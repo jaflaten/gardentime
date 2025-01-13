@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="no.sogn.gardentime.GardenTimeApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-01-13T21:40:24" hostname="Jrn-Ares-MacBook-Pro-3.local" time="0.354">
+  <properties/>
+  <testcase name="contextLoads()" classname="no.sogn.gardentime.GardenTimeApplicationTests" time="0.354"/>
+  <system-out><![CDATA[22:40:22.035 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [no.sogn.gardentime.GardenTimeApplicationTests]: GardenTimeApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:40:22.086 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration no.sogn.gardentime.GardenTimeApplication for test class no.sogn.gardentime.GardenTimeApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.1)
+
+2025-01-13T22:40:22.412+01:00  INFO 28931 --- [GardenTime] [    Test worker] n.s.g.GardenTimeApplicationTests         : Starting GardenTimeApplicationTests using Java 21.0.3 with PID 28931 (started by jaflaten in /Users/jaflaten/dev/solo/gardentime)
+2025-01-13T22:40:22.412+01:00  INFO 28931 --- [GardenTime] [    Test worker] n.s.g.GardenTimeApplicationTests         : No active profile set, falling back to 1 default profile: "default"
+2025-01-13T22:40:22.799+01:00  INFO 28931 --- [GardenTime] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-01-13T22:40:22.871+01:00  INFO 28931 --- [GardenTime] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 67 ms. Found 1 JPA repository interface.
+2025-01-13T22:40:23.161+01:00  INFO 28931 --- [GardenTime] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-01-13T22:40:23.253+01:00  INFO 28931 --- [GardenTime] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2025-01-13T22:40:23.254+01:00  INFO 28931 --- [GardenTime] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-01-13T22:40:23.281+01:00  INFO 28931 --- [GardenTime] [    Test worker] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:testdb (H2 2.3)
+2025-01-13T22:40:23.284+01:00  WARN 28931 --- [GardenTime] [    Test worker] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: H2 2.3.232 is newer than this version of Flyway and support has not been tested. The latest supported version of H2 is 2.2.224.
+2025-01-13T22:40:23.294+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+2025-01-13T22:40:23.295+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.f.core.internal.command.DbValidate     : Successfully validated 0 migrations (execution time 00:00.003s)
+2025-01-13T22:40:23.295+01:00  WARN 28931 --- [GardenTime] [    Test worker] o.f.core.internal.command.DbValidate     : No migrations found. Are your locations set up correctly?
+2025-01-13T22:40:23.299+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "PUBLIC"."flyway_schema_history" ...
+2025-01-13T22:40:23.322+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.f.core.internal.command.DbMigrate      : Current version of schema "PUBLIC": << Empty Schema >>
+2025-01-13T22:40:23.324+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.f.core.internal.command.DbMigrate      : Schema "PUBLIC" is up to date. No migration necessary.
+2025-01-13T22:40:23.386+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-01-13T22:40:23.414+01:00  INFO 28931 --- [GardenTime] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.4.Final
+2025-01-13T22:40:23.431+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-01-13T22:40:23.561+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-01-13T22:40:23.597+01:00  INFO 28931 --- [GardenTime] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-01-13T22:40:23.944+01:00  INFO 28931 --- [GardenTime] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-01-13T22:40:23.957+01:00  INFO 28931 --- [GardenTime] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-01-13T22:40:24.027+01:00  WARN 28931 --- [GardenTime] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-01-13T22:40:24.289+01:00  INFO 28931 --- [GardenTime] [    Test worker] c.n.g.d.s.ReloadableGraphQLSource        : Rebuilding GraphQLSource
+2025-01-13T22:40:24.293+01:00  INFO 28931 --- [GardenTime] [    Test worker] c.n.g.dgs.internal.DgsSchemaProvider     : No schema files found, but a schema was provided as an TypeDefinitionRegistry
+2025-01-13T22:40:24.461+01:00  INFO 28931 --- [GardenTime] [    Test worker] .d.s.a.DgsSpringGraphQLAutoConfiguration : ***Schema Report***
+Unmapped fields: [Query._service]
+Unmapped registrations: {}
+Unmapped arguments: []
+Skipped types: []
+
+2025-01-13T22:40:24.483+01:00  INFO 28931 --- [GardenTime] [    Test worker] s.b.a.g.s.GraphQlWebMvcAutoConfiguration : GraphQL endpoint HTTP POST /graphql
+2025-01-13T22:40:24.734+01:00  INFO 28931 --- [GardenTime] [    Test worker] n.s.g.GardenTimeApplicationTests         : Started GardenTimeApplicationTests in 2.577 seconds (process running for 3.17)
+]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/jaflaten/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.15.11/a38b16385e867f59a641330f0362ebe742788ed8/byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>
