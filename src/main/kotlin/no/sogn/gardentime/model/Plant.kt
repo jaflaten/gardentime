@@ -4,14 +4,13 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import java.util.*
 
 
 data class Plant(
-    val id: Int,
+    val id: Long?,
     val name: String,
     val scientificName: String,
-    val plantType: PlantType,
+    val plantType: PlantType?,
     val plantFamily: String,
     val maturityTime: Int,
     val growingSeason: GrowingSeason?,
@@ -19,8 +18,7 @@ data class Plant(
     val waterReq: String?,
     val soilType: String?,
     val spaceReq: String?,
-    ) {
-}
+    )
 
 @Entity
 class PlantEntity(
@@ -60,3 +58,34 @@ enum class PlantType(val description: String, val examples: List<String>) {
     ALLIUM("Plants in the onion family", listOf("Onion", "Garlic", "Leek"));
 }
 
+fun mapPlantToEntity(plant: Plant): PlantEntity {
+    return PlantEntity(
+        id = plant.id,
+        name = plant.name,
+        scientificName = plant.scientificName,
+        plantType = plant.plantType,
+        plantFamily = plant.plantFamily,
+        maturityTime = plant.maturityTime,
+        growingSeason = plant.growingSeason,
+        sunReq = plant.sunReq,
+        waterReq = plant.waterReq,
+        soilType = plant.soilType,
+        spaceReq = plant.spaceReq,
+    )
+}
+
+fun mapPlantToDomain(plantEntity: PlantEntity): Plant {
+    return Plant(
+        id = plantEntity.id,
+        name = plantEntity.name,
+        scientificName = plantEntity.scientificName,
+        plantType = plantEntity.plantType,
+        plantFamily = plantEntity.plantFamily,
+        maturityTime = plantEntity.maturityTime,
+        growingSeason = plantEntity.growingSeason,
+        sunReq = plantEntity.sunReq,
+        waterReq = plantEntity.waterReq,
+        soilType = plantEntity.soilType,
+        spaceReq = plantEntity.spaceReq,
+    )
+}

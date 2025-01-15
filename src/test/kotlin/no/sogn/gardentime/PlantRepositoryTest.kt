@@ -4,6 +4,8 @@ import no.sogn.gardentime.db.PlantRepository
 import no.sogn.gardentime.model.GrowingSeason
 import no.sogn.gardentime.model.PlantEntity
 import no.sogn.gardentime.model.PlantType
+import no.sogn.gardentime.model.mapPlantToDomain
+import no.sogn.gardentime.model.mapPlantToEntity
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -52,7 +54,29 @@ class PlantRepositoryTest {
             Assertions.assertEquals(plantType, plant.plantType, "Plant ${plant.name} does not match the expected type $plantType")
         }
     }
+
+    @Test
+    fun `map an plant entity to domain and back`() {
+        val carrotEntity = plantRepository.save(testCarrotEntity())
+        Assertions.assertNotNull(carrotEntity)
+        val carrotDomain = mapPlantToDomain(carrotEntity)
+        Assertions.assertNotNull(carrotDomain)
+        Assertions.assertEquals(carrotDomain.id, carrotEntity.id)
+        Assertions.assertEquals(carrotDomain.maturityTime, 75)
+        val newMaturityTime = 80
+        val updatedCarrotDomain = carrotDomain.copy(
+            maturityTime = newMaturityTime
+        )
+
+        println("carrotEntity maturityTime: " + carrotEntity.maturityTime)
+        val savedEntity = plantRepository.save(mapPlantToEntity(updatedCarrotDomain))
+        Assertions.assertEquals(carrotEntity.id, savedEntity.id)
+        Assertions.assertEquals(carrotDomain.id, savedEntity.id)
+        Assertions.assertEquals(savedEntity.maturityTime, newMaturityTime)
+        println("savedEntity maturityTime:" + savedEntity.maturityTime)
+    }
 }
+
 
 
 fun testCarrotEntity(): PlantEntity {
