@@ -1,13 +1,11 @@
 package no.sogn.gardentime.model
-
+// kasse
 data class GrowZone(
     val id: Int,
     val name: String,
-    val plants: List<Plant>,
     val zoneSize: ZoneSize,
-    val cropRecord: CropRecord,
+    val cropRecord: List<CropRecord>,
     val nrOfRows: Int,
-    val status: String,
     val notes: String?,
     val zoneType: ZoneType,
     )

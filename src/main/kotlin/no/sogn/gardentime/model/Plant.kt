@@ -8,11 +8,10 @@ import jakarta.persistence.Id
 
 data class Plant(
     val id: Long?,
-    val name: String,
-    val scientificName: String,
+    val name: String, // einaste påkrevde
+    val scientificName: String?,
     val plantType: PlantType?,
-    val plantFamily: String,
-    val maturityTime: Int,
+    val maturityTime: Int?,
     val growingSeason: GrowingSeason?,
     val sunReq: String?,
     val waterReq: String?,
@@ -26,17 +25,16 @@ class PlantEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val name: String = "",
-    val scientificName: String = "",
+    val scientificName: String? = "null",
     val plantType: PlantType? = null,
-    val plantFamily: String,
-    val maturityTime: Int,
+    val maturityTime: Int? = 0,
     val growingSeason: GrowingSeason?,
     val sunReq: String?,
     val waterReq: String?,
     val soilType: String?,
     val spaceReq: String?,
 ) {
-    constructor() : this(null, "", "", null, "", 0, null, null, null, null, null) {}
+    constructor() : this(null, "", "", null,  0, null, null, null, null, null) {}
 }
 
 enum class GrowingSeason {
@@ -64,7 +62,6 @@ fun mapPlantToEntity(plant: Plant): PlantEntity {
         name = plant.name,
         scientificName = plant.scientificName,
         plantType = plant.plantType,
-        plantFamily = plant.plantFamily,
         maturityTime = plant.maturityTime,
         growingSeason = plant.growingSeason,
         sunReq = plant.sunReq,
@@ -80,7 +77,6 @@ fun mapPlantToDomain(plantEntity: PlantEntity): Plant {
         name = plantEntity.name,
         scientificName = plantEntity.scientificName,
         plantType = plantEntity.plantType,
-        plantFamily = plantEntity.plantFamily,
         maturityTime = plantEntity.maturityTime,
         growingSeason = plantEntity.growingSeason,
         sunReq = plantEntity.sunReq,
