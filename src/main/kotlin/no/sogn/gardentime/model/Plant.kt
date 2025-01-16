@@ -1,6 +1,7 @@
 package no.sogn.gardentime.model
 
 import jakarta.persistence.Entity
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
