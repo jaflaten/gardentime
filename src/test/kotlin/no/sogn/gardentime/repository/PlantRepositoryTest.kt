@@ -1,4 +1,4 @@
-package no.sogn.gardentime
+package no.sogn.gardentime.repository
 
 import no.sogn.gardentime.db.PlantRepository
 import no.sogn.gardentime.model.GrowingSeason
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -23,7 +24,7 @@ class PlantRepositoryTest {
 
     @BeforeEach
     fun setup() {
-
+        plantRepository.deleteAll()
     }
 
     @Test
@@ -74,6 +75,16 @@ class PlantRepositoryTest {
         Assertions.assertEquals(carrotDomain.id, savedEntity.id)
         Assertions.assertEquals(savedEntity.maturityTime, newMaturityTime)
         println("savedEntity maturityTime:" + savedEntity.maturityTime)
+    }
+
+    @Test
+    fun `add new plant and verify it is saved`() {
+        val noPlants = plantRepository.findAll().toList()
+        Assertions.assertTrue(noPlants.isEmpty(), "Plant repository should be empty")
+        plantRepository.save(testGarlicEntity())
+        val allPlants = plantRepository.findAll().toList()
+        Assertions.assertFalse(allPlants.isEmpty(), "Plant repository should not be empty")
+        Assertions.assertEquals(1, allPlants.size, "Plant repository should have one plant")
     }
 }
 
@@ -146,5 +157,19 @@ fun testCucumberEntity(): PlantEntity {
         waterReq = "High",
         soilType = "Loamy",
         spaceReq = "30 cm"
+    )
+
+    }
+fun testGarlicEntity(): PlantEntity {
+    return PlantEntity(
+        name = "Garlic",
+        scientificName = "Allium sativum",
+        plantType = PlantType.ALLIUM,
+        maturityTime = 90,
+        growingSeason = GrowingSeason.SUMMER,
+        sunReq = "Full Sun",
+        waterReq = "Moderate",
+        soilType = "Loamy",
+        spaceReq = "10 cm"
     )
 }

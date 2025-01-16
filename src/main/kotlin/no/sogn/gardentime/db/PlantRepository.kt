@@ -13,5 +13,4 @@ import java.util.UUID
 interface PlantRepository : CrudRepository<PlantEntity, Long> {
     fun findPlantsByPlantType(plantType: PlantType): MutableList<PlantEntity>
 
-
 }

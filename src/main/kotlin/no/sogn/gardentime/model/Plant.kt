@@ -7,16 +7,16 @@ import jakarta.persistence.Id
 
 
 data class Plant(
-    val id: Long?,
+    val id: Long? = null,
     val name: String, // einaste påkrevde
-    val scientificName: String?,
-    val plantType: PlantType?,
-    val maturityTime: Int?,
-    val growingSeason: GrowingSeason?,
-    val sunReq: String?,
-    val waterReq: String?,
-    val soilType: String?,
-    val spaceReq: String?,
+    val scientificName: String? = "",
+    val plantType: PlantType? = null,
+    val maturityTime: Int? = 0,
+    val growingSeason: GrowingSeason? = null,
+    val sunReq: String? = "",
+    val waterReq: String? = "",
+    val soilType: String? = "",
+    val spaceReq: String? = "",
     )
 
 @Entity
