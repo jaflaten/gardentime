@@ -12,7 +12,8 @@ import java.util.*
 data class Garden(
     val id: UUID? = null,
     val name: String,
-    val growZones: MutableList<GrowZone> = mutableListOf()
+    val growZones: MutableList<GrowZone> = mutableListOf(),
+    val userId: UUID? = null,
 ) {
 
 
@@ -24,22 +25,21 @@ class GardenEntity(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
     val name: String,
-//    @OneToMany(mappedBy = "garden", cascade = [CascadeType.ALL], orphanRemoval = true)
-//    val growZones: MutableList<GrowZoneEntity> = mutableListOf()
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "garden_id") // Define the foreign key column in GrowZoneEntity
-    val growZones: MutableList<GrowZoneEntity> = mutableListOf()
+    val growZones: MutableList<GrowZoneEntity> = mutableListOf(),
+    val userId: UUID? = null,
 ) {
-    constructor() : this(UUID.randomUUID(), "", mutableListOf()) {
+    constructor() : this(null, "", mutableListOf(), null) {
 
     }
 
 }
 
 fun mapToGardenEntity(garden: Garden): GardenEntity {
-    return GardenEntity(garden.id, garden.name, garden.growZones.map { mapToGrowZoneEntity(it) }.toMutableList())
+    return GardenEntity(garden.id, garden.name, garden.growZones.map { mapToGrowZoneEntity(it) }.toMutableList(), garden.userId)
 }
 
 fun mapToGarden(gardenEntity: GardenEntity): Garden {
-    return Garden(gardenEntity.id, gardenEntity.name, gardenEntity.growZones.map { mapToGrowZone(it) }.toMutableList())
+    return Garden(gardenEntity.id, gardenEntity.name, gardenEntity.growZones.map { mapToGrowZone(it) }.toMutableList(), gardenEntity.userId)
 }

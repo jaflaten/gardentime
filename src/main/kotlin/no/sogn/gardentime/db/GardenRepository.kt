@@ -8,4 +8,6 @@ import java.util.*
 @Repository
 interface GardenRepository: CrudRepository<GardenEntity, UUID> {
 
+    fun findGardenEntityById(id: UUID): GardenEntity?
+
 }
