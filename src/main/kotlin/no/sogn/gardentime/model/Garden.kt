@@ -26,7 +26,7 @@ class GardenEntity(
     val id: UUID? = null,
     val name: String,
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "garden_id") // Define the foreign key column in GrowZoneEntity
+    @JoinColumn(name = "gardenId") // Define the foreign key column in GrowZoneEntity
     val growZones: MutableList<GrowZoneEntity> = mutableListOf(),
     val userId: UUID? = null,
 ) {
@@ -37,9 +37,10 @@ class GardenEntity(
 }
 
 fun mapToGardenEntity(garden: Garden): GardenEntity {
-    return GardenEntity(garden.id, garden.name, garden.growZones.map { mapToGrowZoneEntity(it) }.toMutableList(), garden.userId)
+    return GardenEntity(garden.id, garden.name, garden.growZones.map { mapGrowZoneToEntity(it) }.toMutableList(), garden.userId)
 }
 
-fun mapToGarden(gardenEntity: GardenEntity): Garden {
-    return Garden(gardenEntity.id, gardenEntity.name, gardenEntity.growZones.map { mapToGrowZone(it) }.toMutableList(), gardenEntity.userId)
+fun mapToGarden(gardenEntity: GardenEntity, cropRecords: MutableList<CropRecordEntity>): Garden {
+    return Garden(gardenEntity.id, gardenEntity.name, gardenEntity.growZones.map {
+        mapGrowZoneEntityToDomain(it, cropRecords) }.toMutableList(), gardenEntity.userId)
 }

@@ -7,18 +7,18 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 data class CropRecord(
-    val id: UUID,
-    val name: String,
-    val description: String,
+    val id: UUID ? = null,
+    val name: String? = null,
+    val description: String? = null,
     val plantingDate: LocalDate,
-    val harvestDate: LocalDate?,
+    val harvestDate: LocalDate? = null,
     val plant: Plant,
-    val status: String,
-    val growZone: GrowZone,
-    val outcome: String?,
+    val status: CropStatus? = null,
+    val growZoneId: Long,
+    val outcome: String? = null,
     val notes: String? = null,
 
     )
@@ -28,51 +28,59 @@ class CropRecordEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
-    val name: String,
-    val description: String,
+    val name: String? = null,
+    val description: String? = null,
     val plantingDate: LocalDate,
-    val harvestDate: LocalDate?,
+    val harvestDate: LocalDate? = null,
     @ManyToOne
     @JoinColumn(name = "plant_id", nullable = false)
     val plant: PlantEntity,
-    val status: String?,
-    @ManyToOne
-    @JoinColumn(name = "grow_zone_id", nullable = false)
-    val growZone: GrowZoneEntity,
+    val status: CropStatus? = null,
+    val growZoneId: Long,
     val outcome: String? = null,
     val notes: String? = null,
 ) {
-    constructor() : this(null, "", "", LocalDate.now(), null, PlantEntity(), "", GrowZoneEntity(), "", "") {
+    constructor() : this(null, "", "", LocalDate.now(), null, PlantEntity(), CropStatus.UNKNOWN, 0, "", "") {
 
     }
 }
 
-fun mapCropRecordToEntity(cropRecord: CropRecord): CropRecordEntity {
-    return CropRecordEntity(
-        cropRecord.id,
-        cropRecord.name,
-        cropRecord.description,
-        cropRecord.plantingDate,
-        cropRecord.harvestDate,
-        mapPlantToEntity(cropRecord.plant),
-        cropRecord.status,
-        mapToGrowZoneEntity(cropRecord.growZone),
-        cropRecord.outcome,
-        cropRecord.notes
+enum class CropStatus {
+    PLANTED,
+    HARVESTED,
+    DISEASED,
+    FAILED,
+    UNKNOWN
+}
+
+fun mapCropRecordEntityToDomain(cropRecordEntity: CropRecordEntity): CropRecord {
+    return CropRecord(
+        id = cropRecordEntity.id,
+        name = cropRecordEntity.name,
+        description = cropRecordEntity.description,
+        plantingDate = cropRecordEntity.plantingDate,
+        harvestDate = cropRecordEntity.harvestDate,
+        plant = mapPlantToDomain(cropRecordEntity.plant),
+        status = cropRecordEntity.status,
+        growZoneId = cropRecordEntity.growZoneId,
+        outcome = cropRecordEntity.outcome,
+        notes = cropRecordEntity.notes
     )
 }
 
-fun mapCropRecord(cropRecordEntity: CropRecordEntity): CropRecord {
-    return CropRecord(
-        cropRecordEntity.id!!,
-        cropRecordEntity.name,
-        cropRecordEntity.description,
-        cropRecordEntity.plantingDate,
-        cropRecordEntity.harvestDate,
-        mapPlantToDomain(cropRecordEntity.plant),
-        cropRecordEntity.status!!,
-        mapToGrowZone(cropRecordEntity.growZone),
-        cropRecordEntity.outcome,
-        cropRecordEntity.notes
+fun mapCropRecordToEntity(cropRecord: CropRecord): CropRecordEntity {
+    return CropRecordEntity(
+        id = cropRecord.id,
+        name = cropRecord.name,
+        description = cropRecord.description,
+        plantingDate = cropRecord.plantingDate,
+        harvestDate = cropRecord.harvestDate,
+        plant = mapPlantToEntity(cropRecord.plant),
+        status = cropRecord.status,
+        growZoneId = cropRecord.growZoneId,
+        outcome = cropRecord.outcome,
+        notes = cropRecord.notes
     )
 }
+
+

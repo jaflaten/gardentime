@@ -1,66 +1,66 @@
 package no.sogn.gardentime.model
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
 import java.util.*
 
 data class GrowZone(
-    val id: Int? = null,
+    val id: Long? = null,
     val name: String,
-    val zoneSize: String?,
-    val cropRecord: List<CropRecord>,
-    val nrOfRows: Int?,
-    val notes: String?,
-    val zoneType: ZoneType?,
+    val zoneSize: String? = null,
+    val cropRecord: MutableList<CropRecord> = mutableListOf(),
+    val gardenId: UUID,
+    val nrOfRows: Int? = null,
+    val notes: String? = null,
+    val zoneType: ZoneType? = null,
     )
 
 @Entity
 class GrowZoneEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int? = null,
+    val id: Long? = null,
     val name: String,
-    val zoneSize: String?,
-    @OneToMany(mappedBy = "growZone", cascade = [CascadeType.ALL], orphanRemoval = false)
-    val cropRecord: List<CropRecordEntity>,
-//    @ManyToOne
-//    @JoinColumn(name = "garden_id", nullable = false)
-//    val garden: GardenEntity,
+    val zoneSize: String? = null,
+    val gardenId: UUID,
     val nrOfRows: Int? = null,
-    val notes: String?,
+    val notes: String? = null,
     val zoneType: ZoneType? = null,
     ) {
-//    constructor() : this(null, "", null, mutableListOf(), GardenEntity(), null, null, null)
-constructor() : this(null, "", null, mutableListOf(), null, null, null)
+    constructor() : this(null, "", "", UUID.randomUUID(), 0, "", null) {
     }
 
-fun mapToGrowZoneEntity(growZone: GrowZone): GrowZoneEntity {
-    return GrowZoneEntity(
-        growZone.id,
-        growZone.name,
-        growZone.zoneSize,
-        growZone.cropRecord.map { mapCropRecordToEntity(it) },
-        growZone.nrOfRows,
-        growZone.notes,
-        growZone.zoneType
-    )
 }
 
-fun mapToGrowZone(growZoneEntity: GrowZoneEntity): GrowZone {
+fun mapGrowZoneEntityToDomain(
+    growZoneEntity: GrowZoneEntity,
+    cropRecords: MutableList<CropRecordEntity>
+): GrowZone {
     return GrowZone(
-        growZoneEntity.id,
-        growZoneEntity.name,
-        growZoneEntity.zoneSize,
-        growZoneEntity.cropRecord.map { mapCropRecord(it) },
-        growZoneEntity.nrOfRows,
-        growZoneEntity.notes,
-        growZoneEntity.zoneType
+        id = growZoneEntity.id,
+        name = growZoneEntity.name,
+        zoneSize = growZoneEntity.zoneSize,
+        cropRecord = cropRecords.map { cropRecord ->
+            mapCropRecordEntityToDomain(cropRecord)
+        }.toMutableList(),
+        gardenId = growZoneEntity.gardenId,
+        nrOfRows = growZoneEntity.nrOfRows,
+        notes = growZoneEntity.notes,
+        zoneType = growZoneEntity.zoneType
     )
 }
 
+
+fun mapGrowZoneToEntity(growZone: GrowZone): GrowZoneEntity {
+    return GrowZoneEntity(
+        id = growZone.id,
+        name = growZone.name,
+        zoneSize = growZone.zoneSize,
+        nrOfRows = growZone.nrOfRows,
+        gardenId = growZone.gardenId,
+        notes = growZone.notes,
+        zoneType = growZone.zoneType
+    )
+}

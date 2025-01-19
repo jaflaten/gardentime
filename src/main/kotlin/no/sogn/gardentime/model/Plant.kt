@@ -5,19 +5,20 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 
 data class Plant(
     val id: Long? = null,
     val name: String, // einaste påkrevde
-    val scientificName: String? = "",
+    val scientificName: String? = null,
     val plantType: PlantType? = null,
     val maturityTime: Int? = 0,
     val growingSeason: GrowingSeason? = null,
-    val sunReq: String? = "",
-    val waterReq: String? = "",
-    val soilType: String? = "",
-    val spaceReq: String? = "",
+    val sunReq: String? = null,
+    val waterReq: String? = null,
+    val soilType: String? = null,
+    val spaceReq: String? = null,
     )
 
 @Entity
@@ -25,17 +26,17 @@ class PlantEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val name: String = "",
-    val scientificName: String? = "null",
+    val name: String,
+    val scientificName: String? = null,
     val plantType: PlantType? = null,
     val maturityTime: Int? = 0,
-    val growingSeason: GrowingSeason?,
-    val sunReq: String?,
-    val waterReq: String?,
-    val soilType: String?,
-    val spaceReq: String?,
+    val growingSeason: GrowingSeason? = null,
+    val sunReq: String? = null,
+    val waterReq: String? = null,
+    val soilType: String? = null,
+    val spaceReq: String? = null,
 ) {
-    constructor() : this(null, "", "", null,  0, null, null, null, null, null) {}
+    constructor() : this(null, "", null, null,  0, null, null, null, null, null) {}
 }
 
 enum class GrowingSeason {

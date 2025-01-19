@@ -18,12 +18,12 @@ class GardenController(
     private val gardenService: GardenService
 ) {
     @GetMapping
-    fun getGardens(): ResponseEntity<List<Garden>> {
-        val gardens = gardenService.getGardens()
-        if (gardens.isEmpty()) {
+    fun getGardens(): ResponseEntity<List<UUID>> {
+        val gardenIds = gardenService.getGardenIds()
+        if (gardenIds.isEmpty()) {
             return ResponseEntity.noContent().build()
         }
-        return ResponseEntity.ok(gardens)
+        return ResponseEntity.ok(gardenIds)
     }
 
     @PostMapping("/{name}")
