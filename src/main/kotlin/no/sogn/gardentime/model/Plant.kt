@@ -1,11 +1,6 @@
 package no.sogn.gardentime.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 
 data class Plant(
@@ -28,8 +23,10 @@ class PlantEntity(
     val id: Long? = null,
     val name: String,
     val scientificName: String? = null,
+    @Convert(converter = PlantTypeConverter::class)
     val plantType: PlantType? = null,
     val maturityTime: Int? = 0,
+    @Convert(converter = GrowingSeasonConverter::class)
     val growingSeason: GrowingSeason? = null,
     val sunReq: String? = null,
     val waterReq: String? = null,
@@ -86,4 +83,28 @@ fun mapPlantToDomain(plantEntity: PlantEntity): Plant {
         soilType = plantEntity.soilType,
         spaceReq = plantEntity.spaceReq,
     )
+}
+
+@Converter(autoApply = true)
+class PlantTypeConverter : AttributeConverter<PlantType, String> {
+
+    override fun convertToDatabaseColumn(attribute: PlantType?): String? {
+        return attribute?.name
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): PlantType? {
+        return dbData?.let { enumValue -> PlantType.valueOf(enumValue) }
+    }
+}
+
+@Converter(autoApply = true)
+class GrowingSeasonConverter : AttributeConverter<GrowingSeason, String> {
+
+    override fun convertToDatabaseColumn(attribute: GrowingSeason?): String? {
+        return attribute?.name
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): GrowingSeason? {
+        return dbData?.let { GrowingSeason.valueOf(it) }
+    }
 }

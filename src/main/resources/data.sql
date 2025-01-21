@@ -22,20 +22,20 @@ VALUES ('b4389fe3-09cf-49d8-9d61-a04676c1efdf', 'My First Garden', 'f1234abc-567
 
 -- Insert Grow Zones for "My First Garden" (ID: b4389fe3-09cf-49d8-9d61-a04676c1efdf)
 INSERT INTO GROW_ZONE_ENTITY (id, name, zone_size, garden_id, nr_of_rows, notes, zone_type)
-VALUES (1, 'Root Zone', 'Medium', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 4, 'For root vegetables', 'ROOT'),
-       (2, 'Leafy Zone', 'Large', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 6, 'For leafy greens', 'LEAFY_GREEN'),
-       (3, 'Herb Patch', 'Small', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 2, 'For growing herbs', 'HERB');
+VALUES (1, 'Root Zone', 'Medium', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 4, 'For root vegetables', 'BOX'),
+       (2, 'Leafy Zone', 'Large', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 6, 'For leafy greens', 'BOX'),
+       (3, 'Herb Patch', 'Small', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 2, 'For growing herbs', 'BUCKET');
 
 -- Insert Grow Zones for "Family Garden" (ID: 38df059d-4397-4972-8961-b6a459f29c5e)
 INSERT INTO GROW_ZONE_ENTITY (id, name, zone_size, garden_id, nr_of_rows, notes, zone_type)
 VALUES (4, 'Tuber Zone', 'Medium', '38df059d-4397-4972-8961-b6a459f29c5e', 4, 'For potatoes and sweet potatoes',
         'TUBER'),
        (5, 'Fruit Zone', 'Large', '38df059d-4397-4972-8961-b6a459f29c5e', 6, 'For tomatoes and cucumbers',
-        'FRUIT_VEGETABLE'),
+        'BED'),
        (6, 'Grain Area', 'Large', '38df059d-4397-4972-8961-b6a459f29c5e', 5, 'For wheat and barley', 'GRAIN'),
        (7, 'Onion Patch', 'Small', '38df059d-4397-4972-8961-b6a459f29c5e', 3, 'For onions and garlic', 'ALLIUM'),
        (8, 'Flower Zone', 'Small', '38df059d-4397-4972-8961-b6a459f29c5e', 2, 'For broccoli and artichokes',
-        'FLOWERING_PLANT');
+        'BOX');
 
 -- Crop Records (2 per grow zone, using example plants)
 -- Root Zone (Grow Zone 1)

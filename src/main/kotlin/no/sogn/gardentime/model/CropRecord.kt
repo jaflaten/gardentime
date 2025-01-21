@@ -1,11 +1,6 @@
 package no.sogn.gardentime.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
 import java.time.LocalDate
 import java.util.*
 
@@ -35,6 +30,7 @@ class CropRecordEntity(
     @ManyToOne
     @JoinColumn(name = "plant_id", nullable = false)
     val plant: PlantEntity,
+    @Convert(converter = CropStatusConverter::class)
     val status: CropStatus? = null,
     val growZoneId: Long,
     val outcome: String? = null,
@@ -47,6 +43,7 @@ class CropRecordEntity(
 
 enum class CropStatus {
     PLANTED,
+    GROWING,
     HARVESTED,
     DISEASED,
     FAILED,
@@ -83,4 +80,14 @@ fun mapCropRecordToEntity(cropRecord: CropRecord): CropRecordEntity {
     )
 }
 
+@Converter(autoApply = true)
+class CropStatusConverter : AttributeConverter<CropStatus, String> {
 
+    override fun convertToDatabaseColumn(attribute: CropStatus?): String? {
+        return attribute?.name
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): CropStatus? {
+        return dbData?.let { CropStatus.valueOf(it) }
+    }
+}

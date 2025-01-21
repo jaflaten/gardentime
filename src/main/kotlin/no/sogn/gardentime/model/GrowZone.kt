@@ -1,9 +1,6 @@
 package no.sogn.gardentime.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 import java.util.*
 
 data class GrowZone(
@@ -27,6 +24,7 @@ class GrowZoneEntity(
     val gardenId: UUID,
     val nrOfRows: Int? = null,
     val notes: String? = null,
+    @Convert(converter = ZoneTypeConverter::class)
     val zoneType: ZoneType? = null,
     ) {
     constructor() : this(null, "", "", UUID.randomUUID(), 0, "", null) {
