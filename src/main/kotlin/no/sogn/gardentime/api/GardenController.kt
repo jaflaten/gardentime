@@ -17,7 +17,7 @@ import java.util.UUID
 class GardenController(
     private val gardenService: GardenService
 ) {
-    @GetMapping
+    @GetMapping("/")
     fun getGardens(): ResponseEntity<List<UUID>> {
         val gardenIds = gardenService.getGardenIds()
         if (gardenIds.isEmpty()) {
