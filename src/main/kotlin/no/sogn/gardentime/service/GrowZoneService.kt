@@ -3,6 +3,8 @@ package no.sogn.gardentime.service
 import no.sogn.gardentime.db.CropRecordRepository
 import no.sogn.gardentime.db.GardenRepository
 import no.sogn.gardentime.db.GrowZoneRepository
+import no.sogn.gardentime.exceptions.GardenIdNotFoundException
+import no.sogn.gardentime.exceptions.GrowZoneIdNotFoundException
 import no.sogn.gardentime.model.CropRecordEntity
 import no.sogn.gardentime.model.GrowZone
 import no.sogn.gardentime.model.mapGrowZoneEntityToDomain
@@ -31,10 +33,10 @@ class GrowZoneService(
     fun deleteGrowZone(id: Long) {
 
         val growZoneEntity = growZoneRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("GrowZone with id $id not found") }
+            .orElseThrow { GrowZoneIdNotFoundException("GrowZone with id $id not found") }
 
         val gardenEntity = gardenRepository.findGardenEntityById(growZoneEntity.gardenId)
-            ?: throw IllegalArgumentException("Garden with id ${growZoneEntity.gardenId} not found")
+            ?: throw GardenIdNotFoundException("Garden with id ${growZoneEntity.gardenId} not found")
         gardenEntity.growZones.remove(growZoneEntity)
         gardenRepository.save(gardenEntity)
         growZoneRepository.deleteById(id)
@@ -42,7 +44,7 @@ class GrowZoneService(
 
     fun getCropRecordsForGarden(id: UUID): MutableList<CropRecordEntity> {
         val garden = (gardenRepository.findGardenEntityById(id)
-            ?: throw IllegalArgumentException("Garden with id $id not found"))
+            ?: throw GardenIdNotFoundException("Garden with id $id not found"))
 
         var cropRecords = mutableListOf<CropRecordEntity>()
         garden.growZones.map { it.id }.forEach { growZoneId ->

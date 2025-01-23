@@ -15,6 +15,7 @@ VALUES (1, 'Gulrot', 'Daucus carota', 'ROOT_VEGETABLE', 75, 'SPRING', 'Full Sun'
        (9, 'Basilikum', 'Ocimum basilicum', 'HERB', 30, 'SUMMER', 'Full Sun', 'Moderate', 'Well-drained', '15 cm'),
        (10, 'Reddik', 'Raphanus sativus', 'ROOT_VEGETABLE', 25, 'SPRING', 'Full Sun', 'Low', 'Well-drained', '5 cm');
 
+ALTER TABLE PLANT_ENTITY ALTER COLUMN id RESTART WITH 11;
 -- Insert Gardens
 INSERT INTO GARDEN_ENTITY (id, name, user_id)
 VALUES ('b4389fe3-09cf-49d8-9d61-a04676c1efdf', 'My First Garden', 'f1234abc-5678-90de-abcd-ef1234567890'),
