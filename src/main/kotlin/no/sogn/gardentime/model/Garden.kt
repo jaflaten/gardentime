@@ -19,6 +19,11 @@ data class Garden(
 
 }
 
+data class GardenInfo (
+    val id: UUID,
+    val name: String
+)
+
 @Entity
 class GardenEntity(
     @Id

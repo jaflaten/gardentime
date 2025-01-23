@@ -9,5 +9,5 @@ import java.util.*
 interface GardenRepository: CrudRepository<GardenEntity, UUID> {
 
     fun findGardenEntityById(id: UUID): GardenEntity?
-
+    fun findAllByUserId(userId: UUID): List<GardenEntity>
 }

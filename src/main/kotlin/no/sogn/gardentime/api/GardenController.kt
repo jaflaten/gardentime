@@ -1,6 +1,8 @@
 package no.sogn.gardentime.api
 
 import no.sogn.gardentime.model.Garden
+import no.sogn.gardentime.model.GardenEntity
+import no.sogn.gardentime.model.GardenInfo
 import no.sogn.gardentime.service.GardenService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -30,6 +32,12 @@ class GardenController(
     fun addGarden(@PathVariable name: String): ResponseEntity<Garden> {
         val createdGarden = gardenService.addGarden(name)
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGarden)
+    }
+
+    @GetMapping("/user/{id}")
+    fun getGardenByUserId(@PathVariable id: UUID): ResponseEntity<List<GardenInfo>> {
+        val garden = gardenService.getGardenByUserId(id) ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(garden)
     }
 
     @GetMapping("/{id}")

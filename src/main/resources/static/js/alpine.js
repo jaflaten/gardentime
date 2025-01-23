@@ -3,34 +3,47 @@ document.addEventListener('alpine:init', () => {
     const baseUrl = "http://localhost:8080/api"
 
     const data = {
-        gardens: [],
+        userGardens: [],
         errorMessage: '',
+        userId: 'f1234abc-5678-90de-abcd-ef1234567890',
+        gardens: []
     }
 
     Alpine.data('alpineFunctions', () => ({
         ...data,
 
-        getGardens: function (e) {
-            fetchData(baseUrl + "/garden", "GET", null, this)
+        getGardensByUserId: function (e) {
+            fetchData(baseUrl + `/garden/user/${data.userId}`, "GET", null, this)
                 .then(data => {
-                    this.gardens = data
-                    console.debug("fetch all gardens "+data)
+                    this.userGardens = data
+                    console.info("fetch all gardens "+JSON.stringify(data))
+                })
+        },
+
+        getGardenById: function (gardenId) {
+            fetchData(baseUrl + `/garden/${gardenId}`, "GET", null, this)
+                .then(data => {
+                    console.info("fetch gardens by id "+JSON.stringify(data))
+                    this.gardens[gardenId] = data
+
+
+                    console.info(JSON.stringify(this.gardens[gardenId]))
                 })
         },
 
         createGarden: function (e) {
             fetchData(baseUrl + "/garden/test", "POST", null, this)
                 .then(data => {
-                    this.gardens = [data, ...(this.gardens || [])];
-                    console.debug("created "+ data)
+                    this.userGardens = [data, ...(this.userGardens || [])];
+                    console.info("created "+ JSON.stringify(data))
                 })
         },
 
         deleteGarden: function(id) {
             fetchData(baseUrl + `/garden/${id}`, "DELETE", null, this)
                 .then(data => {
-                    this.gardens = this.gardens.filter(garden => garden.id !== id);
-                    console.debug("deleted "+id)
+                    this.userGardens = this.userGardens.filter(garden => garden.id !== id);
+                    console.info("deleted "+id)
                 })
         }
 
