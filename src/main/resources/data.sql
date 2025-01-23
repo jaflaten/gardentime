@@ -37,6 +37,10 @@ VALUES (4, 'Tuber Zone', 'Medium', '38df059d-4397-4972-8961-b6a459f29c5e', 4, 'F
        (8, 'Flower Zone', 'Small', '38df059d-4397-4972-8961-b6a459f29c5e', 2, 'For broccoli and artichokes',
         'BOX');
 
+
+-- Reset the auto-increment sequence
+ALTER TABLE GROW_ZONE_ENTITY ALTER COLUMN id RESTART WITH 9;
+
 -- Crop Records (2 per grow zone, using example plants)
 -- Root Zone (Grow Zone 1)
 INSERT INTO CROP_RECORD_ENTITY (id, name, description, planting_date, harvest_date, plant_id, status, grow_zone_id,
