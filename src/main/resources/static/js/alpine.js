@@ -3,6 +3,10 @@ document.addEventListener('alpine:init', () => {
     const baseUrl = "http://localhost:8080/api"
 
     const data = {
+        view: 'gardens',
+        selectedGarden: '',
+        selectedGrowZone: '',
+        selectedCropRecord: '',
         userGardens: [],
         errorMessage: '',
         userId: 'f1234abc-5678-90de-abcd-ef1234567890',
@@ -11,6 +15,30 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('alpineFunctions', () => ({
         ...data,
+
+        // VIEWS
+
+        viewSelectedGarden: function (gardenId) {
+            this.view = 'garden'
+            this.selectedGarden = gardenId
+        },
+
+        viewSelectedGrowZone: function (selectedGarden, growZoneId) {
+            this.view = 'growZone'
+            this.selectedGrowZone = this.gardens[selectedGarden].growZones.find(
+                (growZone) => growZone.id === growZoneId
+            );
+        },
+
+        viewSelectedCropRecord: function (selectedGrowZone, cropRecordId) {
+            this.view = 'cropRecord'
+            this.selectedCropRecord = selectedGrowZone.cropRecord.find(
+                (cropRecord) => cropRecord.id === cropRecordId
+            );
+
+        },
+
+        // REST
 
         getGardensByUserId: function (e) {
             fetchData(baseUrl + `/garden/user/${data.userId}`, "GET", null, this)

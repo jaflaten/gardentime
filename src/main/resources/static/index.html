@@ -2,7 +2,9 @@
     <head>
         <title>GardenTime</title>
         <script src="https://cdn.tailwindcss.com"></script>
+
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
         <script src="js/alpine.js"></script>
         <style>[x-cloak] {
             display: none;
@@ -14,42 +16,125 @@
                 <div class="p-12 bg-gray-50 rounded-lg shadow">
 
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl">Gardens</h2>
+                        <h2 class="text-2xl cursor-pointer" @click="view = 'gardens'">Gardens</h2>
+                        <!--
                         <button @click="createGarden" class="flex my-auto py-1 px-4 bg-[#304a5a] text-white rounded-lg shadow hover:shadow-lg">
                             New Garden
                         </button>
+                        -->
                     </div>
 
-                    <div x-init="getGardensByUserId" class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="userGardens">
-                        <template x-for="garden in userGardens">
-                            <div class="bg-[#5e836e] shadow-lg p-4 text-lg rounded-lg text-white">
-                                <div x-init="getGardenById(garden.id)">
+                    <!-- Gardens -->
+                    <div x-cloak x-show="view == 'gardens'">
+                        <div x-init="getGardensByUserId" class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="userGardens">
+                            <template x-for="garden in userGardens">
+                                <div class="bg-[#5e836e] shadow-lg p-4 text-lg rounded-lg text-white cursor-pointer border hover:border-black hover:shower"
+                                     @click="viewSelectedGarden(garden.id)">
+                                    <div x-init="getGardenById(garden.id)" >
+                                        <h2 class="text-xl" x-text="gardens[garden.id].name"></h2>
 
-                                        <h2 class="text-xl mb-4" x-text="gardens[garden.id].name"></h2>
+                                        <!--
                                         <template x-for="growZone in gardens[garden.id].growZones">
                                             <ul>
                                                 <li>- <span class="text-sm" x-text="growZone.name"></span></li>
                                             </ul>
                                         </template>
+                                        -->
+
+                                    </div>
+
+                                    <!--
+                                    <div class="mt-6 text-sm">
+                                        <label class="cursor-pointer hover:underline" @click="deleteGarden(garden.id)">Delete</label>
+                                    </div>
+                                    -->
 
                                 </div>
+                            </template>
+                        </div>
+                    </div>
 
-                                <!--
-                                <div class="mt-6 text-sm">
-                                    <label class="cursor-pointer hover:underline" @click="deleteGarden(garden.id)">Delete</label>
-                                </div>
-                                -->
+                    <!-- Garden -->
+                    <div x-cloak x-show="view == 'garden'">
+                        <div class="border border-gray-900 rounded-lg bg-gray-100 p-4">
+
+                            <button class="text-blue-600 p-4" @click="view = 'gardens'"><- Tilbake</button>
+                            <h2 class="text-xl mb-4 underline font-semibold" x-text="gardens[selectedGarden].name"></h2>
+
+                            <div class="grid grid-cols-3 gap-4">
+
+                                <template x-for="growZone in gardens[selectedGarden].growZones">
+                                    <div @click="viewSelectedGrowZone(selectedGarden, growZone.id)" class="border rounded-lg p-4 bg-blue-100 hover:border-black hover:cursor-pointer">
+                                        <h2 x-text="growZone.name"> </h2>
+                                    </div>
+                                </template>
 
                             </div>
-                        </template>
-
-
+                        </div>
                     </div>
 
-                    <div x-show="!userGardens || userGardens.length === 0">
-                        <span class="text-gray-500">- Empty gardens</span>
+                    <!-- GrowZone -->
+                    <div x-cloak x-show="view == 'growZone'">
+                        <div class="border border-gray-900 rounded-lg bg-gray-100 p-4">
+
+                            <button class="text-blue-600 p-4" @click="view = 'garden'"><- Tilbake</button>
+                            <div class="space-y-8">
+                                <div>
+                                    <h2 class="font-semibold text-xl mb-4 underline w-full" x-text="selectedGrowZone.name"></h2>
+                                    <div class="flex-col">
+                                        <div class="flex">
+                                            <div class="w-32 font-semibold">ZoneSize: </div>
+                                            <label x-text="selectedGrowZone.zoneSize"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 class="font-semibold underline ">CropRecords:</h4>
+                                    <div class="grid grid-cols-1 gap-2 pt-4">
+                                        <template x-for="cropRecord in selectedGrowZone.cropRecord">
+                                            <div @click="viewSelectedCropRecord(selectedGrowZone, cropRecord.id)" class="bg-yellow-100 p-4 border rounded-lg hover:border-black cursor-pointer">
+                                                <h3 x-text="cropRecord.name"></h3>
+                                                <label x-text="cropRecord.plantingDate"></label>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
                     </div>
-                    
+
+
+                    <!-- CropRecord -->
+                    <div x-cloak x-show="view == 'cropRecord'">
+                        <div class="border border-gray-900 rounded-lg bg-gray-100 p-4">
+
+                            <button class="text-blue-600 p-4" @click="view = 'growZone'"><- Tilbake</button>
+                            <div class="space-y-8">
+
+                                <div >
+                                    <h2 class="font-semibold text-xl mb-4 underline w-full" x-text="selectedCropRecord.name"></h2>
+
+                                    <div class="flex-col">
+                                        <div class="flex">
+                                            <div class="w-32 font-semibold">Description:</div>
+                                            <label x-text="selectedCropRecord.description"></label>
+                                        </div>
+                                        <div class="flex">
+                                            <div class="w-32 font-semibold">Status: </div>
+                                            <label x-text="selectedCropRecord.status"></label>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
