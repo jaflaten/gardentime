@@ -73,7 +73,79 @@ document.addEventListener('alpine:init', () => {
                     this.userGardens = this.userGardens.filter(garden => garden.id !== id);
                     console.info("deleted "+id)
                 })
-        }
+        },
+
+        addGrowZone: function(growZoneName, gardenId) {
+            fetchData(baseUrl + `/growzone/${growZoneName}/garden/${gardenId}`, "POST", null, this)
+                .then(data => {
+                    this.gardens[gardenId].growZones = [data, ...(this.gardens[gardenId].growZones || [])];
+                    console.info("created "+ JSON.stringify(data))
+                })
+        },
+
+        getGrowZoneById: function(growZoneId) {
+            fetchData(baseUrl + `/growzone/${growZoneId}`, "GET", null, this)
+                .then(data => {
+                    this.growZones[growZoneId] = data
+                    console.info("fetch growzone by id "+JSON.stringify(data))
+                })
+        },
+
+        deleteGrowZone: function(id) {
+            fetchData(baseUrl + `/growzone/${id}`, "DELETE", null, this)
+                .then(data => {
+                    this.growZones = this.growZones.filter(growZone => growZone.id !== id);
+                    console.info("deleted growzone with id: "+id)
+                })
+        },
+
+        addCropRecord: function(plantName, gardenId, growZoneId) {
+            fetchData(baseUrl + `/croprecord/${plantName}/garden/${gardenId}/growzone/${growZoneId}`, "POST", null, this)
+                .then(data => {
+                    this.gardens[gardenId].growZones[growZoneId].cropRecords = [data, ...(this.gardens[gardenId].growZones[growZoneId].cropRecords || [])];
+                    console.info("created "+ JSON.stringify(data))
+                })
+        },
+
+        getCropRecordById: function(id) {
+            fetchData(baseUrl + `/croprecord/${id}`, "GET", null, this)
+                .then(data => {
+                    this.cropRecords[id] = data
+                    console.info("fetch crop record by id "+JSON.stringify(data))
+                })
+        },
+
+        deleteCropRecord: function(id) {
+            fetchData(baseUrl + `/croprecord/${id}`, "DELETE", null, this)
+                .then(data => {
+                    this.cropRecords = this.cropRecords.filter(cropRecord => cropRecord.id !== id);
+                    console.info("deleted crop record with id: "+id)
+                })
+        },
+
+        addPlant: function(plantName) {
+            fetchData(baseUrl + `/plants/${name}`, "POST", null, this)
+                .then(data => {
+                    this.plants = [data, ...(this.plants || [])];
+                    console.info("created "+ JSON.stringify(data))
+                })
+        },
+
+        getPlantById: function(id) {
+            fetchData(baseUrl + `/plants/${id}`, "GET", null, this)
+                .then(data => {
+                    this.plants[id] = data
+                    console.info("fetch plant by id "+JSON.stringify(data))
+                })
+        },
+
+        getPlants: function() {
+            fetchData(baseUrl + `/plants`, "GET", null, this)
+                .then(data => {
+                    this.plants = data
+                    console.info("fetch all plants "+JSON.stringify(data))
+                })
+        },
 
     }))
 
