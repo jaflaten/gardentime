@@ -32,6 +32,7 @@ class CropRecordService(
                     plantingDate = LocalDate.now(),
                     plant = getPlantEntityByName(plantName),
                     growZoneId = growZoneEntity.id,
+                    name = plantName
                     )
                 return mapCropRecordEntityToDomain(cropRecordRepository.save(cropRecord))
         }

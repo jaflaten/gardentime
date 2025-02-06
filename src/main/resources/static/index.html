@@ -17,37 +17,26 @@
 
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-2xl cursor-pointer" @click="view = 'gardens'">Gardens</h2>
-                        <!--
-                        <button @click="createGarden" class="flex my-auto py-1 px-4 bg-[#304a5a] text-white rounded-lg shadow hover:shadow-lg">
-                            New Garden
-                        </button>
-                        -->
                     </div>
 
+
+
                     <!-- Gardens -->
+
                     <div x-cloak x-show="view == 'gardens'">
+                        <div class="py-4">
+                            <input x-model="gardenNameInput" type="text" placeholder="Enter Garden name...." />
+                            <button class="bg-blue-500 text-white p-2 rounded-lg" @click="createGarden(gardenNameInput)">Create Garden</button>
+
+                            <label class="flex text-red-700" x-if="errorMessage" x-text="errorMessage"></label>
+                        </div>
                         <div x-init="getGardensByUserId" class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="userGardens">
                             <template x-for="garden in userGardens">
                                 <div class="bg-[#5e836e] shadow-lg p-4 text-lg rounded-lg text-white cursor-pointer border hover:border-black hover:shower"
                                      @click="viewSelectedGarden(garden.id)">
                                     <div x-init="getGardenById(garden.id)" >
-                                        <h2 class="text-xl" x-text="gardens[garden.id].name"></h2>
-
-                                        <!--
-                                        <template x-for="growZone in gardens[garden.id].growZones">
-                                            <ul>
-                                                <li>- <span class="text-sm" x-text="growZone.name"></span></li>
-                                            </ul>
-                                        </template>
-                                        -->
-
+                                        <h2 class="text-xl" x-text="garden.name"></h2>
                                     </div>
-
-                                    <!--
-                                    <div class="mt-6 text-sm">
-                                        <label class="cursor-pointer hover:underline" @click="deleteGarden(garden.id)">Delete</label>
-                                    </div>
-                                    -->
 
                                 </div>
                             </template>
@@ -56,6 +45,13 @@
 
                     <!-- Garden -->
                     <div x-cloak x-show="view == 'garden'">
+                        <div class="py-4">
+                            <input x-model="growzoneNameInput" type="text" placeholder="Enter name grow area...." />
+                            <button class="bg-blue-500 text-white p-2 rounded-lg" @click="addGrowZone(growzoneNameInput, gardens[selectedGarden].id)">Create grow area</button>
+
+                            <label class="flex text-red-700" x-if="errorMessage" x-text="errorMessage"></label>
+                        </div>
+
                         <div class="border border-gray-900 rounded-lg bg-gray-100 p-4">
 
                             <button class="text-blue-600 p-4" @click="view = 'gardens'"><- Tilbake</button>
@@ -75,6 +71,12 @@
 
                     <!-- GrowZone -->
                     <div x-cloak x-show="view == 'growZone'">
+                        <div class="py-4">
+                            <input x-model="plantNameInput" type="text" placeholder="Enter plant name..." />
+                            <button class="bg-blue-500 text-white p-2 rounded-lg" @click="addCropRecord(plantNameInput)">Add cropRecord </button>
+
+                            <label class="flex text-red-700" x-if="errorMessage" x-text="errorMessage"></label>
+                        </div>
                         <div class="border border-gray-900 rounded-lg bg-gray-100 p-4">
 
                             <button class="text-blue-600 p-4" @click="view = 'garden'"><- Tilbake</button>

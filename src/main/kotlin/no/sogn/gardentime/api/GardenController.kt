@@ -6,16 +6,13 @@ import no.sogn.gardentime.model.GardenInfo
 import no.sogn.gardentime.service.GardenService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
 @RestController
 @RequestMapping("/api/garden")
+@CrossOrigin(origins = ["*"])
+
 class GardenController(
     private val gardenService: GardenService
 ) {
@@ -28,9 +25,9 @@ class GardenController(
         return ResponseEntity.ok(gardenIds)
     }
 
-    @PostMapping("/{name}")
-    fun addGarden(@PathVariable name: String): ResponseEntity<Garden> {
-        val createdGarden = gardenService.addGarden(name)
+    @PostMapping("/{userId}/{name}")
+    fun addGarden(@PathVariable name: String, @PathVariable userId: UUID): ResponseEntity<Garden> {
+        val createdGarden = gardenService.addGarden(name, userId)
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGarden)
     }
 

@@ -3,14 +3,11 @@ package no.sogn.gardentime.api
 import no.sogn.gardentime.model.Plant
 import no.sogn.gardentime.service.PlantService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/plants")
+@CrossOrigin(origins = ["*"])
 class PlantController(
     private val plantService: PlantService
 ) {

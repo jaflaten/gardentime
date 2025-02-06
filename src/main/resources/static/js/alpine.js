@@ -10,7 +10,10 @@ document.addEventListener('alpine:init', () => {
         userGardens: [],
         errorMessage: '',
         userId: 'f1234abc-5678-90de-abcd-ef1234567890',
-        gardens: []
+        gardens: [],
+        gardenNameInput: '',
+        growzoneNameInput: '',
+        plantNameInput: '',
     }
 
     Alpine.data('alpineFunctions', () => ({
@@ -51,19 +54,22 @@ document.addEventListener('alpine:init', () => {
         getGardenById: function (gardenId) {
             fetchData(baseUrl + `/garden/${gardenId}`, "GET", null, this)
                 .then(data => {
-                    console.info("fetch gardens by id "+JSON.stringify(data))
                     this.gardens[gardenId] = data
-
-
-                    console.info(JSON.stringify(this.gardens[gardenId]))
                 })
         },
 
-        createGarden: function (e) {
-            fetchData(baseUrl + "/garden/test", "POST", null, this)
+        createGarden: function (name) {
+            if(this.gardenNameInput.length == 0) {
+                this.errorMessage = "Garden name is required"
+                return
+            }
+            this.errorMessage = ''
+            fetchData(baseUrl + `/garden/${this.userId}/${name}`, "POST", null, this)
                 .then(data => {
+                    this.gardens[data.id] = data
                     this.userGardens = [data, ...(this.userGardens || [])];
-                    console.info("created "+ JSON.stringify(data))
+                    this.gardenNameInput = ''
+
                 })
         },
 
@@ -76,6 +82,11 @@ document.addEventListener('alpine:init', () => {
         },
 
         addGrowZone: function(growZoneName, gardenId) {
+            if(this.growzoneNameInput.length == 0) {
+                this.errorMessage = "Grow area name is required"
+                return
+            }
+            this.errorMessage = ''
             fetchData(baseUrl + `/growzone/${growZoneName}/garden/${gardenId}`, "POST", null, this)
                 .then(data => {
                     this.gardens[gardenId].growZones = [data, ...(this.gardens[gardenId].growZones || [])];
@@ -99,11 +110,23 @@ document.addEventListener('alpine:init', () => {
                 })
         },
 
-        addCropRecord: function(plantName, gardenId, growZoneId) {
+        addCropRecord: function(plantName) {
+
+            if(this.plantNameInput.length == 0) {
+                this.errorMessage = "Plant name is required"
+                return
+            }
+            this.errorMessage = ''
+
+            const gardenId = this.selectedGarden;
+
+            const growZoneId = this.selectedGrowZone.id;
+
             fetchData(baseUrl + `/croprecord/${plantName}/garden/${gardenId}/growzone/${growZoneId}`, "POST", null, this)
                 .then(data => {
-                    this.gardens[gardenId].growZones[growZoneId].cropRecords = [data, ...(this.gardens[gardenId].growZones[growZoneId].cropRecords || [])];
-                    console.info("created "+ JSON.stringify(data))
+
+                    console.log(JSON.stringify(data))
+                    this.selectedGrowZone.cropRecord = [data, ...(this.selectedGrowZone.cropRecord || [])];
                 })
         },
 
@@ -182,6 +205,12 @@ document.addEventListener('alpine:init', () => {
         }
 
         throw new Error("FetchAPI error");
+    }
+
+    function setViewParameter(view) {
+
+        const url = new URL(window.location);
+        url.searchParams.set('view', this.view)
     }
 
 })

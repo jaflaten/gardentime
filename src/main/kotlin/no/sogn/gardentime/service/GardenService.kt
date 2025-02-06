@@ -19,9 +19,9 @@ class GardenService(
         return gardenRepository.findAll().mapNotNull { it.id }
     }
 
-    fun addGarden(name: String): Garden {
+    fun addGarden(name: String, userId: UUID): Garden {
         return mapToGarden(
-            gardenRepository.save(mapToGardenEntity(Garden(name = name))),
+            gardenRepository.save(mapToGardenEntity(Garden(name = name, userId = userId))),
             cropRecords = mutableListOf()
         )
     }

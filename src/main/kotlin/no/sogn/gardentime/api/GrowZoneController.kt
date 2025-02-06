@@ -3,16 +3,12 @@ package no.sogn.gardentime.api
 import no.sogn.gardentime.model.GrowZone
 import no.sogn.gardentime.service.GrowZoneService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
 @RestController
 @RequestMapping("/api/growzone")
+@CrossOrigin(origins = ["*"])
 class GrowZoneController(
     private val growZoneService: GrowZoneService
 ) {
