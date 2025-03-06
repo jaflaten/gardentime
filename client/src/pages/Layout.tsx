@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router-dom";
 
-export default function Wrapper() {
+export default function Layout() {
   return (
     <>
         <nav className="flex items-center justify-between bg-gray-800 text-white p-4">
