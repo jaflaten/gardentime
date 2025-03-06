@@ -1,18 +1,18 @@
-import { Link, Outlet } from "react-router-dom";
+import {Outlet} from "react-router-dom";
+import {NavBar} from "../components/nav/NavBar.tsx";
 
 export default function Layout() {
   return (
-    <>
-        <nav className="flex items-center justify-between bg-gray-800 text-white p-4">
-            <ul className="flex space-x-6">
-                <li className="hover:bg-gray-400"><Link to="/">Overview</Link></li>
-                <li className="hover:bg-gray-400"><Link to="/gardens">Gardens</Link></li>
-            </ul>
-        </nav>
+      <>
+      <NavBar/>
 
-        <main className="bg-black text-white p-4">
-            <Outlet/> {/* This is where nested routes will render */}
-        </main>
-    </>
-  );
+      <div className="p-4 sm:ml-64">
+          <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+              <Outlet/> {/* This is where nested routes will render */}
+          </div>
+      </div>
+
+</>
+)
+    ;
 }

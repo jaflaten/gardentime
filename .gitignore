@@ -28,5 +28,6 @@ replay_pid*
 .idea/
 .gradle/
 build/
-
+node_modules/
+yarn.lock
 .DS_Store
