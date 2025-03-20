@@ -1,7 +1,6 @@
 package no.sogn.gardentime.api
 
 import no.sogn.gardentime.model.Garden
-import no.sogn.gardentime.model.GardenEntity
 import no.sogn.gardentime.model.GardenInfo
 import no.sogn.gardentime.service.GardenService
 import org.springframework.http.HttpStatus
@@ -32,7 +31,7 @@ class GardenController(
     }
 
     @GetMapping("/user/{id}")
-    fun getGardenByUserId(@PathVariable id: UUID): ResponseEntity<List<GardenInfo>> {
+    fun getGardensByUserId(@PathVariable id: UUID): ResponseEntity<List<GardenInfo>> {
         val garden = gardenService.getGardenByUserId(id) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(garden)
     }

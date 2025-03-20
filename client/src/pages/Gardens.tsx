@@ -24,13 +24,13 @@ export default function Gardens() {
 
   return (
     <>
-        <div className="grid grid-cols-1 gap-4">
+        <ul className="list-disc ml-12" >
         {gardens.map((garden) => (
-            <div className="hover:border-black">
+            <li className="p-4 hover:bg-gray-200" >
                 <Link to={`/garden/${garden.id}`}>{garden.name}</Link>
-            </div>
+            </li>
         ))}
-        </div>
+        </ul>
     </>
   );
 }

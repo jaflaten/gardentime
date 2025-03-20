@@ -15,10 +15,12 @@ VALUES (1, 'Gulrot', 'Daucus carota', 'ROOT_VEGETABLE', 75, 'SPRING', 'Full Sun'
        (9, 'Basilikum', 'Ocimum basilicum', 'HERB', 30, 'SUMMER', 'Full Sun', 'Moderate', 'Well-drained', '15 cm'),
        (10, 'Reddik', 'Raphanus sativus', 'ROOT_VEGETABLE', 25, 'SPRING', 'Full Sun', 'Low', 'Well-drained', '5 cm');
 
-ALTER TABLE PLANT_ENTITY ALTER COLUMN id RESTART WITH 11;
+ALTER TABLE PLANT_ENTITY
+    ALTER COLUMN id RESTART WITH 11;
 -- Insert Gardens
 INSERT INTO GARDEN_ENTITY (id, name, user_id)
 VALUES ('b4389fe3-09cf-49d8-9d61-a04676c1efdf', 'My First Garden', 'f1234abc-5678-90de-abcd-ef1234567890'),
+       ('b4389fe3-09cf-49d8-9d61-a04676c1efda', 'Backdoor garden', 'f1234abc-5678-90de-abcd-ef1234567890'),
        ('38df059d-4397-4972-8961-b6a459f29c5e', 'Family Garden', 'a89d5e63-cb23-44c9-ba41-abcdef123456');
 
 -- Insert Grow Zones for "My First Garden" (ID: b4389fe3-09cf-49d8-9d61-a04676c1efdf)
@@ -40,7 +42,8 @@ VALUES (4, 'Tuber Zone', 'Medium', '38df059d-4397-4972-8961-b6a459f29c5e', 4, 'F
 
 
 -- Reset the auto-increment sequence
-ALTER TABLE GROW_ZONE_ENTITY ALTER COLUMN id RESTART WITH 9;
+ALTER TABLE GROW_ZONE_ENTITY
+    ALTER COLUMN id RESTART WITH 9;
 
 -- Crop Records (2 per grow zone, using example plants)
 -- Root Zone (Grow Zone 1)

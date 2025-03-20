@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Overview from './pages/Overview';
 import Layout from './pages/Layout.tsx';
-import Gardens from './pages/Gardens';
+import GardensListView from './pages/Gardens';
 import NoPage from './pages/NoPage';
-import {GardenPage} from "./components/GardenPage.tsx";
+import {GardenView} from "./components/GardenView.tsx";
+import {GrowZoneView} from "./components/GrowZoneView.tsx";
 
 function App() {
 
@@ -12,8 +13,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Overview />} />
-          <Route path="gardens" element={<Gardens />} />
-          <Route path="/garden/:gardenId" element={<GardenPage />} />
+          <Route path="gardens" element={<GardensListView />} />
+          <Route path="/garden/:gardenId" element={<GardenView />} />
+          <Route path="/growzone/:growzoneId" element={<GrowZoneView />} />
 
           {/*<Route path="/cropRecord/:cropRecordId" element={<GardenPage />} />*/}
 
