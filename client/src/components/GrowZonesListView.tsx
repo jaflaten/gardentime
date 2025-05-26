@@ -15,20 +15,31 @@ export interface GrowZoneViewInfo {
 export function GrowZonesListView({growZones}: { growZones: GrowZoneViewInfo[] }) {
     return (
         <>
-            <h2 className="text-xl mb-4">GrowZones</h2>
-            <div className="grid grid-cols-1 gap-4">
-                {growZones.map((item) => (
-                    <Link to={`/growarea/${item.id}`}>
-                        <div className="bg-amber-200 p-4 flex">
-                            <p>{item.name}</p>
-                            <div className="ml-auto flex space-x-4">
-                                <span>edit</span>
-                                <span>delete</span>
+            <h2 className="text-xl mb-4">Grow Areas</h2>
+            {growZones.length === 0 ? <EmptyGrowZonesMessage /> : (
+                <div className="grid grid-cols-1 gap-4">
+                    {growZones.map((item) => (
+                        <Link to={`/growarea/${item.id}`}>
+                            <div className="bg-amber-200 p-4 flex">
+                                <p>{item.name}</p>
+                                <div className="ml-auto flex space-x-4">
+                                    <span>edit</span>
+                                    <span>delete</span>
+                                </div>
                             </div>
-                        </div>
-                    </Link>
-                ))} //TODO vise resten av informasjonen
-            </div>
+                        </Link>
+                    ))} //TODO vise resten av informasjonen
+                </div>
+            )}
         </>
     );
 };
+
+function EmptyGrowZonesMessage() {
+    return (
+        <div className="text-gray-600">
+            <p>No grow areas added yet.</p>
+            {<button className="mt-2 bg-green-500 text-white px-4 py-2 rounded">Add Grow Area</button> }
+        </div>
+    );
+}

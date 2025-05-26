@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
+import { CropRecordCard } from "./CropRecordCard.tsx";
 
 export interface GrowZoneViewInfo {
     id: string;
@@ -96,37 +97,24 @@ export function GrowZoneView() {
                 <p>Size: {growZone.zoneSize}</p>
             </div>
 
-            {/* Active/Current Crops */}
             <h3 className="text-xl mb-5">Plants</h3>
             <div className="grid grid-cols-1 gap-4">
                 {growZone.cropRecord
                     .filter(crop => crop.status !== CropStatusViewInfo.HARVESTED)
-                    .map((cropRecord) => (
-                        <div key={cropRecord.id} className="bg-green-100 p-4 border border-black rounded-lg">
-                            <p>Plant: {cropRecord.plant.name}</p>
-                            <p>Planting date: {cropRecord.plantingDate}</p>
-                            <p>Status: {cropRecord.status}</p>
-                            <p>Notes: {cropRecord.notes}</p>
-                        </div>
+                    .map(crop => (
+                        <CropRecordCard key={crop.id} crop={crop} highlight="active" />
                     ))}
             </div>
 
-            {/* History Section */}
             <h3 className="text-xl mt-10 mb-5">History</h3>
             <div className="grid grid-cols-1 gap-4">
                 {growZone.cropRecord
                     .filter(crop => crop.status === CropStatusViewInfo.HARVESTED)
-                    .map((cropRecord) => (
-                        <div key={cropRecord.id} className="bg-gray-100 p-4 border border-black rounded-lg">
-                            <p>Plant: {cropRecord.plant.name}</p>
-                            <p>Planting date: {cropRecord.plantingDate}</p>
-                            <p>Harvest date: {cropRecord.harvestDate}</p>
-                            <p>Status: {cropRecord.status}</p>
-                            <p>Outcome: {cropRecord.outcome}</p>
-                            <p>Notes: {cropRecord.notes}</p>
-                        </div>
+                    .map(crop => (
+                        <CropRecordCard key={crop.id} crop={crop} highlight="history" />
                     ))}
             </div>
+
         </>
     );
 
