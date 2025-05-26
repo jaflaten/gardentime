@@ -25,15 +25,15 @@ VALUES ('b4389fe3-09cf-49d8-9d61-a04676c1efdf', 'My First Garden', 'f1234abc-567
 
 -- Insert Grow Zones for "My First Garden" (ID: b4389fe3-09cf-49d8-9d61-a04676c1efdf)
 INSERT INTO GROW_ZONE_ENTITY (id, name, zone_size, garden_id, nr_of_rows, notes, zone_type)
-VALUES (1, 'Root Zone', 'Medium', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 4, 'For root vegetables', 'BOX'),
-       (2, 'Leafy Zone', 'Large', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 6, 'For leafy greens', 'BOX'),
+VALUES (1, 'Root Area', 'Medium', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 4, 'For root vegetables', 'BOX'),
+       (2, 'Leafy Area', 'Large', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 6, 'For leafy greens', 'BOX'),
        (3, 'Herb Patch', 'Small', 'b4389fe3-09cf-49d8-9d61-a04676c1efdf', 2, 'For growing herbs', 'BUCKET');
 
 -- Insert Grow Zones for "Family Garden" (ID: 38df059d-4397-4972-8961-b6a459f29c5e)
 INSERT INTO GROW_ZONE_ENTITY (id, name, zone_size, garden_id, nr_of_rows, notes, zone_type)
-VALUES (4, 'Tuber Zone', 'Medium', '38df059d-4397-4972-8961-b6a459f29c5e', 4, 'For potatoes and sweet potatoes',
+VALUES (4, 'Tuber Area', 'Medium', '38df059d-4397-4972-8961-b6a459f29c5e', 4, 'For potatoes and sweet potatoes',
         'TUBER'),
-       (5, 'Fruit Zone', 'Large', '38df059d-4397-4972-8961-b6a459f29c5e', 6, 'For tomatoes and cucumbers',
+       (5, 'Fruit Area', 'Large', '38df059d-4397-4972-8961-b6a459f29c5e', 6, 'For tomatoes and cucumbers',
         'BED'),
        (6, 'Grain Area', 'Large', '38df059d-4397-4972-8961-b6a459f29c5e', 5, 'For wheat and barley', 'GRAIN'),
        (7, 'Onion Patch', 'Small', '38df059d-4397-4972-8961-b6a459f29c5e', 3, 'For onions and garlic', 'ALLIUM'),
@@ -50,9 +50,14 @@ ALTER TABLE GROW_ZONE_ENTITY
 INSERT INTO CROP_RECORD_ENTITY (id, name, description, planting_date, harvest_date, plant_id, status, grow_zone_id,
                                 outcome, notes)
 VALUES ('21af123e-7b6d-4e78-a94b-cd4dc62534ff', 'Carrot Crop', 'Early harvest carrots', '2025-01-01', '2025-04-15', 1,
-        'PLANTED', 1, NULL, 'Planted in Zone 1'),
+        'PLANTED', 1, NULL, 'Planted in grow area: 1'),
        ('22ff123e-9b7d-4e67-b94c-ac3bc55655ff', 'Beetroot Batch', 'High-quality seeds', '2025-01-15', '2025-05-20', 2,
-        'PLANTED', 1, NULL, 'Planted in Zone 1');
+        'PLANTED', 1, NULL, 'Planted in grow area: 1');
+
+INSERT INTO CROP_RECORD_ENTITY (id, name, description, planting_date, harvest_date, plant_id, status, grow_zone_id,
+                                outcome, notes)
+VALUES ('23aa456e-8d9f-4c12-a34b-df5bd78901ef', 'Carrot Crop', 'Fast-growing radishes', '2025-02-10', '2025-04-01', 1,
+        'HARVESTED', 1, 'Excellent yield', 'Harvested early due to rapid growth');
 
 -- Leafy Zone (Grow Zone 2)
 INSERT INTO CROP_RECORD_ENTITY (id, name, description, planting_date, harvest_date, plant_id, status, grow_zone_id,

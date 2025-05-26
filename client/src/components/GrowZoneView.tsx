@@ -94,14 +94,30 @@ export function GrowZoneView() {
             <div className="mb-8 bg-gray-200 p-4">
                 <p>ZoneType: {growZone.zoneType}</p>
                 <p>Size: {growZone.zoneSize}</p>
-                // list ut meir info om boks.. i div
-                // TODO lag en egen component her for cropRecord
             </div>
-            <h3 className="text-xl mb-4">CropRecords </h3>
-            <div className="grid grid-cols-1 gap-4">{growZone.cropRecord.map(
-                (cropRecord) => {
-                    return (
-                        <div className="bg-amber-200 p-4 border border-black rounded-lg">
+
+            {/* Active/Current Crops */}
+            <h3 className="text-xl mb-5">Plants</h3>
+            <div className="grid grid-cols-1 gap-4">
+                {growZone.cropRecord
+                    .filter(crop => crop.status !== CropStatusViewInfo.HARVESTED)
+                    .map((cropRecord) => (
+                        <div key={cropRecord.id} className="bg-green-100 p-4 border border-black rounded-lg">
+                            <p>Plant: {cropRecord.plant.name}</p>
+                            <p>Planting date: {cropRecord.plantingDate}</p>
+                            <p>Status: {cropRecord.status}</p>
+                            <p>Notes: {cropRecord.notes}</p>
+                        </div>
+                    ))}
+            </div>
+
+            {/* History Section */}
+            <h3 className="text-xl mt-10 mb-5">History</h3>
+            <div className="grid grid-cols-1 gap-4">
+                {growZone.cropRecord
+                    .filter(crop => crop.status === CropStatusViewInfo.HARVESTED)
+                    .map((cropRecord) => (
+                        <div key={cropRecord.id} className="bg-gray-100 p-4 border border-black rounded-lg">
                             <p>Plant: {cropRecord.plant.name}</p>
                             <p>Planting date: {cropRecord.plantingDate}</p>
                             <p>Harvest date: {cropRecord.harvestDate}</p>
@@ -109,12 +125,9 @@ export function GrowZoneView() {
                             <p>Outcome: {cropRecord.outcome}</p>
                             <p>Notes: {cropRecord.notes}</p>
                         </div>
-                    )
-                }
-            )}</div>
-
-
-
+                    ))}
+            </div>
         </>
     );
+
 };

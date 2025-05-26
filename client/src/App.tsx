@@ -15,7 +15,7 @@ function App() {
           <Route index element={<Overview />} />
           <Route path="gardens" element={<GardensListView />} />
           <Route path="/garden/:gardenId" element={<GardenView />} />
-          <Route path="/growzone/:growzoneId" element={<GrowZoneView />} />
+          <Route path="/growarea/:growzoneId" element={<GrowZoneView />} />
 
           {/*<Route path="/cropRecord/:cropRecordId" element={<GardenPage />} />*/}
 

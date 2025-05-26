@@ -18,7 +18,7 @@ export function GrowZonesListView({growZones}: { growZones: GrowZoneViewInfo[] }
             <h2 className="text-xl mb-4">GrowZones</h2>
             <div className="grid grid-cols-1 gap-4">
                 {growZones.map((item) => (
-                    <Link to={`/growzone/${item.id}`}>
+                    <Link to={`/growarea/${item.id}`}>
                         <div className="bg-amber-200 p-4 flex">
                             <p>{item.name}</p>
                             <div className="ml-auto flex space-x-4">
