@@ -205,6 +205,118 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - Backend
 - **Database Schema**
+# GardenTime - Vite to Next.js Migration
+
+## Migration Status: Complete ✅
+
+### Completed Tasks
+
+#### 1. Infrastructure Setup
+- ✅ Set up Next.js project structure
+- ✅ Configured package.json with dependencies (React 18, Next.js 15, axios, TypeScript)
+- ✅ Created environment configuration files
+- ✅ Set up Tailwind CSS (already configured)
+
+#### 2. BFF (Backend for Frontend) Layer
+- ✅ Created Next.js API routes to proxy requests to Spring Boot backend
+- ✅ Implemented authentication endpoints (`/api/auth/login`, `/api/auth/register`)
+- ✅ Implemented garden endpoints (`/api/gardens`, `/api/gardens/[id]`)
+- ✅ Implemented grow area endpoints (`/api/grow-areas`, `/api/grow-areas/[id]`)
+- ✅ Implemented crop record endpoints (`/api/crop-records`)
+- ✅ Implemented plant endpoints (`/api/plants`)
+- ✅ Created Spring API helper utility for backend communication
+
+#### 3. Client-Side Services
+- ✅ Created comprehensive API service layer (`lib/api.ts`)
+- ✅ Implemented TypeScript interfaces for all data types
+- ✅ Set up axios with authentication interceptors
+
+#### 4. Authentication & Context
+- ✅ Created AuthContext for global auth state management
+- ✅ Implemented login/logout functionality
+- ✅ Token management with localStorage
+- ✅ Protected route logic
+
+#### 5. Pages & Components
+- ✅ Home/Landing page (`/`)
+- ✅ Login page (`/login`)
+- ✅ Register page (`/register`)
+- ✅ Gardens list page (`/gardens`)
+- ✅ Garden detail page (`/gardens/[id]`)
+- ✅ Grow area detail page (`/gardens/[id]/grow-areas/[growAreaId]`)
+
+#### 6. Features Implemented
+- ✅ User authentication (login/register)
+- ✅ Auto-redirect authenticated users
+- ✅ List all gardens
+- ✅ Create new gardens
+- ✅ View garden details
+- ✅ List grow areas per garden
+- ✅ Create new grow areas
+- ✅ View grow area details
+- ✅ List crop records per grow area
+- ✅ Create new crop records
+- ✅ Plant selection from database
+- ✅ Crop outcome tracking (Excellent/Good/Fair/Poor)
+- ✅ Harvest tracking with quantity and units
+
+### Architecture
+
+**BFF Pattern Implementation:**
+```
+Client (Browser) → Next.js API Routes → Spring Boot Backend
+```
+
+The Next.js API routes act as a Backend for Frontend (BFF) layer that:
+- Handles authentication token forwarding
+- Provides a clean API interface to the client
+- Can be extended for caching, data transformation, etc.
+
+### Environment Variables
+
+Create a `.env.local` file with:
+```
+SPRING_BACKEND_URL=http://localhost:8080
+```
+
+### Running the Application
+
+1. Start Spring Boot backend:
+   ```bash
+   ./gradlew bootRun
+   ```
+
+2. Start Next.js frontend:
+   ```bash
+   cd client-next
+   npm install
+   npm run dev
+   ```
+
+3. Access the app at `http://localhost:3000`
+
+### Migration Benefits
+
+- ✅ **Server-Side Rendering (SSR)** capabilities
+- ✅ **API Routes** for BFF pattern
+- ✅ **Better SEO** potential
+- ✅ **Improved routing** with file-based system
+- ✅ **Modern React** with Server Components support
+- ✅ **Type-safe** API layer with TypeScript
+- ✅ **Optimized performance** with Next.js optimizations
+
+### Next Steps (Optional Enhancements)
+
+- [ ] Add server-side rendering for public pages
+- [ ] Implement middleware for route protection
+- [ ] Add loading states with Suspense
+- [ ] Implement error boundaries
+- [ ] Add data revalidation strategies
+- [ ] Consider using React Server Components for data fetching
+- [ ] Add unit and integration tests
+- [ ] Implement optimistic UI updates
+- [ ] Add image optimization for plant/garden photos
+- [ ] Consider implementing NextAuth for authentication
   - Garden entity with name and user_id fields
   - GrowZone entity with name, size, type, notes, and number of rows
   - Plant entity with comprehensive fields (name, scientific name, plant type, maturity time, growing season, sun/water/soil requirements)

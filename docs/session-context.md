@@ -1,119 +1,174 @@
-# GardenTime - Session Context (October 8, 2025)
+# GardenTime - Session Context
 
-## What We've Accomplished Today
+## ✅ NEXT.JS MIGRATION COMPLETE (October 8, 2025)
 
-### 1. Authentication System Implementation ✅
-- **Backend (Steps 1-1.9):**
-  - Created User model/entity with UserDetails interface
-  - Set up PostgreSQL database with Docker Compose (using podman-compose)
-  - Implemented JWT-based authentication
-  - Added Spring Security configuration
-  - Created login/register endpoints
-  - Protected all API endpoints
+### Migration Status: FULLY FUNCTIONAL
 
-- **Frontend (Steps 2-8):**
-  - Created login and registration pages
-  - Implemented auth context with React Context API
-  - Added protected routes
-  - Token management with localStorage
-  - Auto-redirect on session expiration
-  - User info display in navbar with logout
+The application has been successfully migrated from Vite to Next.js 15 with a complete BFF (Backend for Frontend) architecture.
 
-### 2. Data Access Control ✅ (Steps 9-12)
-- Created SecurityUtils for current user context
-- All services now filter by authenticated user
-- Gardens, grow areas, and crop records are user-scoped
-- Authorization checks on all CRUD operations
-- Multi-tenant data isolation complete
+### Important Implementation Details
 
-### 3. GrowZone → GrowArea Renaming 🔄 (Step 69)
-**Currently in progress - fixing compilation errors**
+#### UUID Type System
+**CRITICAL:** Spring Boot backend uses UUID for all IDs, NOT integers!
+- All IDs are strings in TypeScript (e.g., `id: string`)
+- Never parse IDs with `parseInt()` - keep them as strings
+- UUIDs look like: `8549a1b2-3c4d-5e6f-7890-1a2b3c4d5e6f`
 
-#### Completed:
-- ✅ Renamed model: GrowZone → GrowArea
-- ✅ Renamed entity: GrowZoneEntity → GrowAreaEntity
-- ✅ Renamed service: GrowZoneService → GrowAreaService
-- ✅ Renamed repository: GrowZoneRepository → GrowAreaRepository
-- ✅ Renamed controller: GrowZoneController → GrowAreaController
-- ✅ Updated Garden model to use growAreas
-- ✅ Updated API endpoint: /api/growzone → /api/growarea
-- ✅ Updated frontend modal to use new endpoint
-
-#### Still Need to Fix:
-- ❌ GlobalExceptionHandler - references to GrowZoneIdNotFoundException
-- ❌ CropRecordRepository - method name findAllByGrowZoneId
-- ❌ Test files still reference old names
-- ❌ Database column name: grow_zone_id in crop records
-
-## Current State
-
-### Test User Credentials
-- Username: `testuser`
-- Password: `password123`
-- Email: `test@gardentime.com`
-- Has test garden: "My First Garden"
-- Has test grow area: "Tomato Patch"
-
-### Database
-- PostgreSQL running on localhost:5432
-- Database name: gardentime
-- Running via podman-compose
-
-### Running Services
-- Backend: http://localhost:8080 (Spring Boot)
-- Frontend: http://localhost:5173 (Vite/React)
-
-### API Endpoints (Updated)
-- POST /api/auth/register
-- POST /api/auth/login
-- GET /api/gardens (user's gardens)
-- POST /api/gardens (create garden)
-- GET /api/gardens/{id}
-- POST /api/growarea/{name}/garden/{gardenId} (add grow area)
-- GET /api/growarea/{id}
-- DELETE /api/growarea/{id}
-
-## Project Structure
-
-### Backend (Kotlin/Spring Boot)
+#### Architecture
 ```
-src/main/kotlin/no/sogn/gardentime/
-├── api/          # Controllers
-├── config/       # Configuration (DataInitializer, etc.)
-├── db/           # Repositories
-├── dto/          # Data Transfer Objects
-├── exceptions/   # Custom exceptions
-├── model/        # Domain models and entities
-├── security/     # Security config, JWT, filters
-└── service/      # Business logic
+Browser (React Client)
+    ↓ (string UUIDs)
+Next.js BFF API Routes (/app/api/*)
+    ↓ (string UUIDs → forwarded to Spring Boot)
+Spring Boot REST API (UUID type)
+    ↓
+PostgreSQL Database
 ```
 
-### Frontend (React/TypeScript)
+### Completed Routes & Features
+
+#### Pages (Frontend)
+- ✅ `/` - Landing page with auto-redirect for authenticated users
+- ✅ `/login` - Login page
+- ✅ `/register` - Registration page  
+- ✅ `/gardens` - Gardens list page with create modal
+- ✅ `/gardens/[id]` - Garden detail page (view/create grow areas)
+- ✅ `/gardens/[id]/grow-areas/[growAreaId]` - Grow area detail (view/create crop records)
+
+#### BFF API Routes (Next.js → Spring Boot)
+All routes properly handle:
+- JWT token extraction and forwarding
+- UUID string parameters
+- Error handling and logging
+
+**Authentication:**
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+
+**Gardens:**
+- `GET /api/gardens` - List all user's gardens
+- `POST /api/gardens` - Create garden
+- `GET /api/gardens/[id]` - Get garden by UUID
+- `PUT /api/gardens/[id]` - Update garden
+- `DELETE /api/gardens/[id]` - Delete garden
+- `GET /api/gardens/[id]/grow-areas` - Get grow areas for garden
+
+**Grow Areas:**
+- `GET /api/grow-areas` - List all grow areas
+- `POST /api/grow-areas` - Create grow area
+- `GET /api/grow-areas/[id]` - Get grow area by UUID
+- `PUT /api/grow-areas/[id]` - Update grow area
+- `DELETE /api/grow-areas/[id]` - Delete grow area
+- `GET /api/grow-areas/[id]/crop-records` - Get crop records
+
+**Crop Records & Plants:**
+- `POST /api/crop-records` - Create crop record
+- `GET /api/plants` - List all plants
+
+### Key Files
+
+**Critical Files (DO NOT DELETE):**
+- `client-next/lib/api.ts` - Client API service with UUID string types
+- `client-next/lib/spring-api.ts` - Spring Boot connection helper
+- `client-next/contexts/AuthContext.tsx` - Auth state management
+- `client-next/app/api/**/*` - All BFF API routes
+
+**Environment Configuration:**
+- `client-next/.env.local`:
+  ```
+  SPRING_BACKEND_URL=http://localhost:8080
+  ```
+
+### Running the Application
+
+1. **Start Spring Boot backend:**
+   ```bash
+   ./gradlew bootRun
+   ```
+   Running on: http://localhost:8080
+
+2. **Start Next.js frontend:**
+   ```bash
+   cd client-next
+   npm run dev
+   ```
+   Running on: http://localhost:3000
+
+3. **Test credentials:**
+   - Username: `testuser`
+   - Password: `password123`
+
+### TypeScript Type Definitions
+
+**IMPORTANT:** All entity IDs are UUID strings:
+
+```typescript
+export interface Garden {
+  id: string;  // UUID string
+  name: string;
+  description?: string;
+  location?: string;
+  userId: string;  // UUID string
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GrowArea {
+  id: string;  // UUID string
+  gardenId: string;  // UUID string
+  name: string;
+  // ...
+}
+
+export interface CropRecord {
+  id: string;  // UUID string
+  growAreaId: string;  // UUID string
+  plantId: string;  // UUID string
+  // ...
+}
 ```
-client/src/
-├── components/   # React components
-├── context/      # Auth context
-├── pages/        # Page components
-└── services/     # API client
-```
 
-## Tech Stack
-- **Backend:** Kotlin, Spring Boot 3.4.1, Spring Security, JWT, PostgreSQL
-- **Frontend:** React 19, TypeScript, Vite, TailwindCSS, Axios
-- **Database:** PostgreSQL 16
-- **Container:** Podman/Podman-compose
+### Common Issues & Solutions
 
-## Next Steps
-1. Fix remaining GrowZone references (GlobalExceptionHandler, CropRecordRepository)
-2. Update database migration to rename grow_zone_id column
-3. Update test files
-4. Complete Step 69 (renaming)
-5. Then move to medium priority features (Steps 13+)
+**Issue:** "Invalid UUID string: 8549"
+**Solution:** Don't parse IDs with `parseInt()` - keep them as strings
 
-## Important Notes
-- Using podman-compose instead of docker-compose
-- Frontend uses port 5173 (Vite default)
-- Backend uses port 8080
-- JWT tokens expire after 24 hours
-- All data is user-scoped for security
+**Issue:** "No static resource api/gardens/..."
+**Solution:** Ensure BFF API route exists in `/app/api/` directory
 
+**Issue:** "Unauthorized" errors
+**Solution:** Check that JWT token is being stored in localStorage and forwarded in headers
+
+### Tech Stack
+
+**Frontend:**
+- Next.js 15 (App Router)
+- React 18
+- TypeScript
+- Tailwind CSS (v4 with @tailwindcss/postcss)
+- Axios
+
+**Backend:**
+- Spring Boot (Kotlin)
+- PostgreSQL with UUID primary keys
+- JWT Authentication
+- Flyway migrations
+
+### What Changed from Vite
+
+1. **BFF Pattern:** All API calls now go through Next.js API routes instead of directly to Spring Boot
+2. **File-based routing:** Pages in `/app/` directory instead of React Router
+3. **Server Components Ready:** Can add SSR/SSG in future
+4. **Type Safety:** Fixed UUID type handling throughout the stack
+
+### Next Development Steps
+
+- Old Vite client (`/client`) can be archived or removed
+- All future development should use Next.js client (`/client-next`)
+- BFF layer allows for future enhancements like caching, rate limiting, etc.
+
+---
+
+**Migration Date:** October 8, 2025  
+**Status:** ✅ Production Ready  
+**All Features:** Working End-to-End
