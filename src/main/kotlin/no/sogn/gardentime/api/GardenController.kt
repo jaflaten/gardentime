@@ -9,31 +9,22 @@ import org.springframework.web.bind.annotation.*
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/garden")
+@RequestMapping("/api/gardens")
 @CrossOrigin(origins = ["*"])
 
 class GardenController(
     private val gardenService: GardenService
 ) {
-    @GetMapping("/")
-    fun getGardens(): ResponseEntity<List<UUID>> {
-        val gardenIds = gardenService.getGardenIds()
-        if (gardenIds.isEmpty()) {
-            return ResponseEntity.noContent().build()
-        }
-        return ResponseEntity.ok(gardenIds)
+    @GetMapping
+    fun getGardens(): ResponseEntity<List<GardenInfo>> {
+        val gardens = gardenService.getGardenByUserId()
+        return ResponseEntity.ok(gardens)
     }
 
-    @PostMapping("/{userId}/{name}")
-    fun addGarden(@PathVariable name: String, @PathVariable userId: UUID): ResponseEntity<Garden> {
-        val createdGarden = gardenService.addGarden(name, userId)
+    @PostMapping
+    fun addGarden(@RequestBody request: CreateGardenRequest): ResponseEntity<Garden> {
+        val createdGarden = gardenService.addGarden(request.name)
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGarden)
-    }
-
-    @GetMapping("/user/{id}")
-    fun getGardensByUserId(@PathVariable id: UUID): ResponseEntity<List<GardenInfo>> {
-        val garden = gardenService.getGardenByUserId(id) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(garden)
     }
 
     @GetMapping("/{id}")
@@ -48,3 +39,7 @@ class GardenController(
         return ResponseEntity.noContent().build()
     }
 }
+
+data class CreateGardenRequest(
+    val name: String
+)

@@ -31,3 +31,6 @@ build/
 node_modules/
 yarn.lock
 .DS_Store
+
+# Generated files
+/docs

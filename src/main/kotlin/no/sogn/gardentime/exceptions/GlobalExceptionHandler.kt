@@ -10,9 +10,9 @@ class GlobalExceptionHandler {
 
     private val objectMapper = ObjectMapper()
 
-    @ExceptionHandler(GrowZoneIdNotFoundException::class)
-    fun handleGrowZoneIdMissingException(e: GrowZoneIdNotFoundException, id: String): ResponseEntity<String> {
-        val errorResponse = ErrorResponse(e.statusCode.value(), e.message + " -  Grow zone id: $id is missing or not found.")
+    @ExceptionHandler(GrowAreaIdNotFoundException::class)
+    fun handleGrowAreaIdMissingException(e: GrowAreaIdNotFoundException, id: String): ResponseEntity<String> {
+        val errorResponse = ErrorResponse(e.statusCode.value(), e.message + " -  Grow area id: $id is missing or not found.")
         return ResponseEntity.status(e.statusCode).body(objectMapper.writeValueAsString(errorResponse))
     }
 
@@ -20,8 +20,5 @@ class GlobalExceptionHandler {
     fun handleGardenIdMissingException(e: GardenIdNotFoundException, id: String): ResponseEntity<String> {
         val errorResponse = ErrorResponse(e.statusCode.value(), e.message + " - Garden id: $id is missing or not found.")
         return ResponseEntity.status(e.statusCode ).body(objectMapper.writeValueAsString(errorResponse))
-
-
     }
 }
-

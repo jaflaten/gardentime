@@ -3,7 +3,7 @@ package no.sogn.gardentime.model
 import jakarta.persistence.*
 import java.util.*
 //TODO we should probably rename GrowZone to GrowArea or something similar
-data class GrowZone(
+data class GrowArea(
     val id: Long? = null,
     val name: String,
     val zoneSize: String? = null,
@@ -15,7 +15,7 @@ data class GrowZone(
     )
 
 @Entity
-class GrowZoneEntity(
+class GrowAreaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
@@ -32,33 +32,33 @@ class GrowZoneEntity(
 
 }
 
-fun mapGrowZoneEntityToDomain(
-    growZoneEntity: GrowZoneEntity,
+fun mapGrowAreaEntityToDomain(
+    growAreaEntity: GrowAreaEntity,
     cropRecords: MutableList<CropRecordEntity>
-): GrowZone {
-    return GrowZone(
-        id = growZoneEntity.id,
-        name = growZoneEntity.name,
-        zoneSize = growZoneEntity.zoneSize,
+): GrowArea {
+    return GrowArea(
+        id = growAreaEntity.id,
+        name = growAreaEntity.name,
+        zoneSize = growAreaEntity.zoneSize,
         cropRecord = cropRecords.map { cropRecord ->
             mapCropRecordEntityToDomain(cropRecord)
         }.toMutableList(),
-        gardenId = growZoneEntity.gardenId,
-        nrOfRows = growZoneEntity.nrOfRows,
-        notes = growZoneEntity.notes,
-        zoneType = growZoneEntity.zoneType
+        gardenId = growAreaEntity.gardenId,
+        nrOfRows = growAreaEntity.nrOfRows,
+        notes = growAreaEntity.notes,
+        zoneType = growAreaEntity.zoneType
     )
 }
 
 
-fun mapGrowZoneToEntity(growZone: GrowZone): GrowZoneEntity {
-    return GrowZoneEntity(
-        id = growZone.id,
-        name = growZone.name,
-        zoneSize = growZone.zoneSize,
-        nrOfRows = growZone.nrOfRows,
-        gardenId = growZone.gardenId,
-        notes = growZone.notes,
-        zoneType = growZone.zoneType
+fun mapGrowAreaToEntity(growArea: GrowArea): GrowAreaEntity {
+    return GrowAreaEntity(
+        id = growArea.id,
+        name = growArea.name,
+        zoneSize = growArea.zoneSize,
+        nrOfRows = growArea.nrOfRows,
+        gardenId = growArea.gardenId,
+        notes = growArea.notes,
+        zoneType = growArea.zoneType
     )
 }

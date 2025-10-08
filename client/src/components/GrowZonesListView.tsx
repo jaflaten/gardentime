@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
 
-export interface GrowZoneViewInfo {
+export interface GrowAreaViewInfo {
     id: string;
     name: string;
     zoneSize: string;
@@ -12,14 +12,14 @@ export interface GrowZoneViewInfo {
 }
 
 
-export function GrowZonesListView({growZones}: { growZones: GrowZoneViewInfo[] }) {
+export function GrowZonesListView({growZones}: { growZones: GrowAreaViewInfo[] }) {
     return (
         <>
             <h2 className="text-xl mb-4">Grow Areas</h2>
             {growZones.length === 0 ? <EmptyGrowZonesMessage /> : (
                 <div className="grid grid-cols-1 gap-4">
                     {growZones.map((item) => (
-                        <Link to={`/growarea/${item.id}`}>
+                        <Link to={`/growarea/${item.id}`} key={item.id}>
                             <div className="bg-amber-200 p-4 flex">
                                 <p>{item.name}</p>
                                 <div className="ml-auto flex space-x-4">

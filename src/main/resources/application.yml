@@ -1,20 +1,22 @@
-
 spring:
-  h2:
-    console:
-      enabled: true          # Enables the H2 web console
-      path: /h2-console      # The access path for the H2 console (default: /h2-console)
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: update
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:postgresql://localhost:5432/gardentime
+    username: gardentime
+    password: gardentime
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
     show-sql: true
-  sql:
-    init:
-      mode: always
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-this-in-production-make-it-very-long-and-secure}
+  expiration: 86400000  # 24 hours in milliseconds

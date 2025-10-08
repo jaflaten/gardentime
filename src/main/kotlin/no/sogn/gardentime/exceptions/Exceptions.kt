@@ -3,7 +3,7 @@ package no.sogn.gardentime.exceptions
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 
-class GrowZoneIdNotFoundException(message: String) : ResponseStatusException(HttpStatus.NOT_FOUND, message)
+class GrowAreaIdNotFoundException(message: String) : ResponseStatusException(HttpStatus.NOT_FOUND, message)
 
 class GardenIdNotFoundException(message: String) : ResponseStatusException(HttpStatus.NOT_FOUND, message)
 
