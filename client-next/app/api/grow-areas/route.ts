@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const response = await springApi.get('/api/grow-areas', {
+    const response = await springApi.get('/api/growarea', {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -46,8 +46,9 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    console.log('Creating grow area with body:', body);
 
-    const response = await springApi.post('/api/grow-areas', body, {
+    const response = await springApi.post('/api/growarea', body, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -68,4 +69,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

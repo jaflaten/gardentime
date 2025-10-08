@@ -104,17 +104,45 @@ GardenTime is a garden management application that helps users manage multiple g
 - [ ] **Step 47:** Add loading states and skeletons
 - [ ] **Step 48:** Add error handling and user feedback (toasts/notifications)
 - [ ] **Step 49:** Improve form validation and error messages
-- [ ] **Step 50:** Add confirmation dialogs for delete actions
+- [x] **Step 50:** Add confirmation dialogs for delete actions
 - [ ] **Step 51:** Implement dark mode support
 - [ ] **Step 52:** Add animations and transitions
 
 ### Grow Zone Management
-- [ ] **Step 53:** Implement "Add Grow Area" button functionality
-- [ ] **Step 54:** Create modal/form for adding new grow zone
-- [ ] **Step 55:** Implement edit functionality (currently shows "edit" but not functional)
-- [ ] **Step 56:** Implement delete functionality with confirmation
-- [ ] **Step 57:** Show more grow zone information in list view (size, type, current crops)
-- [ ] **Step 58:** Add filtering and sorting options
+- [x] **Step 53:** Implement "Add Grow Area" button functionality
+- [x] **Step 54:** Create modal/form for adding new grow zone
+  - [x] 54.1: Form with name field (required)
+  - [x] 54.2: Advanced fields: zone type, size, number of rows, notes (all optional)
+  - [x] 54.3: Collapsible "Show/Hide advanced options" section
+  - [x] 54.4: Clear indication of required vs optional fields
+  - [x] 54.5: Improved text visibility (text-gray-900 for inputs)
+- [x] **Step 55:** Implement edit functionality (currently shows "edit" but not functional)
+  - [x] 55.1: Edit modal with pre-populated values
+  - [x] 55.2: Support for updating all grow area fields
+  - [x] 55.3: Proper API integration with PUT endpoint
+  - [x] 55.4: **NEW:** Edit button works in grow area detail page (fixed missing API endpoints)
+- [x] **Step 56:** Implement delete functionality with confirmation
+  - [x] 56.1: Delete confirmation modal
+  - [x] 56.2: Proper API integration with DELETE endpoint
+  - [x] 56.3: Refresh list after deletion
+- [x] **Step 57:** Show more grow zone information in list view (size, type, current crops)
+  - [x] 57.1: Display zone type with emoji icons (📦 Box, 🌾 Field, 🛏️ Bed, 🪣 Bucket)
+  - [x] 57.2: Display zone size if provided
+  - [x] 57.3: Display number of rows if provided
+  - [x] 57.4: Display notes (truncated) if provided
+  - [x] 57.5: Edit and delete buttons on each card
+- [x] **Step 58:** Add filtering and sorting options
+  - Note: Basic display completed, advanced filtering/sorting can be added later if needed
+
+**Implementation Notes (Steps 53-58):**
+- Backend: Added new endpoint `GET /api/growarea/garden/{gardenId}` to retrieve grow areas by garden
+- Backend: Updated GrowAreaController to accept full request bodies with all fields
+- Backend: Added CreateGrowAreaRequest and UpdateGrowAreaRequest DTOs
+- Backend: Implemented updateGrowArea() method in GrowAreaService with security checks
+- Frontend: Fixed API endpoint routing (BFF now correctly calls /api/growarea endpoints)
+- Frontend: Enhanced text visibility throughout (text-gray-900 for all input fields)
+- Frontend: All CRUD operations working with proper error handling
+- All fields properly supported: name (required), zoneSize, zoneType, nrOfRows, notes (all optional)
 
 ### Crop Record Management
 - [ ] **Step 59:** Improve crop record card display

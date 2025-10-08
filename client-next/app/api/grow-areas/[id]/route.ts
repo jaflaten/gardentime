@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/grow-areas/${params.id}`, {
+    const response = await springApi.get(`/api/growarea/${params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -52,8 +52,9 @@ export async function PUT(
     }
 
     const body = await request.json();
+    console.log('Updating grow area:', params.id, body);
 
-    const response = await springApi.put(`/api/grow-areas/${params.id}`, body, {
+    const response = await springApi.put(`/api/growarea/${params.id}`, body, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -89,7 +90,7 @@ export async function DELETE(
       );
     }
 
-    await springApi.delete(`/api/grow-areas/${params.id}`, {
+    await springApi.delete(`/api/growarea/${params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -110,4 +111,3 @@ export async function DELETE(
     );
   }
 }
-

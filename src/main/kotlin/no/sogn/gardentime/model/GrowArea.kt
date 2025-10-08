@@ -15,22 +15,19 @@ data class GrowArea(
     )
 
 @Entity
-class GrowAreaEntity(
+@Table(name = "grow_area_entity")
+data class GrowAreaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val name: String,
+    val name: String = "",
     val zoneSize: String? = null,
-    val gardenId: UUID,
+    val gardenId: UUID = UUID.randomUUID(),
     val nrOfRows: Int? = null,
     val notes: String? = null,
     @Convert(converter = ZoneTypeConverter::class)
     val zoneType: ZoneType? = null,
-    ) {
-    constructor() : this(null, "", "", UUID.randomUUID(), 0, "", null) {
-    }
-
-}
+)
 
 fun mapGrowAreaEntityToDomain(
     growAreaEntity: GrowAreaEntity,

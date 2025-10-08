@@ -15,7 +15,8 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/gardens/${params.id}/grow-areas`, {
+    // Fixed: Use /api/growarea/garden/{gardenId} endpoint
+    const response = await springApi.get(`/api/growarea/garden/${params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -36,4 +37,3 @@ export async function GET(
     );
   }
 }
-

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const response = await springApi.get('/api/plants', {
+    const response = await springApi.get('/api/plants/', {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -33,4 +33,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

@@ -28,6 +28,12 @@ class CropRecordController(
         return ResponseEntity.ok(cropRecord)
     }
 
+    @GetMapping("/growarea/{growAreaId}")
+    fun getCropRecordsByGrowAreaId(@PathVariable growAreaId: Long): ResponseEntity<List<CropRecord>> {
+        val cropRecords = cropRecordService.getCropRecordsByGrowAreaId(growAreaId)
+        return ResponseEntity.ok(cropRecords)
+    }
+
     @DeleteMapping("/{id}")
     fun deleteCropRecordById(@PathVariable id: UUID): ResponseEntity<Unit> {
         cropRecordService.deleteCropRecordById(id)

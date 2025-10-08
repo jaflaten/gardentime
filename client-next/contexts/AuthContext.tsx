@@ -9,6 +9,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, username: string, email: string) => void;
   logout: () => void;
+  isLoading: boolean; // Add loading state
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,6 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     // Check for existing auth token on mount
@@ -31,6 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setEmail(storedEmail);
       setIsAuthenticated(true);
     }
+
+    setIsLoading(false); // Auth check complete
   }, []);
 
   const login = (newToken: string, newUsername: string, newEmail: string) => {
@@ -62,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         token,
         login,
         logout,
+        isLoading, // Expose loading state
       }}
     >
       {children}

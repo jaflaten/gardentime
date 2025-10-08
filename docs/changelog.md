@@ -17,6 +17,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] - 2025-10-08
+
+### Fixed - Grow Area Detail Page & Missing API Endpoints
+- **Crop Records Endpoint Missing**
+  - Added `GET /api/croprecord/growarea/{growAreaId}` endpoint in `CropRecordController`
+  - Added `getCropRecordsByGrowAreaId(Long)` method in `CropRecordService` with security checks
+  - Fixed Next.js BFF route `/api/grow-areas/[id]/crop-records` to call correct Spring Boot endpoint
+  - Grow area detail page now loads crop records correctly
+
+- **Plants API Trailing Slash Issue**
+  - Fixed `/api/plants` route to call `/api/plants/` (with trailing slash) on Spring Boot
+  - Resolved 404 errors when fetching plants list
+
+- **Edit Functionality in Grow Area Detail Page**
+  - Edit button in grow area detail page (`/gardens/{id}/grow-areas/{growAreaId}`) now fully functional
+  - Modal appears with pre-populated grow area data
+  - All fields editable (name, zone type, size, rows, notes)
+  - Advanced options collapsible section works correctly
+  - Updates save successfully to backend
+
+### Technical Details
+- Backend: Added missing endpoint to fetch crop records by grow area ID
+- Backend: Proper security checks ensure users can only access their own data
+- Frontend: Fixed API route mapping for crop records and plants
+- All grow area management features now working in both list view and detail page
+
+---
+
 ## [0.5.0] - 2025-10-08
 
 ### Changed - Major Refactoring

@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/grow-areas/${params.id}/crop-records`, {
+    const response = await springApi.get(`/api/croprecord/growarea/${params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -36,4 +36,3 @@ export async function GET(
     );
   }
 }
-

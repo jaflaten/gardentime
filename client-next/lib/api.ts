@@ -63,21 +63,35 @@ export interface CreateGardenRequest {
 }
 
 // GrowArea types - FIXED: IDs are UUID strings
+export type ZoneType = 'BOX' | 'FIELD' | 'BED' | 'BUCKET';
+
 export interface GrowArea {
   id: string;  // UUID
   name: string;
-  description?: string;
   gardenId: string;  // UUID
-  sizeM2?: number;
+  zoneSize?: string;  // Optional: e.g., "80x120cm" or "2m x 3m"
+  zoneType?: ZoneType;  // Optional: BOX, FIELD, BED, or BUCKET
+  nrOfRows?: number;  // Optional: Number of planting rows
+  notes?: string;  // Optional: General notes
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateGrowAreaRequest {
-  name: string;
-  description?: string;
-  gardenId: string;  // UUID
-  sizeM2?: number;
+  name: string;  // Required
+  gardenId: string;  // UUID - Required
+  zoneSize?: string;  // Optional
+  zoneType?: ZoneType;  // Optional
+  nrOfRows?: number;  // Optional
+  notes?: string;  // Optional
+}
+
+export interface UpdateGrowAreaRequest {
+  name?: string;
+  zoneSize?: string;
+  zoneType?: ZoneType;
+  nrOfRows?: number;
+  notes?: string;
 }
 
 // CropRecord types - FIXED: IDs are UUID strings
@@ -166,8 +180,8 @@ export const gardenService = {
 
 // GrowArea service - calls Next.js BFF
 export const growAreaService = {
-  getByGardenId: async (gardenId: string): Promise<GrowArea[]> => {
-    const response = await api.get(`/gardens/${gardenId}/grow-areas`);
+  getAll: async (): Promise<GrowArea[]> => {
+    const response = await api.get('/grow-areas');
     return response.data;
   },
 
@@ -176,18 +190,28 @@ export const growAreaService = {
     return response.data;
   },
 
+  getByGardenId: async (gardenId: string): Promise<GrowArea[]> => {
+    const response = await api.get(`/gardens/${gardenId}/grow-areas`);
+    return response.data;
+  },
+
   create: async (data: CreateGrowAreaRequest): Promise<GrowArea> => {
     const response = await api.post('/grow-areas', data);
     return response.data;
   },
 
-  update: async (id: string, data: Partial<CreateGrowAreaRequest>): Promise<GrowArea> => {
+  update: async (id: string, data: UpdateGrowAreaRequest): Promise<GrowArea> => {
     const response = await api.put(`/grow-areas/${id}`, data);
     return response.data;
   },
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/grow-areas/${id}`);
+  },
+
+  getCropRecords: async (id: string): Promise<CropRecord[]> => {
+    const response = await api.get(`/grow-areas/${id}/crop-records`);
+    return response.data;
   },
 };
 

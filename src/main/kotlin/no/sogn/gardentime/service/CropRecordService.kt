@@ -75,6 +75,26 @@ class CropRecordService(
         return mapCropRecordEntityToDomain(cropRecordEntity)
     }
 
+    fun getCropRecordsByGrowAreaId(growAreaId: Long): List<CropRecord> {
+        val currentUserId = securityUtils.getCurrentUserId()
+
+        // Security check: verify the grow area belongs to the user's garden
+        val gardenEntity = gardenRepository.findAll().firstOrNull { garden ->
+            garden.growAreas.any { it.id == growAreaId }
+        } ?: throw GrowAreaIdNotFoundException("Grow area with id $growAreaId not found")
+
+        if (gardenEntity.userId != currentUserId) {
+            throw IllegalAccessException("You don't have permission to access crop records for this grow area")
+        }
+
+        // Get all crop records for this grow area
+        val cropRecords = cropRecordRepository.findAll()
+            .filter { it.growZoneId == growAreaId }
+            .map { mapCropRecordEntityToDomain(it) }
+
+        return cropRecords
+    }
+
     fun deleteCropRecordById(id: UUID) {
         val currentUserId = securityUtils.getCurrentUserId()
         val record = cropRecordRepository.findCropRecordEntityById(id)
