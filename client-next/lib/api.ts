@@ -95,6 +95,8 @@ export interface UpdateGrowAreaRequest {
 }
 
 // CropRecord types - FIXED: IDs are UUID strings
+export type CropStatus = 'PLANTED' | 'GROWING' | 'HARVESTED' | 'DISEASED' | 'FAILED' | 'UNKNOWN';
+
 export interface CropRecord {
   id: string;  // UUID
   growAreaId: string;  // UUID
@@ -106,6 +108,7 @@ export interface CropRecord {
   outcome?: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
   quantityHarvested?: number;
   unit?: string;
+  status?: CropStatus;  // NEW: Status to track crop lifecycle
   createdAt: string;
   updatedAt: string;
 }
@@ -121,9 +124,9 @@ export interface CreateCropRecordRequest {
   unit?: string;
 }
 
-// Plant types - FIXED: id is UUID string
+// Plant types - FIXED: id is number (Long in backend)
 export interface Plant {
-  id: string;  // UUID
+  id: number;  // Long in backend
   name: string;
   scientificName?: string;
   category?: string;
@@ -225,6 +228,15 @@ export const cropRecordService = {
   create: async (data: CreateCropRecordRequest): Promise<CropRecord> => {
     const response = await api.post('/crop-records', data);
     return response.data;
+  },
+
+  update: async (id: string, data: Partial<CreateCropRecordRequest> & { status?: CropStatus }): Promise<CropRecord> => {
+    const response = await api.put(`/crop-records/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/crop-records/${id}`);
   },
 };
 

@@ -4,6 +4,21 @@ import jakarta.persistence.*
 import java.time.LocalDate
 import java.util.*
 
+// DTO for API responses - maps to frontend expectations
+data class CropRecordDTO(
+    val id: UUID?,
+    val growAreaId: Long,
+    val plantId: Long,
+    val plantName: String,
+    val datePlanted: String,  // ISO date string
+    val dateHarvested: String? = null,  // ISO date string
+    val notes: String? = null,
+    val outcome: String? = null,
+    val status: CropStatus? = null,
+    val quantityHarvested: Double? = null,
+    val unit: String? = null
+)
+
 data class CropRecord(
     val id: UUID ? = null,
     val name: String? = null,
@@ -65,18 +80,31 @@ fun mapCropRecordEntityToDomain(cropRecordEntity: CropRecordEntity): CropRecord 
     )
 }
 
-fun mapCropRecordToEntity(cropRecord: CropRecord): CropRecordEntity {
-    return CropRecordEntity(
+fun mapCropRecordToDTO(cropRecord: CropRecord): CropRecordDTO {
+    return CropRecordDTO(
         id = cropRecord.id,
-        name = cropRecord.name,
-        description = cropRecord.description,
-        plantingDate = cropRecord.plantingDate,
-        harvestDate = cropRecord.harvestDate,
-        plant = mapPlantToEntity(cropRecord.plant),
-        status = cropRecord.status,
-        growZoneId = cropRecord.growZoneId,
+        growAreaId = cropRecord.growZoneId,
+        plantId = cropRecord.plant.id ?: 0L,
+        plantName = cropRecord.plant.name,
+        datePlanted = cropRecord.plantingDate.toString(),
+        dateHarvested = cropRecord.harvestDate?.toString(),
+        notes = cropRecord.notes,
         outcome = cropRecord.outcome,
-        notes = cropRecord.notes
+        status = cropRecord.status
+    )
+}
+
+fun mapCropRecordEntityToDTO(cropRecordEntity: CropRecordEntity): CropRecordDTO {
+    return CropRecordDTO(
+        id = cropRecordEntity.id,
+        growAreaId = cropRecordEntity.growZoneId,
+        plantId = cropRecordEntity.plant.id ?: 0L,
+        plantName = cropRecordEntity.plant.name,
+        datePlanted = cropRecordEntity.plantingDate.toString(),
+        dateHarvested = cropRecordEntity.harvestDate?.toString(),
+        notes = cropRecordEntity.notes,
+        outcome = cropRecordEntity.outcome,
+        status = cropRecordEntity.status
     )
 }
 

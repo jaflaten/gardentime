@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional
 interface PlantRepository : CrudRepository<PlantEntity, Long> {
     fun findPlantsByPlantType(plantType: PlantType): MutableList<PlantEntity>
     fun findPlantEntityByName(name: String): MutableList<PlantEntity>
-
+    fun findPlantEntityById(id: Long): PlantEntity?
 }

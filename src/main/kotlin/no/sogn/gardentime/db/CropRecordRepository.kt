@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface CropRecordRepository: CrudRepository<CropRecordEntity, Long> {
+interface CropRecordRepository: CrudRepository<CropRecordEntity, UUID> {
     fun findAllByGrowZoneId(growZoneId: Long): MutableList<CropRecordEntity>
-    fun findCropRecordEntityById(id: UUID): CropRecordEntity
+    fun findCropRecordEntityById(id: UUID): CropRecordEntity?
 }

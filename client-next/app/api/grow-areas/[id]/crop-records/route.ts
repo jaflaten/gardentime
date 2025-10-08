@@ -15,7 +15,7 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/croprecord/growarea/${params.id}`, {
+    const response = await springApi.get(`/api/crop-records/growarea/${params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

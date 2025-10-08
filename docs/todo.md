@@ -87,6 +87,13 @@ GardenTime is a garden management application that helps users manage multiple g
   - [ ] 39.3: Growing season (required)
   - [ ] 39.4: Maturity time (optional but recommended)
 - [ ] **Step 40:** Create admin/seed data script for common vegetables
+- [ ] **Step 97:** **NEW: Plant Management UI**
+  - [ ] 97.1: Create plant management page/section
+  - [ ] 97.2: List all plants with search/filter
+  - [ ] 97.3: Add new plant form (with all fields: name, type, season, maturity time, etc.)
+  - [ ] 97.4: Edit existing plants
+  - [ ] 97.5: Delete plants (with safety check if used in crop records)
+  - [ ] 97.6: Import/export plant data
 
 ### Crop Rotation Intelligence
 - [ ] **Step 41:** Add crop family tracking (Brassicas, Legumes, Nightshades, etc.)
@@ -145,8 +152,16 @@ GardenTime is a garden management application that helps users manage multiple g
 - All fields properly supported: name (required), zoneSize, zoneType, nrOfRows, notes (all optional)
 
 ### Crop Record Management
-- [ ] **Step 59:** Improve crop record card display
-- [ ] **Step 60:** Add quick view of current vs historical crops
+a crop record is kind of the history of a grow area, so a grow area can have several crop records, also several can be planted and have CropStatus PLANTED at the same time for instance. But if a crop record is harvested, it is in the past. We would still want to be able to see the history, but it should not be one of the main ones to be displayed.  This is required as we later want to avoid planting the same type of plant in the same grow area two seasons in a row.
+- [x] **Step 59:** Improve crop record card display ✅ **COMPLETED**
+  - [x] 59.1: Added CropStatus type support to frontend
+  - [x] 59.2: Separated active crops (PLANTED, GROWING) from historical crops (HARVESTED, DISEASED, FAILED)
+  - [x] 59.3: Active crops displayed prominently at the top
+  - [x] 59.4: Historical crops in collapsible "Show/Hide" section
+  - [x] 59.5: Enhanced visual display with status badges and icons
+  - [x] 59.6: Status-based color coding (green for active, gray for historical, red for diseased)
+- [ ] **Step 60:** Add quick view of current vs historical crops in that grow area 
+- [ ] **Step 60.1:** Add a new page to show current and historical crops for all the users grow areas. This can be accessed either from the garden page "my new garden" or from a menu
 - [ ] **Step 61:** Visual timeline of crop history
 - [ ] **Step 62:** Batch operations (harvest multiple crops at once)
 - [ ] **Step 63:** Export crop history to CSV/PDF

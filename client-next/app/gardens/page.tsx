@@ -67,7 +67,7 @@ export default function GardensPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-green-600">GardenTime</h1>
+              <h1 className="text-2xl font-bold text-green-600">RegenGarden</h1>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-gray-700">Welcome, {username}</span>
@@ -139,9 +139,9 @@ export default function GardensPage() {
 
       {/* Create Garden Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Create New Garden</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Create New Garden</h3>
             <form onSubmit={handleCreateGarden}>
               <div className="space-y-4">
                 <div>
@@ -151,7 +151,7 @@ export default function GardensPage() {
                   <input
                     type="text"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
                     value={newGarden.name}
                     onChange={(e) =>
                       setNewGarden({ ...newGarden, name: e.target.value })
@@ -163,7 +163,7 @@ export default function GardensPage() {
                     Description
                   </label>
                   <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
                     rows={3}
                     value={newGarden.description}
                     onChange={(e) =>
@@ -177,7 +177,7 @@ export default function GardensPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
                     value={newGarden.location}
                     onChange={(e) =>
                       setNewGarden({ ...newGarden, location: e.target.value })

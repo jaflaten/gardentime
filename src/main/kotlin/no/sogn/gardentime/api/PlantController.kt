@@ -15,9 +15,7 @@ class PlantController(
     @GetMapping("/")
     fun getPlants(): ResponseEntity<List<Plant>> {
         val plants = plantService.getPlants()
-        if (plants.isEmpty()) {
-            return ResponseEntity.noContent().build()
-        }
+        // Always return an array, even if empty
         return ResponseEntity.ok(plants)
     }
 
