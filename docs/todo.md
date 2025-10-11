@@ -45,24 +45,150 @@ GardenTime is a garden management application that helps users manage multiple g
 ## 🟡 Medium Priority - Enhanced Features
 
 ### Visual Garden Layout (Miro-style Board)
-- [ ] **Backend Requirements**
-  - [ ] **Step 13:** Add position/coordinates to GrowZone model (x, y positions)
-  - [ ] **Step 14:** Add dimensions to GrowZone (width, length, height in cm)
-  - [ ] **Step 15:** Create migration for new position fields
-  - [ ] **Step 16:** Update GrowZone API to support position data
+
+**Technology Choice:** `react-konva` (Canvas-based rendering with zoom/pan capabilities)
+**Key Requirements:** Mobile support, performance for many grow areas, auto-save like Miro
+
+- [ ] **Backend Requirements (Steps 13-16)**
+  - [ ] **Step 13:** Add position fields to GrowArea model
+    - [ ] 13.1: Add `positionX: Double?` (nullable, for canvas X coordinate)
+    - [ ] 13.2: Add `positionY: Double?` (nullable, for canvas Y coordinate)
+    - [ ] Note: Positions are in pixels on the canvas; nullable to support areas not yet placed on board
   
-- [ ] **Frontend Implementation**
-  - [ ] **Step 17:** Research and choose canvas/board library (react-grid-layout, react-dnd, Konva, etc.)
-  - [ ] **Step 18:** Create visual garden board component
-  - [ ] **Step 19:** Implement drag-and-drop for grow zones
-  - [ ] **Step 20:** Add resize functionality for grow zones
-  - [ ] **Step 21:** Visual representation of grow zone size (scale)
-  - [ ] **Step 22:** Add grid/snap-to-grid functionality
-  - [ ] **Step 23:** Click to view/edit grow zone details
-  - [ ] **Step 24:** Add new grow zone by clicking/drawing on board
-  - [ ] **Step 25:** Delete grow zone from visual board
-  - [ ] **Step 26:** Save layout positions to backend
-  - [ ] **Step 27:** Toggle between list view and visual board view
+  - [ ] **Step 14:** Add dimension fields to GrowArea model for accurate visual scaling
+    - [ ] 14.1: Add `width: Double?` (in centimeters, for real-world width)
+    - [ ] 14.2: Add `length: Double?` (in centimeters, for real-world length)
+    - [ ] 14.3: Add `height: Double?` (in centimeters, optional - for vertical gardens)
+    - [ ] Note: These replace/augment the string-based `zoneSize` field with precise measurements
+  
+  - [ ] **Step 15:** Create Flyway migration for new position and dimension fields
+    - [ ] 15.1: Add columns: position_x, position_y, width, length, height (all DOUBLE PRECISION, nullable)
+    - [ ] 15.2: Keep existing `zone_size` column for backward compatibility
+    - [ ] 15.3: Test migration on local database
+  
+  - [ ] **Step 16:** Update GrowArea API endpoints to support position/dimension data
+    - [ ] 16.1: Update `CreateGrowAreaRequest` DTO with new fields
+    - [ ] 16.2: Update `UpdateGrowAreaRequest` DTO with new fields
+    - [ ] 16.3: Update `GrowAreaService` to handle position updates
+    - [ ] 16.4: Add validation (positions >= 0, dimensions > 0 if provided)
+    - [ ] 16.5: Update TypeScript types in frontend (`lib/api.ts`)
+
+- [ ] **Frontend Implementation (Steps 17-27)**
+  - [x] **Step 17:** Choose canvas library: **react-konva** selected ✅
+    - Reason: True canvas rendering, zoom/pan, precise scaling, Miro-like experience
+    - Install: `npm install react-konva konva`
+    - Also consider: `npm install use-image` for loading images if needed
+  
+  - [ ] **Step 18:** Create GardenBoardView component (main canvas container)
+    - [ ] 18.1: Set up Konva Stage and Layer components
+    - [ ] 18.2: Initialize with garden dimensions (or auto-size to viewport)
+    - [ ] 18.3: Implement zoom controls (buttons: 50%, 100%, 200%, Fit to View)
+    - [ ] 18.4: Implement pan/drag canvas functionality (click-drag empty space)
+    - [ ] 18.5: **Mobile:** Touch gesture support for pinch-to-zoom and pan
+    - [ ] 18.6: Add toolbar with: zoom level display, grid toggle, view mode toggle
+  
+  - [ ] **Step 19:** Create GrowAreaBox component (visual representation)
+    - [ ] 19.1: Render each grow area as Konva Rect with label (Text)
+    - [ ] 19.2: Apply color based on zone type (BOX=blue, FIELD=green, BED=brown, BUCKET=gray)
+    - [ ] 19.3: Display grow area name inside or above the box
+    - [ ] 19.4: Show dimensions text (e.g., "80 x 120 cm")
+    - [ ] 19.5: Add hover effects (border highlight, cursor change)
+    - [ ] 19.6: **Mobile:** Touch-friendly size (minimum touch target 44x44px)
+  
+  - [ ] **Step 20:** Implement drag-and-drop for grow areas
+    - [ ] 20.1: Enable dragging on GrowAreaBox components
+    - [ ] 20.2: Update position state in real-time during drag
+    - [ ] 20.3: Debounce auto-save (e.g., 500ms after drag ends)
+    - [ ] 20.4: Call API to save new position to backend
+    - [ ] 20.5: Show loading indicator during save
+    - [ ] 20.6: **Mobile:** Ensure drag works with touch events (not just mouse)
+  
+  - [ ] **Step 21:** Add resize functionality for grow areas
+    - [ ] 21.1: Add resize handles (corner anchors) on selected grow area
+    - [ ] 21.2: Update width/length during resize
+    - [ ] 21.3: Maintain aspect ratio option (toggle or hold Shift key)
+    - [ ] 21.4: Auto-save dimensions after resize (debounced)
+    - [ ] 21.5: **Mobile:** Touch-friendly resize handles (larger touch targets)
+  
+  - [ ] **Step 22:** Implement visual scaling system
+    - [ ] 22.1: Define scale factor (e.g., 1cm = 1px at 100% zoom)
+    - [ ] 22.2: Convert grow area dimensions (cm) to canvas pixels
+    - [ ] 22.3: Apply zoom multiplier to scale (50% = 0.5x, 200% = 2x)
+    - [ ] 22.4: Add ruler/scale indicator (e.g., "10cm" visual guide)
+    - [ ] 22.5: "Fit to View" auto-scales to show entire garden
+  
+  - [ ] **Step 23:** Add grid and snap-to-grid functionality
+    - [ ] 23.1: Draw background grid lines (e.g., 10cm intervals)
+    - [ ] 23.2: Toggle grid visibility (button in toolbar)
+    - [ ] 23.3: Snap positions to grid when dragging (optional toggle)
+    - [ ] 23.4: Configurable grid size (user preference)
+  
+  - [ ] **Step 24:** Click to view/edit grow area details
+    - [ ] 24.1: Single click selects grow area (highlight border)
+    - [ ] 24.2: Double click opens edit modal (reuse existing EditGrowAreaModal)
+    - [ ] 24.3: Show quick info tooltip on hover (name, size, crop count)
+    - [ ] 24.4: **Mobile:** Single tap selects, double tap or long-press opens edit
+  
+  - [ ] **Step 25:** Add new grow area from visual board
+    - [ ] 25.1: "Draw Mode" button in toolbar
+    - [ ] 25.2: Click-and-drag to draw new rectangle on canvas
+    - [ ] 25.3: Show dimensions in real-time while drawing
+    - [ ] 25.4: On release, open "Create Grow Area" modal with pre-filled dimensions
+    - [ ] 25.5: Auto-calculate position and size from drawn rectangle
+    - [ ] 25.6: Alternative: "Add Area" button opens modal, places at default position
+  
+  - [ ] **Step 26:** Delete grow area from visual board
+    - [ ] 26.1: Delete button appears when grow area is selected
+    - [ ] 26.2: Keyboard shortcut: Delete/Backspace key
+    - [ ] 26.3: Show confirmation dialog (reuse existing delete confirmation)
+    - [ ] 26.4: Remove from canvas and call API to delete
+    - [ ] 26.5: **Mobile:** Delete icon/button in selection toolbar
+  
+  - [ ] **Step 27:** Auto-save layout positions (Miro-style)
+    - [ ] 27.1: Debounced auto-save on drag end (500ms delay)
+    - [ ] 27.2: Debounced auto-save on resize end (500ms delay)
+    - [ ] 27.3: Visual indicator: "Saving..." → "Saved ✓" in toolbar
+    - [ ] 27.4: Error handling: Show error toast if save fails, allow retry
+    - [ ] 27.5: Optimistic updates: UI updates immediately, rollback on error
+    - [ ] 27.6: Batch updates if multiple areas moved/resized quickly
+  
+  - [ ] **Step 27.1:** Toggle between list view and board view
+    - [ ] Add view mode selector in garden detail page header
+    - [ ] Tab/button toggle: "List View" | "Board View"
+    - [ ] Persist view preference in localStorage
+    - [ ] Ensure both views stay in sync (shared state/API)
+    - [ ] **Mobile:** Default to list view on small screens, with option to switch
+
+- [ ] **Performance Optimization (for many grow areas)**
+  - [ ] **Step 27.2:** Virtualization and optimization
+    - [ ] Use Konva's built-in performance optimizations
+    - [ ] Only render grow areas in viewport (virtualization)
+    - [ ] Limit number of simultaneously selected items
+    - [ ] Throttle zoom/pan events
+    - [ ] Use Konva's caching for static elements
+    - [ ] Test with 50+ grow areas to ensure smooth performance
+
+- [ ] **Mobile-Specific Features**
+  - [ ] **Step 27.3:** Mobile UX enhancements
+    - [ ] Touch gesture library integration (pinch-zoom, two-finger pan)
+    - [ ] Larger touch targets for buttons and handles (minimum 44x44px)
+    - [ ] Simplified toolbar for small screens
+    - [ ] Bottom sheet or drawer for grow area details (instead of modal)
+    - [ ] Orientation support (landscape for better canvas view)
+    - [ ] Prevent accidental zooms (disable page zoom, only canvas zoom)
+
+- [ ] **Additional Features**
+  - [ ] **Step 27.4:** Advanced board features
+    - [ ] Collision detection (warn if grow areas overlap)
+    - [ ] Multi-select (Shift+click or drag-select box)
+    - [ ] Bulk move/delete selected areas
+    - [ ] Undo/Redo functionality
+    - [ ] Copy/paste grow areas
+    - [ ] Garden layout templates (preset arrangements)
+    - [ ] Export layout as image (PNG/PDF)
+    - [ ] Measurement tool (distance between areas)
+    - [ ] Notes/annotations on canvas (text boxes, arrows)
+    - [ ] Background image upload (aerial view of actual garden)
 
 ### Search Functionality
 - [ ] **Grow Zone Search**
