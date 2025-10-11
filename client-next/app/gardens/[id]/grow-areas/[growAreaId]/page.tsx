@@ -297,6 +297,7 @@ export default function GrowAreaDetailPage() {
                   onClick={handleEditGrowArea}
                   className="ml-4 px-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-all flex items-center gap-2 cursor-pointer"
                   title="Edit Grow Area"
+                  data-testid="grow-area-edit-btn"
                 >
                   <span className="text-lg">✏️</span>
                   <span className="font-medium">Edit</span>
@@ -337,6 +338,7 @@ export default function GrowAreaDetailPage() {
                   <div
                     key={record.id}
                     className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
+                    data-testid="crop-record-card"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div>
@@ -392,6 +394,7 @@ export default function GrowAreaDetailPage() {
                           setShowEditCropModal(true);
                         }}
                         className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center gap-2"
+                        data-testid={`crop-record-edit-btn-${record.id}`}
                       >
                         <span className="text-lg">✏️</span>
                         <span>Edit</span>
@@ -402,6 +405,7 @@ export default function GrowAreaDetailPage() {
                           setShowDeleteCropModal(true);
                         }}
                         className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center gap-2"
+                        data-testid={`crop-record-delete-btn-${record.id}`}
                       >
                         <span className="text-lg">🗑️</span>
                         <span>Delete</span>
@@ -431,6 +435,7 @@ export default function GrowAreaDetailPage() {
                       <div
                         key={record.id}
                         className="bg-white p-6 rounded-lg shadow hover:shadow-md transition opacity-75"
+                        data-testid="crop-record-card-historical"
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div>
@@ -713,8 +718,8 @@ export default function GrowAreaDetailPage() {
 
       {/* Edit Crop Record Modal */}
       {showEditCropModal && selectedCropRecord && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">
               Edit Crop Record
             </h3>
@@ -846,6 +851,7 @@ export default function GrowAreaDetailPage() {
               </div>
               <div className="flex justify-end gap-4">
                 <button
+                  type="button"
                   onClick={() => setShowEditCropModal(false)}
                   className="px-4 py-2 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
                 >
@@ -865,7 +871,7 @@ export default function GrowAreaDetailPage() {
 
       {/* Delete Crop Record Modal */}
       {showDeleteCropModal && selectedCropRecord && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
             <h3 className="text-xl font-semibold text-gray-900 mb-4">
               Delete Crop Record
@@ -875,6 +881,7 @@ export default function GrowAreaDetailPage() {
             </p>
             <div className="flex justify-end gap-4">
               <button
+                type="button"
                 onClick={() => setShowDeleteCropModal(false)}
                 className="px-4 py-2 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
               >

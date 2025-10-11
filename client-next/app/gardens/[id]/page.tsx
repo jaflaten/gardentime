@@ -242,6 +242,7 @@ export default function GardenDetailPage() {
                 {growAreas.map((growArea) => (
                   <div
                     key={growArea.id}
+                    data-testid="grow-area-card"
                     className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
                   >
                     <div className="flex justify-between items-start mb-3">

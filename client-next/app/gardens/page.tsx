@@ -121,6 +121,7 @@ export default function GardensPage() {
                 key={garden.id}
                 href={`/gardens/${garden.id}`}
                 className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition cursor-pointer"
+                data-testid="garden-card"
               >
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {garden.name}
@@ -207,4 +208,3 @@ export default function GardensPage() {
     </div>
   );
 }
-
