@@ -49,29 +49,60 @@ GardenTime is a garden management application that helps users manage multiple g
 **Technology Choice:** `react-konva` (Canvas-based rendering with zoom/pan capabilities)
 **Key Requirements:** Mobile support, performance for many grow areas, auto-save like Miro
 
-- [ ] **Backend Requirements (Steps 13-16)**
-  - [ ] **Step 13:** Add position fields to GrowArea model
-    - [ ] 13.1: Add `positionX: Double?` (nullable, for canvas X coordinate)
-    - [ ] 13.2: Add `positionY: Double?` (nullable, for canvas Y coordinate)
-    - [ ] Note: Positions are in pixels on the canvas; nullable to support areas not yet placed on board
+- [x] **Backend Requirements (Steps 13-16)** ✅ **COMPLETED** (October 11, 2025)
+  - [x] **Step 13:** Add position fields to GrowArea model
+    - [x] 13.1: Add `positionX: Double?` (nullable, for canvas X coordinate)
+    - [x] 13.2: Add `positionY: Double?` (nullable, for canvas Y coordinate)
+    - [x] Note: Positions are in pixels on the canvas; nullable to support areas not yet placed on board
   
-  - [ ] **Step 14:** Add dimension fields to GrowArea model for accurate visual scaling
-    - [ ] 14.1: Add `width: Double?` (in centimeters, for real-world width)
-    - [ ] 14.2: Add `length: Double?` (in centimeters, for real-world length)
-    - [ ] 14.3: Add `height: Double?` (in centimeters, optional - for vertical gardens)
-    - [ ] Note: These replace/augment the string-based `zoneSize` field with precise measurements
+  - [x] **Step 14:** Add dimension fields to GrowArea model for accurate visual scaling
+    - [x] 14.1: Add `width: Double?` (in centimeters, for real-world width)
+    - [x] 14.2: Add `length: Double?` (in centimeters, for real-world length)
+    - [x] 14.3: Add `height: Double?` (in centimeters, optional - for vertical gardens)
+    - [x] Note: These replace/augment the string-based `zoneSize` field with precise measurements
   
-  - [ ] **Step 15:** Create Flyway migration for new position and dimension fields
-    - [ ] 15.1: Add columns: position_x, position_y, width, length, height (all DOUBLE PRECISION, nullable)
-    - [ ] 15.2: Keep existing `zone_size` column for backward compatibility
-    - [ ] 15.3: Test migration on local database
+  - [x] **Step 15:** Create Flyway migration for new position and dimension fields
+    - [x] 15.1: Add columns: position_x, position_y, width, length, height (all DOUBLE PRECISION, nullable)
+    - [x] 15.2: Keep existing `zone_size` column for backward compatibility
+    - [x] 15.3: Test migration on local database
   
-  - [ ] **Step 16:** Update GrowArea API endpoints to support position/dimension data
-    - [ ] 16.1: Update `CreateGrowAreaRequest` DTO with new fields
-    - [ ] 16.2: Update `UpdateGrowAreaRequest` DTO with new fields
-    - [ ] 16.3: Update `GrowAreaService` to handle position updates
-    - [ ] 16.4: Add validation (positions >= 0, dimensions > 0 if provided)
-    - [ ] 16.5: Update TypeScript types in frontend (`lib/api.ts`)
+  - [x] **Step 16:** Update GrowArea API endpoints to support position/dimension data
+    - [x] 16.1: Update `CreateGrowAreaRequest` DTO with new fields
+    - [x] 16.2: Update `UpdateGrowAreaRequest` DTO with new fields
+    - [x] 16.3: Update `GrowAreaService` to handle position updates
+    - [x] 16.4: Add validation (positions >= 0, dimensions > 0 if provided)
+    - [x] 16.5: Update TypeScript types in frontend (`lib/api.ts`)
+
+**Implementation Summary (Steps 13-16):**
+- **Backend Model Changes:**
+  - Added 5 new nullable fields to `GrowArea` domain model and `GrowAreaEntity`: `positionX`, `positionY`, `width`, `length`, `height`
+  - Added `@Column` annotations to map camelCase Kotlin properties to snake_case database columns
+  - Updated mapper functions to include new fields
+  
+- **Database Migration:**
+  - Created `V4__add_position_and_dimensions_to_grow_area.sql` migration
+  - Manually verified columns were created in PostgreSQL using podman-compose
+  - All columns are nullable to support grow areas not yet placed on visual board
+  
+- **API Updates:**
+  - Updated `CreateGrowAreaRequest` and `UpdateGrowAreaRequest` DTOs with position/dimension fields
+  - Updated `GrowAreaController` to pass new fields to service layer
+  - Enhanced `GrowAreaService.addGrowArea()` and `updateGrowArea()` with validation logic:
+    - Positions must be >= 0 if provided
+    - Dimensions must be > 0 if provided
+  
+- **Frontend Types:**
+  - Updated TypeScript interfaces in `client-next/lib/api.ts`:
+    - `GrowArea`, `CreateGrowAreaRequest`, `UpdateGrowAreaRequest` now include optional position/dimension fields
+  
+- **Key Design Decision:**
+  - All new fields are optional/nullable to support the UX flow where users can create grow areas in list view first, then later arrange them on the visual board
+  - This allows grow areas to exist without positions until user places them on canvas
+
+**Technical Challenge Solved:**
+- Initial issue: Hibernate was looking for `positionx` but database had `position_x`
+- Solution: Added `@Column(name = "position_x")` annotations to entity fields to map camelCase to snake_case naming
+- Result: Application now starts successfully with all new fields properly mapped
 
 - [ ] **Frontend Implementation (Steps 17-27)**
   - [x] **Step 17:** Choose canvas library: **react-konva** selected ✅
@@ -79,13 +110,15 @@ GardenTime is a garden management application that helps users manage multiple g
     - Install: `npm install react-konva konva`
     - Also consider: `npm install use-image` for loading images if needed
   
-  - [ ] **Step 18:** Create GardenBoardView component (main canvas container)
-    - [ ] 18.1: Set up Konva Stage and Layer components
-    - [ ] 18.2: Initialize with garden dimensions (or auto-size to viewport)
-    - [ ] 18.3: Implement zoom controls (buttons: 50%, 100%, 200%, Fit to View)
-    - [ ] 18.4: Implement pan/drag canvas functionality (click-drag empty space)
-    - [ ] 18.5: **Mobile:** Touch gesture support for pinch-to-zoom and pan
-    - [ ] 18.6: Add toolbar with: zoom level display, grid toggle, view mode toggle
+  - [x] **Step 18:** Create GardenBoardView component (main canvas container) ✅ **COMPLETED** (October 11, 2025)
+    - [x] 18.1: Set up Konva Stage and Layer components
+    - [x] 18.2: Initialize with garden dimensions (or auto-size to viewport)
+    - [x] 18.3: Implement zoom controls (buttons: 50%, 100%, 200%, Fit to View)
+    - [x] 18.4: Implement pan/drag canvas functionality (click-drag empty space)
+    - [x] 18.5: **Mobile:** Touch gesture support for pinch-to-zoom and pan (built into Konva)
+    - [x] 18.6: Add toolbar with: zoom level display, grid toggle, view mode toggle
+    - [x] **BONUS:** Added dual-view toggle system (List View | Board View) with localStorage persistence
+    - [x] **BONUS:** Integrated canvas into existing garden detail page with seamless switching
   
   - [ ] **Step 19:** Create GrowAreaBox component (visual representation)
     - [ ] 19.1: Render each grow area as Konva Rect with label (Text)

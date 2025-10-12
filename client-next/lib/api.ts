@@ -73,6 +73,13 @@ export interface GrowArea {
   zoneType?: ZoneType;  // Optional: BOX, FIELD, BED, or BUCKET
   nrOfRows?: number;  // Optional: Number of planting rows
   notes?: string;  // Optional: General notes
+  // Visual board position fields (in pixels on canvas)
+  positionX?: number;  // Optional: null if not yet placed on board
+  positionY?: number;  // Optional: null if not yet placed on board
+  // Physical dimension fields (in centimeters)
+  width?: number;  // Optional: real-world width in cm
+  length?: number;  // Optional: real-world length in cm
+  height?: number;  // Optional: real-world height in cm (for vertical gardens)
   createdAt: string;
   updatedAt: string;
 }
@@ -84,6 +91,13 @@ export interface CreateGrowAreaRequest {
   zoneType?: ZoneType;  // Optional
   nrOfRows?: number;  // Optional
   notes?: string;  // Optional
+  // Visual board position fields (in pixels)
+  positionX?: number;  // Optional
+  positionY?: number;  // Optional
+  // Physical dimension fields (in centimeters)
+  width?: number;  // Optional
+  length?: number;  // Optional
+  height?: number;  // Optional
 }
 
 export interface UpdateGrowAreaRequest {
@@ -92,6 +106,13 @@ export interface UpdateGrowAreaRequest {
   zoneType?: ZoneType;
   nrOfRows?: number;
   notes?: string;
+  // Visual board position fields (in pixels)
+  positionX?: number;  // Optional
+  positionY?: number;  // Optional
+  // Physical dimension fields (in centimeters)
+  width?: number;  // Optional
+  length?: number;  // Optional
+  height?: number;  // Optional
 }
 
 // CropRecord types - FIXED: IDs are UUID strings

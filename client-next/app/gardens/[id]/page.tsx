@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { gardenService, growAreaService, Garden, GrowArea, ZoneType } from '@/lib/api';
 import Link from 'next/link';
+import GardenBoardView from './components/GardenBoardView';
 
 export default function GardenDetailPage() {
   const router = useRouter();
@@ -20,13 +21,25 @@ export default function GardenDetailPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedGrowArea, setSelectedGrowArea] = useState<GrowArea | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
   const [newGrowArea, setNewGrowArea] = useState({
     name: '',
     zoneSize: '',
     zoneType: '' as ZoneType | '',
     nrOfRows: '',
     notes: '',
+    width: '',
+    length: '',
+    height: '',
   });
+
+  // Load view preference from localStorage
+  useEffect(() => {
+    const savedView = localStorage.getItem(`garden-view-${gardenId}`);
+    if (savedView === 'board' || savedView === 'list') {
+      setViewMode(savedView);
+    }
+  }, [gardenId]);
 
   useEffect(() => {
     if (isLoading) return; // Wait for auth to load
@@ -58,6 +71,12 @@ export default function GardenDetailPage() {
   const handleCreateGrowArea = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      // Calculate a default position for new grow areas
+      // Place them in a simple grid pattern to avoid stacking
+      const existingCount = growAreas.length;
+      const defaultX = 100 + (existingCount % 3) * 200; // 3 columns
+      const defaultY = 100 + Math.floor(existingCount / 3) * 200; // New row every 3 items
+
       await growAreaService.create({
         name: newGrowArea.name,
         gardenId: gardenId,
@@ -65,10 +84,16 @@ export default function GardenDetailPage() {
         zoneType: newGrowArea.zoneType || undefined,
         nrOfRows: newGrowArea.nrOfRows ? parseInt(newGrowArea.nrOfRows) : undefined,
         notes: newGrowArea.notes || undefined,
+        width: newGrowArea.width ? parseFloat(newGrowArea.width) : undefined,
+        length: newGrowArea.length ? parseFloat(newGrowArea.length) : undefined,
+        height: newGrowArea.height ? parseFloat(newGrowArea.height) : undefined,
+        // Set default position so areas don't stack at (0,0)
+        positionX: defaultX,
+        positionY: defaultY,
       });
       setShowCreateModal(false);
       setShowAdvanced(false);
-      setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '' });
+      setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
       fetchGardenData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create grow area');
@@ -86,11 +111,14 @@ export default function GardenDetailPage() {
         zoneType: newGrowArea.zoneType || undefined,
         nrOfRows: newGrowArea.nrOfRows ? parseInt(newGrowArea.nrOfRows) : undefined,
         notes: newGrowArea.notes || undefined,
+        width: newGrowArea.width ? parseFloat(newGrowArea.width) : undefined,
+        length: newGrowArea.length ? parseFloat(newGrowArea.length) : undefined,
+        height: newGrowArea.height ? parseFloat(newGrowArea.height) : undefined,
       });
       setShowEditModal(false);
       setShowAdvanced(false);
       setSelectedGrowArea(null);
-      setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '' });
+      setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
       fetchGardenData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to update grow area');
@@ -118,6 +146,9 @@ export default function GardenDetailPage() {
       zoneType: growArea.zoneType || '',
       nrOfRows: growArea.nrOfRows?.toString() || '',
       notes: growArea.notes || '',
+      width: growArea.width?.toString() || '',
+      length: growArea.length?.toString() || '',
+      height: growArea.height?.toString() || '',
     });
     setShowEditModal(true);
   };
@@ -140,6 +171,39 @@ export default function GardenDetailPage() {
       case 'BUCKET': return '🪣';
       default: return '📍';
     }
+  };
+
+  const handleViewModeChange = (mode: 'list' | 'board') => {
+    setViewMode(mode);
+    localStorage.setItem(`garden-view-${gardenId}`, mode);
+  };
+
+  const handleUpdatePosition = async (id: string, x: number, y: number) => {
+    // DON'T update local state immediately during drag!
+    // Let Konva handle the position during the drag operation
+    // Only update after backend confirms the save
+
+    try {
+      await growAreaService.update(id, {
+        positionX: x,
+        positionY: y,
+      });
+
+      // Update local state AFTER backend success
+      setGrowAreas(prevAreas =>
+        prevAreas.map(area =>
+          area.id === id ? { ...area, positionX: x, positionY: y } : area
+        )
+      );
+    } catch (err: any) {
+      // If backend update fails, fetch fresh data to revert
+      setError(err.response?.data?.message || 'Failed to update position');
+      fetchGardenData();
+    }
+  };
+
+  const handleSelectGrowAreaFromBoard = (growArea: GrowArea) => {
+    openEditModal(growArea);
   };
 
   if (isLoading) {
@@ -210,6 +274,24 @@ export default function GardenDetailPage() {
               )}
             </div>
 
+            {/* View Mode Toggle */}
+            <div className="mb-6 flex gap-2">
+              <button
+                onClick={() => handleViewModeChange('list')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all flex-1 flex items-center justify-center gap-2
+                ${viewMode === 'list' ? 'bg-green-600 text-white shadow-md' : 'bg-white text-green-600 border border-green-600 hover:bg-green-50'}`}
+              >
+                {viewMode === 'list' ? '📋 List View' : '📋 List View'}
+              </button>
+              <button
+                onClick={() => handleViewModeChange('board')}
+                className={`px-4 py-2 rounded-lg font-medium transition-all flex-1 flex items-center justify-center gap-2
+                ${viewMode === 'board' ? 'bg-green-600 text-white shadow-md' : 'bg-white text-green-600 border border-green-600 hover:bg-green-50'}`}
+              >
+                {viewMode === 'board' ? '🗺️ Board View' : '🗺️ Board View'}
+              </button>
+            </div>
+
             {/* Grow Areas Section */}
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Grow Areas</h2>
@@ -237,7 +319,7 @@ export default function GardenDetailPage() {
                   Create your first grow area
                 </button>
               </div>
-            ) : (
+            ) : viewMode === 'list' ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {growAreas.map((growArea) => (
                   <div
@@ -293,6 +375,12 @@ export default function GardenDetailPage() {
                   </div>
                 ))}
               </div>
+            ) : (
+              <GardenBoardView
+                growAreas={growAreas}
+                onUpdatePosition={handleUpdatePosition}
+                onSelectGrowArea={handleSelectGrowAreaFromBoard}
+              />
             )}
           </>
         )}
@@ -397,6 +485,52 @@ export default function GardenDetailPage() {
                         }
                       />
                     </div>
+
+                    {/* New Fields: Width, Length, Height */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Width <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 2m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.width}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, width: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Length <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 3m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.length}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, length: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Height <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 1m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.height}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, height: e.target.value })
+                        }
+                      />
+                    </div>
                   </>
                 )}
               </div>
@@ -406,7 +540,7 @@ export default function GardenDetailPage() {
                   onClick={() => {
                     setShowCreateModal(false);
                     setShowAdvanced(false);
-                    setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '' });
+                    setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
                   }}
                   className="px-4 py-2 text-gray-700 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
@@ -517,6 +651,52 @@ export default function GardenDetailPage() {
                         }
                       />
                     </div>
+
+                    {/* New Fields: Width, Length, Height */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Width <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 2m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.width}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, width: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Length <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 3m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.length}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, length: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-800 mb-1">
+                        Height <span className="text-gray-600 text-xs">(optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g., 1m"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-400"
+                        value={newGrowArea.height}
+                        onChange={(e) =>
+                          setNewGrowArea({ ...newGrowArea, height: e.target.value })
+                        }
+                      />
+                    </div>
                   </>
                 )}
               </div>
@@ -527,7 +707,7 @@ export default function GardenDetailPage() {
                     setShowEditModal(false);
                     setShowAdvanced(false);
                     setSelectedGrowArea(null);
-                    setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '' });
+                    setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
                   }}
                   className="px-4 py-2 text-gray-700 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >

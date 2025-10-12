@@ -29,7 +29,12 @@ class GrowAreaService(
         zoneSize: String? = null,
         zoneType: ZoneType? = null,
         nrOfRows: Int? = null,
-        notes: String? = null
+        notes: String? = null,
+        positionX: Double? = null,
+        positionY: Double? = null,
+        width: Double? = null,
+        length: Double? = null,
+        height: Double? = null
     ): GrowArea {
         val currentUserId = securityUtils.getCurrentUserId()
         val gardenEntity = gardenRepository.findGardenEntityById(gardenId)
@@ -40,13 +45,29 @@ class GrowAreaService(
             throw IllegalAccessException("You don't have permission to add grow areas to this garden")
         }
 
+        // Validation: dimensions should be > 0 if provided
+        if (width != null && width <= 0) {
+            throw IllegalArgumentException("Width must be > 0")
+        }
+        if (length != null && length <= 0) {
+            throw IllegalArgumentException("Length must be > 0")
+        }
+        if (height != null && height <= 0) {
+            throw IllegalArgumentException("Height must be > 0")
+        }
+
         val growArea = GrowArea(
             name = name,
             gardenId = gardenId,
             zoneSize = zoneSize,
             zoneType = zoneType,
             nrOfRows = nrOfRows,
-            notes = notes
+            notes = notes,
+            positionX = positionX,
+            positionY = positionY,
+            width = width,
+            length = length,
+            height = height
         )
         val growAreaEntity = growAreaRepository.save(mapGrowAreaToEntity(growArea))
 
@@ -59,7 +80,12 @@ class GrowAreaService(
         zoneSize: String? = null,
         zoneType: ZoneType? = null,
         nrOfRows: Int? = null,
-        notes: String? = null
+        notes: String? = null,
+        positionX: Double? = null,
+        positionY: Double? = null,
+        width: Double? = null,
+        length: Double? = null,
+        height: Double? = null
     ): GrowArea {
         val currentUserId = securityUtils.getCurrentUserId()
         val growAreaEntity = growAreaRepository.findById(id)
@@ -73,6 +99,19 @@ class GrowAreaService(
             throw IllegalAccessException("You don't have permission to update this grow area")
         }
 
+        // Validation: dimensions should be > 0 if provided
+        if (width != null && width <= 0) {
+            throw IllegalArgumentException("Width must be > 0")
+        }
+        if (length != null && length <= 0) {
+            throw IllegalArgumentException("Length must be > 0")
+        }
+        if (height != null && height <= 0) {
+            throw IllegalArgumentException("Height must be > 0")
+        }
+
+        // Note: Position X and Y can be negative on an infinite canvas, so no validation needed
+
         // Create updated entity with new values (only update if provided)
         val updatedEntity = GrowAreaEntity(
             id = growAreaEntity.id,
@@ -81,7 +120,12 @@ class GrowAreaService(
             gardenId = growAreaEntity.gardenId,
             zoneType = zoneType ?: growAreaEntity.zoneType,
             nrOfRows = nrOfRows ?: growAreaEntity.nrOfRows,
-            notes = notes ?: growAreaEntity.notes
+            notes = notes ?: growAreaEntity.notes,
+            positionX = positionX ?: growAreaEntity.positionX,
+            positionY = positionY ?: growAreaEntity.positionY,
+            width = width ?: growAreaEntity.width,
+            length = length ?: growAreaEntity.length,
+            height = height ?: growAreaEntity.height
         )
 
         val savedEntity = growAreaRepository.save(updatedEntity)

@@ -17,6 +17,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.2] - 2025-10-12
+
+### Fixed - Canvas Dragging Behavior in Garden Board View
+- **Grow Area Dragging Issues**
+  - Fixed critical bug where dragging one grow area would cause the canvas to move/snap
+  - Fixed issue where dragging the background canvas itself was unreliable
+  - Resolved problem where boxes appeared to interfere with each other during drag
+  - Each grow area now drags independently with smooth, predictable movement
+  
+- **Backend Validation**
+  - Confirmed position validation allows negative coordinates (required for infinite canvas with pan/zoom)
+  - Positions can be negative when canvas is panned or items are placed in different quadrants
+  
+- **Canvas Background Dragging**
+  - Background canvas now draggable at all times (like Miro/Excalidraw)
+  - Stage is temporarily disabled during grow area drag to prevent interference
+  - Click and drag empty space to pan the canvas smoothly
+  - Canvas stays stationary when dragging grow areas
+
+### Technical Details
+- **Root Cause**: 
+  - Stage and Group elements were both draggable simultaneously, causing interference
+  - When dragging a grow area, the Stage would also start dragging, creating the "snapping" effect
+  - React state updates during drag were causing ALL Groups to re-render with new props
+  
+- **Solution**: 
+  1. **Stage Dragging Control**: Made Stage always `draggable={true}` instead of state-controlled
+  2. **Prevent Simultaneous Drag**: When a grow area drag starts, temporarily disable Stage dragging:
+     ```typescript
+     onDragStart={(e) => {
+       draggingIdRef.current = growArea.id;
+       e.cancelBubble = true;
+       stage.draggable(false); // Disable stage during item drag
+     }}
+     ```
+  3. **Re-enable After Drag**: When grow area drag ends, re-enable Stage dragging:
+     ```typescript
+     onDragEnd={(e) => {
+       // ... save position ...
+       stage.draggable(true); // Re-enable stage
+     }}
+     ```
+  4. **State Update Timing**: Backend saves first, then React state updates only after success
+  5. **Drag Tracking**: Use `useRef` to track which item is being dragged (doesn't trigger re-renders)
+
+- **Files Modified**: 
+  - `GardenBoardView.tsx` - Fixed Stage/Group dragging interference, added drag state tracking
+  - `page.tsx` - State updates after backend save completes (not during drag)
+  
+- **Result**: 
+  - ✅ Drag a grow area → Only that box moves, canvas stays still
+  - ✅ Drag empty space → Canvas pans smoothly
+  - ✅ Each box moves independently without affecting others
+  - ✅ Behavior matches Miro/Excalidraw expectations
+  - ✅ Positions persist correctly to backend
+
+---
+
 ## [0.5.1] - 2025-10-08
 
 ### Fixed - Grow Area Detail Page & Missing API Endpoints

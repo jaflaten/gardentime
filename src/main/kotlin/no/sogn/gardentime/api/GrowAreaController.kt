@@ -13,7 +13,14 @@ data class CreateGrowAreaRequest(
     val zoneSize: String? = null,
     val zoneType: ZoneType? = null,
     val nrOfRows: Int? = null,
-    val notes: String? = null
+    val notes: String? = null,
+    // Visual board position fields (in pixels)
+    val positionX: Double? = null,
+    val positionY: Double? = null,
+    // Physical dimension fields (in centimeters)
+    val width: Double? = null,
+    val length: Double? = null,
+    val height: Double? = null
 )
 
 data class UpdateGrowAreaRequest(
@@ -21,7 +28,14 @@ data class UpdateGrowAreaRequest(
     val zoneSize: String? = null,
     val zoneType: ZoneType? = null,
     val nrOfRows: Int? = null,
-    val notes: String? = null
+    val notes: String? = null,
+    // Visual board position fields (in pixels)
+    val positionX: Double? = null,
+    val positionY: Double? = null,
+    // Physical dimension fields (in centimeters)
+    val width: Double? = null,
+    val length: Double? = null,
+    val height: Double? = null
 )
 
 @RestController
@@ -39,7 +53,12 @@ class GrowAreaController(
             zoneSize = request.zoneSize,
             zoneType = request.zoneType,
             nrOfRows = request.nrOfRows,
-            notes = request.notes
+            notes = request.notes,
+            positionX = request.positionX,
+            positionY = request.positionY,
+            width = request.width,
+            length = request.length,
+            height = request.height
         )
         return ResponseEntity.ok(createdGrowArea)
     }
@@ -52,7 +71,12 @@ class GrowAreaController(
             zoneSize = request.zoneSize,
             zoneType = request.zoneType,
             nrOfRows = request.nrOfRows,
-            notes = request.notes
+            notes = request.notes,
+            positionX = request.positionX,
+            positionY = request.positionY,
+            width = request.width,
+            length = request.length,
+            height = request.height
         )
         return ResponseEntity.ok(updatedGrowArea)
     }

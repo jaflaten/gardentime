@@ -12,7 +12,14 @@ data class GrowArea(
     val nrOfRows: Int? = null,
     val notes: String? = null,
     val zoneType: ZoneType? = null,
-    )
+    // Visual board position fields (in pixels on canvas)
+    val positionX: Double? = null,
+    val positionY: Double? = null,
+    // Physical dimension fields (in centimeters)
+    val width: Double? = null,
+    val length: Double? = null,
+    val height: Double? = null,
+)
 
 @Entity
 @Table(name = "grow_area_entity")
@@ -27,6 +34,18 @@ data class GrowAreaEntity(
     val notes: String? = null,
     @Convert(converter = ZoneTypeConverter::class)
     val zoneType: ZoneType? = null,
+    // Visual board position fields (in pixels on canvas)
+    @Column(name = "position_x")
+    val positionX: Double? = null,
+    @Column(name = "position_y")
+    val positionY: Double? = null,
+    // Physical dimension fields (in centimeters)
+    @Column(name = "width")
+    val width: Double? = null,
+    @Column(name = "length")
+    val length: Double? = null,
+    @Column(name = "height")
+    val height: Double? = null,
 )
 
 fun mapGrowAreaEntityToDomain(
@@ -43,7 +62,12 @@ fun mapGrowAreaEntityToDomain(
         gardenId = growAreaEntity.gardenId,
         nrOfRows = growAreaEntity.nrOfRows,
         notes = growAreaEntity.notes,
-        zoneType = growAreaEntity.zoneType
+        zoneType = growAreaEntity.zoneType,
+        positionX = growAreaEntity.positionX,
+        positionY = growAreaEntity.positionY,
+        width = growAreaEntity.width,
+        length = growAreaEntity.length,
+        height = growAreaEntity.height
     )
 }
 
@@ -56,6 +80,11 @@ fun mapGrowAreaToEntity(growArea: GrowArea): GrowAreaEntity {
         nrOfRows = growArea.nrOfRows,
         gardenId = growArea.gardenId,
         notes = growArea.notes,
-        zoneType = growArea.zoneType
+        zoneType = growArea.zoneType,
+        positionX = growArea.positionX,
+        positionY = growArea.positionY,
+        width = growArea.width,
+        length = growArea.length,
+        height = growArea.height
     )
 }
