@@ -36,3 +36,17 @@ export function getTokenFromRequest(request: Request): string | null {
   return null;
 }
 
+// Generic proxy call used by Next.js route handlers to reach the Spring backend.
+// Ensures absolute URL, merges provided headers, and forwards auth header if present.
+export async function callSpringApi(path: string, options: RequestInit = {}): Promise<Response> {
+  const url = path.startsWith('http') ? path : `${SPRING_BACKEND_URL}${path}`;
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> || {}),
+  };
+  // Remove empty Authorization header to avoid sending "Authorization: "
+  if (!headers['Authorization']) {
+    delete headers['Authorization'];
+  }
+  return fetch(url, { ...options, headers });
+}

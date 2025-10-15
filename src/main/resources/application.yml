@@ -10,8 +10,8 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        format_sql: true
-    show-sql: true
+        format_sql: false
+    show-sql: false
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -20,3 +20,8 @@ spring:
 jwt:
   secret: ${JWT_SECRET:your-secret-key-change-this-in-production-make-it-very-long-and-secure}
   expiration: 86400000  # 24 hours in milliseconds
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN

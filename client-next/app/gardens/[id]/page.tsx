@@ -5,7 +5,17 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { gardenService, growAreaService, Garden, GrowArea, ZoneType } from '@/lib/api';
 import Link from 'next/link';
-import GardenBoardView from './components/GardenBoardView';
+import dynamic from 'next/dynamic';
+
+// Dynamically import GardenBoardView with SSR disabled (Konva requires browser environment)
+const GardenBoardView = dynamic(() => import('./components/GardenBoardView'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-96">
+      <div className="text-gray-500">Loading board view...</div>
+    </div>
+  ),
+});
 
 export default function GardenDetailPage() {
   const router = useRouter();
@@ -202,6 +212,26 @@ export default function GardenDetailPage() {
     }
   };
 
+  const handleUpdateDimensions = async (id: string, width: number, height: number) => {
+    try {
+      await growAreaService.update(id, {
+        width: width,
+        length: height, // Note: "length" in backend = "height" visually on canvas
+      });
+
+      // Update local state AFTER backend success
+      setGrowAreas(prevAreas =>
+        prevAreas.map(area =>
+          area.id === id ? { ...area, width: width, length: height } : area
+        )
+      );
+    } catch (err: any) {
+      // If backend update fails, fetch fresh data to revert
+      setError(err.response?.data?.message || 'Failed to update dimensions');
+      fetchGardenData();
+    }
+  };
+
   const handleSelectGrowAreaFromBoard = (growArea: GrowArea) => {
     openEditModal(growArea);
   };
@@ -379,7 +409,10 @@ export default function GardenDetailPage() {
               <GardenBoardView
                 growAreas={growAreas}
                 onUpdatePosition={handleUpdatePosition}
+                onUpdateDimensions={handleUpdateDimensions}
                 onSelectGrowArea={handleSelectGrowAreaFromBoard}
+                onAddGrowArea={() => setShowCreateModal(true)}
+                gardenId={gardenId}
               />
             )}
           </>

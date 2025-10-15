@@ -14,64 +14,177 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TODO.md for tracking feature development
 - CHANGELOG.md for tracking project changes
 - Session context documentation for development continuity
+- **Board View Viewport Position Memory**: The board view now remembers your exact viewport position, zoom level, and grid visibility preferences
+  - Viewport state is saved to localStorage per garden (key: `garden-board-state-${gardenId}`)
+  - Position is automatically restored when you refresh the page or switch back to board view
+  - Each garden maintains its own independent viewport state
+  - Fixed race condition where default position (0,0) was being saved before saved state could load
+  - Added 100ms delay before allowing saves to ensure React state updates complete properly
+  - Improved state management with `isInitialMount` and `hasLoadedSavedState` flags
+  - Clean implementation without debug console spam
 
 ---
 
-## [0.5.2] - 2025-10-12
+## [0.5.4] - 2025-10-13
 
-### Fixed - Canvas Dragging Behavior in Garden Board View
-- **Grow Area Dragging Issues**
-  - Fixed critical bug where dragging one grow area would cause the canvas to move/snap
-  - Fixed issue where dragging the background canvas itself was unreliable
-  - Resolved problem where boxes appeared to interfere with each other during drag
-  - Each grow area now drags independently with smooth, predictable movement
-  
-- **Backend Validation**
-  - Confirmed position validation allows negative coordinates (required for infinite canvas with pan/zoom)
-  - Positions can be negative when canvas is panned or items are placed in different quadrants
-  
-- **Canvas Background Dragging**
-  - Background canvas now draggable at all times (like Miro/Excalidraw)
-  - Stage is temporarily disabled during grow area drag to prevent interference
-  - Click and drag empty space to pan the canvas smoothly
-  - Canvas stays stationary when dragging grow areas
+### Fixed - Zone Type Badge Positioning After Resize ✅
 
-### Technical Details
-- **Root Cause**: 
-  - Stage and Group elements were both draggable simultaneously, causing interference
-  - When dragging a grow area, the Stage would also start dragging, creating the "snapping" effect
-  - React state updates during drag were causing ALL Groups to re-render with new props
-  
-- **Solution**: 
-  1. **Stage Dragging Control**: Made Stage always `draggable={true}` instead of state-controlled
-  2. **Prevent Simultaneous Drag**: When a grow area drag starts, temporarily disable Stage dragging:
-     ```typescript
-     onDragStart={(e) => {
-       draggingIdRef.current = growArea.id;
-       e.cancelBubble = true;
-       stage.draggable(false); // Disable stage during item drag
-     }}
-     ```
-  3. **Re-enable After Drag**: When grow area drag ends, re-enable Stage dragging:
-     ```typescript
-     onDragEnd={(e) => {
-       // ... save position ...
-       stage.draggable(true); // Re-enable stage
-     }}
-     ```
-  4. **State Update Timing**: Backend saves first, then React state updates only after success
-  5. **Drag Tracking**: Use `useRef` to track which item is being dragged (doesn't trigger re-renders)
+**Problem:**
+- Zone type badges (BOX, FIELD, BED, BUCKET) were not repositioning correctly after resizing grow areas
+- Badge would stay in the old position until page refresh
+- For large rectangles, badge appeared inside the shape; for small ones, outside the shape
+- Badge position calculation used outdated dimensions
 
-- **Files Modified**: 
-  - `GardenBoardView.tsx` - Fixed Stage/Group dragging interference, added drag state tracking
-  - `page.tsx` - State updates after backend save completes (not during drag)
-  
-- **Result**: 
-  - ✅ Drag a grow area → Only that box moves, canvas stays still
-  - ✅ Drag empty space → Canvas pans smoothly
-  - ✅ Each box moves independently without affecting others
-  - ✅ Behavior matches Miro/Excalidraw expectations
-  - ✅ Positions persist correctly to backend
+**Root Cause:**
+- React wasn't re-rendering the `GrowAreaBox` component after dimensions changed
+- Component key was only `growArea.id`, which never changes during resize
+- Badge position calculated once on mount, not updated when dimensions changed
+
+**Solution:**
+1. **Updated React Key**: Changed from `key={growArea.id}` to `key={`${growArea.id}-${growArea.width}-${growArea.length}`}`
+2. **Force Component Re-mount**: When dimensions change, React sees new key and completely re-renders component
+3. **Added Transform State**: Added `isTransforming` state to hide badges during active resize
+4. **Centered Badge Position**: 
+   - Rectangles: `(width / 2) - 25` for horizontal centering
+   - Circles: `(radius - 25)` for horizontal centering
+   - Both: `y = 8` for consistent top positioning
+
+**Files Modified:**
+- `GardenBoardView.tsx` - Updated component key to include dimensions
+- `GrowAreaBox.tsx` - Added isTransforming state, centered badge positioning logic
+
+**Result:**
+- ✅ Badge immediately appears in correct position after resize (no refresh needed)
+- ✅ Badge always centered at top for both rectangles and circles
+- ✅ Badge hidden during active resize for clean UX
+- ✅ Works for any size: small, large, tall, wide
+- ✅ Consistent positioning regardless of shape type
+
+**User Experience:**
+- Resize a rectangle from narrow to wide → badge stays perfectly centered at top
+- Resize from large to small → badge repositions correctly
+- Resize a circle → badge stays centered at top
+- Clean UI during resize (no floating badges in wrong positions)
+
+---
+
+## [0.5.3] - 2025-10-12
+
+### Added - Resize Functionality for Grow Areas (Steps 20-21 Complete) ✅
+
+**Interactive Resize Handles Implementation**
+
+**Features Added:**
+
+1. **Konva Transformer Integration:**
+   - Added resize handles using Konva's built-in Transformer component
+   - Green handles (`#10b981`) with darker borders (`#059669`)
+   - 12px anchor size for touch-friendly interaction
+   - Rotation disabled (resize only)
+
+2. **Different Handle Configurations:**
+   - **Rectangles**: 8 handles (4 corners + 4 edge midpoints) for flexible resizing
+   - **Circles**: 4 corner handles only for proportional scaling
+
+3. **Real-time Visual Feedback:**
+   - Shape scales during drag
+   - Minimum size enforcement (44x44px for mobile touch targets)
+   - Labels hidden during resize for clean UX
+
+4. **Auto-save to Backend:**
+   - Dimensions saved immediately on resize completion
+   - Optimistic UI updates after successful save
+   - Error handling with state revert on failure
+
+5. **Smart Dimension Updates:**
+   - Rectangles: Independent width/height adjustment
+   - Circles: Proportional resize maintaining circular shape
+   - Dimensions displayed as "Ø X cm" for circles, "W × L cm" for rectangles
+
+**Files Modified:**
+- `GrowAreaBox.tsx` - Added Transformer, handleTransformEnd, resize state management
+- `GardenBoardView.tsx` - Added onUpdateDimensions prop and callback
+- `page.tsx` - Added handleUpdateDimensions function to save dimensions to backend
+
+**Technical Implementation:**
+- Used `shapeRef` and `transformerRef` to connect Transformer to shapes
+- Scale values calculated and applied to dimensions
+- Scale reset to 1 after extracting dimensions
+- Stage dragging temporarily disabled during transform
+
+**Result:**
+- ✅ Click grow area to select and show resize handles
+- ✅ Drag any handle to resize shape
+- ✅ Release to auto-save new dimensions
+- ✅ Works seamlessly with existing drag-and-drop
+- ✅ Mobile-friendly touch targets
+
+---
+
+## [0.5.3] - 2025-10-12
+
+### Added - GrowAreaBox Component with Circular Buckets (Step 19 Complete) ✅
+
+**Created dedicated GrowAreaBox component for visual grow area representation**
+
+- **Component Location:** `/client-next/app/gardens/[id]/components/GrowAreaBox.tsx`
+- **Refactored:** Extracted grow area rendering logic from GardenBoardView into reusable component
+
+**Features Implemented:**
+
+1. **Visual Rendering (19.1):**
+   - Each grow area rendered as Konva Group with Rect and Text elements
+   - Clean separation of concerns with dedicated component
+
+2. **Color Coding by Zone Type (19.2):**
+   - BOX = `#3b82f6` (blue)
+   - FIELD = `#22c55e` (green)
+   - BED = `#92400e` (brown)
+   - BUCKET = `#6b7280` (gray)
+   - Const object for easy maintenance: `ZONE_TYPE_COLORS`
+
+3. **Text Display (19.3 & 19.4):**
+   - Grow area name prominently displayed in center (16px bold)
+   - Dimensions text below name (e.g., "80 × 120 cm") in 13px
+   - Falls back to zoneSize string if width/length not provided
+   - Text ellipsis for long names
+
+4. **Hover Effects (19.5):**
+   - Border highlight on hover (stroke width increases from 2px to 3px)
+   - Opacity increases from 0.7 to 0.8
+   - Shadow blur increases from 5px to 10px
+   - Cursor changes to indicate draggable (built into Konva)
+   - Selected state has green border (#10b981, 4px width, 15px shadow)
+
+5. **Mobile Touch Support (19.6):**
+   - Minimum size enforced: 44x44px (iOS/Android touch target guidelines)
+   - `Math.max()` ensures grow areas never render smaller than touch targets
+   - Touch events handled: onTap, onDblTap (in addition to mouse events)
+
+**Bonus Features Added:**
+
+- **Zone Type Badge:** Small badge in top-left corner showing zone type (BOX, FIELD, etc.)
+- **Number of Rows Indicator:** Badge in bottom-right corner if `nrOfRows` is set
+- **Selection Corner Markers:** Four green squares at corners when selected for clear visual feedback
+- **Enhanced Drag Handling:** Proper event bubbling prevention to avoid canvas interference
+- **Stage Dragging Control:** Temporarily disables stage dragging during grow area drag
+
+**Integration:**
+
+- Updated `GardenBoardView.tsx` to import and use `GrowAreaBox`
+- Simplified parent component - cleaner code with better separation of concerns
+- All drag-and-drop logic preserved and working correctly
+
+**Code Quality:**
+
+- ✅ Zero TypeScript errors
+- ✅ Proper prop typing with interface
+- ✅ Event handling with proper cleanup
+- ✅ Performance optimized (listening={false} on static elements)
+
+**Next Steps:**
+- Step 20: Implement auto-save for drag positions (debounced API calls)
+- Step 21: Add resize functionality with corner handles
 
 ---
 

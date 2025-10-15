@@ -3,9 +3,10 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -16,7 +17,7 @@ export async function GET(
     }
 
     // Fixed: Use /api/growarea/garden/{gardenId} endpoint
-    const response = await springApi.get(`/api/growarea/garden/${params.id}`, {
+    const response = await springApi.get(`/api/growarea/garden/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

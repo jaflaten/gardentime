@@ -3,9 +3,10 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -15,7 +16,7 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/growarea/${params.id}`, {
+    const response = await springApi.get(`/api/growarea/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -39,9 +40,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -52,9 +54,9 @@ export async function PUT(
     }
 
     const body = await request.json();
-    console.log('Updating grow area:', params.id, body);
+    console.log('Updating grow area:', id, body);
 
-    const response = await springApi.put(`/api/growarea/${params.id}`, body, {
+    const response = await springApi.put(`/api/growarea/${id}`, body, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -78,9 +80,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -90,7 +93,7 @@ export async function DELETE(
       );
     }
 
-    await springApi.delete(`/api/growarea/${params.id}`, {
+    await springApi.delete(`/api/growarea/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

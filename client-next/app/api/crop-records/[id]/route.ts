@@ -3,9 +3,10 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -17,7 +18,7 @@ export async function PUT(
 
     const body = await request.json();
 
-    const response = await springApi.put(`/api/crop-records/${params.id}`, body, {
+    const response = await springApi.put(`/api/crop-records/${id}`, body, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -41,9 +42,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -53,12 +55,11 @@ export async function DELETE(
       );
     }
 
-    await springApi.delete(`/api/crop-records/${params.id}`, {
+    await springApi.delete(`/api/crop-records/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    // Return 204 No Content without a body (correct way)
-    return new NextResponse(null, { status: 204 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error: any) {
     console.error('Delete crop record error:', error);
 

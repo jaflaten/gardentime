@@ -3,9 +3,10 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -15,7 +16,7 @@ export async function GET(
       );
     }
 
-    const response = await springApi.get(`/api/gardens/${params.id}`, {
+    const response = await springApi.get(`/api/gardens/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -39,9 +40,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -53,7 +55,7 @@ export async function PUT(
 
     const body = await request.json();
 
-    const response = await springApi.put(`/api/gardens/${params.id}`, body, {
+    const response = await springApi.put(`/api/gardens/${id}`, body, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -77,9 +79,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -89,7 +92,7 @@ export async function DELETE(
       );
     }
 
-    await springApi.delete(`/api/gardens/${params.id}`, {
+    await springApi.delete(`/api/gardens/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -110,4 +113,3 @@ export async function DELETE(
     );
   }
 }
-

@@ -1,33 +1,153 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Stage, Layer, Rect, Text, Line, Group } from 'react-konva';
-import { GrowArea } from '@/lib/api';
+import { Stage, Layer, Rect, Line } from 'react-konva';
+import { GrowArea, CanvasObject, canvasObjectService } from '@/lib/api';
 import Konva from 'konva';
+import GrowAreaBox from './GrowAreaBox';
+import DrawingToolbar, { DrawingTool } from './DrawingToolbar';
+import CanvasShape from './CanvasShape';
 
 interface GardenBoardViewProps {
   growAreas: GrowArea[];
   onUpdatePosition: (id: string, x: number, y: number) => void;
+  onUpdateDimensions: (id: string, width: number, height: number) => void;
   onSelectGrowArea: (growArea: GrowArea) => void;
+  onAddGrowArea?: () => void;
+  gardenId: string;
 }
-
-type ZoomLevel = 50 | 100 | 200;
 
 export default function GardenBoardView({
   growAreas,
   onUpdatePosition,
+  onUpdateDimensions,
   onSelectGrowArea,
+  onAddGrowArea,
+  gardenId,
 }: GardenBoardViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const draggingIdRef = useRef<string | null>(null);
+  const hasLoadedSavedState = useRef(false); // Track if we've loaded saved state
+  const isInitialMount = useRef(true); // Track initial mount
+  const initialGardenId = useRef(gardenId); // Store the initial gardenId
 
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>(100);
+  const [scale, setScale] = useState<number>(1); // Changed from discrete zoomLevel to continuous scale
   const [showGrid, setShowGrid] = useState(true);
   const [stagePosition, setStagePosition] = useState({ x: 0, y: 0 });
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isDraggingStage, setIsDraggingStage] = useState(false);
+
+  // Drawing tool state
+  const [activeTool, setActiveTool] = useState<DrawingTool>('SELECT');
+  const [canvasObjects, setCanvasObjects] = useState<CanvasObject[]>([]);
+  const [selectedObjectId, setSelectedObjectId] = useState<number | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawingStart, setDrawingStart] = useState<{ x: number; y: number } | null>(null);
+  const [currentDrawing, setCurrentDrawing] = useState<CanvasObject | null>(null);
+
+  // Load canvas objects from backend
+  useEffect(() => {
+    // Don't load if gardenId is not defined yet
+    if (!gardenId) return;
+
+    const loadCanvasObjects = async () => {
+      try {
+        const objects = await canvasObjectService.getByGardenId(gardenId);
+        console.log(`✅ Loaded ${objects.length} canvas objects from backend:`, objects);
+        setCanvasObjects(objects);
+      } catch (error) {
+        console.error('❌ Failed to load canvas objects:', error);
+      }
+    };
+    loadCanvasObjects();
+  }, [gardenId]);
+
+  // Load saved canvas state from localStorage on mount ONLY
+  useEffect(() => {
+    // Only run this once on initial mount
+    if (hasLoadedSavedState.current) return;
+
+    const savedState = localStorage.getItem(`garden-board-state-${gardenId}`);
+    if (savedState) {
+      try {
+        const { position, zoom, scale: savedScale, grid } = JSON.parse(savedState);
+        if (position) {
+          setStagePosition(position);
+        }
+        // Support both old 'zoom' and new 'scale' format
+        if (savedScale !== undefined) {
+          setScale(savedScale);
+        } else if (zoom !== undefined) {
+          setScale(zoom / 100);
+        }
+        if (grid !== undefined) setShowGrid(grid);
+      } catch (error) {
+        console.error('Failed to parse saved board state:', error);
+      }
+    }
+    hasLoadedSavedState.current = true;
+
+    // Small delay to ensure state is set before we allow saves
+    setTimeout(() => {
+      isInitialMount.current = false;
+    }, 100);
+  }, []); // Empty dependency array - run only once!
+
+  // Reset state when garden changes
+  useEffect(() => {
+    if (initialGardenId.current !== gardenId) {
+      initialGardenId.current = gardenId;
+      hasLoadedSavedState.current = false;
+      isInitialMount.current = true;
+
+      // Load new garden's saved state
+      const savedState = localStorage.getItem(`garden-board-state-${gardenId}`);
+      if (savedState) {
+        try {
+          const { position, zoom, scale: savedScale, grid } = JSON.parse(savedState);
+          if (position) setStagePosition(position);
+          if (savedScale !== undefined) {
+            setScale(savedScale);
+          } else if (zoom !== undefined) {
+            setScale(zoom / 100);
+          }
+          if (grid !== undefined) setShowGrid(grid);
+        } catch (error) {
+          console.error('Failed to parse saved board state:', error);
+        }
+      } else {
+        setStagePosition({ x: 0, y: 0 });
+        setScale(1);
+        setShowGrid(true);
+      }
+
+      hasLoadedSavedState.current = true;
+      setTimeout(() => {
+        isInitialMount.current = false;
+      }, 100);
+    }
+  }, [gardenId]);
+
+  // Save canvas state to localStorage whenever it changes
+  useEffect(() => {
+    // Don't save on the very first render before we've had a chance to load
+    if (isInitialMount.current) {
+      return;
+    }
+
+    // Don't save until we've loaded saved state
+    if (!hasLoadedSavedState.current) {
+      return;
+    }
+
+    const state = {
+      position: stagePosition,
+      scale: scale,
+      grid: showGrid,
+    };
+    localStorage.setItem(`garden-board-state-${gardenId}`, JSON.stringify(state));
+  }, [stagePosition, scale, showGrid, gardenId]);
 
   // Update canvas dimensions on mount and resize
   useEffect(() => {
@@ -44,15 +164,49 @@ export default function GardenBoardView({
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Handle zoom changes
-  const handleZoomChange = (level: ZoomLevel) => {
-    setZoomLevel(level);
+  // Handle zoom changes from buttons
+  const handleZoomChange = (zoomPercent: number) => {
+    setScale(zoomPercent / 100);
+  };
+
+  // Handle mouse wheel zoom - now with smooth continuous zooming
+  const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+    e.evt.preventDefault();
+    e.evt.stopPropagation();
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const oldScale = scale;
+    const pointer = stage.getPointerPosition();
+    if (!pointer) return;
+
+    // Determine zoom direction and amount
+    const scaleBy = 1.02; // Smaller increment for smoother zooming
+    let newScale = e.evt.deltaY > 0 ? oldScale / scaleBy : oldScale * scaleBy;
+
+    // Clamp scale to reasonable limits (50% to 200%)
+    newScale = Math.max(0.5, Math.min(2, newScale));
+
+    // Calculate new position to zoom towards pointer
+    const mousePointTo = {
+      x: (pointer.x - stagePosition.x) / oldScale,
+      y: (pointer.y - stagePosition.y) / oldScale,
+    };
+
+    const newPos = {
+      x: pointer.x - mousePointTo.x * newScale,
+      y: pointer.y - mousePointTo.y * newScale,
+    };
+
+    setScale(newScale);
+    setStagePosition(newPos);
   };
 
   // Fit to view - centers and scales to show all grow areas
   const handleFitToView = () => {
     if (growAreas.length === 0) {
-      setZoomLevel(100);
+      setScale(1);
       setStagePosition({ x: 0, y: 0 });
       return;
     }
@@ -68,7 +222,7 @@ export default function GardenBoardView({
       }));
 
     if (positions.length === 0) {
-      setZoomLevel(100);
+      setScale(1);
       setStagePosition({ x: 0, y: 0 });
       return;
     }
@@ -84,18 +238,13 @@ export default function GardenBoardView({
     // Calculate zoom to fit content with padding
     const scaleX = (dimensions.width * 0.8) / contentWidth;
     const scaleY = (dimensions.height * 0.8) / contentHeight;
-    const scale = Math.min(scaleX, scaleY, 2); // Max 200% zoom
-
-    // Determine closest zoom level
-    let newZoom: ZoomLevel = 100;
-    if (scale <= 0.75) newZoom = 50;
-    else if (scale >= 1.5) newZoom = 200;
+    const newScale = Math.min(scaleX, scaleY, 2); // Max 200% zoom
 
     // Center the content
-    const centerX = (dimensions.width - contentWidth * (newZoom / 100)) / 2 - minX * (newZoom / 100);
-    const centerY = (dimensions.height - contentHeight * (newZoom / 100)) / 2 - minY * (newZoom / 100);
+    const centerX = (dimensions.width - contentWidth * newScale) / 2 - minX * newScale;
+    const centerY = (dimensions.height - contentHeight * newScale) / 2 - minY * newScale;
 
-    setZoomLevel(newZoom);
+    setScale(newScale);
     setStagePosition({ x: centerX, y: centerY });
   };
 
@@ -103,13 +252,13 @@ export default function GardenBoardView({
   const generateGridLines = () => {
     const lines = [];
     const gridSize = 50; // 50cm intervals at 100% zoom
-    const scaledGridSize = gridSize * (zoomLevel / 100);
+    const scaledGridSize = gridSize * scale;
 
     // Calculate visible area accounting for stage position
     const startX = Math.floor(-stagePosition.x / scaledGridSize) * scaledGridSize;
     const startY = Math.floor(-stagePosition.y / scaledGridSize) * scaledGridSize;
-    const endX = startX + dimensions.width / (zoomLevel / 100) + scaledGridSize;
-    const endY = startY + dimensions.height / (zoomLevel / 100) + scaledGridSize;
+    const endX = startX + dimensions.width / scale + scaledGridSize;
+    const endY = startY + dimensions.height / scale + scaledGridSize;
 
     // Vertical lines
     for (let x = startX; x <= endX; x += gridSize) {
@@ -118,7 +267,7 @@ export default function GardenBoardView({
           key={`v-${x}`}
           points={[x, startY, x, endY]}
           stroke="#e5e7eb"
-          strokeWidth={1 / (zoomLevel / 100)}
+          strokeWidth={1 / scale}
           listening={false}
         />
       );
@@ -131,7 +280,7 @@ export default function GardenBoardView({
           key={`h-${y}`}
           points={[startX, y, endX, y]}
           stroke="#e5e7eb"
-          strokeWidth={1 / (zoomLevel / 100)}
+          strokeWidth={1 / scale}
           listening={false}
         />
       );
@@ -140,8 +289,215 @@ export default function GardenBoardView({
     return lines;
   };
 
+  // Get current zoom percentage for display
+  const currentZoomPercent = Math.round(scale * 100);
+
+  // Handle mouse down on stage - start drawing
+  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    // Only start drawing if a drawing tool is active (not SELECT or PAN)
+    if (activeTool === 'SELECT' || activeTool === 'PAN') return;
+
+    // Prevent stage dragging when drawing
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // Only handle clicks on the stage background (not on shapes)
+    if (e.target !== stage) return;
+
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+
+    // Convert screen coordinates to canvas coordinates (accounting for zoom and pan)
+    const x = (pos.x - stagePosition.x) / scale;
+    const y = (pos.y - stagePosition.y) / scale;
+
+    setIsDrawing(true);
+    setDrawingStart({ x, y });
+
+    // For text tool, create text immediately
+    if (activeTool === 'TEXT') {
+      const textPrompt = prompt('Enter text:', 'Text');
+      if (textPrompt) {
+        const newTextObject: CanvasObject = {
+          id: Date.now(), // Temporary ID until saved
+          gardenId: gardenId,
+          type: 'TEXT',
+          x,
+          y,
+          width: 200,
+          height: 40,
+          text: textPrompt,
+          fontSize: 16,
+          fontFamily: 'Arial',
+          strokeColor: '#000000',
+          fillColor: '#ffffff',
+          opacity: 1,
+        };
+
+        // Save to backend immediately
+        saveCanvasObject(newTextObject);
+      }
+      setActiveTool('SELECT');
+      setIsDrawing(false);
+      setDrawingStart(null);
+      return;
+    }
+
+    // For freehand, start with initial point
+    if (activeTool === 'FREEHAND') {
+      setCurrentDrawing({
+        id: Date.now(),
+        gardenId: gardenId,
+        type: 'FREEHAND',
+        x: 0,
+        y: 0,
+        points: JSON.stringify([x, y]),
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 1,
+      });
+    }
+  };
+
+  // Handle mouse move on stage - update drawing preview
+  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!isDrawing || !drawingStart || activeTool === 'SELECT' || activeTool === 'PAN') return;
+
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pos = stage.getPointerPosition();
+    if (!pos) return;
+
+    const x = (pos.x - stagePosition.x) / scale;
+    const y = (pos.y - stagePosition.y) / scale;
+
+    // Update preview based on tool type
+    if (activeTool === 'RECTANGLE') {
+      const width = x - drawingStart.x;
+      const height = y - drawingStart.y;
+
+      setCurrentDrawing({
+        id: Date.now(),
+        gardenId: gardenId,
+        type: 'RECTANGLE',
+        x: width > 0 ? drawingStart.x : x,
+        y: height > 0 ? drawingStart.y : y,
+        width: Math.abs(width),
+        height: Math.abs(height),
+        fillColor: '#e0e0e0',
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 0.7,
+      });
+    } else if (activeTool === 'CIRCLE') {
+      const width = Math.abs(x - drawingStart.x);
+      const height = Math.abs(y - drawingStart.y);
+      const diameter = Math.max(width, height);
+
+      setCurrentDrawing({
+        id: Date.now(),
+        gardenId: gardenId,
+        type: 'CIRCLE',
+        x: drawingStart.x,
+        y: drawingStart.y,
+        width: diameter,
+        height: diameter,
+        fillColor: '#e0e0e0',
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 0.7,
+      });
+    } else if (activeTool === 'LINE' || activeTool === 'ARROW') {
+      setCurrentDrawing({
+        id: Date.now(),
+        gardenId: gardenId,
+        type: activeTool,
+        x: 0,
+        y: 0,
+        points: JSON.stringify([drawingStart.x, drawingStart.y, x, y]),
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 1,
+      });
+    } else if (activeTool === 'FREEHAND' && currentDrawing) {
+      // Add new point to freehand path
+      const existingPoints = JSON.parse(currentDrawing.points || '[]') as number[];
+      const newPoints = [...existingPoints, x, y];
+
+      setCurrentDrawing({
+        ...currentDrawing,
+        points: JSON.stringify(newPoints),
+      });
+    }
+  };
+
+  // Handle mouse up on stage - finalize drawing
+  const handleStageMouseUp = async () => {
+    if (!isDrawing || !currentDrawing) {
+      setIsDrawing(false);
+      setDrawingStart(null);
+      return;
+    }
+
+    // Don't save shapes that are too small (likely accidental clicks)
+    if (activeTool === 'RECTANGLE' || activeTool === 'CIRCLE') {
+      const minSize = 5; // minimum 5px
+      if ((currentDrawing.width || 0) < minSize && (currentDrawing.height || 0) < minSize) {
+        setIsDrawing(false);
+        setDrawingStart(null);
+        setCurrentDrawing(null);
+        return;
+      }
+    }
+
+    setIsDrawing(false);
+    setDrawingStart(null);
+
+    // Save the completed shape to backend
+    await saveCanvasObject(currentDrawing);
+
+    setCurrentDrawing(null);
+    setActiveTool('SELECT'); // Switch back to select mode
+  };
+
+  // Save canvas object to backend
+  const saveCanvasObject = async (obj: CanvasObject) => {
+    try {
+      const saved = await canvasObjectService.create({
+        gardenId: obj.gardenId,
+        type: obj.type,
+        x: obj.x,
+        y: obj.y,
+        width: obj.width,
+        height: obj.height,
+        points: obj.points,
+        fillColor: obj.fillColor,
+        strokeColor: obj.strokeColor,
+        strokeWidth: obj.strokeWidth,
+        opacity: obj.opacity,
+        text: obj.text,
+        fontSize: obj.fontSize,
+        fontFamily: obj.fontFamily,
+      });
+
+      // Add to local state with real ID from backend
+      setCanvasObjects((prev) => [...prev, saved]);
+    } catch (error) {
+      console.error('Failed to save canvas object:', error);
+      alert('Failed to save drawing. Please try again.');
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
+      {/* Drawing Toolbar - always visible */}
+      <DrawingToolbar
+        activeTool={activeTool}
+        onToolChange={setActiveTool}
+        onAddGrowArea={onAddGrowArea}
+      />
+
       {/* Toolbar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
         {/* Zoom Controls */}
@@ -151,7 +507,7 @@ export default function GardenBoardView({
             <button
               onClick={() => handleZoomChange(50)}
               className={`px-3 py-1 text-sm rounded ${
-                zoomLevel === 50
+                Math.abs(scale - 0.5) < 0.01
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -161,7 +517,7 @@ export default function GardenBoardView({
             <button
               onClick={() => handleZoomChange(100)}
               className={`px-3 py-1 text-sm rounded ${
-                zoomLevel === 100
+                Math.abs(scale - 1) < 0.01
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -171,7 +527,7 @@ export default function GardenBoardView({
             <button
               onClick={() => handleZoomChange(200)}
               className={`px-3 py-1 text-sm rounded ${
-                zoomLevel === 200
+                Math.abs(scale - 2) < 0.01
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -184,6 +540,9 @@ export default function GardenBoardView({
             >
               Fit to View
             </button>
+          </div>
+          <div className="text-sm font-medium text-green-600">
+            {currentZoomPercent}%
           </div>
         </div>
 
@@ -210,11 +569,12 @@ export default function GardenBoardView({
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
-          draggable={true}
+          draggable={activeTool === 'SELECT' || activeTool === 'PAN'}
           x={stagePosition.x}
           y={stagePosition.y}
-          scaleX={zoomLevel / 100}
-          scaleY={zoomLevel / 100}
+          scaleX={scale}
+          scaleY={scale}
+          onWheel={handleWheel}
           onDragEnd={(e) => {
             // Only update stage position if we actually dragged the stage (not a grow area)
             const target = e.target;
@@ -231,6 +591,9 @@ export default function GardenBoardView({
               setSelectedId(null);
             }
           }}
+          onMouseDown={handleStageMouseDown}
+          onMouseMove={handleStageMouseMove}
+          onMouseUp={handleStageMouseUp}
         >
           <Layer>
             {/* Background rectangle for canvas area */}
@@ -253,124 +616,66 @@ export default function GardenBoardView({
                 return null;
               }
 
-              const x = growArea.positionX;
-              const y = growArea.positionY;
-              const width = growArea.width || 100; // Default 100cm
-              const height = growArea.length || 100; // Default 100cm
-              const isSelected = selectedId === growArea.id;
-              const isDragging = draggingIdRef.current === growArea.id;
-              const color = (() => {
-                switch (growArea.zoneType) {
-                  case 'BOX': return '#3b82f6'; // blue
-                  case 'FIELD': return '#22c55e'; // green
-                  case 'BED': return '#a855f7'; // purple
-                  case 'BUCKET': return '#64748b'; // gray
-                  default: return '#6b7280'; // default gray
-                }
-              })();
-
               return (
-                <Group
-                  key={growArea.id}
-                  x={x}
-                  y={y}
-                  draggable
-                  onDragStart={(e) => {
-                    // Mark this item as being dragged
+                <GrowAreaBox
+                  key={`${growArea.id}-${growArea.width}-${growArea.length}`}
+                  growArea={growArea}
+                  isSelected={selectedId === growArea.id}
+                  onDragStart={() => {
                     draggingIdRef.current = growArea.id;
-
-                    // CRITICAL: Stop the event from bubbling to the Stage
-                    // This prevents the Stage from starting a drag when we drag a grow area
-                    e.cancelBubble = true;
-                    const stage = e.target.getStage();
-                    if (stage) {
-                      stage.draggable(false);
-                    }
                   }}
-                  onDragEnd={(e) => {
-                    // Get the final position
-                    const node = e.target;
-                    const newX = node.x();
-                    const newY = node.y();
-
-                    // Update the backend with the new position
-                    onUpdatePosition(growArea.id, newX, newY);
-
+                  onDragEnd={(x, y) => {
+                    onUpdatePosition(growArea.id, x, y);
                     draggingIdRef.current = null;
-
-                    // Re-enable stage dragging
-                    const stage = e.target.getStage();
-                    if (stage) {
-                      stage.draggable(true);
-                    }
                   }}
-                  onMouseDown={(e) => {
-                    // Stop event from reaching the stage
-                    e.cancelBubble = true;
+                  onResize={(width, height) => {
+                    onUpdateDimensions(growArea.id, width, height);
                   }}
-                  onClick={(e) => {
-                    e.cancelBubble = true;
-                    setSelectedId(growArea.id);
-                  }}
-                  onDblClick={(e) => {
-                    e.cancelBubble = true;
-                    onSelectGrowArea(growArea);
-                  }}
-                  onTap={(e) => {
-                    e.cancelBubble = true;
-                    setSelectedId(growArea.id);
-                  }}
-                  onDblTap={(e) => {
-                    e.cancelBubble = true;
-                    onSelectGrowArea(growArea);
-                  }}
-                >
-                  {/* Rectangle */}
-                  <Rect
-                    x={0}
-                    y={0}
-                    width={width}
-                    height={height}
-                    fill={color}
-                    opacity={0.7}
-                    stroke={isSelected ? '#10b981' : '#1f2937'}
-                    strokeWidth={isSelected ? 3 : 1}
-                    cornerRadius={4}
-                    shadowColor="black"
-                    shadowBlur={isSelected ? 10 : 5}
-                    shadowOpacity={0.3}
-                    shadowOffset={{ x: 2, y: 2 }}
-                  />
-
-                  {/* Label */}
-                  <Text
-                    x={0}
-                    y={height / 2 - 10}
-                    width={width}
-                    text={growArea.name}
-                    fontSize={14}
-                    fontStyle="bold"
-                    fill="white"
-                    align="center"
-                    listening={false}
-                  />
-
-                  {/* Dimensions */}
-                  {growArea.width && growArea.length && (
-                    <Text
-                      x={0}
-                      y={height / 2 + 5}
-                      width={width}
-                      text={`${growArea.width} × ${growArea.length} cm`}
-                      fontSize={11}
-                      fill="white"
-                      align="center"
-                      listening={false}
-                    />
-                  )}
-                </Group>
+                  onSelect={() => setSelectedId(growArea.id)}
+                  onDoubleClick={() => onSelectGrowArea(growArea)}
+                />
               );
             })}
+
+            {/* Canvas Objects */}
+            {canvasObjects.map((obj) => (
+              <CanvasShape
+                key={obj.id}
+                canvasObject={obj}
+                isSelected={selectedObjectId === obj.id}
+                onSelect={() => setSelectedObjectId(obj.id)}
+                onDragEnd={async (x, y) => {
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y } : s)));
+                  try {
+                    await canvasObjectService.update(obj.id, { x, y });
+                  } catch (error) {
+                    console.error('Failed to update canvas object position:', error);
+                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
+                  }
+                }}
+                onResize={async (x, y, width, height) => {
+                  // optimistic
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y, width, height } : s)));
+                  try {
+                    await canvasObjectService.update(obj.id, { x, y, width, height });
+                  } catch (error) {
+                    console.error('Failed to resize canvas object:', error);
+                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
+                  }
+                }}
+              />
+            ))}
+
+            {/* Preview of shape being drawn */}
+            {isDrawing && currentDrawing && (
+              <CanvasShape
+                key="preview"
+                canvasObject={currentDrawing}
+                isSelected={false}
+                onSelect={() => {}}
+                onDragEnd={() => {}}
+              />
+            )}
           </Layer>
         </Stage>
 

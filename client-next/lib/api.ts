@@ -101,11 +101,11 @@ export interface CreateGrowAreaRequest {
 }
 
 export interface UpdateGrowAreaRequest {
-  name?: string;
-  zoneSize?: string;
-  zoneType?: ZoneType;
-  nrOfRows?: number;
-  notes?: string;
+  name?: string;  // Optional
+  zoneSize?: string;  // Optional
+  zoneType?: ZoneType;  // Optional
+  nrOfRows?: number;  // Optional
+  notes?: string;  // Optional
   // Visual board position fields (in pixels)
   positionX?: number;  // Optional
   positionY?: number;  // Optional
@@ -113,6 +113,76 @@ export interface UpdateGrowAreaRequest {
   width?: number;  // Optional
   length?: number;  // Optional
   height?: number;  // Optional
+}
+
+// Canvas Object types - for drawing shapes, text, arrows, etc.
+export type CanvasObjectType = 'RECTANGLE' | 'CIRCLE' | 'LINE' | 'ARROW' | 'TEXT' | 'FREEHAND';
+
+export interface CanvasObject {
+  id: number;
+  gardenId: string;  // UUID
+  type: CanvasObjectType;
+  // Position and dimensions
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  // For lines, arrows, freehand paths (array of points: [x1,y1,x2,y2,...])
+  points?: string;
+  // Styling
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  opacity?: number;
+  // Text content (for text objects)
+  text?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  // Metadata
+  rotation?: number;
+  zIndex?: number;
+  locked?: boolean;
+  layerId?: string;
+}
+
+export interface CreateCanvasObjectRequest {
+  gardenId: string;  // UUID
+  type: CanvasObjectType;
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+  points?: string;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  opacity?: number;
+  text?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  rotation?: number;
+  zIndex?: number;
+  locked?: boolean;
+  layerId?: string;
+}
+
+export interface UpdateCanvasObjectRequest {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  points?: string;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
+  opacity?: number;
+  text?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  rotation?: number;
+  zIndex?: number;
+  locked?: boolean;
+  layerId?: string;
 }
 
 // CropRecord types - FIXED: IDs are UUID strings
@@ -141,6 +211,7 @@ export interface CreateCropRecordRequest {
   dateHarvested?: string;
   notes?: string;
   outcome?: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR';
+  status?: CropStatus;  // NEW: Status to track crop lifecycle
   quantityHarvested?: number;
   unit?: string;
 }
@@ -265,6 +336,33 @@ export const cropRecordService = {
 export const plantService = {
   getAll: async (): Promise<Plant[]> => {
     const response = await api.get('/plants');
+    return response.data;
+  },
+};
+
+// Canvas Object service - calls Next.js BFF
+export const canvasObjectService = {
+  getByGardenId: async (gardenId: string): Promise<CanvasObject[]> => {
+    const response = await api.get(`/canvas-objects/garden/${gardenId}`);
+    return response.data;
+  },
+
+  create: async (data: CreateCanvasObjectRequest): Promise<CanvasObject> => {
+    const response = await api.post('/canvas-objects', data);
+    return response.data;
+  },
+
+  update: async (id: number, data: UpdateCanvasObjectRequest): Promise<CanvasObject> => {
+    const response = await api.put(`/canvas-objects/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/canvas-objects/${id}`);
+  },
+
+  batchCreate: async (objects: CreateCanvasObjectRequest[]): Promise<CanvasObject[]> => {
+    const response = await api.post('/canvas-objects/batch', { objects });
     return response.data;
   },
 };
