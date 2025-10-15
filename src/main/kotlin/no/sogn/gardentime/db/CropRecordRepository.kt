@@ -9,4 +9,5 @@ import java.util.*
 interface CropRecordRepository: CrudRepository<CropRecordEntity, UUID> {
     fun findAllByGrowZoneId(growZoneId: Long): MutableList<CropRecordEntity>
     fun findCropRecordEntityById(id: UUID): CropRecordEntity?
+    fun findByGrowZoneIdIn(growZoneIds: List<Long>): List<CropRecordEntity>
 }

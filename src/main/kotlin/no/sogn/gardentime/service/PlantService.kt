@@ -15,4 +15,13 @@ class PlantService(
             mapPlantToDomain(it)
         }
     }
+
+    fun searchPlants(query: String): List<Plant> {
+        return if (query.isBlank()) {
+            plantRepository.findAll().map { mapPlantToDomain(it) }
+        } else {
+            plantRepository.findByNameContainingIgnoreCaseOrScientificNameContainingIgnoreCase(query, query)
+                .map { mapPlantToDomain(it) }
+        }
+    }
 }

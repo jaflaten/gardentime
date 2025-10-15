@@ -194,4 +194,23 @@ class GrowAreaService(
         }
     }
 
+    fun searchGrowAreas(query: String): List<GrowArea> {
+        val currentUserId = securityUtils.getCurrentUserId()
+        // Get all user's gardens
+        val userGardens = gardenRepository.findAllByUserId(currentUserId)
+        val gardenIds = userGardens.mapNotNull { it.id }
+
+        // Search grow areas by name within user's gardens
+        val growAreaEntities = if (query.isBlank()) {
+            growAreaRepository.findByGardenIdIn(gardenIds)
+        } else {
+            growAreaRepository.findByGardenIdInAndNameContainingIgnoreCase(gardenIds, query)
+        }
+
+        return growAreaEntities.map { growAreaEntity ->
+            val cropRecords = cropRecordRepository.findAllByGrowZoneId(growAreaEntity.id!!)
+            mapGrowAreaEntityToDomain(growAreaEntity, cropRecords)
+        }
+    }
+
 }

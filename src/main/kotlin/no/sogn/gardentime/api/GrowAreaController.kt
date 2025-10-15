@@ -99,4 +99,10 @@ class GrowAreaController(
         return ResponseEntity.ok(growAreas)
     }
 
+    @GetMapping("/search")
+    fun searchGrowAreas(@RequestParam query: String): ResponseEntity<List<GrowArea>> {
+        val growAreas = growAreaService.searchGrowAreas(query)
+        return ResponseEntity.ok(growAreas)
+    }
+
 }

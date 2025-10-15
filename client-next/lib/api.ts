@@ -221,8 +221,15 @@ export interface Plant {
   id: number;  // Long in backend
   name: string;
   scientificName?: string;
-  category?: string;
-  description?: string;
+  plantType?: string;  // ROOT_VEGETABLE, LEAFY_GREEN, TUBER, FRUIT_VEGETABLE, HERB, LEGUME, GRAIN, FLOWERING_PLANT, ALLIUM
+  maturityTime?: number;  // Days to maturity
+  growingSeason?: string;  // WINTER, SPRING, SUMMER, AUTUMN
+  sunReq?: string;  // Sun requirements
+  waterReq?: string;  // Water requirements
+  soilType?: string;  // Soil type
+  spaceReq?: string;  // Space requirements
+  category?: string;  // Deprecated: use plantType instead
+  description?: string;  // Deprecated
   createdAt: string;
   updatedAt: string;
 }
@@ -308,6 +315,11 @@ export const growAreaService = {
     const response = await api.get(`/grow-areas/${id}/crop-records`);
     return response.data;
   },
+
+  search: async (query: string): Promise<GrowArea[]> => {
+    const response = await api.get('/grow-areas/search', { params: { query } });
+    return response.data;
+  },
 };
 
 // CropRecord service - calls Next.js BFF
@@ -336,6 +348,11 @@ export const cropRecordService = {
 export const plantService = {
   getAll: async (): Promise<Plant[]> => {
     const response = await api.get('/plants');
+    return response.data;
+  },
+
+  search: async (query: string): Promise<Plant[]> => {
+    const response = await api.get('/plants/search', { params: { query } });
     return response.data;
   },
 };

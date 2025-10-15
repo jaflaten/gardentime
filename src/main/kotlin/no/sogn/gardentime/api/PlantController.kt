@@ -18,4 +18,10 @@ class PlantController(
         // Always return an array, even if empty
         return ResponseEntity.ok(plants)
     }
+
+    @GetMapping("/search")
+    fun searchPlants(@RequestParam query: String): ResponseEntity<List<Plant>> {
+        val plants = plantService.searchPlants(query)
+        return ResponseEntity.ok(plants)
+    }
 }
