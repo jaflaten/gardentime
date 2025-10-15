@@ -63,7 +63,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, onSelect,
           y={shape.y}
           width={shape.width || 100}
           height={shape.height || 100}
-          fill={shape.fillColor || '#e0e0e0'}
+          fill={shape.fillColor || 'transparent'}
           stroke={shape.strokeColor || '#000000'}
           strokeWidth={shape.strokeWidth || 2}
           onDragEnd={baseDragHandler}
@@ -96,7 +96,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, onSelect,
           x={(shape.x ?? 0) + radius}
           y={(shape.y ?? 0) + radius}
           radius={radius}
-          fill={shape.fillColor || '#e0e0e0'}
+          fill={shape.fillColor || 'transparent'}
           stroke={shape.strokeColor || '#000000'}
           strokeWidth={shape.strokeWidth || 2}
           onDragEnd={(e: any) => {

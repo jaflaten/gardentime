@@ -385,7 +385,7 @@ export default function GardenBoardView({
         y: height > 0 ? drawingStart.y : y,
         width: Math.abs(width),
         height: Math.abs(height),
-        fillColor: '#e0e0e0',
+        fillColor: 'transparent',
         strokeColor: '#000000',
         strokeWidth: 2,
         opacity: 0.7,
@@ -403,7 +403,7 @@ export default function GardenBoardView({
         y: drawingStart.y,
         width: diameter,
         height: diameter,
-        fillColor: '#e0e0e0',
+        fillColor: 'transparent',
         strokeColor: '#000000',
         strokeWidth: 2,
         opacity: 0.7,
@@ -488,6 +488,88 @@ export default function GardenBoardView({
       alert('Failed to save drawing. Please try again.');
     }
   };
+
+  // Delete selected canvas object
+  const deleteSelectedObject = async () => {
+    if (!selectedObjectId) return;
+
+    const confirmed = confirm('Delete this shape?');
+    if (!confirmed) return;
+
+    try {
+      await canvasObjectService.delete(selectedObjectId);
+      setCanvasObjects((prev) => prev.filter((obj) => obj.id !== selectedObjectId));
+      setSelectedObjectId(null);
+    } catch (error) {
+      console.error('Failed to delete canvas object:', error);
+      alert('Failed to delete shape. Please try again.');
+    }
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle shortcuts if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Delete selected object (Delete or Backspace)
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        if (selectedObjectId) {
+          deleteSelectedObject();
+        }
+        return;
+      }
+
+      // Escape - deselect and cancel drawing
+      if (e.key === 'Escape') {
+        setSelectedId(null);
+        setSelectedObjectId(null);
+        setIsDrawing(false);
+        setDrawingStart(null);
+        setCurrentDrawing(null);
+        setActiveTool('SELECT');
+        return;
+      }
+
+      // Number key shortcuts for tools (no modifier keys)
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          setActiveTool('SELECT');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          setActiveTool('PAN');
+        } else if (e.key === '3') {
+          e.preventDefault();
+          setActiveTool('RECTANGLE');
+        } else if (e.key === '4') {
+          e.preventDefault();
+          setActiveTool('CIRCLE');
+        } else if (e.key === '5') {
+          e.preventDefault();
+          setActiveTool('LINE');
+        } else if (e.key === '6') {
+          e.preventDefault();
+          setActiveTool('ARROW');
+        } else if (e.key === '7') {
+          e.preventDefault();
+          setActiveTool('TEXT');
+        } else if (e.key === '8') {
+          e.preventDefault();
+          setActiveTool('FREEHAND');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedObjectId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col h-full">
