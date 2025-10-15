@@ -18,16 +18,4 @@ class PlantController(
         // Always return an array, even if empty
         return ResponseEntity.ok(plants)
     }
-
-    @GetMapping("/{id}")
-    fun getPlantById(id: Long): ResponseEntity<Plant> {
-        val plant = plantService.getPlantById(id) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(plant)
-    }
-
-    @PostMapping("/{name}")
-    fun addPlant(@PathVariable name: String): ResponseEntity<Plant> {
-        val createdPlant = plantService.addPlant(name)
-        return ResponseEntity.ok(createdPlant)
-    }
 }

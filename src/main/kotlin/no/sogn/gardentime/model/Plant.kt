@@ -55,21 +55,6 @@ enum class PlantType(val description: String, val examples: List<String>) {
     ALLIUM("Plants in the onion family", listOf("Onion", "Garlic", "Leek"));
 }
 
-fun mapPlantToEntity(plant: Plant): PlantEntity {
-    return PlantEntity(
-        id = plant.id,
-        name = plant.name,
-        scientificName = plant.scientificName,
-        plantType = plant.plantType,
-        maturityTime = plant.maturityTime,
-        growingSeason = plant.growingSeason,
-        sunReq = plant.sunReq,
-        waterReq = plant.waterReq,
-        soilType = plant.soilType,
-        spaceReq = plant.spaceReq,
-    )
-}
-
 fun mapPlantToDomain(plantEntity: PlantEntity): Plant {
     return Plant(
         id = plantEntity.id,

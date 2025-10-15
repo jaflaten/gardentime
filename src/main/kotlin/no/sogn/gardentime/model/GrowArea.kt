@@ -2,7 +2,7 @@ package no.sogn.gardentime.model
 
 import jakarta.persistence.*
 import java.util.*
-//TODO we should probably rename GrowZone to GrowArea or something similar
+
 data class GrowArea(
     val id: Long? = null,
     val name: String,
