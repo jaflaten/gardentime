@@ -375,7 +375,8 @@ export default function GardenBoardView({
         // Save to backend immediately
         saveCanvasObject(newTextObject);
       }
-      setActiveTool('SELECT');
+      // Keep the current active tool instead of switching back to SELECT so users
+      // can create multiple text objects without re-selecting the tool.
       setIsDrawing(false);
       setDrawingStart(null);
       return;
@@ -626,7 +627,10 @@ export default function GardenBoardView({
     }
 
     setCurrentDrawing(null);
-    setActiveTool('SELECT'); // Switch back to select mode
+    // Do not force switching back to SELECT here. Keep the active tool so the
+    // user can draw multiple shapes in succession. The user can still press
+    // Escape or choose the Select tool to exit drawing mode.
+    // setActiveTool('SELECT');
   };
 
   // Save canvas object to backend

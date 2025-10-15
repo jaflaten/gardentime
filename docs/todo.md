@@ -58,9 +58,11 @@ GardenTime is a garden management application that helps users manage multiple g
     - [ ] Configurable line width and color
     - [ ] Dashed/dotted line styles
     - [ ] Hold Shift for horizontal/vertical/45° angles
+    - [ ] Make line endpoints adjustable after placement (drag endpoints, show handles)
   - [ ] 25.2.4: **Arrow Tool** - Click-drag to draw arrows
     - [ ] Single or double-headed arrows
     - [ ] Configurable arrowhead size and style
+    - [ ] Make arrow endpoints adjustable after placement (drag endpoints, update arrowhead orientation)
 
 - [ ] **25.3: Text Tool**
   - [ ] 25.3.1: Click to place text box on canvas
