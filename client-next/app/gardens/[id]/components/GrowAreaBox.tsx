@@ -8,6 +8,7 @@ import Konva from 'konva';
 interface GrowAreaBoxProps {
   growArea: GrowArea;
   isSelected: boolean;
+  isDraggingEnabled: boolean;
   onDragStart: () => void;
   onDragEnd: (x: number, y: number) => void;
   onResize?: (width: number, height: number) => void;
@@ -26,6 +27,7 @@ const ZONE_TYPE_COLORS = {
 export default function GrowAreaBox({
   growArea,
   isSelected,
+  isDraggingEnabled,
   onDragStart,
   onDragEnd,
   onResize,
@@ -107,7 +109,7 @@ export default function GrowAreaBox({
     <Group
       x={x}
       y={y}
-      draggable
+      draggable={isDraggingEnabled}
       onDragStart={(e) => {
         e.cancelBubble = true;
         const stage = e.target.getStage();

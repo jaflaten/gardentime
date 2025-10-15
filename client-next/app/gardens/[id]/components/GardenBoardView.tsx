@@ -651,7 +651,7 @@ export default function GardenBoardView({
           ref={stageRef}
           width={dimensions.width}
           height={dimensions.height}
-          draggable={activeTool === 'SELECT' || activeTool === 'PAN'}
+          draggable={activeTool === 'PAN'}
           x={stagePosition.x}
           y={stagePosition.y}
           scaleX={scale}
@@ -671,6 +671,7 @@ export default function GardenBoardView({
             // Deselect when clicking on stage background
             if (e.target === e.target.getStage()) {
               setSelectedId(null);
+              setSelectedObjectId(null);
             }
           }}
           onMouseDown={handleStageMouseDown}
@@ -703,6 +704,7 @@ export default function GardenBoardView({
                   key={`${growArea.id}-${growArea.width}-${growArea.length}`}
                   growArea={growArea}
                   isSelected={selectedId === growArea.id}
+                  isDraggingEnabled={activeTool === 'SELECT'}
                   onDragStart={() => {
                     draggingIdRef.current = growArea.id;
                   }}
@@ -725,6 +727,7 @@ export default function GardenBoardView({
                 key={obj.id}
                 canvasObject={obj}
                 isSelected={selectedObjectId === obj.id}
+                isDraggingEnabled={activeTool === 'SELECT'}
                 onSelect={() => setSelectedObjectId(obj.id)}
                 onDragEnd={async (x, y) => {
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y } : s)));

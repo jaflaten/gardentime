@@ -10,15 +10,15 @@ interface DrawingToolbarProps {
   onAddGrowArea?: () => void;
 }
 
-const tools: { id: DrawingTool; label: string; icon: string; help: string }[] = [
-  { id: 'SELECT', label: 'Select', icon: '🖱️', help: 'Select and move objects' },
-  { id: 'PAN', label: 'Pan', icon: '✋', help: 'Pan the canvas' },
-  { id: 'RECTANGLE', label: 'Rectangle', icon: '▭', help: 'Draw rectangles' },
-  { id: 'CIRCLE', label: 'Circle', icon: '○', help: 'Draw circles' },
-  { id: 'LINE', label: 'Line', icon: '─', help: 'Draw lines' },
-  { id: 'ARROW', label: 'Arrow', icon: '→', help: 'Draw arrows' },
-  { id: 'TEXT', label: 'Text', icon: 'T', help: 'Add text' },
-  { id: 'FREEHAND', label: 'Freehand', icon: '✏️', help: 'Freehand drawing' },
+const tools: { id: DrawingTool; label: string; icon: string; help: string; shortcut: string }[] = [
+  { id: 'SELECT', label: 'Select', icon: '🖱️', help: 'Select and move objects', shortcut: '1' },
+  { id: 'PAN', label: 'Pan', icon: '✋', help: 'Pan the canvas', shortcut: '2' },
+  { id: 'RECTANGLE', label: 'Rectangle', icon: '▭', help: 'Draw rectangles', shortcut: '3' },
+  { id: 'CIRCLE', label: 'Circle', icon: '○', help: 'Draw circles', shortcut: '4' },
+  { id: 'LINE', label: 'Line', icon: '─', help: 'Draw lines', shortcut: '5' },
+  { id: 'ARROW', label: 'Arrow', icon: '→', help: 'Draw arrows', shortcut: '6' },
+  { id: 'TEXT', label: 'Text', icon: 'T', help: 'Add text', shortcut: '7' },
+  { id: 'FREEHAND', label: 'Freehand', icon: '✏️', help: 'Freehand drawing', shortcut: '8' },
 ];
 
 export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea }: DrawingToolbarProps) {
@@ -39,10 +39,13 @@ export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea
                   ? 'bg-green-600 text-white shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
-              title={tool.help}
+              title={`${tool.help} (Press ${tool.shortcut})`}
             >
               <span className="mr-1">{tool.icon}</span>
               {tool.label}
+              <span className={`ml-2 text-xs ${activeTool === tool.id ? 'opacity-75' : 'opacity-50'}`}>
+                {tool.shortcut}
+              </span>
             </button>
           ))}
         </div>
@@ -70,4 +73,3 @@ export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea
     </div>
   );
 }
-

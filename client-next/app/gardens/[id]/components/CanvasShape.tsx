@@ -7,12 +7,13 @@ import { CanvasObject } from '@/lib/api';
 interface CanvasShapeProps {
   canvasObject: CanvasObject;
   isSelected: boolean;
+  isDraggingEnabled?: boolean;
   onSelect: () => void;
   onDragEnd: (x: number, y: number) => void;
   onResize?: (x: number, y: number, width: number, height: number) => void; // new
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, onSelect, onDragEnd, onResize }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
 
@@ -29,7 +30,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, onSelect,
 
   const commonProps = {
     ref: shapeRef,
-    draggable: !shape.locked,
+    draggable: isDraggingEnabled && !shape.locked,
     onClick: onSelect,
     onTap: onSelect,
     opacity: shape.opacity || 1,
