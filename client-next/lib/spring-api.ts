@@ -10,12 +10,6 @@ export const springApi = axios.create({
   },
 });
 
-// Helper to forward auth token from Next.js request to Spring Boot
-export function getAuthHeader(request: Request): Record<string, string> {
-  const authHeader = request.headers.get('Authorization');
-  return authHeader ? { Authorization: authHeader } : {};
-}
-
 // Helper to extract token from cookie or header
 export function getTokenFromRequest(request: Request): string | null {
   // First try Authorization header
