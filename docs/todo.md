@@ -1,181 +1,207 @@
-### Code Quality (Steps 70-74)
-- ✅ Rename GrowZone → GrowArea (DONE)
-- Comprehensive error handling
-- Input validation on backend
-- API documentation (Swagger/OpenAPI)
-- Integration and E2E tests
-## 🎯 Current Focus
-### Database (Steps 75-78)
-- Optimize indexes
-- Add constraints
-- Soft delete functionality
-- created_at/updated_at timestamps
-#### ✅ Completed (25.1, 25.8, 25.9)
-### Frontend (Steps 79-83)
-- State management review
-- Component structure organization
-- TypeScript type improvements
-- Code splitting and lazy loading
-- Performance optimization
-- **26:** Delete grow area from board (keyboard shortcut, confirmation)
-- **27:** Auto-save with debouncing (Miro-style)
-- **27.1:** ✅ List/Board view toggle (COMPLETED)
-## 📋 Future Backlog (Steps 84-96)
-### Steps 27.5-27.18: Advanced Board Features
-- Weather integration for planting suggestions
-- Calendar view for schedule
-- Reminders/notifications
-- Photo uploads
-- Notes and journal per grow area
-- Pest and disease tracking
-- Yield tracking and analytics
-- Collaborative gardens (sharing)
-- Mobile app (React Native)
-- Offline support (PWA)
-- Backend modularization (package per domain)
-### Plant Database (Steps 35-40, 97)
-- Expand plant varieties
-- Companion planting info
-## 📊 Progress Summary
-- Plant management UI (add/edit/delete plants)
-**Authentication & Gardens:** ✅ 100%  
-**Grow Areas:** ✅ 100% (CRUD, visual board, drag/resize)  
-**Crop Records:** ✅ 85% (basic CRUD, status tracking)  
-**Canvas Drawing:** ⏳ 60% (infrastructure done, interactions pending)  
-**Advanced Features:** ⏳ 15% (many enhancements planned)
-- ✅ Delete confirmations (DONE)
-**Overall Project Completion:** ~65%
+# GardenTime - TODO List
 
-### Crop Record Management (Steps 60-63)
-- Quick view of current vs historical crops
-- Visual timeline
-- Batch operations (harvest multiple)
-- Export to CSV/PDF
-- **60.1:** New page showing all user's crops across gardens
+## Project Overview
+GardenTime is a garden management application that helps users manage multiple gardens with grow zones (planting areas) and track crop rotation to follow regenerative farming principles.
+
+### Core Concepts
+- **Garden**: A container for multiple grow zones
+- **Grow Zone**: A physical planting area (e.g., 80x120cm box) where crops are planted
+- **Crop Record**: Historical record of what was planted in a grow zone (to support crop rotation)
+- **Plant**: The type of crop/vegetable/flower that can be grown
+
+---
+
+## 🔴 High Priority - Core Features
+
+### Authentication & User Management ✅ COMPLETED (Steps 1-12)
+- [x] **Steps 1-12:** User authentication, JWT tokens, Spring Security, protected routes, data access control
+
+---
+
+## 🟡 Medium Priority - Visual Board Features
+
+### Backend Position/Dimension Support ✅ COMPLETED (Steps 13-16)
+- [x] **Steps 13-16:** Added positionX, positionY, width, length, height fields to GrowArea model with database migration V4
+
+### Visual Board Implementation (Steps 17-24)
+
+- [x] **Step 17:** Choose canvas library: **react-konva** ✅
+- [x] **Step 18:** GardenBoardView component with zoom, pan, grid ✅
+- [x] **Step 19:** GrowAreaBox component with color coding, hover effects ✅
+- [x] **Step 20:** Drag-and-drop for grow areas ✅
+- [x] **Step 21:** Resize functionality with Konva Transformer ✅
+- [x] **Step 22:** Visual scaling system (1cm = 1px) ✅
+- [x] **Step 23:** Grid background (partially complete - snap-to-grid pending)
+- [x] **Step 24:** Click to view/edit grow area details ✅
+
+### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (60% complete)
+
+**Goal:** Transform the board into a full-featured canvas app with drawing tools for annotations, planning, and design
+
+- [x] **25.1: Drawing Toolbar/Panel** ✅ COMPLETED
+  - [x] 25.1.1: Add drawing tools panel to toolbar
+  - [x] 25.1.2: Tool selector with icons for each tool type
+  - [x] 25.1.3: Active tool indicator (highlight selected tool)
+  - [ ] 25.1.4: Keyboard shortcuts for quick tool switching
+  - [ ] 25.1.5: **Mobile:** Touch-friendly tool selector (bottom drawer)
+
+- [ ] **25.2: Basic Shape Tools**
+  - [ ] 25.2.1: **Rectangle Tool** - Click-drag to draw rectangles
+    - [ ] Configurable fill color and opacity
+    - [ ] Configurable border color and width
+    - [ ] Hold Shift for perfect squares
+    - [ ] Corner radius option for rounded rectangles
+  - [ ] 25.2.2: **Circle/Ellipse Tool** - Click-drag to draw circles/ellipses
+    - [ ] Hold Shift for perfect circles
+    - [ ] Configurable fill and border
+  - [ ] 25.2.3: **Line Tool** - Click-drag to draw straight lines
+    - [ ] Configurable line width and color
+    - [ ] Dashed/dotted line styles
+    - [ ] Hold Shift for horizontal/vertical/45° angles
+  - [ ] 25.2.4: **Arrow Tool** - Click-drag to draw arrows
+    - [ ] Single or double-headed arrows
+    - [ ] Configurable arrowhead size and style
+
+- [ ] **25.3: Text Tool**
+  - [ ] 25.3.1: Click to place text box on canvas
+  - [ ] 25.3.2: Inline text editing (double-click to edit)
+  - [ ] 25.3.3: Font size, color, and style options
+  - [ ] 25.3.4: Text box background (optional, for visibility)
+  - [ ] 25.3.5: Auto-resize text box or fixed width with wrapping
+
+- [ ] **25.4: Freehand Drawing Tool**
+  - [ ] 25.4.1: Click-drag to draw freehand paths
+  - [ ] 25.4.2: Configurable brush size and color
+  - [ ] 25.4.3: Smooth curve rendering (Konva Line with tension)
+  - [ ] 25.4.4: Eraser mode
+
+- [ ] **25.5: Grow Area Creation from Canvas**
+  - [x] 25.5.1: "Add Grow Area" button (already implemented) ✅
+  - [ ] 25.5.2: "Convert to Grow Area" functionality (right-click on shapes)
+  - [ ] 25.5.3: Quick Create Mode (optional)
+
+- [ ] **25.6: Shape Properties Panel**
+  - [ ] 25.6.1: Context panel appears when shape is selected
+  - [ ] 25.6.2: Color picker for fill and stroke
+  - [ ] 25.6.3: Opacity slider
+  - [ ] 25.6.4: Border width slider
+  - [ ] 25.6.5: Line style selector
+  - [ ] 25.6.6: Z-index controls
+  - [ ] 25.6.7: Delete button
+  - [ ] 25.6.8: Duplicate button
+
+- [ ] **25.7: Canvas Layers and Grouping**
+  - [ ] 25.7.1: Multiple layers support
+  - [ ] 25.7.2: Group/ungroup shapes
+  - [ ] 25.7.3: Lock/unlock layers or shapes
+  - [ ] 25.7.4: Show/hide layers
+
+- [x] **25.8: Backend Support for Canvas Objects** ✅ COMPLETED
+  - [x] 25.8.1: Create `CanvasObject` entity/model
+  - [x] 25.8.2: Database migration V5 for `canvas_objects` table
+  - [x] 25.8.3: CRUD API endpoints
+  - [x] 25.8.4: Batch operations
+  - [x] 25.8.5: Security checks
+
+- [x] **25.9: Frontend Canvas Object Components** ✅ COMPLETED
+  - [x] 25.9.1-25.9.7: Created CanvasShape component for all shape types
+
+- [ ] **25.10: Drawing Interaction Logic** ⏳ **NEXT - HIGH PRIORITY**
+  - [ ] 25.10.1: Tool state management (active tool, drawing mode)
+  - [ ] 25.10.2: Mouse event handlers (onMouseDown, onMouseMove, onMouseUp)
+  - [ ] 25.10.3: Preview while drawing
+  - [ ] 25.10.4: Finalize and save shape on mouse release
+  - [ ] 25.10.5: Cancel drawing on Esc key
+  - [ ] 25.10.6: Distinguish between panning canvas vs drawing
+
+- [ ] **25.11: Advanced Drawing Features**
+  - [ ] 25.11.1: Snap to grid for shapes
+  - [ ] 25.11.2: Smart guides (alignment lines)
+  - [ ] 25.11.3: Duplicate shapes with Alt+Drag
+  - [ ] 25.11.4: Resize shapes after creation
+  - [ ] 25.11.5: Rotate shapes
+  - [ ] 25.11.6: Flip shapes
+
+- [ ] **25.12: Use Cases & Templates**
+  - [ ] Garden zone boundaries, pathways, irrigation lines, notes, etc.
+  - [ ] Template library for common elements
+
+### Board Enhancements (Steps 26-27)
+- [ ] **Step 26:** Delete grow area from board with confirmation
+- [ ] **Step 27:** Auto-save with debouncing (Miro-style)
+- [x] **Step 27.1:** List/Board view toggle ✅
+
+### Advanced Board Features (Steps 27.5-27.18)
+- [ ] **Step 27.5:** Rotation functionality
+- [ ] **Step 27.6:** Multi-select (Shift+Click, drag rectangle, bulk operations)
+- [ ] **Step 27.7:** Undo/Redo (Cmd/Ctrl+Z)
+- [ ] **Step 27.8:** Display current crops on grow areas
+- [ ] **Step 27.9:** Color customization per grow area
+- [ ] **Step 27.10:** Mini-map overview
+- [ ] **Step 27.11:** Keyboard shortcuts (Delete, arrows, zoom, etc.)
+- [ ] **Step 27.12:** Copy/paste functionality
+- [ ] **Step 27.13:** Export/import layout (JSON)
+- [ ] **Step 27.14:** Export as image/PDF
+- [ ] **Step 27.15:** Keyboard shortcuts help modal
+- [ ] **Step 27.16:** Performance optimization (virtualization)
+- [ ] **Step 27.17:** Mobile UX enhancements
+- [ ] **Step 27.18:** Collision detection, templates, measurement tool
+
+### Search Functionality (Steps 28-34)
+- [ ] Grow area search and plant/crop search with autocomplete
+
+### Plant Database (Steps 35-40, 97)
+- [ ] Expand plant varieties, companion planting, crop families
+- [ ] Plant management UI (add/edit/delete plants)
+
+### Crop Rotation Intelligence (Steps 41-44)
+- [ ] Crop family tracking, warnings, suggestions, timeline
+
+---
+
+## 🟢 Low Priority - UX & Polish
+
+### Frontend Modernization (Steps 45-52)
+- [ ] Responsive design, loading states, error handling, dark mode, animations
+- [x] **Step 50:** Delete confirmations ✅
+
+### Grow Zone Management (Steps 53-58) ✅ COMPLETED
+- [x] **Steps 53-58:** Full CRUD with all fields, modals, icons
+
+### Crop Record Management (Steps 59-63)
+- [x] **Step 59:** Separated active/historical crops ✅
+- [ ] **Step 60-60.1:** Quick view page for all user's crops
+- [ ] **Step 61-63:** Timeline, batch operations, export
 
 ### Garden Management (Steps 64-68)
-- Dashboard overview
-- Garden-level statistics
-- Easy garden switching
-- Garden templates
+- [ ] Dashboard, statistics, garden switching, templates
 
 ---
 
 ## 🔧 Technical Debt
 
-### Frontend Modernization
-- [ ] **Step 45:** Improve overall UI/UX design
-- [ ] **Step 46:** Make responsive for mobile devices
-- [ ] **Step 47:** Add loading states and skeletons
-- [ ] **Step 48:** Add error handling and user feedback (toasts/notifications)
-- [ ] **Step 49:** Improve form validation and error messages
-- [x] **Step 50:** Add confirmation dialogs for delete actions
-- [ ] **Step 51:** Implement dark mode support
-- [ ] **Step 52:** Add animations and transitions
+### Code Quality (Steps 69-74)
+- [x] **Step 69:** Rename GrowZone → GrowArea ✅
+- [ ] **Steps 70-74:** Error handling, validation, API docs, tests
 
-### Grow Zone Management
-- [x] **Step 53:** Implement "Add Grow Area" button functionality
-- [x] **Step 54:** Create modal/form for adding new grow zone
-  - [x] 54.1: Form with name field (required)
-  - [x] 54.2: Advanced fields: zone type, size, number of rows, notes (all optional)
-  - [x] 54.3: Collapsible "Show/Hide advanced options" section
-  - [x] 54.4: Clear indication of required vs optional fields
-  - [x] 54.5: Improved text visibility (text-gray-900 for inputs)
-- [x] **Step 55:** Implement edit functionality (currently shows "edit" but not functional)
-  - [x] 55.1: Edit modal with pre-populated values
-  - [x] 55.2: Support for updating all grow area fields
-  - [x] 55.3: Proper API integration with PUT endpoint
-  - [x] 55.4: **NEW:** Edit button works in grow area detail page (fixed missing API endpoints)
-- [x] **Step 56:** Implement delete functionality with confirmation
-  - [x] 56.1: Delete confirmation modal
-  - [x] 56.2: Proper API integration with DELETE endpoint
-  - [x] 56.3: Refresh list after deletion
-- [x] **Step 57:** Show more grow zone information in list view (size, type, current crops)
-  - [x] 57.1: Display zone type with emoji icons (📦 Box, 🌾 Field, 🛏️ Bed, 🪣 Bucket)
-  - [x] 57.2: Display zone size if provided
-  - [x] 57.3: Display number of rows if provided
-  - [x] 57.4: Display notes (truncated) if provided
-  - [x] 57.5: Edit and delete buttons on each card
-- [x] **Step 58:** Add filtering and sorting options
-  - Note: Basic display completed, advanced filtering/sorting can be added later if needed
+### Database (Steps 75-78)
+- [ ] Indexes, constraints, soft delete, timestamps
 
-**Implementation Notes (Steps 53-58):**
-- Backend: Added new endpoint `GET /api/growarea/garden/{gardenId}` to retrieve grow areas by garden
-- Backend: Updated GrowAreaController to accept full request bodies with all fields
-- Backend: Added CreateGrowAreaRequest and UpdateGrowAreaRequest DTOs
-- Backend: Implemented updateGrowArea() method in GrowAreaService with security checks
-- Frontend: Fixed API endpoint routing (BFF now correctly calls /api/growarea endpoints)
-- Frontend: Enhanced text visibility throughout (text-gray-900 for all input fields)
-- Frontend: All CRUD operations working with proper error handling
-- All fields properly supported: name (required), zoneSize, zoneType, nrOfRows, notes (all optional)
-
-### Crop Record Management
-a crop record is kind of the history of a grow area, so a grow area can have several crop records, also several can be planted and have CropStatus PLANTED at the same time for instance. But if a crop record is harvested, it is in the past. We would still want to be able to see the history, but it should not be one of the main ones to be displayed.  This is required as we later want to avoid planting the same type of plant in the same grow area two seasons in a row.
-- [x] **Step 59:** Improve crop record card display ✅ **COMPLETED**
-  - [x] 59.1: Added CropStatus type support to frontend
-  - [x] 59.2: Separated active crops (PLANTED, GROWING) from historical crops (HARVESTED, DISEASED, FAILED)
-  - [x] 59.3: Active crops displayed prominently at the top
-  - [x] 59.4: Historical crops in collapsible "Show/Hide" section
-  - [x] 59.5: Enhanced visual display with status badges and icons
-  - [x] 59.6: Status-based color coding (green for active, gray for historical, red for diseased)
-- [ ] **Step 60:** Add quick view of current vs historical crops in that grow area 
-- [ ] **Step 60.1:** Add a new page to show current and historical crops for all the users grow areas. This can be accessed either from the garden page "my new garden" or from a menu
-- [ ] **Step 61:** Visual timeline of crop history
-- [ ] **Step 62:** Batch operations (harvest multiple crops at once)
-- [ ] **Step 63:** Export crop history to CSV/PDF
-
-### Garden Management
-- [ ] **Step 64:** Create garden overview dashboard
-- [ ] **Step 65:** Add garden-level statistics (total zones, active crops, etc.)
-- [ ] **Step 66:** Multiple garden support in UI
-- [ ] **Step 67:** Switch between gardens easily
-- [ ] **Step 68:** Garden templates/presets
+### Frontend (Steps 79-83)
+- [ ] State management, component structure, TypeScript, performance
 
 ---
 
-## 🔧 Technical Debt & Refactoring
+## 📋 Future Backlog (Steps 84-96)
 
-### Code Quality
-- [x] **Step 69:** Rename GrowZone to GrowArea (as noted in TODO comment)
-  - [x] 69.1: Update all model files
-  - [x] 69.2: Update database tables/migrations
-  - [x] 69.3: Update API endpoints
-  - [x] 69.4: Update frontend components
-- [ ] **Step 70:** Add comprehensive error handling
-- [ ] **Step 71:** Add input validation on backend
-- [ ] **Step 72:** Add API documentation (Swagger/OpenAPI)
-- [ ] **Step 73:** Add integration tests
-- [ ] **Step 74:** Add E2E tests for critical flows
-
-### Database
-- [ ] **Step 75:** Review and optimize database indexes
-- [ ] **Step 76:** Add database constraints where needed
-- [ ] **Step 77:** Consider adding soft delete functionality
-- [ ] **Step 78:** Add created_at and updated_at timestamps to all tables
-
-### Frontend
-- [ ] **Step 79:** Set up proper state management (if needed beyond local state)
-- [ ] **Step 80:** Organize component structure better
-- [ ] **Step 81:** Add PropTypes or improve TypeScript types
-- [ ] **Step 82:** Code splitting and lazy loading
-- [ ] **Step 83:** Performance optimization
+- Weather integration, calendar, notifications, photos, pest tracking, yield analytics
+- Collaborative gardens, mobile app, PWA, import/export
+- Backend modularization
 
 ---
 
-## 📋 Future Enhancements (Backlog)
+## 📊 Current Status
 
-- [ ] **Step 84:** Weather integration (to suggest planting times)
-- [ ] **Step 85:** Calendar view for planting/harvest schedule
-- [ ] **Step 86:** Reminders/notifications (watering, harvesting)
-- [ ] **Step 87:** Photo upload for grow zones and crops
-- [ ] **Step 88:** Notes and journal entries per grow zone
-- [ ] **Step 89:** Pest and disease tracking
-- [ ] **Step 90:** Yield tracking and analytics
-- [ ] **Step 91:** Sharing gardens with other users (collaborative gardens)
-- [ ] **Step 92:** Mobile app (React Native)
-- [ ] **Step 93:** Offline support (PWA)
-- [ ] **Step 94:** Import/export garden layouts
-- [ ] **Step 95:** Community features (share layouts, tips)
-- [ ] **Step 96:** Refactor backend layout so that we have module specific folders, such as a package for Crops, one for GrowArea etc...
+**Overall Project:** ~65% complete
 
----
+**Next Priority:** Step 25.10 - Drawing Interaction Logic (mouse events to make drawing tools functional)
