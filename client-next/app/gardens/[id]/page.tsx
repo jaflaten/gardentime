@@ -189,25 +189,47 @@ export default function GardenDetailPage() {
   };
 
   const handleUpdatePosition = async (id: string, x: number, y: number) => {
-    // DON'T update local state immediately during drag!
-    // Let Konva handle the position during the drag operation
-    // Only update after backend confirms the save
+    // Optimistically update local state immediately for smooth UX
+    setGrowAreas(prevAreas =>
+      prevAreas.map(area =>
+        area.id === id ? { ...area, positionX: x, positionY: y } : area
+      )
+    );
 
     try {
       await growAreaService.update(id, {
         positionX: x,
         positionY: y,
       });
-
-      // Update local state AFTER backend success
-      setGrowAreas(prevAreas =>
-        prevAreas.map(area =>
-          area.id === id ? { ...area, positionX: x, positionY: y } : area
-        )
-      );
     } catch (err: any) {
       // If backend update fails, fetch fresh data to revert
       setError(err.response?.data?.message || 'Failed to update position');
+      fetchGardenData();
+    }
+  };
+
+  // Batch update positions for multiple grow areas (for multi-select drag)
+  const handleUpdatePositions = async (updates: Array<{ id: string; x: number; y: number }>) => {
+    // Optimistically update all positions immediately
+    setGrowAreas(prevAreas =>
+      prevAreas.map(area => {
+        const update = updates.find(u => u.id === area.id);
+        return update ? { ...area, positionX: update.x, positionY: update.y } : area;
+      })
+    );
+
+    // Save all updates to backend in parallel
+    try {
+      await Promise.all(
+        updates.map(update =>
+          growAreaService.update(update.id, {
+            positionX: update.x,
+            positionY: update.y,
+          })
+        )
+      );
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to update positions');
       fetchGardenData();
     }
   };
@@ -409,6 +431,7 @@ export default function GardenDetailPage() {
               <GardenBoardView
                 growAreas={growAreas}
                 onUpdatePosition={handleUpdatePosition}
+                onUpdatePositions={handleUpdatePositions}
                 onUpdateDimensions={handleUpdateDimensions}
                 onSelectGrowArea={handleSelectGrowAreaFromBoard}
                 onAddGrowArea={() => setShowCreateModal(true)}

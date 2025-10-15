@@ -8,6 +8,7 @@ import Konva from 'konva';
 interface GrowAreaBoxProps {
   growArea: GrowArea;
   isSelected: boolean;
+  isMultiSelected?: boolean; // New prop for multi-select visual feedback
   isDraggingEnabled: boolean;
   onDragStart: () => void;
   onDragEnd: (x: number, y: number) => void;
@@ -27,6 +28,7 @@ const ZONE_TYPE_COLORS = {
 export default function GrowAreaBox({
   growArea,
   isSelected,
+  isMultiSelected = false,
   isDraggingEnabled,
   onDragStart,
   onDragEnd,
@@ -38,6 +40,22 @@ export default function GrowAreaBox({
   const [isTransforming, setIsTransforming] = useState(false);
   const shapeRef = React.useRef<Konva.Shape>(null);
   const transformerRef = React.useRef<Konva.Transformer>(null);
+
+  // Debug logging for props received
+  React.useEffect(() => {
+    console.log(`📊 GrowAreaBox "${growArea.name}" (${growArea.id}) render:`, {
+      isSelected,
+      isMultiSelected,
+      isDraggingEnabled,
+    });
+  }, [isSelected, isMultiSelected, isDraggingEnabled, growArea.name, growArea.id]);
+
+  // Debug logging for multi-select visual feedback
+  React.useEffect(() => {
+    if (isMultiSelected) {
+      console.log(`GrowArea ${growArea.name} is multi-selected:`, { isMultiSelected, isSelected });
+    }
+  }, [isMultiSelected, isSelected, growArea.name]);
 
   // Position and dimensions
   const x = growArea.positionX ?? 0;
@@ -54,9 +72,9 @@ export default function GrowAreaBox({
     : ZONE_TYPE_COLORS.BOX;
 
   // Hover effect colors (Step 19.5)
-  const strokeColor = isSelected ? '#10b981' : isHovered ? '#1f2937' : '#374151';
-  const strokeWidth = isSelected ? 4 : isHovered ? 3 : 2;
-  const shadowBlur = isSelected ? 15 : isHovered ? 10 : 5;
+  const strokeColor = isSelected ? '#10b981' : isMultiSelected ? '#3b82f6' : isHovered ? '#1f2937' : '#374151';
+  const strokeWidth = isSelected ? 4 : isMultiSelected ? 3 : isHovered ? 3 : 2;
+  const shadowBlur = isSelected ? 15 : isMultiSelected ? 12 : isHovered ? 10 : 5;
 
   // Check if this is a bucket (should be circular)
   const isBucket = growArea.zoneType === 'BUCKET';
@@ -216,6 +234,45 @@ export default function GrowAreaBox({
           }}
           onTransformStart={() => setIsTransforming(true)}
         />
+      )}
+
+      {/* Multi-select visual feedback - MOVED HERE to render on top */}
+      {isMultiSelected && (
+        <>
+          {isBucket ? (
+            <Circle
+              x={radius}
+              y={radius}
+              radius={radius + 4}
+              stroke="#3b82f6"
+              strokeWidth={6}
+              dash={[8, 4]}
+              fill="transparent"
+              listening={false}
+              shadowColor="#3b82f6"
+              shadowBlur={12}
+              shadowOpacity={0.6}
+              shadowEnabled={true}
+            />
+          ) : (
+            <Rect
+              x={-3}
+              y={-3}
+              width={width + 6}
+              height={height + 6}
+              stroke="#3b82f6"
+              strokeWidth={6}
+              dash={[8, 4]}
+              fill="transparent"
+              cornerRadius={8}
+              listening={false}
+              shadowColor="#3b82f6"
+              shadowBlur={12}
+              shadowOpacity={0.6}
+              shadowEnabled={true}
+            />
+          )}
+        </>
       )}
 
       {/* Zone Type Badge (centered at top for both rectangles and circles) */}

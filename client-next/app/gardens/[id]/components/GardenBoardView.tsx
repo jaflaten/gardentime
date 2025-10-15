@@ -11,6 +11,7 @@ import CanvasShape from './CanvasShape';
 interface GardenBoardViewProps {
   growAreas: GrowArea[];
   onUpdatePosition: (id: string, x: number, y: number) => void;
+  onUpdatePositions?: (updates: Array<{ id: string; x: number; y: number }>) => void;
   onUpdateDimensions: (id: string, width: number, height: number) => void;
   onSelectGrowArea: (growArea: GrowArea) => void;
   onAddGrowArea?: () => void;
@@ -20,6 +21,7 @@ interface GardenBoardViewProps {
 export default function GardenBoardView({
   growAreas,
   onUpdatePosition,
+  onUpdatePositions,
   onUpdateDimensions,
   onSelectGrowArea,
   onAddGrowArea,
@@ -45,6 +47,12 @@ export default function GardenBoardView({
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawingStart, setDrawingStart] = useState<{ x: number; y: number } | null>(null);
   const [currentDrawing, setCurrentDrawing] = useState<CanvasObject | null>(null);
+
+  // Multi-select state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedObjectIds, setSelectedObjectIds] = useState<Set<number>>(new Set());
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionRect, setSelectionRect] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
 
   // Load canvas objects from backend
   useEffect(() => {
@@ -294,6 +302,26 @@ export default function GardenBoardView({
 
   // Handle mouse down on stage - start drawing
   const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    // Check if we clicked on the stage background
+    const clickedOnEmpty = e.target === e.target.getStage();
+
+    // Handle selection rectangle in SELECT mode
+    if (activeTool === 'SELECT' && clickedOnEmpty) {
+      const stage = stageRef.current;
+      if (!stage) return;
+
+      const pos = stage.getPointerPosition();
+      if (!pos) return;
+
+      const x = (pos.x - stagePosition.x) / scale;
+      const y = (pos.y - stagePosition.y) / scale;
+
+      setIsSelecting(true);
+      setDrawingStart({ x, y });
+      setSelectionRect({ x, y, width: 0, height: 0 });
+      return;
+    }
+
     // Only start drawing if a drawing tool is active (not SELECT or PAN)
     if (activeTool === 'SELECT' || activeTool === 'PAN') return;
 
@@ -361,8 +389,6 @@ export default function GardenBoardView({
 
   // Handle mouse move on stage - update drawing preview
   const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!isDrawing || !drawingStart || activeTool === 'SELECT' || activeTool === 'PAN') return;
-
     const stage = stageRef.current;
     if (!stage) return;
 
@@ -371,6 +397,22 @@ export default function GardenBoardView({
 
     const x = (pos.x - stagePosition.x) / scale;
     const y = (pos.y - stagePosition.y) / scale;
+
+    // Handle selection rectangle in SELECT mode
+    if (activeTool === 'SELECT' && isSelecting && drawingStart) {
+      const width = x - drawingStart.x;
+      const height = y - drawingStart.y;
+
+      setSelectionRect({
+        x: Math.min(drawingStart.x, x),
+        y: Math.min(drawingStart.y, y),
+        width: Math.abs(width),
+        height: Math.abs(height),
+      });
+      return;
+    }
+
+    if (!isDrawing || !drawingStart || activeTool === 'SELECT' || activeTool === 'PAN') return;
 
     // Update preview based on tool type
     if (activeTool === 'RECTANGLE') {
@@ -432,11 +474,101 @@ export default function GardenBoardView({
     }
   };
 
-  // Handle mouse up on stage - finalize drawing
+  // Handle mouse up on stage - finalize drawing or selection
   const handleStageMouseUp = async () => {
+    // Handle selection rectangle completion
+    if (isSelecting && selectionRect && drawingStart) {
+      const newSelectedIds = new Set<string>();
+      const newSelectedObjectIds = new Set<number>();
+
+      console.log('🔍 Selection rectangle completed:', selectionRect);
+      console.log('📦 Total grow areas to check:', growAreas.length);
+
+      // Check grow areas
+      growAreas.forEach((area) => {
+        if (area.positionX === undefined || area.positionY === undefined) return;
+
+        const areaRight = area.positionX + (area.width || 100);
+        const areaBottom = area.positionY + (area.length || 100);
+        const selRight = selectionRect.x + selectionRect.width;
+        const selBottom = selectionRect.y + selectionRect.height;
+
+        // Check if area intersects with selection rectangle
+        const intersects = area.positionX <= selRight &&
+          areaRight >= selectionRect.x &&
+          area.positionY <= selBottom &&
+          areaBottom >= selectionRect.y;
+
+        if (intersects) {
+          console.log(`✅ Area "${area.name}" (${area.id}) selected - Position: (${area.positionX}, ${area.positionY}), Size: (${area.width}, ${area.length})`);
+          newSelectedIds.add(area.id);
+        } else {
+          console.log(`❌ Area "${area.name}" (${area.id}) NOT selected - Position: (${area.positionX}, ${area.positionY})`);
+        }
+      });
+
+      // Check canvas objects
+      canvasObjects.forEach((obj) => {
+        const objRight = obj.x + (obj.width || 0);
+        const objBottom = obj.y + (obj.height || 0);
+        const selRight = selectionRect.x + selectionRect.width;
+        const selBottom = selectionRect.y + selectionRect.height;
+
+        if (
+          obj.x <= selRight &&
+          objRight >= selectionRect.x &&
+          obj.y <= selBottom &&
+          objBottom >= selectionRect.y
+        ) {
+          newSelectedObjectIds.add(obj.id);
+        }
+      });
+
+      console.log('🎯 Selection complete:', {
+        growAreasSelected: newSelectedIds.size,
+        objectsSelected: newSelectedObjectIds.size,
+        growAreaIds: Array.from(newSelectedIds),
+        objectIds: Array.from(newSelectedObjectIds),
+      });
+
+      setSelectedIds(newSelectedIds);
+      setSelectedObjectIds(newSelectedObjectIds);
+
+      // Clear single selection when we have multi-selection
+      if (newSelectedIds.size > 1 || newSelectedObjectIds.size > 1) {
+        console.log('🔄 Multi-selection detected - clearing single selection');
+        setSelectedId(null);
+        setSelectedObjectId(null);
+      } else if (newSelectedIds.size === 1) {
+        // If only one grow area selected, also set it as single selection for resize handles
+        const singleId = Array.from(newSelectedIds)[0];
+        console.log('🔄 Single grow area selected:', singleId);
+        setSelectedId(singleId);
+        setSelectedObjectId(null);
+      } else if (newSelectedObjectIds.size === 1) {
+        // If only one object selected, also set it as single selection
+        const singleObjId = Array.from(newSelectedObjectIds)[0];
+        console.log('🔄 Single object selected:', singleObjId);
+        setSelectedId(null);
+        setSelectedObjectId(singleObjId);
+      } else {
+        // Nothing selected
+        console.log('🔄 Nothing selected - clearing all selections');
+        setSelectedId(null);
+        setSelectedObjectId(null);
+      }
+
+      setIsSelecting(false);
+      setSelectionRect(null);
+      setDrawingStart(null);
+      return;
+    }
+
     if (!isDrawing || !currentDrawing) {
       setIsDrawing(false);
       setDrawingStart(null);
+      setIsSelecting(false);
+      setSelectionRect(null);
       return;
     }
 
@@ -639,6 +771,14 @@ export default function GardenBoardView({
             />
             <span className="text-sm text-gray-700">Show Grid</span>
           </label>
+
+          {/* Multi-selection indicator */}
+          {(selectedIds.size > 1 || selectedObjectIds.size > 1) && (
+            <div className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded">
+              {selectedIds.size + selectedObjectIds.size} items selected
+            </div>
+          )}
+
           <div className="text-sm text-gray-600">
             {growAreas.filter(a => a.positionX !== undefined).length} / {growAreas.length} areas placed
           </div>
@@ -672,6 +812,8 @@ export default function GardenBoardView({
             if (e.target === e.target.getStage()) {
               setSelectedId(null);
               setSelectedObjectId(null);
+              setSelectedIds(new Set());
+              setSelectedObjectIds(new Set());
             }
           }}
           onMouseDown={handleStageMouseDown}
@@ -699,23 +841,85 @@ export default function GardenBoardView({
                 return null;
               }
 
+              const isPartOfMultiSelect = selectedIds.has(growArea.id);
+              const showAsMultiSelected = isPartOfMultiSelect && selectedIds.size > 1;
+
               return (
                 <GrowAreaBox
                   key={`${growArea.id}-${growArea.width}-${growArea.length}`}
                   growArea={growArea}
-                  isSelected={selectedId === growArea.id}
+                  isSelected={selectedId === growArea.id && selectedIds.size <= 1}
+                  isMultiSelected={showAsMultiSelected}
                   isDraggingEnabled={activeTool === 'SELECT'}
                   onDragStart={() => {
                     draggingIdRef.current = growArea.id;
                   }}
                   onDragEnd={(x, y) => {
-                    onUpdatePosition(growArea.id, x, y);
+                    console.log(`🎯 Drag ended for "${growArea.name}" (${growArea.id}):`, {
+                      newPosition: { x, y },
+                      originalPosition: { x: growArea.positionX, y: growArea.positionY },
+                      isPartOfMultiSelect: selectedIds.has(growArea.id),
+                      multiSelectSize: selectedIds.size,
+                      selectedIds: Array.from(selectedIds),
+                    });
+
+                    // Calculate the offset from the original position
+                    const deltaX = x - (growArea.positionX ?? 0);
+                    const deltaY = y - (growArea.positionY ?? 0);
+
+                    console.log(`📐 Delta calculated:`, { deltaX, deltaY });
+
+                    // If this item is part of a multi-selection, move all selected items
+                    if (selectedIds.has(growArea.id) && selectedIds.size > 1) {
+                      console.log(`🚚 Multi-select drag detected - moving ${selectedIds.size} items`);
+
+                      const updates = Array.from(selectedIds).map((id) => {
+                        const area = growAreas.find((a) => a.id === id);
+                        if (area && area.positionX !== undefined && area.positionY !== undefined) {
+                          const update = {
+                            id,
+                            x: area.positionX + deltaX,
+                            y: area.positionY + deltaY,
+                          };
+                          console.log(`  ➡️ Moving "${area.name}" (${id}) to:`, update);
+                          return update;
+                        }
+                        return null;
+                      }).filter((u): u is { id: string; x: number; y: number } => u !== null);
+
+                      console.log(`✅ Calling onUpdatePositions with ${updates.length} updates:`, updates);
+                      onUpdatePositions?.(updates);
+                    } else {
+                      // Single item move
+                      console.log(`🔵 Single item move for "${growArea.name}"`);
+                      onUpdatePosition(growArea.id, x, y);
+                    }
+
                     draggingIdRef.current = null;
                   }}
                   onResize={(width, height) => {
                     onUpdateDimensions(growArea.id, width, height);
                   }}
-                  onSelect={() => setSelectedId(growArea.id)}
+                  onSelect={() => {
+                    console.log(`🖱️ Click on "${growArea.name}" (${growArea.id}):`, {
+                      isPartOfMultiSelect: selectedIds.has(growArea.id),
+                      currentSelectionSize: selectedIds.size,
+                      selectedIds: Array.from(selectedIds),
+                    });
+
+                    // If clicking on an item that's already in the multi-selection, keep the entire selection
+                    if (selectedIds.has(growArea.id)) {
+                      console.log(`✋ Item already selected - keeping multi-selection`);
+                      return; // Don't change anything
+                    }
+
+                    // Otherwise, this is a new selection - clear multi-select and select just this item
+                    console.log(`🆕 New selection - clearing multi-select and selecting just this item`);
+                    setSelectedId(growArea.id);
+                    setSelectedIds(new Set([growArea.id]));
+                    setSelectedObjectId(null);
+                    setSelectedObjectIds(new Set());
+                  }}
                   onDoubleClick={() => onSelectGrowArea(growArea)}
                 />
               );
@@ -759,6 +963,21 @@ export default function GardenBoardView({
                 isSelected={false}
                 onSelect={() => {}}
                 onDragEnd={() => {}}
+              />
+            )}
+
+            {/* Selection rectangle for multi-select */}
+            {isSelecting && selectionRect && (
+              <Rect
+                x={selectionRect.x}
+                y={selectionRect.y}
+                width={selectionRect.width}
+                height={selectionRect.height}
+                fill="rgba(0, 123, 255, 0.3)"
+                stroke="#007bff"
+                strokeWidth={2}
+                dash={[4, 2]}
+                listening={false}
               />
             )}
           </Layer>
