@@ -42,7 +42,7 @@ GardenTime is a garden management application that helps users manage multiple g
   - [x] 25.1.1: Add drawing tools panel to toolbar
   - [x] 25.1.2: Tool selector with icons for each tool type
   - [x] 25.1.3: Active tool indicator (highlight selected tool)
-  - [ ] 25.1.4: Keyboard shortcuts for quick tool switching
+  - [x] 25.1.4: Keyboard shortcuts for quick tool switching
   - [ ] 25.1.5: **Mobile:** Touch-friendly tool selector (bottom drawer)
 
 - [ ] **25.2: Basic Shape Tools**
@@ -106,13 +106,13 @@ GardenTime is a garden management application that helps users manage multiple g
 - [x] **25.9: Frontend Canvas Object Components** ✅ COMPLETED
   - [x] 25.9.1-25.9.7: Created CanvasShape component for all shape types
 
-- [ ] **25.10: Drawing Interaction Logic** ⏳ **NEXT - HIGH PRIORITY**
-  - [ ] 25.10.1: Tool state management (active tool, drawing mode)
-  - [ ] 25.10.2: Mouse event handlers (onMouseDown, onMouseMove, onMouseUp)
-  - [ ] 25.10.3: Preview while drawing
-  - [ ] 25.10.4: Finalize and save shape on mouse release
-  - [ ] 25.10.5: Cancel drawing on Esc key
-  - [ ] 25.10.6: Distinguish between panning canvas vs drawing
+- [x] **25.10: Drawing Interaction Logic** ✅ COMPLETED
+  - [x] 25.10.1: Tool state management (active tool, drawing mode)
+  - [x] 25.10.2: Mouse event handlers (onMouseDown, onMouseMove, onMouseUp)
+  - [x] 25.10.3: Preview while drawing
+  - [x] 25.10.4: Finalize and save shape on mouse release
+  - [x] 25.10.5: Cancel drawing on Esc key
+  - [x] 25.10.6: Distinguish between panning canvas vs drawing
 
 - [ ] **25.11: Advanced Drawing Features**
   - [ ] 25.11.1: Snap to grid for shapes
@@ -204,4 +204,4 @@ GardenTime is a garden management application that helps users manage multiple g
 
 **Overall Project:** ~65% complete
 
-**Next Priority:** Step 25.10 - Drawing Interaction Logic (mouse events to make drawing tools functional)
+**Next Priority:** Step 25.11 - Advanced Drawing Features

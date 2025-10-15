@@ -76,7 +76,11 @@ export default function GardenBoardView({
     // Only run this once on initial mount
     if (hasLoadedSavedState.current) return;
 
-    const savedState = localStorage.getItem(`garden-board-state-${gardenId}`);
+    // Use the stable ref `initialGardenId.current` so we don't have to include
+    // `gardenId` in the dependency array — this is intentional: we only want
+    // this effect to run once on the initial mount.
+    const key = `garden-board-state-${initialGardenId.current}`;
+    const savedState = localStorage.getItem(key);
     if (savedState) {
       try {
         const { position, zoom, scale: savedScale, grid } = JSON.parse(savedState);
@@ -100,6 +104,10 @@ export default function GardenBoardView({
     setTimeout(() => {
       isInitialMount.current = false;
     }, 100);
+    // We intentionally only want this to run once on mount; gardenId change is handled
+    // by a separate effect. We use the `initialGardenId` ref above to avoid listing
+    // the prop in deps while keeping the behavior explicit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array - run only once!
 
   // Reset state when garden changes
@@ -302,7 +310,7 @@ export default function GardenBoardView({
 
   // Handle mouse down on stage - start drawing
   const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // Check if we clicked on the stage background
+    // Determine if we clicked on empty stage background
     const clickedOnEmpty = e.target === e.target.getStage();
 
     // Handle selection rectangle in SELECT mode
@@ -325,12 +333,11 @@ export default function GardenBoardView({
     // Only start drawing if a drawing tool is active (not SELECT or PAN)
     if (activeTool === 'SELECT' || activeTool === 'PAN') return;
 
-    // Prevent stage dragging when drawing
+    // We only start drawing when clicking on empty background (not on shapes)
+    if (!clickedOnEmpty) return;
+
     const stage = stageRef.current;
     if (!stage) return;
-
-    // Only handle clicks on the stage background (not on shapes)
-    if (e.target !== stage) return;
 
     const pos = stage.getPointerPosition();
     if (!pos) return;
@@ -342,12 +349,15 @@ export default function GardenBoardView({
     setIsDrawing(true);
     setDrawingStart({ x, y });
 
+    // Initialize a stable currentDrawing so preview updates reuse the same id/object shape reference
+    const baseId = Date.now();
+
     // For text tool, create text immediately
     if (activeTool === 'TEXT') {
       const textPrompt = prompt('Enter text:', 'Text');
       if (textPrompt) {
         const newTextObject: CanvasObject = {
-          id: Date.now(), // Temporary ID until saved
+          id: baseId, // Temporary ID until saved
           gardenId: gardenId,
           type: 'TEXT',
           x,
@@ -371,24 +381,76 @@ export default function GardenBoardView({
       return;
     }
 
-    // For freehand, start with initial point
+    // Initialize different tool starting states
     if (activeTool === 'FREEHAND') {
       setCurrentDrawing({
-        id: Date.now(),
+        id: baseId,
         gardenId: gardenId,
         type: 'FREEHAND',
-        x: 0,
-        y: 0,
+        x,
+        y,
         points: JSON.stringify([x, y]),
         strokeColor: '#000000',
         strokeWidth: 2,
         opacity: 1,
       });
+      return;
+    }
+
+    if (activeTool === 'RECTANGLE') {
+      setCurrentDrawing({
+        id: baseId,
+        gardenId: gardenId,
+        type: 'RECTANGLE',
+        x,
+        y,
+        width: 0,
+        height: 0,
+        fillColor: 'transparent',
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 0.7,
+      });
+      return;
+    }
+
+    if (activeTool === 'CIRCLE') {
+      setCurrentDrawing({
+        id: baseId,
+        gardenId: gardenId,
+        type: 'CIRCLE',
+        x,
+        y,
+        width: 0,
+        height: 0,
+        fillColor: 'transparent',
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 0.7,
+      });
+      return;
+    }
+
+    if (activeTool === 'LINE' || activeTool === 'ARROW') {
+      setCurrentDrawing({
+        id: baseId,
+        gardenId: gardenId,
+        type: activeTool,
+        x: 0,
+        y: 0,
+        points: JSON.stringify([x, y, x, y]),
+        strokeColor: '#000000',
+        strokeWidth: 2,
+        opacity: 1,
+      });
+      return;
     }
   };
 
   // Handle mouse move on stage - update drawing preview
-  const handleStageMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  // The handler doesn't need the event parameter because we obtain pointer
+  // position directly from the stage ref.
+  const handleStageMouseMove = () => {
     const stage = stageRef.current;
     if (!stage) return;
 
@@ -414,63 +476,43 @@ export default function GardenBoardView({
 
     if (!isDrawing || !drawingStart || activeTool === 'SELECT' || activeTool === 'PAN') return;
 
-    // Update preview based on tool type
+    // Update preview based on tool type (mutate currentDrawing rather than replace id each move)
+    if (!currentDrawing) return;
+
     if (activeTool === 'RECTANGLE') {
       const width = x - drawingStart.x;
       const height = y - drawingStart.y;
 
-      setCurrentDrawing({
-        id: Date.now(),
-        gardenId: gardenId,
-        type: 'RECTANGLE',
+      setCurrentDrawing((prev) => ({
+        ...(prev || {}),
         x: width > 0 ? drawingStart.x : x,
         y: height > 0 ? drawingStart.y : y,
         width: Math.abs(width),
         height: Math.abs(height),
-        fillColor: 'transparent',
-        strokeColor: '#000000',
-        strokeWidth: 2,
-        opacity: 0.7,
-      });
+      } as CanvasObject));
     } else if (activeTool === 'CIRCLE') {
       const width = Math.abs(x - drawingStart.x);
       const height = Math.abs(y - drawingStart.y);
       const diameter = Math.max(width, height);
 
-      setCurrentDrawing({
-        id: Date.now(),
-        gardenId: gardenId,
-        type: 'CIRCLE',
+      setCurrentDrawing((prev) => ({
+        ...(prev || {}),
         x: drawingStart.x,
         y: drawingStart.y,
         width: diameter,
         height: diameter,
-        fillColor: 'transparent',
-        strokeColor: '#000000',
-        strokeWidth: 2,
-        opacity: 0.7,
-      });
+      } as CanvasObject));
     } else if (activeTool === 'LINE' || activeTool === 'ARROW') {
-      setCurrentDrawing({
-        id: Date.now(),
-        gardenId: gardenId,
-        type: activeTool,
-        x: 0,
-        y: 0,
+      setCurrentDrawing((prev) => ({
+        ...(prev || {}),
         points: JSON.stringify([drawingStart.x, drawingStart.y, x, y]),
-        strokeColor: '#000000',
-        strokeWidth: 2,
-        opacity: 1,
-      });
+      } as CanvasObject));
     } else if (activeTool === 'FREEHAND' && currentDrawing) {
       // Add new point to freehand path
       const existingPoints = JSON.parse(currentDrawing.points || '[]') as number[];
       const newPoints = [...existingPoints, x, y];
 
-      setCurrentDrawing({
-        ...currentDrawing,
-        points: JSON.stringify(newPoints),
-      });
+      setCurrentDrawing((prev) => ({ ...(prev || {}), points: JSON.stringify(newPoints) } as CanvasObject));
     }
   };
 
@@ -482,7 +524,6 @@ export default function GardenBoardView({
       const newSelectedObjectIds = new Set<number>();
 
       console.log('🔍 Selection rectangle completed:', selectionRect);
-      console.log('📦 Total grow areas to check:', growAreas.length);
 
       // Check grow areas
       growAreas.forEach((area) => {
@@ -493,17 +534,13 @@ export default function GardenBoardView({
         const selRight = selectionRect.x + selectionRect.width;
         const selBottom = selectionRect.y + selectionRect.height;
 
-        // Check if area intersects with selection rectangle
         const intersects = area.positionX <= selRight &&
           areaRight >= selectionRect.x &&
           area.positionY <= selBottom &&
           areaBottom >= selectionRect.y;
 
         if (intersects) {
-          console.log(`✅ Area "${area.name}" (${area.id}) selected - Position: (${area.positionX}, ${area.positionY}), Size: (${area.width}, ${area.length})`);
           newSelectedIds.add(area.id);
-        } else {
-          console.log(`❌ Area "${area.name}" (${area.id}) NOT selected - Position: (${area.positionX}, ${area.positionY})`);
         }
       });
 
@@ -524,36 +561,22 @@ export default function GardenBoardView({
         }
       });
 
-      console.log('🎯 Selection complete:', {
-        growAreasSelected: newSelectedIds.size,
-        objectsSelected: newSelectedObjectIds.size,
-        growAreaIds: Array.from(newSelectedIds),
-        objectIds: Array.from(newSelectedObjectIds),
-      });
-
       setSelectedIds(newSelectedIds);
       setSelectedObjectIds(newSelectedObjectIds);
 
-      // Clear single selection when we have multi-selection
+      // Clear or set single selection state
       if (newSelectedIds.size > 1 || newSelectedObjectIds.size > 1) {
-        console.log('🔄 Multi-selection detected - clearing single selection');
         setSelectedId(null);
         setSelectedObjectId(null);
       } else if (newSelectedIds.size === 1) {
-        // If only one grow area selected, also set it as single selection for resize handles
         const singleId = Array.from(newSelectedIds)[0];
-        console.log('🔄 Single grow area selected:', singleId);
         setSelectedId(singleId);
         setSelectedObjectId(null);
       } else if (newSelectedObjectIds.size === 1) {
-        // If only one object selected, also set it as single selection
         const singleObjId = Array.from(newSelectedObjectIds)[0];
-        console.log('🔄 Single object selected:', singleObjId);
         setSelectedId(null);
         setSelectedObjectId(singleObjId);
       } else {
-        // Nothing selected
-        console.log('🔄 Nothing selected - clearing all selections');
         setSelectedId(null);
         setSelectedObjectId(null);
       }
@@ -564,18 +587,29 @@ export default function GardenBoardView({
       return;
     }
 
-    if (!isDrawing || !currentDrawing) {
-      setIsDrawing(false);
+    // If we were drawing but have no currentDrawing, just reset
+    if (!isDrawing) {
       setDrawingStart(null);
-      setIsSelecting(false);
-      setSelectionRect(null);
+      setCurrentDrawing(null);
       return;
     }
 
     // Don't save shapes that are too small (likely accidental clicks)
-    if (activeTool === 'RECTANGLE' || activeTool === 'CIRCLE') {
+    if (currentDrawing && (currentDrawing.type === 'RECTANGLE' || currentDrawing.type === 'CIRCLE')) {
       const minSize = 5; // minimum 5px
       if ((currentDrawing.width || 0) < minSize && (currentDrawing.height || 0) < minSize) {
+        setIsDrawing(false);
+        setDrawingStart(null);
+        setCurrentDrawing(null);
+        return;
+      }
+    }
+
+    // Finalize freehand: ensure we have enough points
+    if (currentDrawing && currentDrawing.type === 'FREEHAND') {
+      const pts = JSON.parse(currentDrawing.points || '[]') as number[];
+      if (pts.length < 4) {
+        // Too short
         setIsDrawing(false);
         setDrawingStart(null);
         setCurrentDrawing(null);
@@ -587,7 +621,9 @@ export default function GardenBoardView({
     setDrawingStart(null);
 
     // Save the completed shape to backend
-    await saveCanvasObject(currentDrawing);
+    if (currentDrawing) {
+      await saveCanvasObject(currentDrawing);
+    }
 
     setCurrentDrawing(null);
     setActiveTool('SELECT'); // Switch back to select mode
@@ -657,12 +693,21 @@ export default function GardenBoardView({
 
       // Escape - deselect and cancel drawing
       if (e.key === 'Escape') {
+        // Clear single and multi-selection state
         setSelectedId(null);
         setSelectedObjectId(null);
+        setSelectedIds(new Set());
+        setSelectedObjectIds(new Set());
+
+        // Cancel drawing state
         setIsDrawing(false);
         setDrawingStart(null);
         setCurrentDrawing(null);
         setActiveTool('SELECT');
+
+        // Also cancel any selection-rectangle mode
+        setIsSelecting(false);
+        setSelectionRect(null);
         return;
       }
 
