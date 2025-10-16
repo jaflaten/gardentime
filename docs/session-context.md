@@ -1,16 +1,22 @@
-# GardenTime - Current Session Context
+# RegenGarden - Current Session Context
 
-**Last Updated:** October 15, 2025
+**Last Updated:** October 16, 2025
 
 ## 🚀 Project Status: FULLY FUNCTIONAL
 
-GardenTime is a garden management app built with **Next.js 15 (BFF)** + **Spring Boot (Kotlin)** + **PostgreSQL**.
+RegenGarden (formerly GardenTime) is a garden management app built with **Next.js 15 (BFF)** + **Spring Boot (Kotlin)** + **PostgreSQL**.
 
 ---
 
 ## 🎯 Current Work
 
-**Active:** Step 25 - Canvas Drawing Tools (25.10 - Drawing Interaction Logic)
+**Recently Completed:** Search Functionality (Steps 28-34)
+- ✅ Fixed 405 error in grow area search endpoint
+- ✅ Implemented BFF route for grow area search
+- ✅ Rebranded application from "GardenTime" to "RegenGarden" across all pages
+- ✅ Both plant search and grow area search fully functional
+
+**Previous:** Step 25 - Canvas Drawing Tools (25.10 - Drawing Interaction Logic)
 - ✅ Backend infrastructure complete (CanvasObject entity, API, database)
 - ✅ Frontend components complete (DrawingToolbar, CanvasShape)
 - ⏳ **Next:** Implement mouse event handlers for drawing interactions

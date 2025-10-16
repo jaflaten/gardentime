@@ -70,6 +70,12 @@ export default function GardensPage() {
               <h1 className="text-2xl font-bold text-green-600">RegenGarden</h1>
             </div>
             <div className="flex items-center gap-4">
+              <Link
+                href="/search"
+                className="px-4 py-2 text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                🔍 Search
+              </Link>
               <span className="text-gray-700">Welcome, {username}</span>
               <button
                 onClick={handleLogout}

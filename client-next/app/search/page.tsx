@@ -40,7 +40,7 @@ export default function SearchPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Search</h1>
+              <h1 className="text-2xl font-bold text-green-600">RegenGarden</h1>
               <p className="text-sm text-gray-500 mt-1">
                 Search for grow areas and plants across all your gardens
               </p>
@@ -82,21 +82,21 @@ export default function SearchPage() {
               <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h3 className="font-semibold text-green-900 mb-2">Selected Grow Area</h3>
                 <div className="space-y-2">
-                  <p className="text-sm">
+                  <p className="text-sm text-gray-900">
                     <span className="font-medium">Name:</span> {selectedGrowArea.name}
                   </p>
                   {selectedGrowArea.zoneType && (
-                    <p className="text-sm">
+                    <p className="text-sm text-gray-900">
                       <span className="font-medium">Type:</span> {selectedGrowArea.zoneType}
                     </p>
                   )}
                   {selectedGrowArea.zoneSize && (
-                    <p className="text-sm">
+                    <p className="text-sm text-gray-900">
                       <span className="font-medium">Size:</span> {selectedGrowArea.zoneSize}
                     </p>
                   )}
                   {selectedGrowArea.notes && (
-                    <p className="text-sm">
+                    <p className="text-sm text-gray-900">
                       <span className="font-medium">Notes:</span> {selectedGrowArea.notes}
                     </p>
                   )}

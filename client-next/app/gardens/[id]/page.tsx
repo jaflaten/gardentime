@@ -278,12 +278,18 @@ export default function GardenDetailPage() {
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-4">
               <Link href="/gardens" className="text-2xl font-bold text-green-600">
-                GardenTime
+                RegenGarden
               </Link>
               <span className="text-gray-400">/</span>
               <span className="text-gray-800 font-medium">{garden?.name || 'Garden'}</span>
             </div>
             <div className="flex items-center gap-4">
+              <Link
+                href="/search"
+                className="px-4 py-2 text-sm text-green-600 hover:text-green-700 font-medium"
+              >
+                🔍 Search
+              </Link>
               <span className="text-gray-800">Welcome, {username}</span>
               <button
                 onClick={handleLogout}

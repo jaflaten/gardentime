@@ -149,8 +149,15 @@ GardenTime is a garden management application that helps users manage multiple g
 - [ ] **Step 27.17:** Mobile UX enhancements
 - [ ] **Step 27.18:** Collision detection, templates, measurement tool
 
-### Search Functionality (Steps 28-34)
-- [ ] Grow area search and plant/crop search with autocomplete
+### Search Functionality (Steps 28-34) ✅ COMPLETED
+- [x] **Steps 28-34:** Grow area search and plant/crop search with autocomplete ✅
+  - [x] Backend search endpoint implemented (`/api/growarea/search`)
+  - [x] BFF route created (`/app/api/grow-areas/search/route.ts`)
+  - [x] GrowAreaSearch component with debounced autocomplete
+  - [x] PlantSearch component with autocomplete
+  - [x] Dedicated search page (`/search`) with both search types
+  - [x] Keyboard navigation support (arrow keys, Enter, Escape)
+  - [x] Security: User-scoped search (only searches own grow areas)
 
 ### Plant Database (Steps 35-40, 97)
 - [ ] Expand plant varieties, companion planting, crop families

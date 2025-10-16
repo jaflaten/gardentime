@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GardenTime - Manage Your Garden",
+  title: "RegenGarden - Manage Your Garden",
   description: "Track your gardens, grow areas, and crop rotation",
 };
 
