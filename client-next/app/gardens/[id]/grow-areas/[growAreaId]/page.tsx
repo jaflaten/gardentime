@@ -5,6 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { growAreaService, cropRecordService, plantService, GrowArea, CropRecord, Plant, ZoneType, CropStatus } from '@/lib/api';
 import Link from 'next/link';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
 
 export default function GrowAreaDetailPage() {
   const router = useRouter();
@@ -217,37 +219,16 @@ export default function GrowAreaDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-2 text-sm">
-              <Link href="/gardens" className="text-green-600 hover:text-green-700">
-                Gardens
-              </Link>
-              <span className="text-gray-400">/</span>
-              <Link href={`/gardens/${gardenId}`} className="text-green-600 hover:text-green-700">
-                Garden
-              </Link>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-800 font-medium">{growArea?.name || 'Grow Area'}</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-gray-800">Welcome, {username}</span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar
+        breadcrumbs={[
+          { label: 'Garden', href: `/gardens/${gardenId}` },
+          { label: growArea?.name || 'Grow Area' }
+        ]}
+      />
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         <div className="mb-6">
           <Link
             href={`/gardens/${gardenId}`}
@@ -476,6 +457,8 @@ export default function GrowAreaDetailPage() {
           </>
         )}
       </div>
+
+      <Footer />
 
       {/* Create Crop Record Modal */}
       {showCreateModal && (

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { gardenService, Garden } from '@/lib/api';
 import Link from 'next/link';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
 
 export default function GardensPage() {
   const router = useRouter();
@@ -61,32 +63,8 @@ export default function GardensPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-green-600">RegenGarden</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/search"
-                className="px-4 py-2 text-sm text-green-600 hover:text-green-700 font-medium"
-              >
-                🔍 Search
-              </Link>
-              <span className="text-gray-700">Welcome, {username}</span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -148,7 +126,9 @@ export default function GardensPage() {
       {showCreateModal && (
         <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Create New Garden</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-900">
+              Create New Garden
+            </h3>
             <form onSubmit={handleCreateGarden}>
               <div className="space-y-4">
                 <div>
@@ -211,6 +191,8 @@ export default function GardensPage() {
           </div>
         </div>
       )}
+
+      <Footer />
     </div>
   );
 }

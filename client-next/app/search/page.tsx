@@ -7,6 +7,8 @@ import GrowAreaSearch from '../gardens/components/GrowAreaSearch';
 import PlantSearch from '../gardens/components/PlantSearch';
 import { GrowArea, Plant } from '@/lib/api';
 import Link from 'next/link';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
 
 export default function SearchPage() {
   const router = useRouter();
@@ -34,32 +36,18 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-green-600">RegenGarden</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Search for grow areas and plants across all your gardens
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {username}</span>
-              <Link
-                href="/gardens"
-                className="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700"
-              >
-                Back to Gardens
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar showSearch={false} />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Search</h1>
+          <p className="text-gray-600">
+            Search for grow areas and plants across all your gardens
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Grow Area Search Section */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -247,6 +235,8 @@ export default function SearchPage() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }
