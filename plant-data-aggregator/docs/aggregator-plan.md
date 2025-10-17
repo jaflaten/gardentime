@@ -47,6 +47,11 @@ For each companion relationship we should track:
 - [x] Comprehensive error handling (401, 404, 429, etc.)
 - [x] Documentation (see `docs/trefle-integration.md`)
 
+Next steps: 
+1. Implement PerenualService (following the same pattern as TrefleService)
+2. Build the merge service to combine data from both Trefle and Perenual
+3. Add data enrichment and conflict resolution logic
+
 **Perenual Client:** 🔄 TODO
 - [ ] Implement authentication
 - [ ] Create DTOs for Perenual responses (DTOs already exist)
