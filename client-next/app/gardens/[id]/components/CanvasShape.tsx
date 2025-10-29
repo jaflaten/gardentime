@@ -13,9 +13,10 @@ interface CanvasShapeProps {
   onResize?: (x: number, y: number, width: number, height: number) => void;
   onUpdatePoints?: (points: number[]) => void; // New: for lines/arrows
   onContextMenu?: (e: any) => void; // New: for right-click menu
+  onTextEdit?: (text: string) => void; // New: for text editing
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu, onTextEdit }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
 
@@ -262,10 +263,25 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
 
   // TEXT
   if (shape.type === 'TEXT') {
+    const handleTextEdit = () => {
+      if (onTextEdit && !shape.locked) {
+        const newText = prompt('Edit text:', shape.text || 'Text');
+        if (newText !== null) {
+          onTextEdit(newText);
+        }
+      }
+    };
+
     return (
-      <Group {...commonProps} draggable={!shape.locked} onDragEnd={baseDragHandler}>
+      <Group
+        {...commonProps}
+        draggable={!shape.locked}
+        onDragEnd={baseDragHandler}
+        onDblClick={handleTextEdit}
+        onDblTap={handleTextEdit}
+      >
         {/* Optional background */}
-        {shape.fillColor && (
+        {shape.fillColor && shape.fillColor !== 'transparent' && (
           <Rect
             x={shape.x}
             y={shape.y}

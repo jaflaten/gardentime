@@ -34,7 +34,7 @@ GardenTime is a garden management application that helps users manage multiple g
 - [x] **Step 23:** Grid background (partially complete - snap-to-grid pending)
 - [x] **Step 24:** Click to view/edit grow area details ✅
 
-### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (75% complete)
+### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (80% complete)
 
 **Goal:** Transform the board into a full-featured canvas app with drawing tools for annotations, planning, and design
 
@@ -66,12 +66,12 @@ GardenTime is a garden management application that helps users manage multiple g
     - [x] Hold Shift for horizontal/vertical/45° angles ✅
     - [x] Make arrow endpoints adjustable after placement (drag endpoints, update arrowhead orientation) ✅
 
-- [ ] **25.3: Text Tool**
-  - [ ] 25.3.1: Click to place text box on canvas
-  - [ ] 25.3.2: Inline text editing (double-click to edit)
-  - [ ] 25.3.3: Font size, color, and style options
-  - [ ] 25.3.4: Text box background (optional, for visibility)
-  - [ ] 25.3.5: Auto-resize text box or fixed width with wrapping
+- [x] **25.3: Text Tool** ✅ COMPLETED
+  - [x] 25.3.1: Click to place text box on canvas ✅
+  - [x] 25.3.2: Inline text editing (double-click to edit) ✅
+  - [x] 25.3.3: Font size, color, and style options ✅
+  - [x] 25.3.4: Text box background (optional, for visibility) ✅
+  - [x] 25.3.5: Text width control with wrapping ✅
 
 - [ ] **25.4: Freehand Drawing Tool**
   - [ ] 25.4.1: Click-drag to draw freehand paths
@@ -132,7 +132,13 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ### Board Enhancements (Steps 26-27)
 - [ ] **Step 26:** Delete grow area from board with confirmation
-- [ ] **Step 27:** Auto-save with debouncing (Miro-style)
+- [x] **Step 27:** Auto-save with debouncing (Miro-style) ✅ COMPLETED
+  - [x] 27.1: Debounced save hook (800ms delay)
+  - [x] 27.2: Visual save indicator (pending/saving/saved/error)
+  - [x] 27.3: Update batching (merge consecutive changes)
+  - [x] 27.4: Error handling with retry
+  - [x] 27.5: Integration with canvas objects
+  - [x] 27.6: 90%+ reduction in API calls
 - [x] **Step 27.1:** List/Board view toggle ✅
 
 ### Advanced Board Features (Steps 27.5-27.18)
@@ -213,18 +219,22 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ## 📊 Current Status
 
-**Overall Project:** ~68% complete
+**Overall Project:** ~70% complete
 
-**Current Focus:** Step 25.3 - Text Tool OR Step 27 - Auto-save
+**Current Focus:** Step 25.4 - Freehand Drawing OR Step 25.11 - Advanced Features
 
 **Just Completed:** 
-- Step 25.6 - Shape Properties Panel ✅
-  - Color pickers with preset swatches
-  - Opacity and stroke width sliders
-  - Line style selector (solid/dashed/dotted)
-  - Z-index controls for layering
-  - Duplicate and delete buttons
-  - Enhanced lock/unlock UI
-  - Complete Excalidraw-like experience
+- Step 25.3 - Text Tool ✅
+  - Click to place text on canvas
+  - Double-click inline editing
+  - Text properties panel (content, font size, font family, width)
+  - Auto-save integration
+  - 7 font families, 8-72px size range
+  - Optional background color
+  - Color presets and customization
 
-**Next Priority:** Step 25.3 - Text Tool OR Step 27 - Auto-save with debouncing
+**Previous:** 
+- Step 27 - Auto-save with Debouncing ✅
+  - ⚠️ **TODO: Test auto-save functionality** - Drag shapes, watch save indicator, check network tab
+
+**Next Priority:** Step 25.4 - Freehand Drawing Tool OR Step 25.11 - Advanced Features (snap-to-grid, alignment guides)

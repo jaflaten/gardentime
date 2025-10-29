@@ -255,6 +255,79 @@ export default function ShapePropertiesPanel({
           </div>
         )}
 
+        {/* Text Properties (for text objects) */}
+        {selectedObject.type === 'TEXT' && (
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Text Content
+              </label>
+              <textarea
+                value={selectedObject.text || ''}
+                onChange={(e) => onUpdate({ text: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                rows={3}
+                placeholder="Enter text..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Font Size: {selectedObject.fontSize || 16}px
+              </label>
+              <input
+                type="range"
+                min="8"
+                max="72"
+                value={selectedObject.fontSize || 16}
+                onChange={(e) => handleNumberChange('fontSize', parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>8px</span>
+                <span>72px</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Font Family
+              </label>
+              <select
+                value={selectedObject.fontFamily || 'Arial'}
+                onChange={(e) => onUpdate({ fontFamily: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="Arial">Arial</option>
+                <option value="Helvetica">Helvetica</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Text Width: {selectedObject.width || 200}px
+              </label>
+              <input
+                type="range"
+                min="50"
+                max="800"
+                value={selectedObject.width || 200}
+                onChange={(e) => handleNumberChange('width', parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                <span>50px</span>
+                <span>800px</span>
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Lock/Unlock */}
         <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
           <div className="flex items-center gap-2">

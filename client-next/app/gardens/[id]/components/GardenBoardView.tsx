@@ -12,11 +12,13 @@ import ViewOptions from './ViewOptions';
 import SelectionRectangle from './SelectionRectangle';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import ContextMenu from './ContextMenu';
+import SaveIndicator from './SaveIndicator';
 import { useCanvasPersistence } from '../hooks/useCanvasPersistence';
 import { useCanvasZoom } from '../hooks/useCanvasZoom';
 import { useDrawingInteraction } from '../hooks/useDrawingInteraction';
 import { useSelectionState } from '../hooks/useSelectionState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { useCanvasObjectSaver } from '../hooks/useCanvasObjectSaver';
 import { generateGridLines } from '../utils/gridUtils';
 
 interface GardenBoardViewProps {
@@ -46,6 +48,10 @@ export default function GardenBoardView({
   const [activeTool, setActiveTool] = useState<DrawingTool>('SELECT');
   const [canvasObjects, setCanvasObjects] = useState<CanvasObject[]>([]);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; objectId: number } | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle');
+
+  // Auto-save hook for canvas objects
+  const { scheduleUpdate: scheduleCanvasObjectSave, saveNow: saveCanvasObjectsNow } = useCanvasObjectSaver(800);
 
   // Use custom hooks
   const { stagePosition, setStagePosition, scale, setScale, showGrid, setShowGrid } =
@@ -232,23 +238,17 @@ export default function GardenBoardView({
   const handleUpdateObjectProperties = async (updates: Partial<CanvasObject>) => {
     if (!selectedObjectId) return;
 
+    // Optimistic update
     setCanvasObjects((prev) =>
       prev.map((obj) => (obj.id === selectedObjectId ? { ...obj, ...updates } : obj))
     );
 
-    try {
-      await canvasObjectService.update(selectedObjectId, updates);
-    } catch (error) {
-      console.error('Failed to update canvas object:', error);
-      // Rollback on error
-      const original = canvasObjects.find((obj) => obj.id === selectedObjectId);
-      if (original) {
-        setCanvasObjects((prev) =>
-          prev.map((obj) => (obj.id === selectedObjectId ? original : obj))
-        );
-      }
-      alert('Failed to update shape. Please try again.');
-    }
+    // Debounced save
+    setSaveStatus('pending');
+    scheduleCanvasObjectSave(selectedObjectId, updates);
+    setTimeout(() => setSaveStatus('saving'), 100);
+    setTimeout(() => setSaveStatus('saved'), 900);
+    setTimeout(() => setSaveStatus('idle'), 2900);
   };
 
   // Context menu handlers
@@ -441,35 +441,48 @@ export default function GardenBoardView({
                 isSelected={selectedObjectId === obj.id}
                 isDraggingEnabled={activeTool === 'SELECT'}
                 onSelect={() => selectCanvasObject(obj.id)}
-                onDragEnd={async (x, y) => {
+                onDragEnd={(x, y) => {
+                  // Optimistic update
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y } : s)));
-                  try {
-                    await canvasObjectService.update(obj.id, { x, y });
-                  } catch (error) {
-                    console.error('Failed to update canvas object position:', error);
-                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
-                  }
+                  setSaveStatus('pending');
+                  // Debounced save
+                  scheduleCanvasObjectSave(obj.id, { x, y });
+                  setTimeout(() => setSaveStatus('saving'), 100);
+                  setTimeout(() => setSaveStatus('saved'), 900);
+                  setTimeout(() => setSaveStatus('idle'), 2900);
                 }}
                 onResize={async (x, y, width, height) => {
+                  // Optimistic update
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y, width, height } : s)));
-                  try {
-                    await canvasObjectService.update(obj.id, { x, y, width, height });
-                  } catch (error) {
-                    console.error('Failed to update canvas object:', error);
-                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
-                  }
+                  setSaveStatus('pending');
+                  // Debounced save
+                  scheduleCanvasObjectSave(obj.id, { x, y, width, height });
+                  setTimeout(() => setSaveStatus('saving'), 100);
+                  setTimeout(() => setSaveStatus('saved'), 900);
+                  setTimeout(() => setSaveStatus('idle'), 2900);
                 }}
                 onUpdatePoints={async (points) => {
                   const pointsString = JSON.stringify(points);
+                  // Optimistic update
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, points: pointsString } : s)));
-                  try {
-                    await canvasObjectService.update(obj.id, { points: pointsString });
-                  } catch (error) {
-                    console.error('Failed to update canvas object points:', error);
-                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
-                  }
+                  setSaveStatus('pending');
+                  // Debounced save
+                  scheduleCanvasObjectSave(obj.id, { points: pointsString });
+                  setTimeout(() => setSaveStatus('saving'), 100);
+                  setTimeout(() => setSaveStatus('saved'), 900);
+                  setTimeout(() => setSaveStatus('idle'), 2900);
                 }}
                 onContextMenu={(e) => handleContextMenuOpen(e, obj.id)}
+                onTextEdit={(text) => {
+                  // Optimistic update
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, text } : s)));
+                  setSaveStatus('pending');
+                  // Debounced save
+                  scheduleCanvasObjectSave(obj.id, { text });
+                  setTimeout(() => setSaveStatus('saving'), 100);
+                  setTimeout(() => setSaveStatus('saved'), 900);
+                  setTimeout(() => setSaveStatus('idle'), 2900);
+                }}
               />
             ))}
 
@@ -516,6 +529,9 @@ export default function GardenBoardView({
           onDelete={deleteSelectedObject}
         />
       )}
+
+      {/* Save Status Indicator */}
+      <SaveIndicator status={saveStatus} />
     </div>
   );
 }

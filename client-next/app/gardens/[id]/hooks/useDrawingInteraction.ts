@@ -91,8 +91,8 @@ export function useDrawingInteraction({
 
     // Handle text tool immediately
     if (activeTool === 'TEXT') {
-      const textPrompt = prompt('Enter text:', 'Text');
-      if (textPrompt) {
+      const textPrompt = prompt('Enter text:', 'Double-click to edit');
+      if (textPrompt !== null) { // Allow empty string
         const newTextObject: CanvasObject = {
           id: baseId,
           gardenId,
@@ -101,11 +101,11 @@ export function useDrawingInteraction({
           y: canvasPos.y,
           width: 200,
           height: 40,
-          text: textPrompt,
+          text: textPrompt || 'Double-click to edit',
           fontSize: 16,
           fontFamily: 'Arial',
           strokeColor: '#000000',
-          fillColor: '#ffffff',
+          fillColor: 'transparent',
           opacity: 1,
         };
         saveCanvasObject(newTextObject);
