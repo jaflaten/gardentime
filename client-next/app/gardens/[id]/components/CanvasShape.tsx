@@ -12,9 +12,10 @@ interface CanvasShapeProps {
   onDragEnd: (x: number, y: number) => void;
   onResize?: (x: number, y: number, width: number, height: number) => void;
   onUpdatePoints?: (points: number[]) => void; // New: for lines/arrows
+  onContextMenu?: (e: any) => void; // New: for right-click menu
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
 
@@ -34,6 +35,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
     draggable: isDraggingEnabled && !shape.locked,
     onClick: onSelect,
     onTap: onSelect,
+    onContextMenu: onContextMenu,
     opacity: shape.opacity || 1,
     rotation: shape.rotation || 0,
     shadowColor: isSelected ? '#10b981' : undefined,
@@ -133,6 +135,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
   if (shape.type === 'LINE') {
     const points = shape.points ? JSON.parse(shape.points) : [0, 0, 100, 100];
     const [x1, y1, x2, y2] = points;
+    const dashPattern = shape.dash ? JSON.parse(shape.dash) : undefined;
     
     return (
       <>
@@ -142,6 +145,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
           strokeWidth={shape.strokeWidth || 2}
           lineCap="round"
           lineJoin="round"
+          dash={dashPattern}
           hitStrokeWidth={20}  // Wider hit area for easier selection
           {...commonProps}
           draggable={false}
@@ -195,6 +199,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
   if (shape.type === 'ARROW') {
     const points = shape.points ? JSON.parse(shape.points) : [0, 0, 100, 100];
     const [x1, y1, x2, y2] = points;
+    const dashPattern = shape.dash ? JSON.parse(shape.dash) : undefined;
     
     return (
       <>
@@ -205,6 +210,7 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
           strokeWidth={shape.strokeWidth || 2}
           pointerLength={10}
           pointerWidth={10}
+          dash={dashPattern}
           hitStrokeWidth={20}  // Wider hit area for easier selection
           {...commonProps}
           draggable={false}

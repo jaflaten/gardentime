@@ -10,6 +10,8 @@ import CanvasShape from './CanvasShape';
 import ZoomControls from './ZoomControls';
 import ViewOptions from './ViewOptions';
 import SelectionRectangle from './SelectionRectangle';
+import ShapePropertiesPanel from './ShapePropertiesPanel';
+import ContextMenu from './ContextMenu';
 import { useCanvasPersistence } from '../hooks/useCanvasPersistence';
 import { useCanvasZoom } from '../hooks/useCanvasZoom';
 import { useDrawingInteraction } from '../hooks/useDrawingInteraction';
@@ -43,6 +45,7 @@ export default function GardenBoardView({
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [activeTool, setActiveTool] = useState<DrawingTool>('SELECT');
   const [canvasObjects, setCanvasObjects] = useState<CanvasObject[]>([]);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; objectId: number } | null>(null);
 
   // Use custom hooks
   const { stagePosition, setStagePosition, scale, setScale, showGrid, setShowGrid } =
@@ -138,6 +141,31 @@ export default function GardenBoardView({
     }
   };
 
+  // Duplicate selected canvas object
+  const duplicateSelectedObject = async () => {
+    if (!selectedObjectId) return;
+
+    const objectToDuplicate = canvasObjects.find((obj) => obj.id === selectedObjectId);
+    if (!objectToDuplicate) return;
+
+    try {
+      // Create a copy with offset position
+      const { id, ...objectData } = objectToDuplicate;
+      const duplicatedObject = await canvasObjectService.create({
+        ...objectData,
+        x: objectToDuplicate.x + 20,
+        y: objectToDuplicate.y + 20,
+        zIndex: (objectToDuplicate.zIndex || 0) + 1,
+      });
+      
+      setCanvasObjects((prev) => [...prev, duplicatedObject]);
+      setSelectedObjectId(duplicatedObject.id);
+    } catch (error) {
+      console.error('Failed to duplicate canvas object:', error);
+      alert('Failed to duplicate shape. Please try again.');
+    }
+  };
+
   // Keyboard shortcuts
   useKeyboardShortcuts({
     selectedObjectId,
@@ -153,6 +181,9 @@ export default function GardenBoardView({
   // Handle stage mouse down
   const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const clickedOnEmpty = e.target === e.target.getStage();
+
+    // Close context menu on any click
+    setContextMenu(null);
 
     // Handle selection rectangle in SELECT mode
     if (activeTool === 'SELECT' && clickedOnEmpty) {
@@ -197,8 +228,74 @@ export default function GardenBoardView({
     }
   };
 
+  // Update canvas object properties
+  const handleUpdateObjectProperties = async (updates: Partial<CanvasObject>) => {
+    if (!selectedObjectId) return;
+
+    setCanvasObjects((prev) =>
+      prev.map((obj) => (obj.id === selectedObjectId ? { ...obj, ...updates } : obj))
+    );
+
+    try {
+      await canvasObjectService.update(selectedObjectId, updates);
+    } catch (error) {
+      console.error('Failed to update canvas object:', error);
+      // Rollback on error
+      const original = canvasObjects.find((obj) => obj.id === selectedObjectId);
+      if (original) {
+        setCanvasObjects((prev) =>
+          prev.map((obj) => (obj.id === selectedObjectId ? original : obj))
+        );
+      }
+      alert('Failed to update shape. Please try again.');
+    }
+  };
+
+  // Context menu handlers
+  const handleContextMenuOpen = (e: any, objectId: number) => {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pointerPosition = stage.getPointerPosition();
+    if (pointerPosition) {
+      setContextMenu({
+        x: pointerPosition.x,
+        y: pointerPosition.y,
+        objectId,
+      });
+      setSelectedObjectId(objectId);
+    }
+  };
+
+  const handleBringToFront = () => {
+    if (!contextMenu) return;
+    const maxZIndex = Math.max(...canvasObjects.map(obj => obj.zIndex || 0), 0);
+    handleUpdateObjectProperties({ zIndex: maxZIndex + 1 });
+  };
+
+  const handleBringForward = () => {
+    if (!contextMenu) return;
+    const obj = canvasObjects.find(o => o.id === contextMenu.objectId);
+    handleUpdateObjectProperties({ zIndex: (obj?.zIndex || 0) + 1 });
+  };
+
+  const handleSendBackward = () => {
+    if (!contextMenu) return;
+    const obj = canvasObjects.find(o => o.id === contextMenu.objectId);
+    handleUpdateObjectProperties({ zIndex: Math.max(0, (obj?.zIndex || 0) - 1) });
+  };
+
+  const handleSendToBack = () => {
+    if (!contextMenu) return;
+    handleUpdateObjectProperties({ zIndex: 0 });
+  };
+
+  // Get selected canvas object
+  const selectedCanvasObject = canvasObjects.find((obj) => obj.id === selectedObjectId) || null;
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
       {/* Drawing Toolbar */}
       <DrawingToolbar
         activeTool={activeTool}
@@ -334,8 +431,10 @@ export default function GardenBoardView({
               );
             })}
 
-            {/* Canvas Objects */}
-            {canvasObjects.map((obj) => (
+            {/* Canvas Objects - sorted by zIndex */}
+            {[...canvasObjects]
+              .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
+              .map((obj) => (
               <CanvasShape
                 key={obj.id}
                 canvasObject={obj}
@@ -370,6 +469,7 @@ export default function GardenBoardView({
                     setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
                   }
                 }}
+                onContextMenu={(e) => handleContextMenuOpen(e, obj.id)}
               />
             ))}
 
@@ -390,6 +490,32 @@ export default function GardenBoardView({
           </Layer>
         </Stage>
       </div>
+
+      {/* Shape Properties Panel */}
+      {selectedCanvasObject && (
+        <ShapePropertiesPanel
+          selectedObject={selectedCanvasObject}
+          onUpdate={handleUpdateObjectProperties}
+          onDelete={deleteSelectedObject}
+          onDuplicate={duplicateSelectedObject}
+          onClose={() => setSelectedObjectId(null)}
+        />
+      )}
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          onBringToFront={handleBringToFront}
+          onBringForward={handleBringForward}
+          onSendBackward={handleSendBackward}
+          onSendToBack={handleSendToBack}
+          onDuplicate={duplicateSelectedObject}
+          onDelete={deleteSelectedObject}
+        />
+      )}
     </div>
   );
 }

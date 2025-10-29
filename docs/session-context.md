@@ -10,30 +10,21 @@ RegenGarden (formerly GardenTime) is a garden management app built with **Next.j
 
 ## 🎯 Current Work
 
-**Just Completed:** Step 25.2 - Basic Shape Tools ✅
-1. **Shift Key Modifiers:**
-   - ✅ Rectangle tool: Hold Shift for perfect squares
-   - ✅ Line tool: Hold Shift for 45° angle constraints
-   - ✅ Arrow tool: Hold Shift for 45° angle constraints
-   - 📄 Details in `docs/step-25.2-implementation.md`
+**Just Completed:** Step 25.6 - Shape Properties Panel ✅
+- ✅ Color pickers with 10 preset swatches
+- ✅ Opacity slider (0-100%)
+- ✅ Stroke width slider (1-20px)
+- ✅ Line style selector (solid, dashed, dotted)
+- ✅ Z-index controls (bring forward/send backward)
+- ✅ Lock/unlock toggle with visual icons
+- ✅ Duplicate button (creates copy with offset)
+- ✅ Delete button with confirmation
+- ✅ Backend support for `dash` field (V6 migration)
+- 📄 Details in `docs/step-25.6-implementation.md`
 
-2. **Adjustable Line/Arrow Endpoints:**
-   - ✅ Draggable endpoint handles (green circles) appear when selected
-   - ✅ Drag endpoints to adjust length and direction
-   - ✅ Arrow arrowhead automatically updates orientation
-   - ✅ Backend persistence with optimistic UI updates
-   - 📄 Details in `docs/adjustable-endpoints-implementation.md`
-
-**Next Priority:** Step 25.6 - Shape Properties Panel
-- Color picker for fill and stroke
-- Opacity slider
-- Border width controls
-- Line style selector (solid, dashed, dotted)
-- This will enable full customization of shapes like Excalidraw
-
-**Alternative Next:** Step 27 - Auto-save with debouncing
-- Prevent data loss during editing
-- Miro-style auto-save UX
+**Next Priority:** Step 25.3 - Text Tool OR Step 27 - Auto-save
+- Text tool will enable annotations and labels on the canvas
+- Auto-save will prevent data loss during editing (Miro-style UX)
 
 ---
 

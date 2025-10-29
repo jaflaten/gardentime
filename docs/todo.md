@@ -34,7 +34,7 @@ GardenTime is a garden management application that helps users manage multiple g
 - [x] **Step 23:** Grid background (partially complete - snap-to-grid pending)
 - [x] **Step 24:** Click to view/edit grow area details ✅
 
-### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (60% complete)
+### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (75% complete)
 
 **Goal:** Transform the board into a full-featured canvas app with drawing tools for annotations, planning, and design
 
@@ -84,15 +84,15 @@ GardenTime is a garden management application that helps users manage multiple g
   - [ ] 25.5.2: "Convert to Grow Area" functionality (right-click on shapes)
   - [ ] 25.5.3: Quick Create Mode (optional)
 
-- [ ] **25.6: Shape Properties Panel**
-  - [ ] 25.6.1: Context panel appears when shape is selected
-  - [ ] 25.6.2: Color picker for fill and stroke
-  - [ ] 25.6.3: Opacity slider
-  - [ ] 25.6.4: Border width slider
-  - [ ] 25.6.5: Line style selector
-  - [ ] 25.6.6: Z-index controls
-  - [ ] 25.6.7: Delete button
-  - [ ] 25.6.8: Duplicate button
+- [x] **25.6: Shape Properties Panel** ✅ COMPLETED
+  - [x] 25.6.1: Context panel appears when shape is selected ✅
+  - [x] 25.6.2: Color picker for fill and stroke (with presets) ✅
+  - [x] 25.6.3: Opacity slider ✅
+  - [x] 25.6.4: Border width slider ✅
+  - [x] 25.6.5: Line style selector (solid, dashed, dotted) ✅
+  - [x] 25.6.6: Z-index controls (bring forward/send backward) ✅
+  - [x] 25.6.7: Delete button ✅
+  - [x] 25.6.8: Duplicate button ✅
 
 - [ ] **25.7: Canvas Layers and Grouping**
   - [ ] 25.7.1: Multiple layers support
@@ -213,11 +213,18 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ## 📊 Current Status
 
-**Overall Project:** ~67% complete
+**Overall Project:** ~68% complete
 
-**Current Focus:** Step 25.6 - Shape Properties Panel
+**Current Focus:** Step 25.3 - Text Tool OR Step 27 - Auto-save
 
 **Just Completed:** 
-- Step 25.2 - Basic Shape Tools (Shift key modifiers + adjustable endpoints) ✅
+- Step 25.6 - Shape Properties Panel ✅
+  - Color pickers with preset swatches
+  - Opacity and stroke width sliders
+  - Line style selector (solid/dashed/dotted)
+  - Z-index controls for layering
+  - Duplicate and delete buttons
+  - Enhanced lock/unlock UI
+  - Complete Excalidraw-like experience
 
-**Next Priority:** Step 25.6 - Shape Properties Panel OR Step 27 - Auto-save
+**Next Priority:** Step 25.3 - Text Tool OR Step 27 - Auto-save with debouncing

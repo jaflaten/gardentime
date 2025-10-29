@@ -28,6 +28,7 @@ class CanvasObjectService(
         strokeColor: String? = null,
         strokeWidth: Double? = null,
         opacity: Double? = null,
+        dash: String? = null,
         text: String? = null,
         fontSize: Int? = null,
         fontFamily: String? = null,
@@ -57,6 +58,7 @@ class CanvasObjectService(
             strokeColor = strokeColor,
             strokeWidth = strokeWidth,
             opacity = opacity,
+            dash = dash,
             text = text,
             fontSize = fontSize,
             fontFamily = fontFamily,
@@ -95,6 +97,7 @@ class CanvasObjectService(
         strokeColor: String? = null,
         strokeWidth: Double? = null,
         opacity: Double? = null,
+        dash: String? = null,
         text: String? = null,
         fontSize: Int? = null,
         fontFamily: String? = null,
@@ -128,6 +131,7 @@ class CanvasObjectService(
         existingEntity.strokeColor = strokeColor ?: existingEntity.strokeColor
         existingEntity.strokeWidth = strokeWidth ?: existingEntity.strokeWidth
         existingEntity.opacity = opacity ?: existingEntity.opacity
+        existingEntity.dash = dash ?: existingEntity.dash
         existingEntity.text = text ?: existingEntity.text
         existingEntity.fontSize = fontSize ?: existingEntity.fontSize
         existingEntity.fontFamily = fontFamily ?: existingEntity.fontFamily

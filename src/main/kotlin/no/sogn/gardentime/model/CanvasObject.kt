@@ -24,6 +24,7 @@ data class CanvasObject(
     val strokeColor: String? = null,
     val strokeWidth: Double? = null,
     val opacity: Double? = null,
+    val dash: String? = null,  // Line dash pattern as JSON, e.g. "[5, 5]" for dashed
     // Text content (for text objects)
     val text: String? = null,
     val fontSize: Int? = null,
@@ -77,6 +78,9 @@ class CanvasObjectEntity(
 
     @Column(name = "opacity")
     var opacity: Double? = null,
+
+    @Column(name = "dash", length = 50)
+    var dash: String? = null,
 
     // Text content
     @Column(name = "text", columnDefinition = "TEXT")
@@ -136,6 +140,7 @@ fun mapCanvasObjectEntityToDomain(entity: CanvasObjectEntity): CanvasObject {
         strokeColor = entity.strokeColor,
         strokeWidth = entity.strokeWidth,
         opacity = entity.opacity,
+        dash = entity.dash,
         text = entity.text,
         fontSize = entity.fontSize,
         fontFamily = entity.fontFamily,
@@ -160,6 +165,7 @@ fun mapCanvasObjectToEntity(canvasObject: CanvasObject): CanvasObjectEntity {
         strokeColor = canvasObject.strokeColor,
         strokeWidth = canvasObject.strokeWidth,
         opacity = canvasObject.opacity,
+        dash = canvasObject.dash,
         text = canvasObject.text,
         fontSize = canvasObject.fontSize,
         fontFamily = canvasObject.fontFamily,

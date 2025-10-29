@@ -134,6 +134,7 @@ export interface CanvasObject {
   strokeColor?: string;
   strokeWidth?: number;
   opacity?: number;
+  dash?: string;  // NEW: Line dash pattern as JSON string, e.g. "[5, 5]" for dashed
   // Text content (for text objects)
   text?: string;
   fontSize?: number;
@@ -157,6 +158,7 @@ export interface CreateCanvasObjectRequest {
   strokeColor?: string;
   strokeWidth?: number;
   opacity?: number;
+  dash?: string;  // NEW: Line dash pattern
   text?: string;
   fontSize?: number;
   fontFamily?: string;
@@ -176,6 +178,7 @@ export interface UpdateCanvasObjectRequest {
   strokeColor?: string;
   strokeWidth?: number;
   opacity?: number;
+  dash?: string;  // NEW: Line dash pattern
   text?: string;
   fontSize?: number;
   fontFamily?: string;
