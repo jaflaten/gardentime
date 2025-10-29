@@ -319,8 +319,68 @@ export default function GrowAreaBox({
         />
       )}
 
-      {/* Dimensions Text (Step 19.4) */}
-      {growArea.width && growArea.length && !isSelected && !isTransforming && (
+      {/* Current Crops Display (Step 27.8) */}
+      {growArea.currentCrops && growArea.currentCrops.length > 0 && !isSelected && !isTransforming && (
+        <Group>
+          {/* Crop info background */}
+          <Rect
+            x={isBucket ? radius - 50 : (width / 2) - 50}
+            y={isBucket ? radius + 25 : height / 2 + 25}
+            width={100}
+            height={Math.min(growArea.currentCrops.length * 18 + 8, 80)}
+            fill="rgba(16, 185, 129, 0.9)"
+            cornerRadius={6}
+            listening={false}
+            shadowColor="black"
+            shadowBlur={4}
+            shadowOpacity={0.3}
+            shadowOffset={{ x: 1, y: 1 }}
+          />
+          
+          {/* Crop list - show up to 3 crops */}
+          {growArea.currentCrops.slice(0, 3).map((crop, index) => {
+            // Status color coding
+            const statusColor = crop.status === 'HARVESTED' ? '#fbbf24' : 
+                              crop.status === 'DISEASED' || crop.status === 'FAILED' ? '#ef4444' :
+                              '#ffffff';
+            
+            return (
+              <Text
+                key={crop.id}
+                x={isBucket ? radius - 46 : (width / 2) - 46}
+                y={isBucket ? radius + 30 + (index * 18) : height / 2 + 30 + (index * 18)}
+                width={92}
+                text={`🌱 ${crop.plantName || 'Unknown'}`}
+                fontSize={11}
+                fontStyle="600"
+                fill={statusColor}
+                align="center"
+                listening={false}
+                wrap="none"
+                ellipsis={true}
+              />
+            );
+          })}
+          
+          {/* "+" indicator if more than 3 crops */}
+          {growArea.currentCrops.length > 3 && (
+            <Text
+              x={isBucket ? radius - 46 : (width / 2) - 46}
+              y={isBucket ? radius + 84 : height / 2 + 84}
+              width={92}
+              text={`+${growArea.currentCrops.length - 3} more`}
+              fontSize={10}
+              fill="white"
+              align="center"
+              listening={false}
+              opacity={0.8}
+            />
+          )}
+        </Group>
+      )}
+
+      {/* Dimensions Text (Step 19.4) - Adjusted position when crops are shown */}
+      {growArea.width && growArea.length && !isSelected && !isTransforming && !(growArea.currentCrops && growArea.currentCrops.length > 0) && (
         <Text
           x={isBucket ? 0 : 8}
           y={isBucket ? radius + 10 : height / 2 + 5}

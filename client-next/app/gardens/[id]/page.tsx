@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { gardenService, growAreaService, Garden, GrowArea, ZoneType } from '@/lib/api';
+import { gardenService, growAreaService, cropRecordService, Garden, GrowArea, ZoneType } from '@/lib/api';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import AddCropModal from './components/AddCropModal';
 
 // Dynamically import GardenBoardView with SSR disabled (Konva requires browser environment)
 const GardenBoardView = dynamic(() => import('./components/GardenBoardView'), {
@@ -34,6 +35,8 @@ export default function GardenDetailPage() {
   const [selectedGrowArea, setSelectedGrowArea] = useState<GrowArea | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
+  const [showAddCropModal, setShowAddCropModal] = useState(false);
+  const [cropModalGrowArea, setCropModalGrowArea] = useState<GrowArea | null>(null);
   const [newGrowArea, setNewGrowArea] = useState({
     name: '',
     zoneSize: '',
@@ -71,8 +74,30 @@ export default function GardenDetailPage() {
         growAreaService.getByGardenId(gardenId),
       ]);
       setGarden(gardenData);
+      
+      // Fetch current crops for each grow area (Step 27.8)
+      const growAreasWithCrops = await Promise.all(
+        growAreasData.map(async (growArea) => {
+          try {
+            const crops = await cropRecordService.getByGrowAreaId(growArea.id);
+            // Filter for active crops (PLANTED or GROWING status, not HARVESTED)
+            const activeCrops = crops.filter(
+              (crop) => crop.status === 'PLANTED' || crop.status === 'GROWING' || !crop.status
+            );
+            return {
+              ...growArea,
+              currentCrops: activeCrops,
+            };
+          } catch (err) {
+            // If fetching crops fails for a grow area, just return it without crops
+            console.warn(`Failed to fetch crops for grow area ${growArea.name}:`, err);
+            return { ...growArea, currentCrops: [] };
+          }
+        })
+      );
+      
       // Sort grow areas by name to keep consistent order
-      setGrowAreas(growAreasData.sort((a, b) => a.name.localeCompare(b.name)));
+      setGrowAreas(growAreasWithCrops.sort((a, b) => a.name.localeCompare(b.name)));
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load garden data');
     } finally {
@@ -168,6 +193,16 @@ export default function GardenDetailPage() {
   const openDeleteConfirm = (growArea: GrowArea) => {
     setSelectedGrowArea(growArea);
     setShowDeleteConfirm(true);
+  };
+
+  const handleAddCropClick = (growArea: GrowArea) => {
+    setCropModalGrowArea(growArea);
+    setShowAddCropModal(true);
+  };
+
+  const handleCropCreated = () => {
+    // Refresh the garden data to show the new crop
+    fetchGardenData();
   };
 
   const handleLogout = () => {
@@ -418,6 +453,7 @@ export default function GardenDetailPage() {
                 onSelectGrowArea={handleSelectGrowAreaFromBoard}
                 onAddGrowArea={() => setShowCreateModal(true)}
                 onDeleteGrowArea={openDeleteConfirm}
+                onAddCrop={handleAddCropClick}
                 gardenId={gardenId}
               />
             )}
@@ -793,6 +829,20 @@ export default function GardenDetailPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Add Crop Modal */}
+      {cropModalGrowArea && (
+        <AddCropModal
+          growAreaId={cropModalGrowArea.id}
+          growAreaName={cropModalGrowArea.name}
+          isOpen={showAddCropModal}
+          onClose={() => {
+            setShowAddCropModal(false);
+            setCropModalGrowArea(null);
+          }}
+          onSuccess={handleCropCreated}
+        />
       )}
     </div>
   );

@@ -28,7 +28,8 @@ interface GardenBoardViewProps {
   onUpdateDimensions: (id: string, width: number, height: number) => void;
   onSelectGrowArea: (growArea: GrowArea) => void;
   onAddGrowArea?: () => void;
-  onDeleteGrowArea?: (growArea: GrowArea) => void; // New: for deleting from board
+  onDeleteGrowArea?: (growArea: GrowArea) => void;
+  onAddCrop?: (growArea: GrowArea) => void; // New: for adding crops from board
   gardenId: string;
 }
 
@@ -40,6 +41,7 @@ export default function GardenBoardView({
   onSelectGrowArea,
   onAddGrowArea,
   onDeleteGrowArea,
+  onAddCrop,
   gardenId,
 }: GardenBoardViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -555,6 +557,26 @@ export default function GardenBoardView({
           onDuplicate={duplicateSelectedObject}
           onDelete={deleteSelectedObject}
         />
+      )}
+
+      {/* Add Crop Button - shown when a grow area is selected */}
+      {selectedId && !selectedObjectId && onAddCrop && (
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
+          <button
+            onClick={() => {
+              const growArea = growAreas.find(ga => ga.id === selectedId);
+              if (growArea) {
+                onAddCrop(growArea);
+              }
+            }}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium transition-all hover:scale-105"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add Crop to This Area
+          </button>
+        </div>
       )}
 
       {/* Save Status Indicator */}

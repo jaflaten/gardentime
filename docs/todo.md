@@ -145,7 +145,14 @@ GardenTime is a garden management application that helps users manage multiple g
 - [ ] **Step 27.5:** Rotation functionality
 - [ ] **Step 27.6:** Multi-select (Shift+Click, drag rectangle, bulk operations)
 - [ ] **Step 27.7:** Undo/Redo (Cmd/Ctrl+Z)
-- [ ] **Step 27.8:** Display current crops on grow areas
+- [x] **Step 27.8:** Display current crops on grow areas ✅ COMPLETED
+  - [x] 27.8.1: Extend GrowArea interface with currentCrops field
+  - [x] 27.8.2: Fetch active crops for each grow area
+  - [x] 27.8.3: Display crop info on GrowAreaBox component
+  - [x] 27.8.4: Color-code by crop status (green for active, yellow for harvested, red for diseased/failed)
+  - [x] 27.8.5: Show up to 3 crops, with "+X more" indicator
+  - [x] 27.8.6: Filter for active crops only (PLANTED, GROWING)
+  - [x] 27.8.7: Add crop from canvas (floating button when grow area selected) ✅ NEW
 - [ ] **Step 27.9:** Color customization per grow area
 - [ ] **Step 27.10:** Mini-map overview
 - [ ] **Step 27.11:** Keyboard shortcuts (Delete, arrows, zoom, etc.)
@@ -219,21 +226,27 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ## 📊 Current Status
 
-**Overall Project:** ~73% complete 🎉
+**Overall Project:** ~76% complete 🎉
 
-**Current Focus:** Testing & Refinement
+**Current Focus:** Canvas Crop Integration
 
 **Just Completed:** 
-- Step 26 - Delete Grow Area ✅
-  - Delete/Backspace key deletes selected grow area from board
-  - Confirmation dialog before deletion
-  - Integrated with existing delete modal from list view
-  - Works with keyboard shortcuts
+- Step 27.8.7 - Add Crop from Canvas ✅
+  - Floating "Add Crop" button when grow area is selected
+  - Opens modal directly from board view
+  - No need to navigate to grow area details
+  - Seamless workflow for planting
 
-- Step 25.11 - Advanced Features (Snap-to-Grid) ✅
-  - Toggle snap-to-grid in toolbar (blue "Snap" button)
-  - Snaps positions to 50cm grid intervals
-  - Works with drag and resize operations
+- Step 27.8 - Display Current Crops on Grow Areas ✅
+  - Crops now visible on grow area boxes on the board
+  - Shows up to 3 active crops with plant names
+  - Color-coded status indicators (white=active, yellow=harvested, red=failed/diseased)
+  - "+X more" indicator for areas with many crops
+  - Auto-fetches crops when loading garden
+  - Only shows PLANTED/GROWING crops (filters out HARVESTED)
+
+- Step 26 - Delete Grow Area ✅
+- Step 25.11 - Snap-to-Grid ✅
 
 **Previous:**
 - Step 25.4 - Freehand Drawing Tool ✅
@@ -241,6 +254,12 @@ GardenTime is a garden management application that helps users manage multiple g
 - Step 27 - Auto-save with Debouncing ✅
 
 **Testing Queue:**
+- ⚠️ **TODO: Test add crop from canvas** - Select grow area, click "Add Crop" button, fill form
+- ⚠️ **TODO: Test crop appears immediately** - After adding, verify it shows on board without refresh
+- ⚠️ **TODO: Test modal form** - Verify all fields work, defaults to today's date and PLANTED status
+- ⚠️ **TODO: Test crop display on board** - Create crops in grow areas, verify they show on board view
+- ⚠️ **TODO: Test crop status colors** - Mark crops as HARVESTED/DISEASED, verify color changes
+- ⚠️ **TODO: Test many crops** - Add 4+ crops to one area, verify "+X more" indicator
 - ⚠️ **TODO: Test grow area deletion** - Select grow area, press Delete, confirm dialog, verify removal
 - ⚠️ **TODO: Test snap-to-grid** - Enable snap, drag shapes/grow areas, verify alignment
 - ⚠️ **TODO: Test freehand tool** - Draw paths, adjust brush size (1-20px)
@@ -250,4 +269,4 @@ GardenTime is a garden management application that helps users manage multiple g
 - ⚠️ **TODO: Test properties panel** - Select shapes, adjust colors/opacity/stroke width
 - ⚠️ **TODO: Test performance** - Create 20+ shapes, drag them around
 
-**Next Priority:** Testing & Bug Fixes, or Continue with Step 25.5 - Grow Area Integration
+**Next Priority:** Testing & Bug Fixes, or Continue with Step 27.7 (Undo/Redo) or 27.9 (Color customization)

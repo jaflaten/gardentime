@@ -82,6 +82,8 @@ export interface GrowArea {
   height?: number;  // Optional: real-world height in cm (for vertical gardens)
   createdAt: string;
   updatedAt: string;
+  // Current crops (Step 27.8)
+  currentCrops?: CropRecord[];  // Active crops in this grow area
 }
 
 export interface CreateGrowAreaRequest {
