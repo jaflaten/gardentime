@@ -19,7 +19,7 @@ import { useDrawingInteraction } from '../hooks/useDrawingInteraction';
 import { useSelectionState } from '../hooks/useSelectionState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useCanvasObjectSaver } from '../hooks/useCanvasObjectSaver';
-import { generateGridLines } from '../utils/gridUtils';
+import { generateGridLines, snapPositionToGrid, GRID_SIZE } from '../utils/gridUtils';
 
 interface GardenBoardViewProps {
   growAreas: GrowArea[];
@@ -28,6 +28,7 @@ interface GardenBoardViewProps {
   onUpdateDimensions: (id: string, width: number, height: number) => void;
   onSelectGrowArea: (growArea: GrowArea) => void;
   onAddGrowArea?: () => void;
+  onDeleteGrowArea?: (growArea: GrowArea) => void; // New: for deleting from board
   gardenId: string;
 }
 
@@ -38,6 +39,7 @@ export default function GardenBoardView({
   onUpdateDimensions,
   onSelectGrowArea,
   onAddGrowArea,
+  onDeleteGrowArea,
   gardenId,
 }: GardenBoardViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,6 +51,8 @@ export default function GardenBoardView({
   const [canvasObjects, setCanvasObjects] = useState<CanvasObject[]>([]);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; objectId: number } | null>(null);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle');
+  const [brushSize, setBrushSize] = useState(3); // Default brush size for freehand
+  const [snapToGrid, setSnapToGrid] = useState(false); // Snap-to-grid toggle
 
   // Auto-save hook for canvas objects
   const { scheduleUpdate: scheduleCanvasObjectSave, saveNow: saveCanvasObjectsNow } = useCanvasObjectSaver(800);
@@ -96,6 +100,7 @@ export default function GardenBoardView({
     activeTool,
     scale,
     stagePosition,
+    brushSize, // Pass current brush size
     onObjectCreated: (obj) => setCanvasObjects((prev) => [...prev, obj]),
   });
 
@@ -175,7 +180,17 @@ export default function GardenBoardView({
   // Keyboard shortcuts
   useKeyboardShortcuts({
     selectedObjectId,
-    onDeleteObject: deleteSelectedObject,
+    onDeleteObject: () => {
+      if (selectedObjectId) {
+        deleteSelectedObject();
+      } else if (selectedId && onDeleteGrowArea) {
+        // Delete grow area if one is selected
+        const growArea = growAreas.find(ga => ga.id === selectedId);
+        if (growArea && confirm(`Delete "${growArea.name}"? This cannot be undone.`)) {
+          onDeleteGrowArea(growArea);
+        }
+      }
+    },
     onSetActiveTool: setActiveTool,
     onCancelDrawing: () => {
       clearSelection();
@@ -301,6 +316,8 @@ export default function GardenBoardView({
         activeTool={activeTool}
         onToolChange={setActiveTool}
         onAddGrowArea={onAddGrowArea}
+        brushSize={brushSize}
+        onBrushSizeChange={setBrushSize}
       />
 
       {/* Toolbar */}
@@ -310,6 +327,10 @@ export default function GardenBoardView({
           currentZoomPercent={currentZoomPercent}
           onZoomChange={handleZoomChange}
           onFitToView={handleFitToView}
+          showGrid={showGrid}
+          onToggleGrid={() => setShowGrid(!showGrid)}
+          snapToGrid={snapToGrid}
+          onToggleSnap={() => setSnapToGrid(!snapToGrid)}
         />
 
         <ViewOptions
@@ -442,21 +463,27 @@ export default function GardenBoardView({
                 isDraggingEnabled={activeTool === 'SELECT'}
                 onSelect={() => selectCanvasObject(obj.id)}
                 onDragEnd={(x, y) => {
+                  // Apply snap-to-grid if enabled
+                  const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
+                  
                   // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y } : s)));
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y } : s)));
                   setSaveStatus('pending');
                   // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { x, y });
+                  scheduleCanvasObjectSave(obj.id, { x: finalPos.x, y: finalPos.y });
                   setTimeout(() => setSaveStatus('saving'), 100);
                   setTimeout(() => setSaveStatus('saved'), 900);
                   setTimeout(() => setSaveStatus('idle'), 2900);
                 }}
                 onResize={async (x, y, width, height) => {
+                  // Apply snap-to-grid if enabled
+                  const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
+                  
                   // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y, width, height } : s)));
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y, width, height } : s)));
                   setSaveStatus('pending');
                   // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { x, y, width, height });
+                  scheduleCanvasObjectSave(obj.id, { x: finalPos.x, y: finalPos.y, width, height });
                   setTimeout(() => setSaveStatus('saving'), 100);
                   setTimeout(() => setSaveStatus('saved'), 900);
                   setTimeout(() => setSaveStatus('idle'), 2900);

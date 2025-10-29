@@ -417,6 +417,7 @@ export default function GardenDetailPage() {
                 onUpdateDimensions={handleUpdateDimensions}
                 onSelectGrowArea={handleSelectGrowAreaFromBoard}
                 onAddGrowArea={() => setShowCreateModal(true)}
+                onDeleteGrowArea={openDeleteConfirm}
                 gardenId={gardenId}
               />
             )}

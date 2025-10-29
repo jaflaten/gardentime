@@ -34,7 +34,7 @@ GardenTime is a garden management application that helps users manage multiple g
 - [x] **Step 23:** Grid background (partially complete - snap-to-grid pending)
 - [x] **Step 24:** Click to view/edit grow area details ✅
 
-### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (80% complete)
+### Step 25: Canvas Drawing Tools 🎨 **IN PROGRESS** (85% complete)
 
 **Goal:** Transform the board into a full-featured canvas app with drawing tools for annotations, planning, and design
 
@@ -73,11 +73,11 @@ GardenTime is a garden management application that helps users manage multiple g
   - [x] 25.3.4: Text box background (optional, for visibility) ✅
   - [x] 25.3.5: Text width control with wrapping ✅
 
-- [ ] **25.4: Freehand Drawing Tool**
-  - [ ] 25.4.1: Click-drag to draw freehand paths
-  - [ ] 25.4.2: Configurable brush size and color
-  - [ ] 25.4.3: Smooth curve rendering (Konva Line with tension)
-  - [ ] 25.4.4: Eraser mode
+- [x] **25.4: Freehand Drawing Tool** ✅ COMPLETED
+  - [x] 25.4.1: Click-drag to draw freehand paths ✅
+  - [x] 25.4.2: Configurable brush size and color ✅
+  - [x] 25.4.3: Smooth curve rendering (Konva Line with tension) ✅
+  - [ ] 25.4.4: Eraser mode (future enhancement)
 
 - [ ] **25.5: Grow Area Creation from Canvas**
   - [x] 25.5.1: "Add Grow Area" button (already implemented) ✅
@@ -118,20 +118,20 @@ GardenTime is a garden management application that helps users manage multiple g
   - [x] 25.10.5: Cancel drawing on Esc key
   - [x] 25.10.6: Distinguish between panning canvas vs drawing
 
-- [ ] **25.11: Advanced Drawing Features**
-  - [ ] 25.11.1: Snap to grid for shapes
-  - [ ] 25.11.2: Smart guides (alignment lines)
-  - [ ] 25.11.3: Duplicate shapes with Alt+Drag
-  - [ ] 25.11.4: Resize shapes after creation
-  - [ ] 25.11.5: Rotate shapes
-  - [ ] 25.11.6: Flip shapes
+- [x] **25.11: Advanced Drawing Features** ✅ PARTIALLY COMPLETED
+  - [x] 25.11.1: Snap to grid for shapes ✅
+  - [ ] 25.11.2: Smart guides (alignment lines) (deferred)
+  - [ ] 25.11.3: Duplicate shapes with Alt+Drag (deferred)
+  - [ ] 25.11.4: Resize shapes after creation (already works with transformer)
+  - [ ] 25.11.5: Rotate shapes (deferred)
+  - [ ] 25.11.6: Flip shapes (deferred)
 
 - [ ] **25.12: Use Cases & Templates**
   - [ ] Garden zone boundaries, pathways, irrigation lines, notes, etc.
   - [ ] Template library for common elements
 
 ### Board Enhancements (Steps 26-27)
-- [ ] **Step 26:** Delete grow area from board with confirmation
+- [x] **Step 26:** Delete grow area from board with confirmation ✅
 - [x] **Step 27:** Auto-save with debouncing (Miro-style) ✅ COMPLETED
   - [x] 27.1: Debounced save hook (800ms delay)
   - [x] 27.2: Visual save indicator (pending/saving/saved/error)
@@ -219,22 +219,35 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ## 📊 Current Status
 
-**Overall Project:** ~70% complete
+**Overall Project:** ~73% complete 🎉
 
-**Current Focus:** Step 25.4 - Freehand Drawing OR Step 25.11 - Advanced Features
+**Current Focus:** Testing & Refinement
 
 **Just Completed:** 
+- Step 26 - Delete Grow Area ✅
+  - Delete/Backspace key deletes selected grow area from board
+  - Confirmation dialog before deletion
+  - Integrated with existing delete modal from list view
+  - Works with keyboard shortcuts
+
+- Step 25.11 - Advanced Features (Snap-to-Grid) ✅
+  - Toggle snap-to-grid in toolbar (blue "Snap" button)
+  - Snaps positions to 50cm grid intervals
+  - Works with drag and resize operations
+
+**Previous:**
+- Step 25.4 - Freehand Drawing Tool ✅
 - Step 25.3 - Text Tool ✅
-  - Click to place text on canvas
-  - Double-click inline editing
-  - Text properties panel (content, font size, font family, width)
-  - Auto-save integration
-  - 7 font families, 8-72px size range
-  - Optional background color
-  - Color presets and customization
-
-**Previous:** 
 - Step 27 - Auto-save with Debouncing ✅
-  - ⚠️ **TODO: Test auto-save functionality** - Drag shapes, watch save indicator, check network tab
 
-**Next Priority:** Step 25.4 - Freehand Drawing Tool OR Step 25.11 - Advanced Features (snap-to-grid, alignment guides)
+**Testing Queue:**
+- ⚠️ **TODO: Test grow area deletion** - Select grow area, press Delete, confirm dialog, verify removal
+- ⚠️ **TODO: Test snap-to-grid** - Enable snap, drag shapes/grow areas, verify alignment
+- ⚠️ **TODO: Test freehand tool** - Draw paths, adjust brush size (1-20px)
+- ⚠️ **TODO: Test text tool** - Create text, double-click edit, change font/size
+- ⚠️ **TODO: Test auto-save** - Drag shapes, watch save indicator
+- ⚠️ **TODO: Test all drawing tools** - Rectangle, Circle, Line, Arrow, Text, Freehand
+- ⚠️ **TODO: Test properties panel** - Select shapes, adjust colors/opacity/stroke width
+- ⚠️ **TODO: Test performance** - Create 20+ shapes, drag them around
+
+**Next Priority:** Testing & Bug Fixes, or Continue with Step 25.5 - Grow Area Integration

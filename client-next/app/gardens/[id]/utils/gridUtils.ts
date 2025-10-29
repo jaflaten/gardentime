@@ -11,10 +11,11 @@ interface GridLine {
   strokeWidth: number;
 }
 
+export const GRID_SIZE = 50; // 50cm intervals
+
 export function generateGridLines({ dimensions, scale, stagePosition }: GridLinesProps): GridLine[] {
   const lines: GridLine[] = [];
-  const gridSize = 50; // 50cm intervals at 100% zoom
-  const scaledGridSize = gridSize * scale;
+  const scaledGridSize = GRID_SIZE * scale;
 
   // Calculate visible area accounting for stage position
   const startX = Math.floor(-stagePosition.x / scaledGridSize) * scaledGridSize;
@@ -23,7 +24,7 @@ export function generateGridLines({ dimensions, scale, stagePosition }: GridLine
   const endY = startY + dimensions.height / scale + scaledGridSize;
 
   // Vertical lines
-  for (let x = startX; x <= endX; x += gridSize) {
+  for (let x = startX; x <= endX; x += GRID_SIZE) {
     lines.push({
       key: `v-${x}`,
       points: [x, startY, x, endY],
@@ -33,7 +34,7 @@ export function generateGridLines({ dimensions, scale, stagePosition }: GridLine
   }
 
   // Horizontal lines
-  for (let y = startY; y <= endY; y += gridSize) {
+  for (let y = startY; y <= endY; y += GRID_SIZE) {
     lines.push({
       key: `h-${y}`,
       points: [startX, y, endX, y],
@@ -43,4 +44,24 @@ export function generateGridLines({ dimensions, scale, stagePosition }: GridLine
   }
 
   return lines;
+}
+
+/**
+ * Snap a coordinate to the nearest grid point
+ */
+export function snapToGrid(value: number, gridSize: number = GRID_SIZE): number {
+  return Math.round(value / gridSize) * gridSize;
+}
+
+/**
+ * Snap a position object to grid
+ */
+export function snapPositionToGrid(
+  position: { x: number; y: number },
+  gridSize: number = GRID_SIZE
+): { x: number; y: number } {
+  return {
+    x: snapToGrid(position.x, gridSize),
+    y: snapToGrid(position.y, gridSize),
+  };
 }

@@ -14,11 +14,36 @@ interface CanvasShapeProps {
   onUpdatePoints?: (points: number[]) => void; // New: for lines/arrows
   onContextMenu?: (e: any) => void; // New: for right-click menu
   onTextEdit?: (text: string) => void; // New: for text editing
+  onDuplicateOnDrag?: (originalId: number, x: number, y: number) => void; // New: for Alt+Drag
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu, onTextEdit }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu, onTextEdit, onDuplicateOnDrag }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
+  const altKeyPressed = useRef(false);
+  const dragStarted = useRef(false);
+
+  // Track Alt key state
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.altKey) {
+        altKeyPressed.current = true;
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!e.altKey) {
+        altKeyPressed.current = false;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   useEffect(() => {
     if (isSelected && trRef.current && shapeRef.current) {
@@ -318,9 +343,10 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
         strokeWidth={shape.strokeWidth || 2}
         lineCap="round"
         lineJoin="round"
-        tension={0.5}
+        tension={0.5} // Smooth curves
         {...commonProps}
-        draggable={false}
+        draggable={!shape.locked}
+        onDragEnd={baseDragHandler}
       />
     );
   }

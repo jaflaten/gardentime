@@ -328,6 +328,30 @@ export default function ShapePropertiesPanel({
           </>
         )}
 
+        {/* Freehand Properties (for freehand drawings) */}
+        {selectedObject.type === 'FREEHAND' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Brush Size: {selectedObject.strokeWidth || 3}px
+            </label>
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value={selectedObject.strokeWidth || 3}
+              onChange={(e) => handleNumberChange('strokeWidth', parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500 mt-1">
+              <span>1px (Fine)</span>
+              <span>20px (Thick)</span>
+            </div>
+            <div className="mt-2 text-xs text-gray-500 italic">
+              💡 Tip: Use a thicker brush for bold strokes, thinner for details
+            </div>
+          </div>
+        )}
+
         {/* Lock/Unlock */}
         <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
           <div className="flex items-center gap-2">

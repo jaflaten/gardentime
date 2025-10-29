@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RegenGarden - Manage Your Garden",
-  description: "Track your gardens, grow areas, and crop rotation",
+  title: "RegenGarden - Visual Garden Planning & Crop Tracking",
+  description: "Plan your garden with professional visual canvas tools. Track crops, manage growing areas, and plan crop rotation with our modern garden planning software.",
 };
 
 export default function RootLayout({

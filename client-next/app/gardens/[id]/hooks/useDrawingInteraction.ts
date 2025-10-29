@@ -8,6 +8,7 @@ interface UseDrawingInteractionProps {
   activeTool: DrawingTool;
   scale: number;
   stagePosition: { x: number; y: number };
+  brushSize?: number; // Optional brush size for freehand
   onObjectCreated: (obj: CanvasObject) => void;
 }
 
@@ -16,6 +17,7 @@ export function useDrawingInteraction({
   activeTool,
   scale,
   stagePosition,
+  brushSize = 3,
   onObjectCreated,
 }: UseDrawingInteractionProps) {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -125,7 +127,7 @@ export function useDrawingInteraction({
         y: canvasPos.y,
         points: JSON.stringify([canvasPos.x, canvasPos.y]),
         strokeColor: '#000000',
-        strokeWidth: 2,
+        strokeWidth: brushSize, // Use current brush size
         opacity: 1,
       });
     } else if (activeTool === 'RECTANGLE') {
