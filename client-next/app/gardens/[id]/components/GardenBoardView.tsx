@@ -360,6 +360,16 @@ export default function GardenBoardView({
                     setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
                   }
                 }}
+                onUpdatePoints={async (points) => {
+                  const pointsString = JSON.stringify(points);
+                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, points: pointsString } : s)));
+                  try {
+                    await canvasObjectService.update(obj.id, { points: pointsString });
+                  } catch (error) {
+                    console.error('Failed to update canvas object points:', error);
+                    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? obj : s)));
+                  }
+                }}
               />
             ))}
 

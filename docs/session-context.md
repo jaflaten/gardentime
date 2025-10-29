@@ -1,6 +1,6 @@
 # RegenGarden - Current Session Context
 
-**Last Updated:** October 16, 2025
+**Last Updated:** October 29, 2025
 
 ## 🚀 Project Status: FULLY FUNCTIONAL
 
@@ -10,16 +10,30 @@ RegenGarden (formerly GardenTime) is a garden management app built with **Next.j
 
 ## 🎯 Current Work
 
-**Recently Completed:** Search Functionality (Steps 28-34)
-- ✅ Fixed 405 error in grow area search endpoint
-- ✅ Implemented BFF route for grow area search
-- ✅ Rebranded application from "GardenTime" to "RegenGarden" across all pages
-- ✅ Both plant search and grow area search fully functional
+**Just Completed:** Step 25.2 - Basic Shape Tools ✅
+1. **Shift Key Modifiers:**
+   - ✅ Rectangle tool: Hold Shift for perfect squares
+   - ✅ Line tool: Hold Shift for 45° angle constraints
+   - ✅ Arrow tool: Hold Shift for 45° angle constraints
+   - 📄 Details in `docs/step-25.2-implementation.md`
 
-**Previous:** Step 25 - Canvas Drawing Tools (25.10 - Drawing Interaction Logic)
-- ✅ Backend infrastructure complete (CanvasObject entity, API, database)
-- ✅ Frontend components complete (DrawingToolbar, CanvasShape)
-- ⏳ **Next:** Implement mouse event handlers for drawing interactions
+2. **Adjustable Line/Arrow Endpoints:**
+   - ✅ Draggable endpoint handles (green circles) appear when selected
+   - ✅ Drag endpoints to adjust length and direction
+   - ✅ Arrow arrowhead automatically updates orientation
+   - ✅ Backend persistence with optimistic UI updates
+   - 📄 Details in `docs/adjustable-endpoints-implementation.md`
+
+**Next Priority:** Step 25.6 - Shape Properties Panel
+- Color picker for fill and stroke
+- Opacity slider
+- Border width controls
+- Line style selector (solid, dashed, dotted)
+- This will enable full customization of shapes like Excalidraw
+
+**Alternative Next:** Step 27 - Auto-save with debouncing
+- Prevent data loss during editing
+- Miro-style auto-save UX
 
 ---
 

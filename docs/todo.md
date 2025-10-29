@@ -45,24 +45,26 @@ GardenTime is a garden management application that helps users manage multiple g
   - [x] 25.1.4: Keyboard shortcuts for quick tool switching
   - [ ] 25.1.5: **Mobile:** Touch-friendly tool selector (bottom drawer)
 
-- [ ] **25.2: Basic Shape Tools**
-  - [ ] 25.2.1: **Rectangle Tool** - Click-drag to draw rectangles
-    - [ ] Configurable fill color and opacity
-    - [ ] Configurable border color and width
-    - [ ] Hold Shift for perfect squares
+- [x] **25.2: Basic Shape Tools** ✅ COMPLETED (except optional features)
+  - [x] 25.2.1: **Rectangle Tool** - Click-drag to draw rectangles ✅
+    - [ ] Configurable fill color and opacity (Step 25.6)
+    - [ ] Configurable border color and width (Step 25.6)
+    - [x] Hold Shift for perfect squares ✅
     - [ ] Corner radius option for rounded rectangles
-  - [ ] 25.2.2: **Circle/Ellipse Tool** - Click-drag to draw circles/ellipses
-    - [ ] Hold Shift for perfect circles
-    - [ ] Configurable fill and border
-  - [ ] 25.2.3: **Line Tool** - Click-drag to draw straight lines
-    - [ ] Configurable line width and color
+  - [x] 25.2.2: **Circle/Ellipse Tool** - Click-drag to draw circles/ellipses ✅
+    - [x] Hold Shift for perfect circles (always perfect) ✅
+    - [ ] Configurable fill and border (Step 25.6)
+  - [x] 25.2.3: **Line Tool** - Click-drag to draw straight lines ✅
+    - [ ] Configurable line width and color (Step 25.6)
     - [ ] Dashed/dotted line styles
-    - [ ] Hold Shift for horizontal/vertical/45° angles
-    - [ ] Make line endpoints adjustable after placement (drag endpoints, show handles)
-  - [ ] 25.2.4: **Arrow Tool** - Click-drag to draw arrows
-    - [ ] Single or double-headed arrows
-    - [ ] Configurable arrowhead size and style
-    - [ ] Make arrow endpoints adjustable after placement (drag endpoints, update arrowhead orientation)
+    - [x] Hold Shift for horizontal/vertical/45° angles ✅
+    - [x] Make line endpoints adjustable after placement (drag endpoints, show handles) ✅
+  - [x] 25.2.4: **Arrow Tool** - Click-drag to draw arrows ✅
+    - [x] Single-headed arrows (implemented) ✅
+    - [ ] Double-headed arrows option
+    - [ ] Configurable arrowhead size and style (Step 25.6)
+    - [x] Hold Shift for horizontal/vertical/45° angles ✅
+    - [x] Make arrow endpoints adjustable after placement (drag endpoints, update arrowhead orientation) ✅
 
 - [ ] **25.3: Text Tool**
   - [ ] 25.3.1: Click to place text box on canvas
@@ -211,6 +213,11 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ## 📊 Current Status
 
-**Overall Project:** ~65% complete
+**Overall Project:** ~67% complete
 
-**Next Priority:** Step 25.11 - Advanced Drawing Features
+**Current Focus:** Step 25.6 - Shape Properties Panel
+
+**Just Completed:** 
+- Step 25.2 - Basic Shape Tools (Shift key modifiers + adjustable endpoints) ✅
+
+**Next Priority:** Step 25.6 - Shape Properties Panel OR Step 27 - Auto-save

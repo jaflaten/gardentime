@@ -13,10 +13,10 @@ interface DrawingToolbarProps {
 const tools: { id: DrawingTool; label: string; icon: string; help: string; shortcut: string }[] = [
   { id: 'SELECT', label: 'Select', icon: '🖱️', help: 'Select and move objects', shortcut: '1' },
   { id: 'PAN', label: 'Pan', icon: '✋', help: 'Pan the canvas', shortcut: '2' },
-  { id: 'RECTANGLE', label: 'Rectangle', icon: '▭', help: 'Draw rectangles', shortcut: '3' },
+  { id: 'RECTANGLE', label: 'Rectangle', icon: '▭', help: 'Draw rectangles (hold Shift for squares)', shortcut: '3' },
   { id: 'CIRCLE', label: 'Circle', icon: '○', help: 'Draw circles', shortcut: '4' },
-  { id: 'LINE', label: 'Line', icon: '─', help: 'Draw lines', shortcut: '5' },
-  { id: 'ARROW', label: 'Arrow', icon: '→', help: 'Draw arrows', shortcut: '6' },
+  { id: 'LINE', label: 'Line', icon: '─', help: 'Draw lines (hold Shift for 45° angles)', shortcut: '5' },
+  { id: 'ARROW', label: 'Arrow', icon: '→', help: 'Draw arrows (hold Shift for 45° angles)', shortcut: '6' },
   { id: 'TEXT', label: 'Text', icon: 'T', help: 'Add text', shortcut: '7' },
   { id: 'FREEHAND', label: 'Freehand', icon: '✏️', help: 'Freehand drawing', shortcut: '8' },
 ];

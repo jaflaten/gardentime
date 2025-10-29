@@ -10,10 +10,11 @@ interface CanvasShapeProps {
   isDraggingEnabled?: boolean;
   onSelect: () => void;
   onDragEnd: (x: number, y: number) => void;
-  onResize?: (x: number, y: number, width: number, height: number) => void; // new
+  onResize?: (x: number, y: number, width: number, height: number) => void;
+  onUpdatePoints?: (points: number[]) => void; // New: for lines/arrows
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
 
@@ -131,33 +132,125 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
   // LINE
   if (shape.type === 'LINE') {
     const points = shape.points ? JSON.parse(shape.points) : [0, 0, 100, 100];
+    const [x1, y1, x2, y2] = points;
+    
     return (
-      <Line
-        points={points}
-        stroke={shape.strokeColor || '#000000'}
-        strokeWidth={shape.strokeWidth || 2}
-        lineCap="round"
-        lineJoin="round"
-        {...commonProps}
-        draggable={false}
-      />
+      <>
+        <Line
+          points={points}
+          stroke={shape.strokeColor || '#000000'}
+          strokeWidth={shape.strokeWidth || 2}
+          lineCap="round"
+          lineJoin="round"
+          hitStrokeWidth={20}  // Wider hit area for easier selection
+          {...commonProps}
+          draggable={false}
+        />
+        {/* Endpoint Handles - shown only when selected */}
+        {isSelected && onUpdatePoints && (
+          <>
+            {/* Start point handle */}
+            <Circle
+              x={x1}
+              y={y1}
+              radius={6}
+              fill="#10b981"
+              stroke="#ffffff"
+              strokeWidth={2}
+              draggable={!shape.locked}
+              onDragEnd={(e) => {
+                const newPoints = [e.target.x(), e.target.y(), x2, y2];
+                onUpdatePoints(newPoints);
+              }}
+              onClick={(e) => {
+                e.cancelBubble = true;
+                onSelect();
+              }}
+            />
+            {/* End point handle */}
+            <Circle
+              x={x2}
+              y={y2}
+              radius={6}
+              fill="#10b981"
+              stroke="#ffffff"
+              strokeWidth={2}
+              draggable={!shape.locked}
+              onDragEnd={(e) => {
+                const newPoints = [x1, y1, e.target.x(), e.target.y()];
+                onUpdatePoints(newPoints);
+              }}
+              onClick={(e) => {
+                e.cancelBubble = true;
+                onSelect();
+              }}
+            />
+          </>
+        )}
+      </>
     );
   }
 
   // ARROW
   if (shape.type === 'ARROW') {
     const points = shape.points ? JSON.parse(shape.points) : [0, 0, 100, 100];
+    const [x1, y1, x2, y2] = points;
+    
     return (
-      <Arrow
-        points={points}
-        stroke={shape.strokeColor || '#000000'}
-        fill={shape.strokeColor || '#000000'}
-        strokeWidth={shape.strokeWidth || 2}
-        pointerLength={10}
-        pointerWidth={10}
-        {...commonProps}
-        draggable={false}
-      />
+      <>
+        <Arrow
+          points={points}
+          stroke={shape.strokeColor || '#000000'}
+          fill={shape.strokeColor || '#000000'}
+          strokeWidth={shape.strokeWidth || 2}
+          pointerLength={10}
+          pointerWidth={10}
+          hitStrokeWidth={20}  // Wider hit area for easier selection
+          {...commonProps}
+          draggable={false}
+        />
+        {/* Endpoint Handles - shown only when selected */}
+        {isSelected && onUpdatePoints && (
+          <>
+            {/* Start point handle */}
+            <Circle
+              x={x1}
+              y={y1}
+              radius={6}
+              fill="#10b981"
+              stroke="#ffffff"
+              strokeWidth={2}
+              draggable={!shape.locked}
+              onDragEnd={(e) => {
+                const newPoints = [e.target.x(), e.target.y(), x2, y2];
+                onUpdatePoints(newPoints);
+              }}
+              onClick={(e) => {
+                e.cancelBubble = true;
+                onSelect();
+              }}
+            />
+            {/* End point handle (arrowhead) */}
+            <Circle
+              x={x2}
+              y={y2}
+              radius={6}
+              fill="#10b981"
+              stroke="#ffffff"
+              strokeWidth={2}
+              draggable={!shape.locked}
+              onDragEnd={(e) => {
+                const newPoints = [x1, y1, e.target.x(), e.target.y()];
+                onUpdatePoints(newPoints);
+              }}
+              onClick={(e) => {
+                e.cancelBubble = true;
+                onSelect();
+              }}
+            />
+          </>
+        )}
+      </>
     );
   }
 

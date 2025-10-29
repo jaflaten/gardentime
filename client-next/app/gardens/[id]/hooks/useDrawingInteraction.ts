@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Konva from 'konva';
 import { CanvasObject, canvasObjectService } from '@/lib/api';
 import { DrawingTool } from '../components/DrawingToolbar';
@@ -21,6 +21,7 @@ export function useDrawingInteraction({
   const [isDrawing, setIsDrawing] = useState(false);
   const [drawingStart, setDrawingStart] = useState<{ x: number; y: number } | null>(null);
   const [currentDrawing, setCurrentDrawing] = useState<CanvasObject | null>(null);
+  const shiftKeyPressed = useRef(false);
 
   const convertToCanvasCoords = useCallback((screenPos: { x: number; y: number }) => {
     return {
@@ -28,6 +29,22 @@ export function useDrawingInteraction({
       y: (screenPos.y - stagePosition.y) / scale,
     };
   }, [scale, stagePosition]);
+
+  // Helper function to constrain line angle to 0°, 45°, 90°, 135°, 180°, etc.
+  const constrainLineAngle = useCallback((start: { x: number; y: number }, end: { x: number; y: number }) => {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const angle = Math.atan2(dy, dx);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // Snap to nearest 45° increment
+    const snapAngle = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+    
+    return {
+      x: start.x + Math.cos(snapAngle) * distance,
+      y: start.y + Math.sin(snapAngle) * distance,
+    };
+  }, []);
 
   const saveCanvasObject = useCallback(async (obj: CanvasObject) => {
     try {
@@ -65,6 +82,10 @@ export function useDrawingInteraction({
     const canvasPos = convertToCanvasCoords(pos);
     setIsDrawing(true);
     setDrawingStart(canvasPos);
+
+    // Capture shift key state at start of drawing
+    shiftKeyPressed.current = stage.getStage()?.getPointerPosition() ? 
+      (window.event as KeyboardEvent)?.shiftKey || false : false;
 
     const baseId = Date.now();
 
@@ -161,22 +182,37 @@ export function useDrawingInteraction({
     if (!pos) return;
 
     const canvasPos = convertToCanvasCoords(pos);
+    
+    // Update shift key state during drawing
+    const isShiftPressed = (window.event as any)?.shiftKey || false;
 
     if (activeTool === 'RECTANGLE') {
-      const width = canvasPos.x - drawingStart.x;
-      const height = canvasPos.y - drawingStart.y;
+      let width = canvasPos.x - drawingStart.x;
+      let height = canvasPos.y - drawingStart.y;
+
+      // If shift is pressed, make it a perfect square
+      if (isShiftPressed) {
+        const maxDimension = Math.max(Math.abs(width), Math.abs(height));
+        width = width >= 0 ? maxDimension : -maxDimension;
+        height = height >= 0 ? maxDimension : -maxDimension;
+      }
 
       setCurrentDrawing((prev) => ({
         ...(prev || {}),
-        x: width > 0 ? drawingStart.x : canvasPos.x,
-        y: height > 0 ? drawingStart.y : canvasPos.y,
+        x: width > 0 ? drawingStart.x : drawingStart.x + width,
+        y: height > 0 ? drawingStart.y : drawingStart.y + height,
         width: Math.abs(width),
         height: Math.abs(height),
       } as CanvasObject));
     } else if (activeTool === 'CIRCLE') {
       const width = Math.abs(canvasPos.x - drawingStart.x);
       const height = Math.abs(canvasPos.y - drawingStart.y);
-      const diameter = Math.max(width, height);
+      
+      // Always draw perfect circles (uniform diameter)
+      // If shift is pressed, it's already a circle, so no change needed
+      const diameter = isShiftPressed 
+        ? Math.max(width, height)  // Perfect circle from corner
+        : Math.max(width, height);  // Always perfect circle
 
       setCurrentDrawing((prev) => ({
         ...(prev || {}),
@@ -186,16 +222,23 @@ export function useDrawingInteraction({
         height: diameter,
       } as CanvasObject));
     } else if (activeTool === 'LINE' || activeTool === 'ARROW') {
+      let endPoint = canvasPos;
+      
+      // If shift is pressed, constrain to 45° angles
+      if (isShiftPressed) {
+        endPoint = constrainLineAngle(drawingStart, canvasPos);
+      }
+      
       setCurrentDrawing((prev) => ({
         ...(prev || {}),
-        points: JSON.stringify([drawingStart.x, drawingStart.y, canvasPos.x, canvasPos.y]),
+        points: JSON.stringify([drawingStart.x, drawingStart.y, endPoint.x, endPoint.y]),
       } as CanvasObject));
     } else if (activeTool === 'FREEHAND') {
       const existingPoints = JSON.parse(currentDrawing.points || '[]') as number[];
       const newPoints = [...existingPoints, canvasPos.x, canvasPos.y];
       setCurrentDrawing((prev) => ({ ...(prev || {}), points: JSON.stringify(newPoints) } as CanvasObject));
     }
-  }, [isDrawing, drawingStart, currentDrawing, activeTool, convertToCanvasCoords]);
+  }, [isDrawing, drawingStart, currentDrawing, activeTool, convertToCanvasCoords, constrainLineAngle]);
 
   const handleMouseUp = useCallback(async () => {
     if (!isDrawing) {
