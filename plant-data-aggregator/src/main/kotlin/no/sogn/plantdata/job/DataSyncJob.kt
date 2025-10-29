@@ -17,7 +17,14 @@ class DataSyncJob(private val mergeService: PlantMergeService) {
         log.info("Starting sample sync job")
         // In reality fetch from APIs; here we simulate a single merge
         val trefle = TrefleSpeciesDetail(1L, "Solanum lycopersicum", "Tomato", "Solanaceae", "Solanum")
-        val perenual = PerenualSpeciesDetail(10L, "Solanum lycopersicum", "Tomato", listOf("Tomate"), "Solanaceae", "Solanum")
+        val perenual = PerenualSpeciesDetail(
+            id = 10L,
+            commonName = "Tomato",
+            scientificNames = listOf("Solanum lycopersicum"),
+            otherNames = listOf("Tomate"),
+            family = "Solanaceae",
+            genus = "Solanum"
+        )
         val result = mergeService.merge(trefle, perenual)
         log.info("Merged plant ${result.plant.canonicalScientificName} conflicts=${result.conflicts.size}")
     }

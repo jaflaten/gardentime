@@ -35,7 +35,7 @@ For each companion relationship we should track:
 - [x] Create basic project structure (controllers, services, repositories)
 - [x] Configure `application.properties` / `application.yml` with API keys (use environment variables)
 
-### Phase 2: External API Integration 🔄 IN PROGRESS
+### Phase 2: External API Integration ✅ COMPLETE
 **Trefle Client:** ✅ COMPLETE
 - [x] Implement authentication
 - [x] Create DTOs for Trefle responses (based on actual API examples)
@@ -47,26 +47,24 @@ For each companion relationship we should track:
 - [x] Comprehensive error handling (401, 404, 429, etc.)
 - [x] Documentation (see `docs/trefle-integration.md`)
 
-Next steps: 
-1. Implement PerenualService (following the same pattern as TrefleService)
-2. Build the merge service to combine data from both Trefle and Perenual
-3. Add data enrichment and conflict resolution logic
+**Perenual Client:** ✅ COMPLETE
+- [x] Implement authentication
+- [x] Create DTOs for Perenual responses (DTOs exist and updated)
+- [x] Implement rate limiting handling
+- [x] Add caching layer
+- [x] Create PerenualService similar to TrefleService
+- [x] Add PerenualController with REST endpoints
+- [x] API call tracking in database
+- [x] Comprehensive error handling
+- [x] Documentation (see `docs/perenual-integration.md`)
 
-**Perenual Client:** 🔄 TODO
-- [ ] Implement authentication
-- [ ] Create DTOs for Perenual responses (DTOs already exist)
-- [ ] Implement rate limiting handling
-- [ ] Add caching layer
-- [ ] Create PerenualService similar to TrefleService
-- [ ] Add PerenualController with REST endpoints
-
-**Unified Data:** 🔄 TODO
-- [ ] Create unified plant data model combining both sources
+**Unified Data:** 🔄 IN PROGRESS
+- [ ] Enhance PlantMergeService to handle Perenual-specific fields
 - [ ] Implement data fetching service that merges Trefle + Perenual data
 - [ ] Define canonical matching strategy (normalized scientific name)
 - [ ] Implement synonym harvesting & persistence
 - [x] Add conflict logging mechanism (table + service) - models exist
-- [x] Add API quota tracking mechanism (persist counters) - implemented in TrefleService
+- [x] Add API quota tracking mechanism (persist counters) - implemented in both services
 
 ### Phase 3: Database Schema Design ✅ COMPLETE
 - [x] Design `plants` table (merged data from APIs)

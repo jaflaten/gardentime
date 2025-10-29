@@ -1,6 +1,11 @@
 package no.sogn.plantdata.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 // ----------------------------- TREFLE DTOs -----------------------------
 // Based on actual API responses from Trefle documentation
@@ -225,6 +230,34 @@ data class TrefleSpeciesDetail(
 }
 
 // ----------------------------- PERENUAL DTOs -----------------------------
+
+/**
+ * Custom deserializer for other_images field that can handle both:
+ * - Array of PerenualImage objects (when data is available)
+ * - String message (when data requires plan upgrade)
+ */
+class FlexibleImageListDeserializer : JsonDeserializer<List<PerenualImage>?>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): List<PerenualImage>? {
+        return try {
+            when {
+                p.currentToken.isStructStart -> {
+                    // It's an array - parse normally
+                    val mapper = jacksonObjectMapper()
+                    mapper.readValue(p, mapper.typeFactory.constructCollectionType(List::class.java, PerenualImage::class.java))
+                }
+                else -> {
+                    // It's a string or something else - just skip it and return empty list
+                    p.text // consume the value
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            // If anything goes wrong, return null
+            null
+        }
+    }
+}
+
 // Image representation reused across endpoints
 // Matches keys in responses (license, license_name, license_url, original_url, regular_url, medium_url, small_url, thumbnail)
 data class PerenualImage(
@@ -326,14 +359,11 @@ data class PerenualSunlightDuration(
 
 data class PerenualSpeciesDetail(
     val id: Long,
-    // We pick first scientific name if list provided; consumer may override after deserialization.
-    val scientificName: String?,
-    val commonName: String?,
-    val otherNames: List<String> = emptyList(),
-    val family: String?,
-    val genus: String?,
-    // Extended detail fields below
-    @JsonProperty("scientific_name") val scientificNames: List<String>? = null, // original array
+    @JsonProperty("common_name") val commonName: String? = null,
+    @JsonProperty("scientific_name") val scientificNames: List<String>? = null,
+    @JsonProperty("other_name") val otherNames: List<String>? = null,
+    val family: String? = null,
+    val genus: String? = null,
     val origin: String? = null,
     val type: String? = null,
     val dimensions: PerenualDimensions? = null,
@@ -377,21 +407,35 @@ data class PerenualSpeciesDetail(
     @JsonProperty("care_level") val careLevel: String? = null,
     val description: String? = null,
     @JsonProperty("default_image") val defaultImage: PerenualImage? = null,
-    @JsonProperty("other_images") val otherImages: List<PerenualImage>? = null,
-    // Extended x* fields
+    @JsonProperty("other_images") 
+    @JsonDeserialize(using = FlexibleImageListDeserializer::class)
+    val otherImages: List<PerenualImage>? = null,
     @JsonProperty("xWateringQuality") val xWateringQuality: List<String>? = null,
     @JsonProperty("xWateringPeriod") val xWateringPeriod: List<String>? = null,
     @JsonProperty("xWateringAvgVolumeRequirement") val xWateringAvgVolumeRequirement: List<String>? = null,
     @JsonProperty("xWateringDepthRequirement") val xWateringDepthRequirement: List<String>? = null,
     @JsonProperty("xWateringBasedTemperature") val xWateringBasedTemperature: PerenualWateringTemperature? = null,
     @JsonProperty("xWateringPhLevel") val xWateringPhLevel: PerenualPhLevel? = null,
-    @JsonProperty("xSunlightDuration") val xSunlightDuration: PerenualSunlightDuration? = null,
-    // Derived convenience flags (nullable)
-    val edibleParts: List<String>? = null, // Provided separately in some contexts
-    val toxicity: String? = null,
-    val phMin: Double? = null,
-    val phMax: Double? = null
-)
+    @JsonProperty("xSunlightDuration") val xSunlightDuration: PerenualSunlightDuration? = null
+) {
+    // Derived property for merge service compatibility - extracts first scientific name
+    val scientificName: String?
+        get() = scientificNames?.firstOrNull()
+    
+    // Helper to get edible parts based on boolean flags
+    val edibleParts: List<String>
+        get() = buildList {
+            if (edibleFruit == true) add("fruit")
+            if (edibleLeaf == true) add("leaf")
+        }
+    
+    // Helper to derive pH range from xWateringPhLevel
+    val phMin: Double?
+        get() = xWateringPhLevel?.min
+    
+    val phMax: Double?
+        get() = xWateringPhLevel?.max
+}
 
 // Care guide sections ----------------------------------------------------
 data class PerenualCareGuideSection(
