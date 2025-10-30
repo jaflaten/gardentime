@@ -27,6 +27,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("io.github.resilience4j:resilience4j-spring-boot3:2.2.0")
+    
+    // Web scraping
+    implementation("org.jsoup:jsoup:1.17.2")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

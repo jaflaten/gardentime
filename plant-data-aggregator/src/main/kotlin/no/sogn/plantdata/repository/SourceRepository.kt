@@ -7,5 +7,6 @@ import java.util.*
 
 interface SourceRepository : JpaRepository<Source, UUID> {
     fun findByTypeAndTitle(type: SourceType, title: String): Source?
+    fun findByTitle(title: String): Source?
 }
 

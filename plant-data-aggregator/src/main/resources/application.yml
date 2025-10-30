@@ -41,3 +41,12 @@ perenual:
   api:
     key: ${PERENUAL_API_KEY:}
     base-url: https://perenual.com/api
+
+# Web Scraping Configuration
+scraper:
+  user-agent: "Mozilla/5.0 (compatible; GardenTime-PlantDataAggregator/1.0; +https://gardentime.app)"
+  request-delay-ms: 3000  # 3 seconds between requests (polite scraping)
+  connection-timeout-ms: 30000  # 30 seconds
+  max-retries: 3
+  retry-delay-ms: 5000
+  output-base-dir: "plant-data-aggregator/docs/scrapers"

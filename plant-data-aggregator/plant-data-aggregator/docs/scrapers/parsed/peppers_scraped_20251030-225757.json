@@ -1,0 +1,16 @@
+{
+  "slug" : "peppers",
+  "source" : "Almanac.com",
+  "url" : "https://www.almanac.com/plant/peppers",
+  "commonName" : null,
+  "description" : null,
+  "companionSection" : null,
+  "plantingGuide" : null,
+  "careInstructions" : null,
+  "harvestInfo" : null,
+  "pestsAndDiseases" : null,
+  "rawHtml" : "",
+  "scrapedAt" : "2025-10-30T21:57:57.515010Z",
+  "successful" : false,
+  "errorMessage" : "HTTP error fetching URL. Status=404, URL=[https://www.almanac.com/plant/peppers]"
+}

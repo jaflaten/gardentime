@@ -6,5 +6,6 @@ import java.util.*
 
 interface PlantRepository : JpaRepository<Plant, UUID> {
     fun findByCanonicalScientificNameIgnoreCase(name: String): Plant?
+    fun findByCommonNameIgnoreCase(name: String): Plant?
 }
 

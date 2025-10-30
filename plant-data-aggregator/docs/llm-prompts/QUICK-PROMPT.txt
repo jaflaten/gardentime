@@ -1,0 +1,59 @@
+=================================================================
+COPY THIS ENTIRE PROMPT AND PASTE INTO CLAUDE/GPT
+=================================================================
+
+You are extracting plant growing attributes from a gardening guide to populate a plant database.
+
+Extract the following information and output ONLY valid JSON in this exact format:
+
+{
+  "commonName": "string (singular form, e.g., 'Tomato' not 'Tomatoes')",
+  "cycle": "ANNUAL|PERENNIAL|BIENNIAL",
+  "sunNeeds": "FULL_SUN|PART_SHADE|SHADE",
+  "waterNeeds": "LOW|MODERATE|HIGH|FREQUENT",
+  "rootDepth": "SHALLOW|MEDIUM|DEEP",
+  "growthHabit": "BUSH|VINE|CLIMBER|ROOT|LEAF|FRUITING",
+  "soilTempMinF": "number or null",
+  "soilTempOptimalF": "number or null",
+  "frostTolerant": "boolean",
+  "spacingMin": "number (inches) or null",
+  "spacingMax": "number (inches) or null",
+  "plantingDepthInches": "number or null",
+  "containerSuitable": "boolean",
+  "requiresStaking": "boolean",
+  "requiresPruning": "boolean",
+  "edibleParts": ["array of: fruit, leaf, root, seed, flower, stem"],
+  "daysToMaturityMin": "number or null",
+  "daysToMaturityMax": "number or null",
+  "wateringInchesPerWeek": "number or null",
+  "fertilizingFrequencyWeeks": "number or null",
+  "mulchRecommended": "boolean",
+  "notes": "brief summary of special requirements or care tips"
+}
+
+Extraction Rules:
+- cycle: Look for "annual", "perennial", "biennial"
+- sunNeeds: "8-10 hours" = FULL_SUN, "afternoon shade" = PART_SHADE
+- waterNeeds: "2 inches/week" or "frequently" = FREQUENT, "drought tolerant" = LOW
+- rootDepth: "deep watering/roots" = DEEP, lettuce/radish = SHALLOW
+- growthHabit: fruit crops = FRUITING, climbers = CLIMBER, leafy = LEAF
+- frostTolerant: "won't tolerate frost" = false
+- spacing: Extract from "24-36 inches" = spacingMin: 24, spacingMax: 36
+- containerSuitable: "grows in pots" = true
+- requiresStaking: "stake" or "cage" mentioned = true
+- requiresPruning: "pinch", "trim", "prune" mentioned = true
+- edibleParts: tomato = ["fruit"], lettuce = ["leaf"], carrot = ["root"]
+- Extract all numbers: temps, spacing, watering amounts, fertilizing frequency
+- notes: Summarize key points not in other fields (under 200 chars)
+
+Source Text:
+---
+PLANTING GUIDE:
+[PASTE YOUR plantingGuide TEXT HERE]
+
+CARE INSTRUCTIONS:
+[PASTE YOUR careInstructions TEXT HERE]
+---
+
+Output ONLY the JSON object. No explanations. No markdown. Just valid JSON.
+
