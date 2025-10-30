@@ -238,11 +238,232 @@ GardenTime is a garden management application that helps users manage multiple g
 
 ### Crop Record Management (Steps 59-63)
 - [x] **Step 59:** Separated active/historical crops ✅
-- [ ] **Step 60-60.1:** Quick view page for all user's crops
-- [ ] **Step 61-63:** Timeline, batch operations, export
+- [ ] **Step 60:** Crop Records List View - All user crops in one place
+  - [ ] 60.1: Backend API endpoint with filtering, pagination, sorting
+  - [ ] 60.2: Frontend list/table view with filters panel
+  - [ ] 60.3: Statistics summary panel
+  - [ ] 60.4: Quick actions (mark harvested, edit, view)
+- [ ] **Step 61:** Crop Timeline View - Visual Gantt-chart style timeline
+- [ ] **Step 62:** Batch Operations - Multi-select and bulk actions
+  - [ ] 62.1: Backend batch update/delete endpoints
+  - [ ] 62.2: Frontend multi-select UI
+  - [ ] 62.3: Bulk harvest modal
+- [ ] **Step 63:** Export Crop Records - CSV/Excel export
+  - [ ] 63.1: Backend export endpoints
+  - [ ] 63.2: Frontend export modal with format selection
 
-### Garden Management (Steps 64-68)
-- [ ] Dashboard, statistics, garden switching, templates
+**📋 See:** `/docs/crop-record-management-spec.md` for detailed specifications
+**📋 See:** `/docs/garden-dashboard-implementation-summary.md` for Step 64 implementation details
+
+### Garden Management (Steps 64-69) ⭐ **DASHBOARD COMPLETE - READY FOR PHASE 2**
+
+**Garden Management Dashboard** - Default view when opening a garden, provides actionable insights
+
+- [x] **Step 64:** Garden Overview Dashboard ⭐ **COMPLETED**
+  - [x] 64.1: Backend dashboard API endpoint (`/api/gardens/{gardenId}/dashboard`)
+    - Aggregated data for all widgets in single request ✅
+    - Calculate active crops, recent harvests, upcoming tasks ✅
+    - Calculate garden capacity utilization ✅
+    - Generate mini calendar events ✅
+    - TODO: Implement caching (5-minute TTL)
+  - [x] 64.2: Frontend dashboard route (`/gardens/[id]/dashboard`)
+    - Made this the default view when opening a garden ✅
+    - Responsive layout (3-column desktop, stacked mobile) ✅
+  - [x] 64.3: Garden Summary Card Widget ✅
+    - Total grow areas, active/inactive areas ✅
+    - Total area under cultivation ✅
+    - Last activity date ✅
+    - Quick link to board view ✅
+  - [x] 64.4: Active Crops Widget ✅
+    - Total active crops (PLANTED + GROWING status) ✅
+    - Breakdown by status with counts ✅
+    - Ready to harvest count (simple heuristic) ✅
+  - [x] 64.5: Recent Harvests Widget ✅
+    - Last 5 harvested crops ✅
+    - Harvest date, quantity, outcome rating ✅
+    - Color-coded outcome badges ✅
+    - Monthly harvest count ✅
+  - [x] 64.6: Upcoming Tasks Widget ✅
+    - Crops ready to harvest ✅
+    - Crops needing attention (diseased, failed) ✅
+    - Empty grow areas ready for planting ✅
+    - Priority indicators and task badges ✅
+  - [x] 64.7: Garden Capacity Widget ✅
+    - Space utilization percentage ✅
+    - Visual capacity bar with color coding ✅
+    - Recommendations for planting or overcrowding warnings ✅
+    - Lists empty/crowded areas ✅
+  - [x] 64.8: Planting Calendar Widget (mini version) ✅
+    - Current month calendar ✅
+    - Event indicators (planting, harvest dates) ✅
+    - Color-coded event types ✅
+
+- [ ] **Step 69:** Planting Calendar & Season Planning ⭐ **PHASE 2 - CORE FEATURE**
+  
+  **Backend Implementation:**
+  - [ ] 69.1: Database Migration V10 - season_plans table
+    - id, garden_id, user_id, season, year
+    - Support multiple seasons per year (Spring, Summer, Fall, Winter + phases)
+    - Allow distinct phases (EARLY, MID, LATE) for single-season countries like Norway
+  - [ ] 69.2: Database Migration V11 - garden_climate_info table
+    - last_frost_date, first_frost_date (manual entry)
+    - hardiness_zone (manual, future: auto-detect)
+    - latitude, longitude (for future weather integration)
+    - TODO: Phase 2 - Auto-populate from hardiness zone database
+  - [ ] 69.3: Database Migration V12 - planned_crops table
+    - Links to season_plan and plant
+    - Status: PLANNED, SEEDS_STARTED, TRANSPLANTED, DIRECT_SOWN, GROWING, COMPLETED
+    - indoor_start_date, indoor_start_method
+    - transplant_date OR direct_sow_date
+    - expected_harvest_date
+    - phase field (EARLY, MID, LATE)
+    - crop_record_id link when actually planted
+    - TODO: Phase 2 - Notification system for seed starting reminders
+  - [ ] 69.4: Database Migration V13 - Extend plant_details
+    - weeks_before_frost_indoor (how many weeks before last frost to start indoors)
+    - can_direct_sow, can_transplant booleans
+    - frost_tolerance (HARDY, SEMI_HARDY, TENDER)
+    - indoor_start_method (text guidance)
+    - transplant_guidance (text instructions)
+    - Load placeholder data from `/docs/placeholder-plant-data.sql` (20 common plants)
+    - TODO: Future - Populate from plant-data-aggregator API
+  - [ ] 69.5: PlantingDateCalculator service
+    - Calculate indoor_start_date from last_frost_date and weeks_before_frost_indoor
+    - Calculate transplant_date or direct_sow_date based on frost tolerance
+    - Calculate expected_harvest_date from maturity time
+    - Handle edge cases (no frost zones, tropical climates)
+  - [ ] 69.6: Season Plan API endpoints
+    - GET /api/gardens/{gardenId}/season-plan (current or filter by season/year)
+    - POST /api/gardens/{gardenId}/season-plan (create new season)
+    - POST /api/gardens/{gardenId}/season-plan/planned-crops (add crop to plan)
+    - PATCH /api/gardens/{gardenId}/season-plan/planned-crops/{id} (update status)
+    - DELETE /api/gardens/{gardenId}/season-plan/planned-crops/{id}
+  - [ ] 69.7: Calendar Events API
+    - GET /api/gardens/{gardenId}/calendar?startDate=X&endDate=Y
+    - Aggregate indoor seed start, transplant, harvest events
+    - Include events from planned_crops AND actual crop_records
+  - [ ] 69.8: Climate Info API
+    - GET /api/gardens/{gardenId}/climate (get frost dates)
+    - PUT /api/gardens/{gardenId}/climate (update frost dates manually)
+  
+  **Frontend Implementation:**
+  - [ ] 69.9: Season Plan Creation Page (`/gardens/[id]/season-plan/new`)
+    - Season selector (Spring, Summer, Fall, Winter)
+    - Phase selector (Early, Mid, Late) - optional for succession planning
+    - Year input
+    - Frost dates form (if not set):
+      - Last frost date picker
+      - First frost date picker
+      - Hardiness zone input (optional)
+  - [ ] 69.10: Add Planned Crop Modal
+    - Search/select plant from database
+    - Quantity input
+    - Preferred grow area selector (optional)
+    - Display calculated dates:
+      - 🔵 Start seeds indoors: [date] (if applicable)
+      - 🟢 Transplant/Direct sow: [date]
+      - 🟡 Expected harvest: [date]
+    - Allow manual override of dates
+    - Phase selector (Early, Mid, Late)
+    - Notes field
+  - [ ] 69.11: Season Plan Management Page (`/gardens/[id]/season-plan`)
+    - List all planned crops for season
+    - Status badges and progress tracking
+    - Mark as "Seeds Started", "Transplanted", etc.
+    - Remove crop from plan
+    - Filter by status, phase, grow area
+  - [ ] 69.12: Full Calendar View (`/gardens/[id]/calendar`)
+    - Monthly calendar grid (like Google Calendar)
+    - Year/month navigation
+    - Color-coded events:
+      - 🔵 Blue = Indoor seed starting
+      - 🟢 Green = Outdoor planting/transplanting
+      - 🟡 Yellow = Expected harvest
+      - 🔴 Red = Actual harvest (from crop records)
+    - Click event → Details modal with quick actions
+    - Mark as done → Update planned crop status
+  - [ ] 69.13: Season Plan Dashboard Widget (on main dashboard)
+    - Current season name and progress bar
+    - Upcoming tasks this week:
+      - "Start basil seeds indoors (in 3 days)"
+      - "Transplant tomatoes to Box 1 (in 5 days)"
+    - Quick stats: Planned, Seeds Started, Transplanted, Harvested
+    - Link to full season plan page
+  - [ ] 69.14: Indoor Seed Starting Alerts
+    - Widget showing upcoming seed starting dates
+    - Alert types:
+      - "Start seeds this week" (7 days before)
+      - "Last chance to start seeds" (on date)
+      - "Transplant window opening soon" (2 weeks before)
+      - "Frost danger passed - transplant now" (after last frost)
+    - TODO: Phase 2 - Email/push notifications
+  - [ ] 69.15: Integration with Crop Records
+    - When marking planned crop as "Transplanted" or "Direct Sown":
+      - Show "Create Crop Record" modal
+      - Pre-fill data from planned crop
+      - Create crop_record and link to planned_crop
+      - Crop appears on board immediately
+    - Bidirectional status sync between planned_crops and crop_records
+
+- [ ] **Step 65:** Garden Statistics & Analytics (PHASE 3)
+  - [ ] 65.1: Backend statistics API with aggregations
+  - [ ] 65.2: Productivity over time chart
+  - [ ] 65.3: Plant performance leaderboard
+  - [ ] 65.4: Success rate by plant type
+  - [ ] 65.5: Seasonal performance chart
+  - [ ] 65.6: Grow area efficiency analysis
+  - [ ] 65.7: Crop rotation compliance score
+
+- [ ] **Step 66:** Garden Switching & Multi-Garden Management (PHASE 4)
+  - [ ] 66.1: Garden switcher component in nav
+  - [ ] 66.2: Gardens management page
+  - [ ] 66.3: Multi-garden dashboard (all gardens view)
+
+- [ ] **Step 67:** Garden Templates (PHASE 5)
+  - [ ] 67.1: Backend templates database and API
+  - [ ] 67.2: Template gallery page
+  - [ ] 67.3: Template detail and apply flow
+  - [ ] 67.4: Create custom template from garden
+  - [ ] 67.5: Seed templates (5-10 pre-made layouts)
+
+- [ ] **Step 68:** Garden Activity Feed (PHASE 6)
+  - [ ] 68.1: Backend activities table and event tracking
+  - [ ] 68.2: Activity feed widget
+  - [ ] 68.3: Activity filtering and search
+  - [ ] 68.4: Activity export
+
+**📋 See:** `/docs/garden-management-dashboard-spec.md` for detailed specifications
+**📋 See:** `/docs/dashboard-implementation-plan.md` for implementation roadmap
+**📊 See:** `/docs/placeholder-plant-data.sql` for 20 common plants with seed starting data
+
+### Plant Information View (New Feature Set)
+- [ ] **Plant Database Enhancement** - Extend plant data model
+  - [ ] Add plant_details table (family, difficulty, hardiness zones, etc.)
+  - [ ] Add plant_care_guides table (step-by-step instructions)
+  - [ ] Add plant_varieties table (different cultivars)
+  - [ ] Add plant_companions table (beneficial/harmful companions)
+  - [ ] Add plant_images table (photos at different growth stages)
+  - [ ] Add plant_resources table (videos, articles, guides)
+- [ ] **Plant Detail View** - `/plants/[plantId]`
+  - [ ] Plant header with quick facts
+  - [ ] Growing guide tabs (Overview, Planting, Care, Harvesting, Varieties, Companions)
+  - [ ] Personal growing history section (user's stats with this plant)
+  - [ ] Community insights (aggregated anonymized data)
+  - [ ] Related resources and links
+- [ ] **Plant Browse & Search** - `/plants`
+  - [ ] Plant grid/list view with filters
+  - [ ] Search with autocomplete
+  - [ ] Sort options (alphabetical, difficulty, popularity, success rate)
+  - [ ] Personalized recommendations
+- [ ] **plant-data-aggregator Service** - Data collection and enrichment
+  - [ ] USDA Plants Database integration
+  - [ ] Wikipedia/Wikidata scraping
+  - [ ] Manual entry interface for curators
+  - [ ] Image processing pipeline
+  - [ ] Content management admin UI
+  - [ ] Data quality validation and deduplication
+
+**📋 See:** `/docs/plant-information-view-spec.md` for detailed specifications
 
 ---
 
@@ -273,6 +494,27 @@ GardenTime is a garden management application that helps users manage multiple g
 **Overall Project:** ~78% complete 🎉
 
 **Current Focus:** Advanced Canvas Features - Mini-map, Keyboard Shortcuts, Copy/Paste
+
+---
+
+## 📝 NEW: Comprehensive Feature Specifications Available!
+
+Three major feature areas have been fully specified and are ready for implementation:
+
+1. **Crop Record Management (Steps 60-63)** - `/docs/crop-record-management-spec.md`
+   - Centralized crop list view, timeline, batch operations, export
+
+2. **Garden Management Dashboard (Steps 64-68)** - `/docs/garden-management-dashboard-spec.md`
+   - Overview dashboard, analytics, multi-garden support, templates, activity feed
+
+3. **Plant Information View (New Feature)** - `/docs/plant-information-view-spec.md`
+   - Comprehensive plant database, growing guides, personal history, recommendations
+
+**Summary:** `/docs/feature-specs-summary.md` - Read this first for overview!
+
+**Next Decision:** Which feature set to implement first? (See summary doc for recommendations)
+
+---
 
 **Just Completed:** 
 - Step 27.10 - Mini-map Overview ✅
@@ -330,6 +572,21 @@ GardenTime is a garden management application that helps users manage multiple g
 - Step 27 - Auto-save with Debouncing ✅
 
 **Testing Queue:**
+- ⚠️ **TODO: Test garden dashboard** - Navigate to garden, verify it shows dashboard by default
+- ⚠️ **TODO: Test dashboard summary card** - Verify counts (total areas, active/inactive, last activity)
+- ⚠️ **TODO: Test active crops widget** - Check planted, growing, ready to harvest counts
+- ⚠️ **TODO: Test recent harvests widget** - Create harvested crops, verify they appear with dates
+- ⚠️ **TODO: Test harvest outcome badges** - Mark crops with different outcomes, verify color coding
+- ⚠️ **TODO: Test capacity widget** - Check utilization %, empty areas list, crowded warnings
+- ⚠️ **TODO: Test capacity color coding** - Try different utilization levels (0%, 50%, 75%, 90%, 100%)
+- ⚠️ **TODO: Test upcoming tasks widget** - Verify task prioritization and badges
+- ⚠️ **TODO: Test empty area tasks** - Delete all crops from area, verify it shows as empty task
+- ⚠️ **TODO: Test diseased crop tasks** - Mark crop as diseased, verify it shows in tasks
+- ⚠️ **TODO: Test planting calendar widget** - Plant and harvest crops, verify events appear
+- ⚠️ **TODO: Test dashboard navigation** - Click "Board View" button, verify navigation works
+- ⚠️ **TODO: Test dashboard responsive** - View on mobile, verify widgets stack correctly
+- ⚠️ **TODO: Test dashboard loading state** - Refresh page, verify skeleton UI shows
+- ⚠️ **TODO: Test dashboard error state** - Stop backend, verify error message and retry button
 - ⚠️ **TODO: Test mini-map** - Verify minimap shows in bottom-right, displays all objects
 - ⚠️ **TODO: Test minimap navigation** - Click different areas of minimap, verify viewport moves
 - ⚠️ **TODO: Test minimap toggle** - Click map button in toolbar to show/hide minimap
