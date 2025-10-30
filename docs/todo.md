@@ -298,112 +298,43 @@ GardenTime is a garden management application that helps users manage multiple g
     - Event indicators (planting, harvest dates) ✅
     - Color-coded event types ✅
 
-- [ ] **Step 69:** Planting Calendar & Season Planning ⭐ **PHASE 2 - CORE FEATURE**
+- [x] **Step 69:** Planting Calendar & Season Planning ⭐ **PHASE 2 - STARTED**
   
-  **Backend Implementation:**
-  - [ ] 69.1: Database Migration V10 - season_plans table
-    - id, garden_id, user_id, season, year
-    - Support multiple seasons per year (Spring, Summer, Fall, Winter + phases)
-    - Allow distinct phases (EARLY, MID, LATE) for single-season countries like Norway
-  - [ ] 69.2: Database Migration V11 - garden_climate_info table
-    - last_frost_date, first_frost_date (manual entry)
-    - hardiness_zone (manual, future: auto-detect)
-    - latitude, longitude (for future weather integration)
-    - TODO: Phase 2 - Auto-populate from hardiness zone database
-  - [ ] 69.3: Database Migration V12 - planned_crops table
-    - Links to season_plan and plant
-    - Status: PLANNED, SEEDS_STARTED, TRANSPLANTED, DIRECT_SOWN, GROWING, COMPLETED
-    - indoor_start_date, indoor_start_method
-    - transplant_date OR direct_sow_date
-    - expected_harvest_date
-    - phase field (EARLY, MID, LATE)
-    - crop_record_id link when actually planted
-    - TODO: Phase 2 - Notification system for seed starting reminders
-  - [ ] 69.4: Database Migration V13 - Extend plant_details
-    - weeks_before_frost_indoor (how many weeks before last frost to start indoors)
-    - can_direct_sow, can_transplant booleans
-    - frost_tolerance (HARDY, SEMI_HARDY, TENDER)
-    - indoor_start_method (text guidance)
-    - transplant_guidance (text instructions)
-    - Load placeholder data from `/docs/placeholder-plant-data.sql` (20 common plants)
-    - TODO: Future - Populate from plant-data-aggregator API
-  - [ ] 69.5: PlantingDateCalculator service
-    - Calculate indoor_start_date from last_frost_date and weeks_before_frost_indoor
-    - Calculate transplant_date or direct_sow_date based on frost tolerance
-    - Calculate expected_harvest_date from maturity time
-    - Handle edge cases (no frost zones, tropical climates)
-  - [ ] 69.6: Season Plan API endpoints
-    - GET /api/gardens/{gardenId}/season-plan (current or filter by season/year)
-    - POST /api/gardens/{gardenId}/season-plan (create new season)
-    - POST /api/gardens/{gardenId}/season-plan/planned-crops (add crop to plan)
-    - PATCH /api/gardens/{gardenId}/season-plan/planned-crops/{id} (update status)
-    - DELETE /api/gardens/{gardenId}/season-plan/planned-crops/{id}
-  - [ ] 69.7: Calendar Events API
-    - GET /api/gardens/{gardenId}/calendar?startDate=X&endDate=Y
-    - Aggregate indoor seed start, transplant, harvest events
-    - Include events from planned_crops AND actual crop_records
-  - [ ] 69.8: Climate Info API
-    - GET /api/gardens/{gardenId}/climate (get frost dates)
-    - PUT /api/gardens/{gardenId}/climate (update frost dates manually)
+  **Backend Implementation:** ✅ COMPLETE
+  - [x] 69.1-69.4: Database Migrations V7, V8 (season_plans, planned_crops, garden_climate_info, plant_details) ✅
+  - [x] 69.5: PlantingDateCalculator service ✅ (implemented in SeasonPlanningService)
+  - [x] 69.6: Season Plan API endpoints ✅
+  - [x] 69.7: Calendar Events API ✅
+  - [x] 69.8: Climate Info API ✅
   
-  **Frontend Implementation:**
-  - [ ] 69.9: Season Plan Creation Page (`/gardens/[id]/season-plan/new`)
-    - Season selector (Spring, Summer, Fall, Winter)
-    - Phase selector (Early, Mid, Late) - optional for succession planning
-    - Year input
-    - Frost dates form (if not set):
-      - Last frost date picker
-      - First frost date picker
-      - Hardiness zone input (optional)
-  - [ ] 69.10: Add Planned Crop Modal
-    - Search/select plant from database
-    - Quantity input
-    - Preferred grow area selector (optional)
-    - Display calculated dates:
-      - 🔵 Start seeds indoors: [date] (if applicable)
-      - 🟢 Transplant/Direct sow: [date]
-      - 🟡 Expected harvest: [date]
-    - Allow manual override of dates
-    - Phase selector (Early, Mid, Late)
-    - Notes field
-  - [ ] 69.11: Season Plan Management Page (`/gardens/[id]/season-plan`)
-    - List all planned crops for season
-    - Status badges and progress tracking
-    - Mark as "Seeds Started", "Transplanted", etc.
-    - Remove crop from plan
-    - Filter by status, phase, grow area
-  - [ ] 69.12: Full Calendar View (`/gardens/[id]/calendar`)
-    - Monthly calendar grid (like Google Calendar)
-    - Year/month navigation
-    - Color-coded events:
-      - 🔵 Blue = Indoor seed starting
-      - 🟢 Green = Outdoor planting/transplanting
-      - 🟡 Yellow = Expected harvest
-      - 🔴 Red = Actual harvest (from crop records)
-    - Click event → Details modal with quick actions
-    - Mark as done → Update planned crop status
-  - [ ] 69.13: Season Plan Dashboard Widget (on main dashboard)
-    - Current season name and progress bar
-    - Upcoming tasks this week:
-      - "Start basil seeds indoors (in 3 days)"
-      - "Transplant tomatoes to Box 1 (in 5 days)"
-    - Quick stats: Planned, Seeds Started, Transplanted, Harvested
-    - Link to full season plan page
-  - [ ] 69.14: Indoor Seed Starting Alerts
-    - Widget showing upcoming seed starting dates
-    - Alert types:
-      - "Start seeds this week" (7 days before)
-      - "Last chance to start seeds" (on date)
-      - "Transplant window opening soon" (2 weeks before)
-      - "Frost danger passed - transplant now" (after last frost)
-    - TODO: Phase 2 - Email/push notifications
-  - [ ] 69.15: Integration with Crop Records
-    - When marking planned crop as "Transplanted" or "Direct Sown":
-      - Show "Create Crop Record" modal
-      - Pre-fill data from planned crop
-      - Create crop_record and link to planned_crop
-      - Crop appears on board immediately
-    - Bidirectional status sync between planned_crops and crop_records
+  **Frontend Implementation:** ⏳ IN PROGRESS (Basic Version Complete)
+  - [x] 69.9: Season Plan Creation Page ✅ (integrated in `/gardens/[id]/season-plan`)
+    - Season selector, year input, frost dates form all implemented
+  - [x] 69.11: Season Plan Management Page ✅ (basic version at `/gardens/[id]/season-plan`)
+    - Lists planned crops, shows status, climate info
+  - [x] BFF API Routes created ✅
+    - Climate info routes
+    - Season plans routes
+    - Planned crops routes  
+    - Calendar events routes
+  - [x] Navigation updated ✅ (Season Plan link added to garden navigation)
+  
+  **Remaining Tasks (Phase 2 - Advanced Features):**
+  - [ ] 69.10: Add Planned Crop Modal (with plant search, date calculation display)
+  - [ ] 69.12: Full Calendar View (`/gardens/[id]/calendar`) - Monthly grid with events
+  - [ ] 69.13: Season Plan Dashboard Widget - Show upcoming tasks on main dashboard
+  - [ ] 69.14: Indoor Seed Starting Alerts - Reminders for upcoming seed starts
+  - [ ] 69.15: Integration with Crop Records - Auto-create crops from planned crops
+  - [ ] Load placeholder plant data (20 common plants with indoor start info)
+  - [ ] Implement edit/delete for planned crops
+  - [ ] Add status update buttons (mark as Seeds Started, Transplanted, etc.)
+  - [ ] Filter planned crops by status/phase
+  
+  **Testing Queue:**
+  - ⚠️ **TODO: Test season plan creation** - Navigate to season plan page, create new plan
+  - ⚠️ **TODO: Test climate info setup** - Set frost dates, verify they save
+  - ⚠️ **TODO: Test season plan display** - Verify plan shows season, year, crop count
+  - ⚠️ **TODO: Test navigation** - Verify Season Plan tab appears in garden navigation
 
 - [ ] **Step 65:** Garden Statistics & Analytics (PHASE 3)
   - [ ] 65.1: Backend statistics API with aggregations

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, List, Grid3x3 } from 'lucide-react';
+import { LayoutDashboard, List, Grid3x3, Calendar } from 'lucide-react';
 
 interface GardenNavigationProps {
   gardenId: string;
@@ -24,6 +24,11 @@ export default function GardenNavigation({ gardenId, gardenName }: GardenNavigat
       name: 'Dashboard',
       path: `/gardens/${gardenId}/dashboard`,
       icon: LayoutDashboard,
+    },
+    {
+      name: 'Season Plan',
+      path: `/gardens/${gardenId}/season-plan`,
+      icon: Calendar,
     },
     {
       name: 'Grow Areas',
