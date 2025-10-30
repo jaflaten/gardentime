@@ -383,6 +383,60 @@ export default function ShapePropertiesPanel({
         {/* Divider */}
         <hr className="border-gray-200" />
 
+        {/* Rotation (Step 27.5) */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Rotation: {Math.round(selectedObject.rotation || 0)}°
+          </label>
+          <div className="space-y-3">
+            {/* Rotation slider */}
+            <input
+              type="range"
+              min="0"
+              max="360"
+              value={selectedObject.rotation || 0}
+              onChange={(e) => handleNumberChange('rotation', parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0°</span>
+              <span>180°</span>
+              <span>360°</span>
+            </div>
+            
+            {/* Quick rotation buttons */}
+            <div className="grid grid-cols-4 gap-2">
+              <button
+                onClick={() => onUpdate({ rotation: 0 })}
+                className="px-2 py-1.5 bg-white border-2 border-gray-400 rounded text-xs font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-500 transition-colors"
+              >
+                0°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 90 })}
+                className="px-2 py-1.5 bg-white border-2 border-gray-400 rounded text-xs font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-500 transition-colors"
+              >
+                90°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 180 })}
+                className="px-2 py-1.5 bg-white border-2 border-gray-400 rounded text-xs font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-500 transition-colors"
+              >
+                180°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 270 })}
+                className="px-2 py-1.5 bg-white border-2 border-gray-400 rounded text-xs font-semibold text-gray-800 hover:bg-gray-50 hover:border-gray-500 transition-colors"
+              >
+                270°
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <hr className="border-gray-200" />
+
         {/* Z-Index Controls */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

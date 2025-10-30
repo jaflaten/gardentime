@@ -10,6 +10,10 @@ interface DrawingToolbarProps {
   onAddGrowArea?: () => void;
   brushSize?: number;
   onBrushSizeChange?: (size: number) => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
 }
 
 const tools: { id: DrawingTool; label: string; icon: string; help: string; shortcut: string }[] = [
@@ -23,7 +27,7 @@ const tools: { id: DrawingTool; label: string; icon: string; help: string; short
   { id: 'FREEHAND', label: 'Freehand', icon: '✏️', help: 'Freehand drawing', shortcut: '8' },
 ];
 
-export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea, brushSize = 3, onBrushSizeChange }: DrawingToolbarProps) {
+export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea, brushSize = 3, onBrushSizeChange, canUndo = false, canRedo = false, onUndo, onRedo }: DrawingToolbarProps) {
   const activeToolInfo = tools.find(t => t.id === activeTool);
 
   return (
@@ -69,6 +73,39 @@ export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea
               <span className="text-sm font-medium text-gray-700 w-8 text-right">{brushSize}px</span>
             </div>
           </>
+        )}
+
+        {/* Divider */}
+        <div className="h-8 w-px bg-gray-300" />
+
+        {/* Undo/Redo Buttons */}
+        {(onUndo || onRedo) && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onUndo}
+              disabled={!canUndo}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                canUndo
+                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+              }`}
+              title="Undo (Cmd/Ctrl+Z)"
+            >
+              ↶ Undo
+            </button>
+            <button
+              onClick={onRedo}
+              disabled={!canRedo}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                canRedo
+                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+              }`}
+              title="Redo (Cmd/Ctrl+Shift+Z)"
+            >
+              ↷ Redo
+            </button>
+          </div>
         )}
 
         {/* Divider */}

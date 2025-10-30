@@ -6,12 +6,33 @@ Recent changes and feature highlights. For complete roadmap, see `todo.md`.
 
 ## [Unreleased]
 
+### October 30, 2025 - Advanced Board Features (Steps 27.5, 27.6, 27.9)
+- **Step 27.5 - Rotation Functionality:** 
+  - Rotation slider (0-360°) with visual angle display
+  - Quick rotation buttons (0°, 90°, 180°, 270°)
+  - Integrated with auto-save and undo/redo
+- **Step 27.6 - Multi-Select Bulk Operations:**
+  - New BulkActionsPanel for multi-selected canvas objects
+  - Bulk color change (fill and stroke with 10 presets)
+  - Bulk opacity and stroke width adjustment
+  - Bulk layer order operations (bring to front/send to back)
+  - Bulk delete with undo/redo support
+  - Keyboard Delete works for bulk selection
+- **Step 27.9 - Grow Area Color Customization:**
+  - New GrowAreaPropertiesPanel component
+  - Custom color picker with 10 preset colors
+  - Reset to default color functionality
+  - Persistent color storage via API
+  - Visual feedback on board immediately
+- **Delete Confirmation Improvements:**
+  - Removed confirmation for canvas shapes (undo/redo available)
+  - Kept confirmation for grow areas (data protection)
+
 ### October 15, 2025 - Canvas Drawing Tools (Step 25)
 - Added CanvasObject backend model and API (RECTANGLE, CIRCLE, LINE, ARROW, TEXT, FREEHAND)
 - Created DrawingToolbar component with 8 drawing tools
 - Created CanvasShape component for rendering canvas objects
 - Database migration V5 for canvas_objects table
-- **Next:** Implement drawing interaction logic (mouse events)
 
 ### October 12-13, 2025 - Board View Enhancements
 - **Viewport Position Memory:** Board view remembers zoom, position, and grid visibility per garden (localStorage)

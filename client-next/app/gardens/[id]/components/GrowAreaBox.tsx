@@ -66,10 +66,10 @@ export default function GrowAreaBox({
   const width = Math.max(growArea.width || 100, 44);
   const height = Math.max(growArea.length || 100, 44);
 
-  // Color based on zone type (Step 19.2)
-  const color = growArea.zoneType
+  // Color based on zone type (Step 19.2) or custom color (Step 27.9)
+  const color = (growArea as any).customColor || (growArea.zoneType
     ? ZONE_TYPE_COLORS[growArea.zoneType as keyof typeof ZONE_TYPE_COLORS] || ZONE_TYPE_COLORS.BOX
-    : ZONE_TYPE_COLORS.BOX;
+    : ZONE_TYPE_COLORS.BOX);
 
   // Hover effect colors (Step 19.5)
   const strokeColor = isSelected ? '#10b981' : isMultiSelected ? '#3b82f6' : isHovered ? '#1f2937' : '#374151';

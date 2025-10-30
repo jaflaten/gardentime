@@ -84,6 +84,8 @@ export interface GrowArea {
   updatedAt: string;
   // Current crops (Step 27.8)
   currentCrops?: CropRecord[];  // Active crops in this grow area
+  // Custom color (Step 27.9)
+  color?: string;  // Optional: Custom hex color for grow area
 }
 
 export interface CreateGrowAreaRequest {

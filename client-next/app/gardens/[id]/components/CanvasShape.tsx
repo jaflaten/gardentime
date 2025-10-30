@@ -9,6 +9,7 @@ interface CanvasShapeProps {
   isSelected: boolean;
   isDraggingEnabled?: boolean;
   onSelect: () => void;
+  onDragStart?: () => void;
   onDragEnd: (x: number, y: number) => void;
   onResize?: (x: number, y: number, width: number, height: number) => void;
   onUpdatePoints?: (points: number[]) => void; // New: for lines/arrows
@@ -17,7 +18,7 @@ interface CanvasShapeProps {
   onDuplicateOnDrag?: (originalId: number, x: number, y: number) => void; // New: for Alt+Drag
 }
 
-export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragEnd, onResize, onUpdatePoints, onContextMenu, onTextEdit, onDuplicateOnDrag }: CanvasShapeProps) {
+export default function CanvasShape({ canvasObject: shape, isSelected, isDraggingEnabled = true, onSelect, onDragStart, onDragEnd, onResize, onUpdatePoints, onContextMenu, onTextEdit, onDuplicateOnDrag }: CanvasShapeProps) {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
   const altKeyPressed = useRef(false);
@@ -56,12 +57,17 @@ export default function CanvasShape({ canvasObject: shape, isSelected, isDraggin
     onDragEnd(e.target.x(), e.target.y());
   };
 
+  const baseDragStartHandler = () => {
+    onDragStart?.();
+  };
+
   const commonProps = {
     ref: shapeRef,
     draggable: isDraggingEnabled && !shape.locked,
     onClick: onSelect,
     onTap: onSelect,
     onContextMenu: onContextMenu,
+    onDragStart: baseDragStartHandler,
     opacity: shape.opacity || 1,
     rotation: shape.rotation || 0,
     shadowColor: isSelected ? '#10b981' : undefined,

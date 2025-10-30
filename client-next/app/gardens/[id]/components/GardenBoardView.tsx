@@ -11,14 +11,20 @@ import ZoomControls from './ZoomControls';
 import ViewOptions from './ViewOptions';
 import SelectionRectangle from './SelectionRectangle';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
+import BulkActionsPanel from './BulkActionsPanel';
+import GrowAreaPropertiesPanel from './GrowAreaPropertiesPanel';
 import ContextMenu from './ContextMenu';
 import SaveIndicator from './SaveIndicator';
+import MiniMap from './MiniMap';
+import KeyboardShortcutsModal from './KeyboardShortcutsModal';
 import { useCanvasPersistence } from '../hooks/useCanvasPersistence';
 import { useCanvasZoom } from '../hooks/useCanvasZoom';
 import { useDrawingInteraction } from '../hooks/useDrawingInteraction';
 import { useSelectionState } from '../hooks/useSelectionState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useCanvasObjectSaver } from '../hooks/useCanvasObjectSaver';
+import { useUndoRedo } from '../hooks/useUndoRedo';
+import { useCopyPaste } from '../hooks/useCopyPaste';
 import { generateGridLines, snapPositionToGrid, GRID_SIZE } from '../utils/gridUtils';
 
 interface GardenBoardViewProps {
@@ -47,6 +53,8 @@ export default function GardenBoardView({
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
   const draggingIdRef = useRef<string | null>(null);
+  const dragStartPosRef = useRef<{ id: string; x: number; y: number; isGrowArea: boolean } | null>(null);
+  const resizeStartRef = useRef<{ id: string; width: number; height: number; isGrowArea: boolean } | null>(null);
 
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [activeTool, setActiveTool] = useState<DrawingTool>('SELECT');
@@ -55,9 +63,46 @@ export default function GardenBoardView({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle');
   const [brushSize, setBrushSize] = useState(3); // Default brush size for freehand
   const [snapToGrid, setSnapToGrid] = useState(false); // Snap-to-grid toggle
+  const [showMiniMap, setShowMiniMap] = useState(true); // Mini-map visibility
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false); // Keyboard shortcuts help modal
 
   // Auto-save hook for canvas objects
   const { scheduleUpdate: scheduleCanvasObjectSave, saveNow: saveCanvasObjectsNow } = useCanvasObjectSaver(800);
+
+  // Undo/Redo hook
+  const { canUndo, canRedo, undo, redo, recordAction } = useUndoRedo({
+    onCreateObject: async (object) => {
+      const created = await canvasObjectService.create(object);
+      setCanvasObjects((prev) => [...prev, created]);
+    },
+    onUpdateObject: async (id, updates) => {
+      setCanvasObjects((prev) => prev.map((obj) => (obj.id === id ? { ...obj, ...updates } : obj)));
+      await canvasObjectService.update(id, updates);
+    },
+    onDeleteObject: async (id) => {
+      setCanvasObjects((prev) => prev.filter((obj) => obj.id !== id));
+      await canvasObjectService.delete(id);
+    },
+    onMoveGrowArea: (id, x, y) => {
+      onUpdatePosition(id, x, y);
+    },
+    onResizeGrowArea: (id, width, height) => {
+      onUpdateDimensions(id, width, height);
+    },
+    onBatchMove: (moves) => {
+      const growAreaMoves = moves.filter(m => m.isGrowArea).map(m => ({ id: m.id, x: m.x, y: m.y }));
+      const objectMoves = moves.filter(m => !m.isGrowArea);
+      
+      if (growAreaMoves.length > 0) {
+        onUpdatePositions?.(growAreaMoves);
+      }
+      
+      objectMoves.forEach(m => {
+        setCanvasObjects((prev) => prev.map((obj) => (obj.id === parseInt(m.id) ? { ...obj, x: m.x, y: m.y } : obj)));
+        scheduleCanvasObjectSave(parseInt(m.id), { x: m.x, y: m.y });
+      });
+    },
+  });
 
   // Use custom hooks
   const { stagePosition, setStagePosition, scale, setScale, showGrid, setShowGrid } =
@@ -103,7 +148,29 @@ export default function GardenBoardView({
     scale,
     stagePosition,
     brushSize, // Pass current brush size
-    onObjectCreated: (obj) => setCanvasObjects((prev) => [...prev, obj]),
+    onObjectCreated: (obj) => {
+      setCanvasObjects((prev) => [...prev, obj]);
+      // Record create action for undo
+      recordAction({
+        type: 'CREATE_OBJECT',
+        object: obj,
+      });
+    },
+  });
+
+  // Copy/Paste hook
+  const { copySelectedObject, pasteObject, hasCopiedObject } = useCopyPaste({
+    canvasObjects,
+    selectedObjectId,
+    onObjectCreated: async (obj) => {
+      const created = await canvasObjectService.create(obj);
+      setCanvasObjects((prev) => [...prev, created]);
+      recordAction({
+        type: 'CREATE_OBJECT',
+        object: created,
+      });
+      setSelectedObjectId(created.id);
+    },
   });
 
   // Load canvas objects from backend
@@ -137,14 +204,20 @@ export default function GardenBoardView({
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Delete selected canvas object
+  // Delete selected canvas object (no confirmation - undo/redo available)
   const deleteSelectedObject = async () => {
     if (!selectedObjectId) return;
 
-    const confirmed = confirm('Delete this shape?');
-    if (!confirmed) return;
+    const objectToDelete = canvasObjects.find((obj) => obj.id === selectedObjectId);
+    if (!objectToDelete) return;
 
     try {
+      // Record undo action before deleting
+      recordAction({
+        type: 'DELETE_OBJECT',
+        object: objectToDelete,
+      });
+
       await canvasObjectService.delete(selectedObjectId);
       setCanvasObjects((prev) => prev.filter((obj) => obj.id !== selectedObjectId));
       setSelectedObjectId(null);
@@ -171,6 +244,12 @@ export default function GardenBoardView({
         zIndex: (objectToDuplicate.zIndex || 0) + 1,
       });
       
+      // Record undo action for duplicate (create)
+      recordAction({
+        type: 'CREATE_OBJECT',
+        object: duplicatedObject,
+      });
+      
       setCanvasObjects((prev) => [...prev, duplicatedObject]);
       setSelectedObjectId(duplicatedObject.id);
     } catch (error) {
@@ -179,11 +258,124 @@ export default function GardenBoardView({
     }
   };
 
+  // Move selected canvas object with arrow keys
+  const handleMoveObject = (dx: number, dy: number) => {
+    if (!selectedObjectId) return;
+
+    const obj = canvasObjects.find((o) => o.id === selectedObjectId);
+    if (!obj) return;
+
+    const newX = obj.x + dx;
+    const newY = obj.y + dy;
+
+    // Record undo action
+    recordAction({
+      type: 'UPDATE_OBJECT',
+      objectId: obj.id,
+      before: { x: obj.x, y: obj.y },
+      after: { x: newX, y: newY },
+    });
+
+    // Update locally and save
+    setCanvasObjects((prev) =>
+      prev.map((o) => (o.id === selectedObjectId ? { ...o, x: newX, y: newY } : o))
+    );
+    scheduleCanvasObjectSave(selectedObjectId, { x: newX, y: newY });
+  };
+
+  // Move selected grow area with arrow keys
+  const handleMoveGrowArea = (dx: number, dy: number) => {
+    if (!selectedId) return;
+
+    const growArea = growAreas.find((ga) => ga.id === selectedId);
+    if (!growArea || growArea.positionX === undefined || growArea.positionY === undefined) return;
+
+    const newX = growArea.positionX + dx;
+    const newY = growArea.positionY + dy;
+
+    // Record undo action
+    recordAction({
+      type: 'MOVE_GROW_AREA',
+      areaId: selectedId,
+      before: { x: growArea.positionX, y: growArea.positionY },
+      after: { x: newX, y: newY },
+    });
+
+    onUpdatePosition(selectedId, newX, newY);
+  };
+
+  // Zoom functions for keyboard shortcuts
+  const handleZoomIn = () => {
+    const newScale = Math.min(scale * 1.1, 5);
+    setScale(newScale);
+  };
+
+  const handleZoomOut = () => {
+    const newScale = Math.max(scale / 1.1, 0.1);
+    setScale(newScale);
+  };
+
+  // Bulk update for multi-selected objects
+  const handleBulkUpdate = async (updates: Partial<CanvasObject>) => {
+    if (selectedObjectIds.size === 0) return;
+
+    const objectsToUpdate = canvasObjects.filter(obj => selectedObjectIds.has(obj.id));
+    
+    try {
+      // Optimistic update
+      setCanvasObjects((prev) =>
+        prev.map((obj) => 
+          selectedObjectIds.has(obj.id) ? { ...obj, ...updates } : obj
+        )
+      );
+
+      // Save each object
+      for (const obj of objectsToUpdate) {
+        scheduleCanvasObjectSave(obj.id, updates);
+      }
+    } catch (error) {
+      console.error('Failed to update objects:', error);
+      alert('Failed to update shapes. Please try again.');
+    }
+  };
+
+  // Bulk delete for multi-selected objects
+  const handleBulkDelete = async () => {
+    if (selectedObjectIds.size === 0) return;
+
+    const objectsToDelete = canvasObjects.filter(obj => selectedObjectIds.has(obj.id));
+    
+    try {
+      // Record undo actions for all deleted objects
+      for (const obj of objectsToDelete) {
+        recordAction({
+          type: 'DELETE_OBJECT',
+          object: obj,
+        });
+      }
+
+      // Delete all objects
+      for (const obj of objectsToDelete) {
+        await canvasObjectService.delete(obj.id);
+      }
+      
+      setCanvasObjects((prev) => prev.filter((obj) => !selectedObjectIds.has(obj.id)));
+      clearSelection();
+    } catch (error) {
+      console.error('Failed to delete objects:', error);
+      alert('Failed to delete shapes. Please try again.');
+    }
+  };
+
   // Keyboard shortcuts
   useKeyboardShortcuts({
     selectedObjectId,
+    selectedGrowAreaId: selectedId,
     onDeleteObject: () => {
-      if (selectedObjectId) {
+      // Handle bulk delete if multiple objects selected
+      if (selectedObjectIds.size > 1) {
+        handleBulkDelete();
+      } else if (selectedObjectId) {
         deleteSelectedObject();
       } else if (selectedId && onDeleteGrowArea) {
         // Delete grow area if one is selected
@@ -199,6 +391,25 @@ export default function GardenBoardView({
       cancelDrawing();
       setActiveTool('SELECT');
     },
+    onUndo: () => {
+      if (canUndo) {
+        undo();
+      }
+    },
+    onRedo: () => {
+      if (canRedo) {
+        redo();
+      }
+    },
+    onCopy: copySelectedObject,
+    onPaste: pasteObject,
+    onDuplicate: duplicateSelectedObject,
+    onMoveObject: handleMoveObject,
+    onMoveGrowArea: handleMoveGrowArea,
+    onShowHelp: () => setShowShortcutsModal(true),
+    onFitToView: handleFitToView,
+    onZoomIn: handleZoomIn,
+    onZoomOut: handleZoomOut,
   });
 
   // Handle stage mouse down
@@ -268,6 +479,35 @@ export default function GardenBoardView({
     setTimeout(() => setSaveStatus('idle'), 2900);
   };
 
+  // Update grow area properties (Step 27.9 - color customization)
+  const handleUpdateGrowAreaProperties = async (updates: Partial<GrowArea>) => {
+    if (!selectedId) return;
+
+    const growArea = growAreas.find(ga => ga.id === selectedId);
+    if (!growArea) return;
+
+    try {
+      // Make API call to update grow area
+      const response = await fetch(`/api/grow-areas/${selectedId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update grow area');
+      }
+
+      // The parent component will re-fetch and update the grow areas
+      // So we don't need to do anything else here
+    } catch (error) {
+      console.error('Failed to update grow area:', error);
+      alert('Failed to update grow area. Please try again.');
+    }
+  };
+
   // Context menu handlers
   const handleContextMenuOpen = (e: any, objectId: number) => {
     e.evt.preventDefault();
@@ -320,6 +560,10 @@ export default function GardenBoardView({
         onAddGrowArea={onAddGrowArea}
         brushSize={brushSize}
         onBrushSizeChange={setBrushSize}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onUndo={undo}
+        onRedo={redo}
       />
 
       {/* Toolbar */}
@@ -342,6 +586,30 @@ export default function GardenBoardView({
           selectedObjectIds={selectedObjectIds}
           growAreas={growAreas}
         />
+
+        {/* Help and Mini-map buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowMiniMap(!showMiniMap)}
+            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
+              showMiniMap ? 'bg-blue-50 text-blue-600' : 'text-gray-600'
+            }`}
+            title="Toggle Mini-map"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+          </button>
+          <button
+            onClick={() => setShowShortcutsModal(true)}
+            className="p-2 rounded hover:bg-gray-100 transition-colors text-gray-600"
+            title="Keyboard Shortcuts (?)"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Canvas Container */}
@@ -415,32 +683,67 @@ export default function GardenBoardView({
                   isDraggingEnabled={activeTool === 'SELECT'}
                   onDragStart={() => {
                     draggingIdRef.current = growArea.id;
+                    // Store starting position for undo
+                    dragStartPosRef.current = {
+                      id: growArea.id,
+                      x: growArea.positionX ?? 0,
+                      y: growArea.positionY ?? 0,
+                      isGrowArea: true,
+                    };
                   }}
                   onDragEnd={(x, y) => {
                     const deltaX = x - (growArea.positionX ?? 0);
                     const deltaY = y - (growArea.positionY ?? 0);
 
                     if (selectedIds.has(growArea.id) && selectedIds.size > 1) {
-                      const updates = Array.from(selectedIds).map((id) => {
+                      // Multi-select batch move
+                      const moves = Array.from(selectedIds).map((id) => {
                         const area = growAreas.find((a) => a.id === id);
                         if (area && area.positionX !== undefined && area.positionY !== undefined) {
                           return {
                             id,
-                            x: area.positionX + deltaX,
-                            y: area.positionY + deltaY,
+                            isGrowArea: true,
+                            before: { x: area.positionX, y: area.positionY },
+                            after: { x: area.positionX + deltaX, y: area.positionY + deltaY },
                           };
                         }
                         return null;
-                      }).filter((u): u is { id: string; x: number; y: number } => u !== null);
+                      }).filter((m): m is { id: string; isGrowArea: boolean; before: { x: number; y: number }; after: { x: number; y: number } } => m !== null);
 
+                      if (moves.length > 0) {
+                        recordAction({ type: 'BATCH_MOVE', moves });
+                      }
+
+                      const updates = moves.map(m => ({ id: m.id, x: m.after.x, y: m.after.y }));
                       onUpdatePositions?.(updates);
                     } else {
+                      // Single grow area move
+                      if (dragStartPosRef.current) {
+                        recordAction({
+                          type: 'MOVE_GROW_AREA',
+                          areaId: growArea.id,
+                          before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
+                          after: { x, y },
+                        });
+                      }
                       onUpdatePosition(growArea.id, x, y);
                     }
 
                     draggingIdRef.current = null;
+                    dragStartPosRef.current = null;
                   }}
                   onResize={(width, height) => {
+                    // Record resize action for undo
+                    const before = {
+                      width: growArea.width ?? 100,
+                      height: growArea.length ?? 100,
+                    };
+                    recordAction({
+                      type: 'RESIZE_GROW_AREA',
+                      areaId: growArea.id,
+                      before,
+                      after: { width, height },
+                    });
                     onUpdateDimensions(growArea.id, width, height);
                   }}
                   onSelect={() => {
@@ -464,9 +767,28 @@ export default function GardenBoardView({
                 isSelected={selectedObjectId === obj.id}
                 isDraggingEnabled={activeTool === 'SELECT'}
                 onSelect={() => selectCanvasObject(obj.id)}
+                onDragStart={() => {
+                  // Store starting position for undo
+                  dragStartPosRef.current = {
+                    id: obj.id.toString(),
+                    x: obj.x,
+                    y: obj.y,
+                    isGrowArea: false,
+                  };
+                }}
                 onDragEnd={(x, y) => {
                   // Apply snap-to-grid if enabled
                   const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
+                  
+                  // Record undo action
+                  if (dragStartPosRef.current) {
+                    recordAction({
+                      type: 'UPDATE_OBJECT',
+                      objectId: obj.id,
+                      before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
+                      after: { x: finalPos.x, y: finalPos.y },
+                    });
+                  }
                   
                   // Optimistic update
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y } : s)));
@@ -476,10 +798,20 @@ export default function GardenBoardView({
                   setTimeout(() => setSaveStatus('saving'), 100);
                   setTimeout(() => setSaveStatus('saved'), 900);
                   setTimeout(() => setSaveStatus('idle'), 2900);
+                  
+                  dragStartPosRef.current = null;
                 }}
                 onResize={async (x, y, width, height) => {
                   // Apply snap-to-grid if enabled
                   const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
+                  
+                  // Record undo action
+                  recordAction({
+                    type: 'UPDATE_OBJECT',
+                    objectId: obj.id,
+                    before: { x: obj.x, y: obj.y, width: obj.width, height: obj.height },
+                    after: { x: finalPos.x, y: finalPos.y, width, height },
+                  });
                   
                   // Optimistic update
                   setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y, width, height } : s)));
@@ -533,14 +865,40 @@ export default function GardenBoardView({
         </Stage>
       </div>
 
-      {/* Shape Properties Panel */}
-      {selectedCanvasObject && (
+      {/* Shape Properties Panel - single selection */}
+      {selectedCanvasObject && selectedObjectIds.size <= 1 && (
         <ShapePropertiesPanel
           selectedObject={selectedCanvasObject}
           onUpdate={handleUpdateObjectProperties}
           onDelete={deleteSelectedObject}
           onDuplicate={duplicateSelectedObject}
           onClose={() => setSelectedObjectId(null)}
+        />
+      )}
+
+      {/* Bulk Actions Panel - multi selection */}
+      {selectedObjectIds.size > 1 && (
+        <BulkActionsPanel
+          selectedCount={selectedObjectIds.size}
+          selectedObjects={canvasObjects.filter(obj => selectedObjectIds.has(obj.id))}
+          onBulkUpdate={handleBulkUpdate}
+          onBulkDelete={handleBulkDelete}
+          onClose={clearSelection}
+        />
+      )}
+
+      {/* Grow Area Properties Panel - when grow area is selected (Step 27.9) */}
+      {selectedId && !selectedObjectId && selectedObjectIds.size === 0 && (
+        <GrowAreaPropertiesPanel
+          selectedGrowArea={growAreas.find(ga => ga.id === selectedId)!}
+          onUpdate={handleUpdateGrowAreaProperties}
+          onDelete={onDeleteGrowArea ? () => {
+            const growArea = growAreas.find(ga => ga.id === selectedId);
+            if (growArea && confirm(`Delete "${growArea.name}"? This cannot be undone.`)) {
+              onDeleteGrowArea(growArea);
+            }
+          } : undefined}
+          onClose={() => setSelectedId(null)}
         />
       )}
 
@@ -581,6 +939,27 @@ export default function GardenBoardView({
 
       {/* Save Status Indicator */}
       <SaveIndicator status={saveStatus} />
+
+      {/* Mini-map - Step 27.10 */}
+      {showMiniMap && (
+        <MiniMap
+          growAreas={growAreas}
+          canvasObjects={canvasObjects}
+          stagePosition={stagePosition}
+          scale={scale}
+          viewportWidth={dimensions.width}
+          viewportHeight={dimensions.height}
+          onViewportClick={(x, y) => {
+            setStagePosition({ x, y });
+          }}
+        />
+      )}
+
+      {/* Keyboard Shortcuts Modal - Step 27.11 */}
+      <KeyboardShortcutsModal
+        isOpen={showShortcutsModal}
+        onClose={() => setShowShortcutsModal(false)}
+      />
     </div>
   );
 }
