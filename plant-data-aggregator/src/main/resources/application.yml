@@ -10,6 +10,9 @@ spring:
       ddl-auto: none
     properties:
       hibernate.jdbc.time_zone: UTC
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.type.preferred_instant_jdbc_type: TIMESTAMP
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     show-sql: false
   flyway:

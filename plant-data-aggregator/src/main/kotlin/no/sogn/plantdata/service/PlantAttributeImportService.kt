@@ -14,6 +14,7 @@ import java.util.*
 class PlantAttributeImportService(
     private val plantRepository: PlantRepository,
     private val plantAttributeRepository: PlantAttributeRepository,
+    private val plantAttributeJdbcRepository: PlantAttributeJdbcRepository,
     private val plantAttributeEdiblePartsRepository: PlantAttributeEdiblePartsRepository,
     private val sourceRepository: SourceRepository,
     private val trefleService: TrefleService?
@@ -24,7 +25,6 @@ class PlantAttributeImportService(
     /**
      * Import plant attributes from LLM-parsed JSON
      */
-    @Transactional
     fun importPlantAttributes(request: ImportPlantAttributesRequest): ImportResponse {
         val attrs = request.attributes
         val warnings = mutableListOf<String>()
@@ -32,18 +32,18 @@ class PlantAttributeImportService(
         try {
             log.info("Importing plant attributes for: ${attrs.commonName}")
             
-            // Step 1: Find or create the plant entry
-            val plant = findOrCreatePlant(attrs.commonName, request.scientificName, warnings)
+            // Step 1: Find or create the plant entry (in its own transaction)
+            val plant = findOrCreatePlantInNewTransaction(attrs.commonName, request.scientificName, warnings)
             
-            // Step 2: Create or update plant attributes
+            // Step 2: Create or update plant attributes (in its own transaction via JDBC)
             val plantAttributes = createOrUpdateAttributes(plant, attrs, warnings)
-            plantAttributeRepository.save(plantAttributes)
+            plantAttributeJdbcRepository.saveWithEnumCast(plantAttributes)
             
-            // Step 3: Update edible parts
-            updateEdibleParts(plant.id, attrs.edibleParts)
+            // Step 3: Update edible parts (in its own transaction)
+            updateEdiblePartsInTransaction(plant.id, attrs.edibleParts)
             
-            // Step 4: Create source entry if needed
-            createSourceIfNeeded(request.source)
+            // Step 4: Create source entry if needed (in its own transaction)
+            createSourceIfNeededInTransaction(request.source)
             
             log.info("Successfully imported attributes for ${attrs.commonName} (plant_id: ${plant.id})")
             
@@ -65,6 +65,34 @@ class PlantAttributeImportService(
                 warnings = warnings
             )
         }
+    }
+    
+    /**
+     * Find or create plant in a new transaction to ensure it's committed before attributes
+     */
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    fun findOrCreatePlantInNewTransaction(
+        commonName: String,
+        scientificName: String?,
+        warnings: MutableList<String>
+    ): Plant {
+        return findOrCreatePlant(commonName, scientificName, warnings)
+    }
+    
+    /**
+     * Update edible parts in a transaction
+     */
+    @Transactional
+    fun updateEdiblePartsInTransaction(plantId: UUID, edibleParts: List<String>) {
+        updateEdibleParts(plantId, edibleParts)
+    }
+    
+    /**
+     * Create source in a transaction
+     */
+    @Transactional
+    fun createSourceIfNeededInTransaction(sourceName: String) {
+        createSourceIfNeeded(sourceName)
     }
     
     /**

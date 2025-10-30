@@ -16,27 +16,27 @@ data class PlantAttributes(
     var isNitrogenFixer: Boolean = false,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "root_depth", nullable = false) 
+    @Column(name = "root_depth", nullable = false)
     var rootDepth: RootDepth,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "feeder_type") 
+    @Column(name = "feeder_type")
     var feederType: FeederType? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "cycle") 
+    @Column(name = "cycle")
     var cycle: PlantCycle? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "growth_habit") 
+    @Column(name = "growth_habit")
     var growthHabit: GrowthHabit? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "sun_needs") 
+    @Column(name = "sun_needs")
     var sunNeeds: SunNeeds? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "water_needs") 
+    @Column(name = "water_needs")
     var waterNeeds: WaterNeeds? = null,
     
     @Column(name = "ph_min") 
@@ -46,7 +46,7 @@ data class PlantAttributes(
     var phMax: Double? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "toxicity_level") 
+    @Column(name = "toxicity_level")
     var toxicityLevel: ToxicityLevel? = null,
     
     @Column(name = "invasive") 
@@ -68,7 +68,7 @@ data class PlantAttributes(
     var successionIntervalDays: Int? = null,
     
     @Enumerated(EnumType.STRING) 
-    @Column(name = "primary_nutrient_contribution") 
+    @Column(name = "primary_nutrient_contribution")
     var primaryNutrientContribution: PrimaryNutrientContribution? = null,
     
     @Column(name = "created_at", nullable = false) 
