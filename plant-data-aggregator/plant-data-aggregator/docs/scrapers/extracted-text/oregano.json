@@ -1,0 +1,26 @@
+{
+  "commonName": "Oregano",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "MODERATE",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "BUSH",
+  "soilTempMinF": null,
+  "soilTempOptimalF": null,
+  "frostTolerant": true,
+  "spacingMin": 8,
+  "spacingMax": 10,
+  "plantingDepthInches": null,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": true,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": "Benefits from companion planting."
+}

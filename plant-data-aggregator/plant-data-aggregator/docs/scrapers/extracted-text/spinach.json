@@ -1,0 +1,26 @@
+{
+  "commonName": "Spinach",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "FREQUENT",
+  "rootDepth": "SHALLOW",
+  "growthHabit": "LEAF",
+  "soilTempMinF": 40,
+  "soilTempOptimalF": 70,
+  "frostTolerant": false,
+  "spacingMin": 2,
+  "spacingMax": null,
+  "plantingDepthInches": 0.5,
+  "containerSuitable": false,
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": 2,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": null
+}

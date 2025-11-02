@@ -1,0 +1,26 @@
+{
+  "commonName": "Zucchini & Summer Squash",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "FREQUENT",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "FRUITING",
+  "soilTempMinF": 70,
+  "soilTempOptimalF": 70,
+  "frostTolerant": false,
+  "spacingMin": 1,
+  "spacingMax": null,
+  "plantingDepthInches": 1.0,
+  "containerSuitable": true,
+  "requiresStaking": true,
+  "requiresPruning": false,
+  "edibleParts": [
+    "fruit"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": 1,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": null
+}

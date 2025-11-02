@@ -1,0 +1,26 @@
+{
+  "commonName": "Thyme Plant",
+  "cycle": "PERENNIAL",
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "LOW",
+  "rootDepth": "MEDIUM",
+  "growthHabit": null,
+  "soilTempMinF": 70,
+  "soilTempOptimalF": null,
+  "frostTolerant": true,
+  "spacingMin": 9,
+  "spacingMax": null,
+  "plantingDepthInches": null,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": true,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": "Benefits from companion planting."
+}

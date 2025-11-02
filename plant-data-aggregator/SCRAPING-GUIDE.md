@@ -1,277 +1,449 @@
 # Scraping Implementation Guide
 
+**Last Updated:** 2025-11-02
+
+## Overview
+
+This guide shows you how to scrape plant data from Almanac.com, parse it with an LLM, and import it into the database.
+
+**Current Progress:**
+- ✅ 15 plants scraped and extracted
+- 🔄 72 plants remaining
+- See: `plant-data-aggregator/docs/plants-we-want-to-scrape-status.md` for full list
+
+---
+
 ## Quick Start
 
-### 1. Check Service Status
+### Prerequisites
+
+1. **Start the application:**
+```bash
+cd /Users/Jorn-Are.Klubben.Flaten/dev/solo/gardentime
+./gradlew :plant-data-aggregator:bootRun
+```
+
+2. **Verify it's running:**
+```bash
+curl http://localhost:8081/actuator/health | jq
+# Should return: {"status":"UP"}
+```
+
+---
+
+## Scraping Workflow
+
+### Step 1: Choose Plants to Scrape
+
+Check the status document to see what's pending:
+```bash
+cat plant-data-aggregator/plant-data-aggregator/docs/plants-we-want-to-scrape-status.md
+```
+
+**Recommended order:**
+1. High Priority (8 remaining): potatoes, spinach, beets, zucchini, garlic, cilantro, mint, oregano
+2. Medium Priority (20 plants): brussels-sprouts, cauliflower, sweet-potatoes, etc.
+3. Low Priority (44 plants): fruits, specialty vegetables, perennials
+
+---
+
+### Step 2: Scrape a Plant
+
+Use the slug from the status document:
 
 ```bash
-curl http://localhost:8081/api/admin/scraping/status | jq
+# Single plant
+curl -X POST http://localhost:8081/api/admin/scraping/plant/potatoes | jq
+
+# Expected output:
+# {
+#   "slug": "potatoes",
+#   "successful": true,
+#   "message": "Successfully scraped potatoes",
+#   "outputFiles": {
+#     "rawHtml": "docs/scrapers/rawhtml/potatoes_20251102-203000.html",
+#     "parsed": "docs/scrapers/parsed/potatoes_scraped_20251102-203000.json"
+#   }
+# }
 ```
 
-### 2. View Available Plants
+**What happens:**
+- Scrapes https://www.almanac.com/plant/potatoes
+- Waits 3 seconds (polite scraping)
+- Saves raw HTML to `docs/scrapers/rawhtml/`
+- Saves structured JSON to `docs/scrapers/parsed/`
+- Updates extraction report
+
+---
+
+### Step 3: View Scraped Data
 
 ```bash
-# All target plants
-curl http://localhost:8081/api/admin/scraping/available-plants | jq
+# Find the latest parsed file
+ls -lt plant-data-aggregator/plant-data-aggregator/docs/scrapers/parsed/ | head -5
 
-# Top priority only (priority 1)
-curl "http://localhost:8081/api/admin/scraping/available-plants?priority=1" | jq
+# View the planting guide section
+cat plant-data-aggregator/plant-data-aggregator/docs/scrapers/parsed/potatoes_scraped_*.json | jq '.plantingGuide'
+
+# View care instructions
+cat plant-data-aggregator/plant-data-aggregator/docs/scrapers/parsed/potatoes_scraped_*.json | jq '.careInstructions'
 ```
 
-### 3. Scrape a Single Plant (Test)
+---
+
+### Step 4: Parse with LLM
+
+#### 4.1 Get the LLM Prompt
 
 ```bash
-curl -X POST http://localhost:8081/api/admin/scraping/plant/tomatoes | jq
+cat plant-data-aggregator/plant-data-aggregator/docs/llm-prompts/QUICK-PROMPT.txt
 ```
 
-This will:
-- Scrape https://www.almanac.com/plant/tomatoes
-- Extract companion planting info, planting guide, care instructions, etc.
-- Save raw HTML to `docs/scrapers/rawhtml/tomatoes_*.html`
-- Save structured JSON to `docs/scrapers/parsed/tomatoes_scraped_*.json`
-- Append to extraction report
+#### 4.2 Extract Text Sections
 
-### 4. Scrape Top 15 Priority Plants
+From the scraped JSON file, copy these sections:
+- `plantingGuide`
+- `careInstructions`
+- `harvestInfo` (optional)
 
-```bash
-curl -X POST http://localhost:8081/api/admin/scraping/top-priority | jq
-```
+#### 4.3 Prepare the Prompt
 
-This scrapes:
-- Tomatoes, Lettuce, Cucumbers, Peppers, Beans, Peas, Carrots, Onions
-- Broccoli, Cabbage, Kale, Radishes
-- Basil, Dill, Parsley
+1. Copy the entire QUICK-PROMPT.txt content
+2. Replace `[PASTE YOUR plantingGuide TEXT HERE]` with the actual plantingGuide
+3. Replace `[PASTE YOUR careInstructions TEXT HERE]` with the actual careInstructions
 
-**Time estimate:** ~50-60 seconds (3 seconds between requests + processing)
+#### 4.4 Send to LLM
 
-### 5. Scrape Custom Plant List
+Paste into Claude, ChatGPT, or your preferred LLM.
 
-```bash
-curl -X POST http://localhost:8081/api/admin/scraping/plants \
-  -H "Content-Type: application/json" \
-  -d '{"slugs": ["basil", "mint", "rosemary"]}' | jq
-```
-
-## Output Files
-
-After scraping, check these directories:
-
-```bash
-# Raw HTML files
-ls -lh plant-data-aggregator/docs/scrapers/rawhtml/
-
-# Structured JSON files
-ls -lh plant-data-aggregator/docs/scrapers/parsed/
-
-# Reports
-cat plant-data-aggregator/docs/scrapers/reports/extraction-report.md
-cat plant-data-aggregator/docs/scrapers/reports/summary_*.md
-```
-
-## File Structure
-
-```
-plant-data-aggregator/docs/scrapers/
-├── rawhtml/
-│   └── tomatoes_20241030-204530.html
-├── parsed/
-│   └── tomatoes_scraped_20241030-204530.json
-└── reports/
-    ├── extraction-report.md
-    └── summary_20241030-204600.md
-```
-
-## JSON Output Format
-
-Example `tomatoes_scraped_*.json`:
-
+**Expected output format:**
 ```json
 {
-  "slug": "tomatoes",
-  "source": "Almanac.com",
-  "url": "https://www.almanac.com/plant/tomatoes",
-  "commonName": "Tomatoes",
-  "description": "...",
-  "companionSection": "Plant tomatoes with basil, carrots, and marigolds. Avoid planting with potatoes, fennel, and brassicas.",
-  "plantingGuide": "### When to Plant\n...\n### How to Plant\n...",
-  "careInstructions": "### Watering\n...\n### Fertilizing\n...",
-  "harvestInfo": "### When to Harvest\n...",
-  "pestsAndDiseases": "### Common Pests\n...",
-  "rawHtml": "<html>...",
-  "scrapedAt": "2024-10-30T20:45:30Z",
-  "successful": true,
-  "errorMessage": null
-}
-```
-
-## Next Steps: Parse Scraped Data with LLM
-
-### Step 1: Extract the Text
-
-After scraping, you'll have files like:
-- `docs/scrapers/parsed/tomatoes_scraped_*.json` (full scraped data)
-
-Open the file and copy the `plantingGuide` and `careInstructions` sections.
-
-### Step 2: Use LLM to Parse Attributes
-
-1. Open the LLM prompt template:
-   ```bash
-   cat docs/llm-prompts/QUICK-PROMPT.txt
-   ```
-
-2. Copy the entire prompt
-
-3. Replace `[PASTE YOUR plantingGuide TEXT HERE]` with your actual plantingGuide text
-
-4. Replace `[PASTE YOUR careInstructions TEXT HERE]` with your actual careInstructions text
-
-5. Paste into Claude or GPT-4
-
-6. Get back structured JSON with plant attributes
-
-### Step 3: Save Parsed Attributes
-
-Save the LLM output to:
-```
-docs/scrapers/extracted-text/tomatoes.json
-```
-
-Example output:
-```json
-{
-  "commonName": "Tomato",
+  "commonName": "Potato",
   "cycle": "ANNUAL",
   "sunNeeds": "FULL_SUN",
-  "waterNeeds": "FREQUENT",
-  "rootDepth": "DEEP",
-  "growthHabit": "FRUITING",
-  "soilTempMinF": 55,
-  "soilTempOptimalF": 70,
+  "waterNeeds": "MODERATE",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "ROOT",
+  "soilTempMinF": 45,
+  "soilTempOptimalF": 60,
   "frostTolerant": false,
-  "spacingMin": 24,
-  "spacingMax": 36,
-  "edibleParts": ["fruit"],
-  "requiresStaking": true,
+  "spacingMin": 12,
+  "spacingMax": 15,
+  "plantingDepthInches": 4,
   "containerSuitable": true,
-  "notes": "Heat-loving plant..."
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": ["root"],
+  "daysToMaturityMin": 70,
+  "daysToMaturityMax": 120,
+  "wateringInchesPerWeek": 1.5,
+  "fertilizingFrequencyWeeks": 4,
+  "mulchRecommended": true,
+  "notes": "Hill soil around plants as they grow. Avoid planting where tomatoes grew previously."
 }
 ```
 
-### Step 4: Import to Database
+---
 
-Use the import service:
+### Step 5: Save Extracted Data
+
+Save the LLM output to the extracted-text directory:
+
 ```bash
-curl -X POST http://localhost:8081/api/admin/import/plant-attributes \
-  -H "Content-Type: application/json" \
-  -d @docs/scrapers/extracted-text/tomatoes.json
+# Manually create the file
+nano plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/potatoes.json
+
+# Or use echo (paste the JSON):
+cat > plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/potatoes.json << 'EOF'
+{
+  "commonName": "Potato",
+  "cycle": "ANNUAL",
+  ...
+}
+EOF
 ```
 
-Or import all parsed files:
+**File naming convention:** `{slug}.json` (e.g., `potatoes.json`, `cilantro.json`)
+
+---
+
+### Step 6: Validate JSON
+
 ```bash
+# Check if it's valid JSON
+cat plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/potatoes.json | jq '.'
+
+# Should display the formatted JSON without errors
+```
+
+---
+
+### Step 7: Update Status Document
+
+Mark the plant as scraped:
+
+```bash
+# Edit the status file
+nano plant-data-aggregator/plant-data-aggregator/docs/plants-we-want-to-scrape-status.md
+
+# Change the line from:
+# | 36 | Potatoes | potatoes | 🔄 PENDING | |
+
+# To:
+# | 36 | Potatoes | potatoes | ✅ SCRAPED | |
+```
+
+---
+
+## Batch Scraping
+
+### Scrape Multiple Plants at Once
+
+**High Priority Batch (8 plants):**
+```bash
+# Create a batch script
+cat > /tmp/scrape-high-priority.sh << 'EOF'
+#!/bin/bash
+for plant in potatoes spinach beets zucchini garlic cilantro mint oregano; do
+  echo "Scraping $plant..."
+  curl -X POST http://localhost:8081/api/admin/scraping/plant/$plant | jq '.successful'
+  echo "Waiting 5 seconds..."
+  sleep 5
+done
+EOF
+
+chmod +x /tmp/scrape-high-priority.sh
+/tmp/scrape-high-priority.sh
+```
+
+**Time estimate:** ~50 seconds (8 plants × 3 sec + overhead)
+
+---
+
+## Testing the Scraping & Parsing Flow
+
+### Complete Test with One Plant
+
+Let's test with spinach:
+
+```bash
+# 1. Scrape
+curl -X POST http://localhost:8081/api/admin/scraping/plant/spinach | jq
+
+# 2. View scraped data
+ls -lt plant-data-aggregator/plant-data-aggregator/docs/scrapers/parsed/ | grep spinach
+
+# 3. Extract text for LLM
+LATEST_FILE=$(ls -t plant-data-aggregator/plant-data-aggregator/docs/scrapers/parsed/spinach_* | head -1)
+cat "$LATEST_FILE" | jq '.plantingGuide' > /tmp/spinach-planting.txt
+cat "$LATEST_FILE" | jq '.careInstructions' > /tmp/spinach-care.txt
+
+echo "=== PLANTING GUIDE ==="
+cat /tmp/spinach-planting.txt
+echo ""
+echo "=== CARE INSTRUCTIONS ==="
+cat /tmp/spinach-care.txt
+
+# 4. Now paste these into your LLM with the QUICK-PROMPT.txt template
+
+# 5. After LLM parsing, save to extracted-text/spinach.json
+
+# 6. Validate
+cat plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/spinach.json | jq '.'
+
+# 7. Update status document to mark as ✅ SCRAPED
+```
+
+---
+
+## Output Directory Structure
+
+```
+plant-data-aggregator/plant-data-aggregator/docs/scrapers/
+├── rawhtml/                          # Raw HTML from Almanac.com
+│   ├── tomatoes_20251030-220000.html
+│   ├── potatoes_20251102-203000.html
+│   └── ...
+├── parsed/                           # Structured JSON extracted by scraper
+│   ├── tomatoes_scraped_20251030-220000.json
+│   ├── potatoes_scraped_20251102-203000.json
+│   └── ...
+├── extracted-text/                   # LLM-parsed plant attributes (FINAL)
+│   ├── tomatoes.json                ✅ Ready for database import
+│   ├── basil.json                   ✅ Ready for database import
+│   ├── potatoes.json                🔄 Add this after LLM parsing
+│   └── ...
+└── reports/
+    ├── extraction-report.md          # Ongoing scraping log
+    └── summary_20251030-225834.md    # Summary reports
+```
+
+---
+
+## Import to Database (Future Step)
+
+Once you have extracted-text JSON files, you can import them:
+
+```bash
+# Single plant
+curl -X POST http://localhost:8081/api/admin/import/plant-attributes \
+  -H "Content-Type: application/json" \
+  -d @plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/potatoes.json
+
+# Bulk import all extracted files
 curl -X POST http://localhost:8081/api/admin/import/bulk-attributes \
   -H "Content-Type: application/json" \
-  -d '{"directory": "docs/scrapers/extracted-text"}'
+  -d '{"directory": "plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text"}'
 ```
 
-### Quick Test Workflow
+**Note:** Currently there's a transaction issue with the import service. Manual SQL import may be needed temporarily.
 
-```bash
-# 1. Scrape a plant
-curl -X POST http://localhost:8081/api/admin/scraping/plant/tomatoes
-
-# 2. View the scraped data
-cat docs/scrapers/parsed/tomatoes_scraped_*.json | jq '.plantingGuide'
-
-# 3. Copy text and use LLM prompt from docs/llm-prompts/QUICK-PROMPT.txt
-
-# 4. Save LLM output to docs/scrapers/extracted-text/tomatoes.json
-
-# 5. Import to database
-curl -X POST http://localhost:8081/api/admin/import/plant-attributes \
-  -H "Content-Type: application/json" \
-  -d @docs/scrapers/extracted-text/tomatoes.json
-```
-
-## Configuration
-
-Edit `application.yml` to adjust scraping behavior:
-
-```yaml
-scraper:
-  request-delay-ms: 3000  # Time between requests (be polite!)
-  connection-timeout-ms: 30000
-  max-retries: 3
-  retry-delay-ms: 5000
-```
-
-## Rate Limiting
-
-The scraper respects rate limits:
-- 3 seconds between requests to the same domain (configurable)
-- Exponential backoff on failures
-- Maximum 3 retry attempts
+---
 
 ## Troubleshooting
 
-### "403 Forbidden" or "503 Service Unavailable"
+### Scraping Errors
 
-The site may be blocking automated requests. This is handled by:
-- Using a realistic User-Agent header
-- Rate limiting between requests
-- Retry logic with backoff
+**403 Forbidden:**
+```bash
+# Increase delay between requests
+# Edit application.yml:
+scraper:
+  request-delay-ms: 5000  # Increase from 3000
+```
 
-If problems persist, increase `request-delay-ms` in configuration.
+**Plant not found (404):**
+- Verify the slug exists: https://www.almanac.com/plant/{slug}
+- Check for alternate slugs (e.g., "bok-choy" vs "bok_choy")
 
-### Empty or Missing Sections
+**Empty sections:**
+- Some plants may not have all sections
+- This is normal - captured as `null` in JSON
 
-Some plants may not have all sections (companion planting, pests, etc.). This is normal and captured in the JSON as `null` values.
+### LLM Parsing Issues
 
-### Scraping Takes Too Long
+**Invalid JSON output:**
+```bash
+# Validate and fix with jq
+cat output.json | jq '.' > fixed.json
+```
 
-Adjust the plant list. Instead of scraping all 15 top priority plants, scrape a subset:
+**Missing fields:**
+- Re-run LLM with clarification
+- Manually add required fields (commonName, cycle, sunNeeds, waterNeeds, rootDepth, growthHabit)
+
+**Wrong enum values:**
+- Check valid values in QUICK-PROMPT.txt
+- Ensure exact match (e.g., "FULL_SUN" not "Full Sun")
+
+---
+
+## Configuration
+
+Edit `application.yml` to adjust scraping:
+
+```yaml
+scraper:
+  user-agent: "Mozilla/5.0 (compatible; GardenTime-PlantDataAggregator/1.0; +https://gardentime.app)"
+  request-delay-ms: 3000  # 3 seconds between requests
+  connection-timeout-ms: 30000
+  max-retries: 3
+  retry-delay-ms: 5000
+  output-base-dir: "plant-data-aggregator/docs/scrapers"
+```
+
+---
+
+## Progress Tracking
+
+### Check Your Progress
 
 ```bash
-curl -X POST http://localhost:8081/api/admin/scraping/plants \
-  -H "Content-Type: application/json" \
-  -d '{"slugs": ["tomatoes", "basil", "peppers"]}' | jq
+# Count scraped plants
+ls plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/*.json | wc -l
+
+# List scraped plants
+ls plant-data-aggregator/plant-data-aggregator/docs/scrapers/extracted-text/ | sed 's/.json$//' | sort
+
+# View status summary
+cat plant-data-aggregator/plant-data-aggregator/docs/plants-we-want-to-scrape-status.md | grep "Summary" -A 3
 ```
+
+### Update Status File
+
+After each plant extraction, update the status document:
+```bash
+nano plant-data-aggregator/plant-data-aggregator/docs/plants-we-want-to-scrape-status.md
+
+# Change 🔄 PENDING to ✅ SCRAPED for completed plants
+```
+
+---
+
+## Next Batch Recommendations
+
+### Immediate Next: High Priority (8 plants)
+
+1. **potatoes** - Very common, easy to grow
+2. **spinach** - Cool season green
+3. **beets** - Root vegetable
+4. **zucchini** - Summer squash
+5. **garlic** - Essential allium
+6. **cilantro** - Popular herb
+7. **mint** - Aromatic herb
+8. **oregano** - Perennial herb
+
+### After High Priority: Medium Priority (20 plants)
+
+Focus on common vegetables and popular berries first, then perennial herbs.
+
+---
 
 ## Legal & Ethical Notes
 
-1. **Robots.txt Compliance:** We check that `/plant/` paths are allowed
+1. **Robots.txt Compliance:** Verified `/plant/` paths are allowed
 2. **Rate Limiting:** 3 second delays between requests
-3. **User-Agent:** Identifies our scraper with contact info
-4. **Caching:** Raw HTML is saved to avoid re-scraping
-5. **Fair Use:** Educational/research purposes for companion planting data
+3. **User-Agent:** Identifies our scraper
+4. **Caching:** Raw HTML saved to avoid re-scraping
+5. **Fair Use:** Educational/research purposes
 
-## Implementation Status
+---
 
-✅ Phase 1: Project Setup - COMPLETE
-- JSoup dependency added
-- Directory structure created
-- Configuration in place
+## Summary of Complete Workflow
 
-✅ Phase 2: Core Scraper Infrastructure - COMPLETE
-- BaseScraper abstract class
-- RateLimiter
-- FileOutputService
-- ScraperConfig
+```
+1. START APPLICATION
+   └─> ./gradlew :plant-data-aggregator:bootRun
 
-✅ Phase 3: Almanac.com Scraper - COMPLETE
-- AlmanacScraper with DOM extraction
-- Companion planting section extraction
-- Planting guide extraction
-- Care instructions extraction
-- Harvest info extraction
-- Pest/disease extraction
+2. SCRAPE PLANT
+   └─> curl -X POST http://localhost:8081/api/admin/scraping/plant/{slug}
 
-✅ Orchestration - COMPLETE
-- ScrapingOrchestrator
-- PlantSlugRegistry (15 top priority + 30 total)
-- REST API endpoints
+3. VIEW SCRAPED DATA
+   └─> cat docs/scrapers/parsed/{plant}_scraped_*.json | jq '.plantingGuide'
 
-🔄 Next: Manual LLM Parsing (Phase 6)
-- Scrape data
-- Parse companion sections with LLM
-- Import into database
+4. PARSE WITH LLM
+   ├─> Get prompt: cat docs/llm-prompts/QUICK-PROMPT.txt
+   ├─> Copy plantingGuide and careInstructions sections
+   ├─> Paste into Claude/GPT with prompt
+   └─> Get structured JSON output
+
+5. SAVE EXTRACTED DATA
+   └─> Save LLM output to docs/scrapers/extracted-text/{plant}.json
+
+6. VALIDATE
+   └─> cat docs/scrapers/extracted-text/{plant}.json | jq '.'
+
+7. UPDATE STATUS
+   └─> Mark plant as ✅ SCRAPED in plants-we-want-to-scrape-status.md
+
+8. REPEAT for next plant
+```
+
+---
+
+## Questions?
+
+- Check `/plant-data-aggregator/README-SCRAPING.md` for architecture details
+- Check `/plant-data-aggregator/SCRAPING-IMPLEMENTATION.md` for code structure
+- View example outputs in `docs/scrapers/extracted-text/tomatoes.json`

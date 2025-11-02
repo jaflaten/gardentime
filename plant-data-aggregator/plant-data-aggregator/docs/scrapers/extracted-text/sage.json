@@ -1,0 +1,26 @@
+{
+  "commonName": "Sage",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "MODERATE",
+  "rootDepth": "MEDIUM",
+  "growthHabit": null,
+  "soilTempMinF": null,
+  "soilTempOptimalF": null,
+  "frostTolerant": true,
+  "spacingMin": 30,
+  "spacingMax": null,
+  "plantingDepthInches": null,
+  "containerSuitable": false,
+  "requiresStaking": false,
+  "requiresPruning": true,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": false,
+  "notes": "Benefits from companion planting."
+}

@@ -1,0 +1,26 @@
+{
+  "commonName": "Eggplant (Aubergines)",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "FREQUENT",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "FRUITING",
+  "soilTempMinF": 55,
+  "soilTempOptimalF": 90,
+  "frostTolerant": false,
+  "spacingMin": 1,
+  "spacingMax": null,
+  "plantingDepthInches": 1.0,
+  "containerSuitable": true,
+  "requiresStaking": true,
+  "requiresPruning": true,
+  "edibleParts": [
+    "fruit"
+  ],
+  "daysToMaturityMin": 10,
+  "daysToMaturityMax": 14,
+  "wateringInchesPerWeek": 1,
+  "fertilizingFrequencyWeeks": 2,
+  "mulchRecommended": true,
+  "notes": null
+}
