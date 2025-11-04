@@ -338,3 +338,301 @@ Generated: 2025-10-30T21:24:05.519663Z
 - Has planting guide: true
 - URL: https://www.almanac.com/plant/chives
 
+
+## 2025-11-04T21:22:07.964597Z
+**Plant: artichokes** - SUCCESS
+- Common name: How to Grow Artichokes: Planting & Growing Globe Artichokes
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/artichokes
+
+
+## 2025-11-04T21:22:14.170715Z
+**Plant: asparagus** - SUCCESS
+- Common name: How to Grow Asparagus: A Perennial Favorite That Keeps Giving
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/asparagus
+
+
+## 2025-11-04T21:22:20.265639Z
+**Plant: celery** - SUCCESS
+- Common name: How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/celery
+
+
+## 2025-11-04T21:22:26.415185Z
+**Plant: collards** - SUCCESS
+- Common name: How to Grow Collard Greens: Planting, Growing & Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/collards
+
+
+## 2025-11-04T21:22:32.534232Z
+**Plant: corn** - SUCCESS
+- Common name: How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/corn
+
+
+## 2025-11-04T21:22:38.842662Z
+**Plant: edamame** - SUCCESS
+- Common name: How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/edamame
+
+
+## 2025-11-04T21:22:45.034799Z
+**Plant: fennel** - SUCCESS
+- Common name: How to Grow Fennel: Plant, Grow & Harvest Bulbs and Fronds Easily
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/fennel
+
+
+## 2025-11-04T21:22:51.225837Z
+**Plant: horseradish** - SUCCESS
+- Common name: How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/horseradish
+
+
+## 2025-11-04T21:22:57.500142Z
+**Plant: kohlrabi** - SUCCESS
+- Common name: How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/kohlrabi
+
+
+## 2025-11-04T21:23:03.668217Z
+**Plant: parsnips** - SUCCESS
+- Common name: How to Grow Parsnips: Planting, Growing, and Harvesting Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/parsnips
+
+
+## 2025-11-04T21:23:09.839303Z
+**Plant: rhubarb** - SUCCESS
+- Common name: How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/rhubarb
+
+
+## 2025-11-04T21:23:15.934868Z
+**Plant: tomatillos** - SUCCESS
+- Common name: How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/tomatillos
+
+
+## 2025-11-04T21:23:21.986865Z
+**Plant: turnips** - SUCCESS
+- Common name: How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/turnips
+
+
+## 2025-11-04T21:24:26.863087Z
+**Plant: fava-beans** - SUCCESS
+- Common name: How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/fava-beans
+
+
+## 2025-11-04T21:24:32.943134Z
+**Plant: microgreens** - SUCCESS
+- Common name: How to Grow Microgreens at Home: A Beginner's Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/microgreens
+
+
+## 2025-11-04T21:24:39.052793Z
+**Plant: mustard-greens** - SUCCESS
+- Common name: How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/mustard-greens
+
+
+## 2025-11-04T21:24:45.251646Z
+**Plant: okra** - SUCCESS
+- Common name: How to Grow Okra: Planting, Growing & Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/okra
+
+
+## 2025-11-04T21:24:50.824901Z
+**Plant: peanuts** - SUCCESS
+- Common name: How to Grow Peanuts: Planting, Growing, and Harvesting Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/peanuts
+
+
+## 2025-11-04T21:24:56.869384Z
+**Plant: rutabagas** - SUCCESS
+- Common name: How to Grow Rutabagas: Planting, Care & Harvest Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/rutabagas
+
+
+## 2025-11-04T21:25:02.980893Z
+**Plant: salsify** - SUCCESS
+- Common name: How to Grow Salsify: Planting & Care Guide for This Unique Root Vegetable
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/salsify
+
+
+## 2025-11-04T21:25:08.523237Z
+**Plant: shallots** - SUCCESS
+- Common name: How to Grow Shallots: Planting, Care & Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/shallots
+
+
+## 2025-11-04T21:25:35.756498Z
+**Plant: apples** - SUCCESS
+- Common name: How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/apples
+
+
+## 2025-11-04T21:25:41.853226Z
+**Plant: blackberries** - SUCCESS
+- Common name: How to Grow Blackberries: The Complete Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/blackberries
+
+
+## 2025-11-04T21:25:47.915472Z
+**Plant: cantaloupes** - SUCCESS
+- Common name: How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/cantaloupes
+
+
+## 2025-11-04T21:25:53.948285Z
+**Plant: cherries** - SUCCESS
+- Common name: How to Grow Cherries: The Complete Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/cherries
+
+
+## 2025-11-04T21:26:00.091120Z
+**Plant: currants** - SUCCESS
+- Common name: How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/currants
+
+
+## 2025-11-04T21:26:09.276410Z
+**Plant: elderberries** - SUCCESS
+- Common name: How to Grow Elderberries: The Complete Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/elderberries
+
+
+## 2025-11-04T21:26:15.450674Z
+**Plant: figs** - SUCCESS
+- Common name: How to Grow Figs: A Beginner’s Guide to Planting, Caring for, and Harvesting Fig Trees
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/figs
+
+
+## 2025-11-04T21:26:20.977956Z
+**Plant: gooseberries** - SUCCESS
+- Common name: How to Grow Gooseberries: It's Berry Easy!
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/gooseberries
+
+
+## 2025-11-04T21:26:27.073333Z
+**Plant: goji-berries** - SUCCESS
+- Common name: How to Grow Goji Berries: A Guide to This Tasty Superfruit
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/goji-berries
+
+
+## 2025-11-04T21:26:33.166461Z
+**Plant: grapes** - SUCCESS
+- Common name: How to Grow Grapes: Planting, Pruning, and Harvesting Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/grapes
+
+
+## 2025-11-04T21:26:39.187505Z
+**Plant: honeydew-melons** - SUCCESS
+- Common name: How to Grow Honeydew Melons: Planting, Growing, and Care Tips
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/honeydew-melons
+
+
+## 2025-11-04T21:26:56.085694Z
+**Plant: kiwi** - FAILED
+- Error: HTTP error fetching URL. Status=404, URL=[https://www.almanac.com/plant/kiwi]
+
+
+## 2025-11-04T21:27:13.060392Z
+**Plant: lemons** - FAILED
+- Error: HTTP error fetching URL. Status=404, URL=[https://www.almanac.com/plant/lemons]
+
+
+## 2025-11-04T21:27:19.135067Z
+**Plant: peaches** - SUCCESS
+- Common name: How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/peaches
+
+
+## 2025-11-04T21:31:41.710346Z
+**Plant: pears** - SUCCESS
+- Common name: How to Grow Pears: The Complete Guide
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/pears
+
+
+## 2025-11-04T21:31:47.952243Z
+**Plant: plums** - SUCCESS
+- Common name: How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/plums
+
+
+## 2025-11-04T21:31:53.814213Z
+**Plant: watermelon** - SUCCESS
+- Common name: How to Plant, Grow, and Harvest Watermelon
+- Has companion info: false
+- Has planting guide: true
+- URL: https://www.almanac.com/plant/watermelon
+
