@@ -25,3 +25,14 @@ logging:
   level:
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
+
+# Plant Data Aggregator API Configuration
+plantdata:
+  api:
+    url: ${PLANT_DATA_API_URL:http://localhost:8081}
+
+# Cache configuration
+spring.cache:
+  cache-names: plantDetails,plantList,plantSearch,families,familyPlants,soilBorneDiseases,companions,plantPests,plantDiseases
+  caffeine:
+    spec: maximumSize=500,expireAfterWrite=3600s
