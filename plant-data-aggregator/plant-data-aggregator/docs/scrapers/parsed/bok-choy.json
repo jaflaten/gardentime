@@ -1,0 +1,26 @@
+{
+  "commonName": "Bok Choy",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "MODERATE",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "LEAF",
+  "soilTempMinF": 50,
+  "soilTempOptimalF": 50,
+  "frostTolerant": false,
+  "spacingMin": 3,
+  "spacingMax": null,
+  "plantingDepthInches": null,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": 50,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": 2,
+  "mulchRecommended": true,
+  "notes": "Good for succession planting."
+}

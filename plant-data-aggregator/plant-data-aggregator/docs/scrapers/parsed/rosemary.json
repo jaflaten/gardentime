@@ -1,0 +1,26 @@
+{
+  "commonName": "Rosemary",
+  "cycle": "ANNUAL",
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "LOW",
+  "rootDepth": "MEDIUM",
+  "growthHabit": null,
+  "soilTempMinF": null,
+  "soilTempOptimalF": null,
+  "frostTolerant": false,
+  "spacingMin": 4,
+  "spacingMax": null,
+  "plantingDepthInches": null,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": true,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": null
+}

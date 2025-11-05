@@ -1,0 +1,26 @@
+{
+  "commonName": "Swiss Chard",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "FREQUENT",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "LEAF",
+  "soilTempMinF": null,
+  "soilTempOptimalF": null,
+  "frostTolerant": false,
+  "spacingMin": 2,
+  "spacingMax": 1,
+  "plantingDepthInches": 1.0,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": 40,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": "Good for succession planting."
+}

@@ -1,0 +1,26 @@
+{
+  "commonName": "Mint",
+  "cycle": "PERENNIAL",
+  "sunNeeds": "PART_SHADE",
+  "waterNeeds": "MODERATE",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "BUSH",
+  "soilTempMinF": null,
+  "soilTempOptimalF": null,
+  "frostTolerant": true,
+  "spacingMin": 10,
+  "spacingMax": null,
+  "plantingDepthInches": null,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": [
+    "leaf"
+  ],
+  "daysToMaturityMin": null,
+  "daysToMaturityMax": null,
+  "wateringInchesPerWeek": null,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": null
+}

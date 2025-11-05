@@ -1,0 +1,3912 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-05T06:20:00Z",
+    "total_plants": 77,
+    "total_unique_pests": 184,
+    "total_unique_diseases": 111,
+    "description": "Pests and diseases extracted from Almanac scraped data"
+  },
+  "plants": [
+    {
+      "commonName": "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners",
+      "slug": "apples",
+      "pests": [
+        "And Aphid",
+        "And Aphids",
+        "Apple Maggot",
+        "Apple Maggots",
+        "Codling Moth",
+        "Codling Moths",
+        "Fruit Worm",
+        "Mites"
+      ],
+      "diseases": [
+        "Apple Rust",
+        "Apple Scab"
+      ],
+      "rawText": "### Apples Need Pest Control\nAlso, it’s important to recognize that there are many diseases and fruit pests that attack apples, so it’s rare for this fruit to be grown without any type of pesticides. Growing apples organically is much more difficult on the East Coast than in the West due to the incidence of fungal diseases and types of pests that aren’t even present in the West. It will take much research and persistence to grow apples if you wish to avoid any type of spraying program.\n\n### Pest"
+    },
+    {
+      "commonName": "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+      "slug": "artichokes",
+      "pests": [
+        "Bugs",
+        "Cabbage Looper",
+        "Debris Flea Beetles",
+        "Flea Beetle",
+        "Lady Beetle",
+        "Lady Beetles",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Snails",
+        "Spider Mite",
+        "Spider Mites",
+        "Watering Slugs"
+      ],
+      "diseases": [
+        "Crown Rot",
+        "Gray Spot",
+        "Leaves Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nArtichoke Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers; leaf drop; sticky “honeydew” (excretion) on leaves; sooty, black mold Knock off with water spray; apply insecticidal soap; inspect new plants carefully; use slow-release fertilizers; avoid excess nitrogen; encourage lacewings, lady beetles/bugs, spiders Bacterial crown rot Bacteria Slow growth; leaves wilt; crown rots Use clean tools; start plant"
+    },
+    {
+      "commonName": "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+      "slug": "arugula",
+      "pests": [
+        "Cabbage Worm",
+        "Flea Beetle",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Spot",
+        "Downy Mildew",
+        "Green Spot",
+        "Rot",
+        "White Rust"
+      ],
+      "rawText": "### Pests/Diseases\nArugula Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Cabbage worms Insect Leaves have large, ragged holes or are skeletonized; dark green excrement; yellowish eggs laid singly on leaf undersides by white butterflies with two or three black spots on each wing Handpick; use row covers; add native plants to invite beneficial insects; grow companion plants (especially thyme); spray Bacillus thuringiensis (a beneficial bacterium) Downy mildew Fungus Yellow, angu"
+    },
+    {
+      "commonName": "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+      "slug": "asparagus",
+      "pests": [
+        "Asparagus Beetle",
+        "Asparagus Beetles",
+        "For Cutworms",
+        "More Cutworm",
+        "Nearby Cutworms",
+        "Overharvesting Slugs",
+        "Remove Beetle",
+        "Remove Beetles",
+        "Snails"
+      ],
+      "diseases": [
+        "Asparagus Rust",
+        "Brown Spot",
+        "Crown Rot",
+        "Green Spot",
+        "Insect Wilt",
+        "Releasing Rust",
+        "Rot",
+        "Vigor Rust",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nOne of the biggest concerns in the asparagus bed is simply weeds. Hand pulling should be done regularly in spring and early summer. Cultivate lightly to avoid damaging emerging asparagus spears. Applying 4 to 6 inches of straw in summer also effectively controls weeds. Asparagus Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Asparagus beetles Insect Spears turn brown and bend in a hook shape; defoliation Remove beetles by hand; dispose of plant matter in the "
+    },
+    {
+      "commonName": "How to Plant and Grow Basil",
+      "slug": "basil",
+      "pests": [
+        "Aphids"
+      ],
+      "diseases": [
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nAphids Powdery mildew Variety of bacterial and fungal leaf, stem, and root diseases"
+    },
+    {
+      "commonName": "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+      "slug": "beans",
+      "pests": [
+        "Adults Fly",
+        "Bean Beetle",
+        "Bean Beetles",
+        "Bugs",
+        "Collected Wireworms",
+        "Control Aphid",
+        "Control Aphids",
+        "Crops Aphid",
+        "Crops Aphids",
+        "Crops Slugs",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Help Whiteflies",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Mexican Bean Beetle",
+        "Mulch Wireworms",
+        "Snails",
+        "Wilt Cutworms"
+      ],
+      "diseases": [
+        "Bacterial Wilt",
+        "Black Spot",
+        "Covers Mosaic",
+        "Dark Spot",
+        "Insect Wilt",
+        "Mosaic",
+        "Mosaic Virus",
+        "Plants Wilt",
+        "Pods Rot",
+        "Powdery Mildew",
+        "Rot",
+        "Spot",
+        "Tiny Spot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nGreen Bean Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Anthracnose Fungus Yellow/brown/purple/black spots on leaves; sunken, dark spots on stems and pods; spots may develop a salmon-pink, gelatinous mass; eventually, rot Destroy infected plants; choose resistant varieties; provide good drainage; avoid overhead watering; apply compost; use mulch; rotate crops Aphids Insect Misshapen/yellow leaves; distorted flowers/pods; sticky “honeydew” (excrement); sooty"
+    },
+    {
+      "commonName": "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+      "slug": "beets",
+      "pests": [
+        "Collected Wireworms",
+        "Control Aphid",
+        "Control Aphids",
+        "Flea Beetle",
+        "Flea Beetles",
+        "Leaf Miners",
+        "Wireworms"
+      ],
+      "diseases": [
+        "Brown Spot",
+        "Cucumber Mosaic",
+        "Leaf Spot",
+        "Mosaic Virus",
+        "Of Spot",
+        "Ringed Spot",
+        "Rot",
+        "Tiny Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nBeet Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Cercospora leaf spot Fungus Cercospora prefers warm/humid conditions and damp nights. Many small brown spots with red-purple halos on leaves that enlarge and turn gray; centers of spots eventually fall out, leaving the halos. Destroy infected plants; weed; avoid overhead watering; ensure good air circulation; rotate crops. Cucumber mosaic virus Virus May include stunting, mottled green/yellow/white pattern o"
+    },
+    {
+      "commonName": "How to Grow Blackberries: The Complete Guide",
+      "slug": "blackberries",
+      "pests": [
+        "Fruit Worm",
+        "Raspberry Borer",
+        "Raspberry Borers"
+      ],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\nRaspberry Borers Fruit Worms Gray Mold Viruses If your plant is suffering from the blackberry disease known as Raspberry Bushy Dwarf virus, the leaves will have some bright yellow on them, and the leaves of the fruiting vines may have a bleached look in the summer. The disease known as Blackberry Calico will cause faint yellow blotches on the leaves of the plant."
+    },
+    {
+      "commonName": "How to Grow Blueberries: Plant, Prune, and Harvest Like a Pro",
+      "slug": "blueberries",
+      "pests": [
+        "Blueberry Maggot"
+      ],
+      "diseases": [
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nBirds Blueberry Maggot Powdery Mildew"
+    },
+    {
+      "commonName": "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+      "slug": "bok-choy",
+      "pests": [
+        "Bugs",
+        "Cabbage Looper",
+        "Crops Aphid",
+        "Crops Aphids",
+        "Crops Cutworms",
+        "Fall Thrips",
+        "Flea Beetle",
+        "Residue Slugs",
+        "Root Maggot",
+        "Root Maggots",
+        "Snails",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Black Spot",
+        "Clubroot",
+        "Crowns Rot",
+        "Dark Spot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Insect Wilt",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "Spot",
+        "White Spot"
+      ],
+      "rawText": "### Pests/Diseases\nBok Choy Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Anthracnose Fungus Yellow/brown/purple/black spots on leaves; sunken, dark spots on stems; spots may develop a salmon-pink, gelatinous mass; eventually, rot Destroy infected plants; choose resistant varieties; provide good drainage; avoid overhead watering; apply compost; use mulch; rotate crops Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants;"
+    },
+    {
+      "commonName": "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+      "slug": "broccoli",
+      "pests": [
+        "Adults Fly",
+        "Bugs",
+        "Cabbage Looper",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots",
+        "Stink Bug",
+        "Stink Bugs",
+        "White Maggot",
+        "White Maggots",
+        "Whiteflies"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Clubroot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Green Spot",
+        "Rot",
+        "White Rust",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nBroccoli Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Curled, misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement); sooty, black mold. Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of water and dish soap (no additives) every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects (such as"
+    },
+    {
+      "commonName": "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+      "slug": "brussels-sprouts",
+      "pests": [
+        "Bugs",
+        "Cabbage Looper",
+        "Flea Beetle",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Clubroot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Insect Wilt",
+        "Plants Wilt",
+        "Rot",
+        "Sprouts Rot"
+      ],
+      "rawText": "### Pests/Diseases\nBrussels Sprouts Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Black rot"
+    },
+    {
+      "commonName": "How to Grow Cabbage: Planting, Care & Harvest Tips",
+      "slug": "cabbage",
+      "pests": [
+        "Bugs",
+        "Cabbage Looper",
+        "Fall Thrips",
+        "Flea Beetle",
+        "Insects Slugs",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots",
+        "Snails",
+        "The Bug",
+        "The Bugs",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Clubroot",
+        "Crowns Rot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Insect Wilt",
+        "Plants Wilt",
+        "Rot"
+      ],
+      "rawText": "### Pests/Diseases\nSome old folklore tells us: Scatter elder leaves over your cabbage to keep the bugs away. Cabbage Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; "
+    },
+    {
+      "commonName": "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+      "slug": "cantaloupes",
+      "pests": [
+        "Bugs",
+        "Catch Moth",
+        "Catch Moths",
+        "Control Aphid",
+        "Control Aphids",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Daytime Moth",
+        "Daytime Moths",
+        "Encourage Aphid",
+        "Moth",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Remove Borer",
+        "Squash Vine Borer",
+        "Vine Borer",
+        "Vine Borers"
+      ],
+      "diseases": [
+        "Bacterial Wilt",
+        "Cucumber Mosaic",
+        "Fusarium Wilt",
+        "Mosaic Virus",
+        "Plant Wilt",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "Ringed Spot",
+        "Rot",
+        "Vines Wilt",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nCantaloupe Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers; leaf drop; sticky “honeydew” (excretion) on leaves; sooty, black mold Knock off with water spray; apply insecticidal soap; inspect new plants carefully; use slow-release fertilizers; avoid excess nitrogen; encourage aphid pests such as lacewings, ladybugs, spiders Cucumber beetles Insect Holes in leaves/flowers; rasped fruit; plants stunted/die;"
+    },
+    {
+      "commonName": "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+      "slug": "carrots",
+      "pests": [
+        "Collected Wireworms",
+        "Crops Flea Beetles",
+        "Crops Wireworms",
+        "Flea Beetle"
+      ],
+      "diseases": [
+        "Brown Spot",
+        "Carrot Rust",
+        "Flowers Rot",
+        "Insect Wilt",
+        "Root Rot",
+        "Rot",
+        "Tiny Spot",
+        "Wilt",
+        "With Rust"
+      ],
+      "rawText": "### Pests/Diseases\nCarrot Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aster Yellow Disease Bacteria Shortened and discolored carrot tops and thin, hairy roots; bitter taste Spread by pests as they feed from plant to plant. Keep weeds down and invest in a control plan for pests such as leafhoppers. This disease has the ability to overwinter. Black (Itersonilia) canker Fungus Shallow, reddish brown/purple/black cankers form on crown and/or shoulder of carrots; small, orange-br"
+    },
+    {
+      "commonName": "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+      "slug": "cauliflower",
+      "pests": [
+        "Bugs",
+        "Cabbage Looper",
+        "Fall Thrips",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots",
+        "Stink Bug",
+        "Stink Bugs",
+        "White Maggot",
+        "White Maggots"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Clubroot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Green Spot",
+        "Rot",
+        "White Rust",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nCauliflower Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Curled, misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of water and dish soap (no additives) every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects (such "
+    },
+    {
+      "commonName": "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+      "slug": "celery",
+      "pests": [
+        "Control Aphid",
+        "Control Aphids",
+        "Flea Beetle",
+        "Insects Slugs",
+        "Places Flea Beetles",
+        "Snails"
+      ],
+      "diseases": [
+        "Carrot Rust",
+        "Cucumber Mosaic",
+        "Insect Wilt",
+        "Mosaic Virus",
+        "Ringed Spot",
+        "Root Rot",
+        "Rot",
+        "With Rust"
+      ],
+      "rawText": "### Pests/Diseases\nCelery is relatively trouble-free. To control pests early on, cover the plants with garden fabric (row covers) during the first 4 to 6 weeks of the growing season Celery Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Carrot rust flies Insect Wilted/stunted plants; tunnels with rust-color excrement in roots of carrot-family crops; root rot Monitor adults with yellow sticky traps; use row covers; add native plants to invite beneficial insects; destroy crop resi"
+    },
+    {
+      "commonName": "How to Grow Cherries: The Complete Guide",
+      "slug": "cherries",
+      "pests": [
+        "And Caterpillar",
+        "And Caterpillars",
+        "Apple Maggot",
+        "Apple Maggots",
+        "Tree Borer",
+        "Tree Borers"
+      ],
+      "diseases": [
+        "Brown Rot",
+        "Leaf Spot",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nBirds are common pests, especially with sweet cherries (versus tarts). To avoid bird damage, you can drap nylon mesh netting over dwarf trees, but it’s difficult to cover the larger standard-size sweet cherry tree. Distracting objects such as pie pans can help, but birds can get used to them. Another solution is to grow a fruit tree nearby that will ripen before and during the cherry season, such as mulberry trees. (Avoid planting ‘Illinois Everbearing’ mulberry which ripens t"
+    },
+    {
+      "commonName": "How to Grow Chives: The Complete Guide",
+      "slug": "chives",
+      "pests": [
+        "Fly Thrips",
+        "Onion Fly"
+      ],
+      "diseases": [
+        "Bulb Rot",
+        "Leaf Spot",
+        "Mildew Rust",
+        "White Rot"
+      ],
+      "rawText": "### Pests/Diseases\nBulb rots (caused by soilborne fungi) White rot Mildew Rust Smut Fungal leaf spots (such as purple blotch and gray mold) Onion fly Thrips"
+    },
+    {
+      "commonName": "How to Plant and Grow Cilantro and Coriander",
+      "slug": "cilantro-coriander",
+      "pests": [
+        "Hoppers Aphid",
+        "Hoppers Aphids"
+      ],
+      "diseases": [
+        "And Mildew",
+        "Aphids Mildew",
+        "Are Spot",
+        "Avoid Wilt",
+        "Fungal Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nFungal wilt Leaf hoppers Aphids Mildew To control insects, use insecticidal soap once they are spotted under leaves. Clean up debris and spent plants to avoid wilt and mildew. A common problem with cilantro is its fast-growing cycle. As mentioned above, it will not grow properly in the heat of summer. Grow so that you harvest in spring, fall, or winter (in mild climates)."
+    },
+    {
+      "commonName": "How to Grow Collard Greens: Planting, Growing & Harvesting Tips",
+      "slug": "collards",
+      "pests": [
+        "Aphids",
+        "Cabbage Worm"
+      ],
+      "diseases": [
+        "Black Rot",
+        "Downy Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nAphids Cabbage worms Black rot (Xanthomonas campestris) Downy mildew"
+    },
+    {
+      "commonName": "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+      "slug": "corn",
+      "pests": [
+        "Collected Wireworms",
+        "Corn Earworm",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Flea Beetle",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Lure Beetle",
+        "Lure Beetles",
+        "Plants Wireworms",
+        "Remove Caterpillar",
+        "Remove Caterpillars",
+        "Watering Flea Beetles",
+        "Wilt Cutworms"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Bacterial Wilt",
+        "Black Spot",
+        "Dark Spot",
+        "Downy Mildew",
+        "Insect Wilt",
+        "Rot",
+        "Spot",
+        "Stalks Rot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nCorn Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Anthracnose Fungus Yellow/brown/purple/black spots on leaves; sunken, dark spots on stems; spots may develop a salmon-pink, gelatinous mass; eventually, rot; in corn, tops die back and stalks rot Destroy infected plants; choose resistant varieties; provide good drainage; avoid overhead watering; apply compost; use mulch; rotate crops Corn earworms Insect On corn, eaten silks and kernels; excrement; larvae al"
+    },
+    {
+      "commonName": "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+      "slug": "cucumbers",
+      "pests": [
+        "Adults Fly",
+        "Control Aphid",
+        "Control Aphids",
+        "Crops Aphid",
+        "Crops Aphids",
+        "Crops Whiteflies",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Squash Bug",
+        "Squash Bugs"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Bacterial Wilt",
+        "Black Spot",
+        "Cucumber Mosaic",
+        "Dark Spot",
+        "Downy Mildew",
+        "End Rot",
+        "Mosaic Virus",
+        "Powdery Mildew",
+        "Ringed Spot",
+        "Rot",
+        "Soaked Spot",
+        "Spot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nCucumber Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Anthracnose Fungus Yellow/brown/purple/black spots on leaves; sunken, dark spots on stems and fruit; spots may develop a salmon-pink, gelatinous mass; eventually, rot Destroy infected plants; choose resistant varieties; provide good drainage; avoid overhead watering; apply compost; use mulch; rotate crops Aphids Insect Misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement); sooty"
+    },
+    {
+      "commonName": "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+      "slug": "currants",
+      "pests": [
+        "Aphids",
+        "Currant Borer",
+        "Higher Mite",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Predatory Mite",
+        "Predatory Mites",
+        "Spider Mite",
+        "Spider Mites",
+        "The Beetle",
+        "The Beetles"
+      ],
+      "diseases": [
+        "And Wilt",
+        "Blister Rust",
+        "Cane Blight",
+        "Fruit Rot",
+        "Leaf Spot",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nAphids: Scout plantings for infestations. Use soapy water spray or neem oil. Monitor early to avoid infestation. Use insecticidal soap and neem oils. Spray well. Powdery Mildew: Pruning and plant spacing can help improve air circulation and reduce humidity. Sprays are most necessary during humid or wet weather in the spring. Apply when the first signs of powdery mildew are apparent, and repeat as necessary. Spider Mites: Introducing predatory mites may help. Avoid the use of p"
+    },
+    {
+      "commonName": "How to Grow Dill: Planting, Growing, and Harvesting Guide",
+      "slug": "dill",
+      "pests": [],
+      "diseases": [
+        "Leaf Spot"
+      ],
+      "rawText": "### Pests/Diseases\nLeaf spot and occasionally a few other types of fungal leaf and root diseases"
+    },
+    {
+      "commonName": "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+      "slug": "edamame",
+      "pests": [
+        "Adults Fly",
+        "Bean Beetle",
+        "Bean Beetles",
+        "Bugs",
+        "Collected Wireworms",
+        "Help Whiteflies",
+        "Mexican Bean Beetle",
+        "Mulch Wireworms"
+      ],
+      "diseases": [
+        "Fruit Rot",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nEdamame Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Mexican bean beetles Insect “Lacey,” skeletonized foliage; dark holes on bean pods Handpick; purchase and release beneficial wasp Pediobius foveolatus when larvae observed; destroy severely infested plants; use row covers Powdery mildew Fungus Typically, white spots on upper leaf surfaces expand to flour-like coating over entire leaves; foliage may yellow/die; distortion/stunting of leaves/flowers Destroy"
+    },
+    {
+      "commonName": "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+      "slug": "eggplant",
+      "pests": [
+        "Adults Fly",
+        "Colorado Potato Beetle",
+        "Crops Flea Beetles",
+        "Flea Beetle",
+        "Potato Beetle",
+        "Potato Beetles",
+        "Tomato Hornworm",
+        "Tomato Hornworms",
+        "Whiteflies"
+      ],
+      "diseases": [
+        "Concentric Spot",
+        "Crops Blight",
+        "End Rot",
+        "Fruit Rot",
+        "Powdery Mildew",
+        "Prevention Blight",
+        "Rot",
+        "Soaked Spot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nEggplant Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Blight (early) Fungus Leaves, beginning with lower ones, develop dark, concentric spots, often with yellow outer ring, and eventually die; fruit/stems also may be affected Destroy infected plants; choose resistant varieties; maintain proper soil fertility; ensure good air circulation; avoid overhead watering; water in morning; disinfect tools; rotate crops Blight (late) Fungus Small, greenish gray, water"
+    },
+    {
+      "commonName": "How to Grow Elderberries: The Complete Guide",
+      "slug": "elderberries",
+      "pests": [],
+      "diseases": [
+        "Winds Spot"
+      ],
+      "rawText": "### Pests/Diseases\nHeavy snow/ice loads High winds Spotted Wing Drosophila"
+    },
+    {
+      "commonName": "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips",
+      "slug": "fava-beans",
+      "pests": [
+        "Aphids"
+      ],
+      "diseases": [
+        "Aschochyta Blight",
+        "Bean Rust",
+        "Chocolate Spot",
+        "Downy Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nDiseases: Fungal diseases include: Aschochyta blight (Aschochyta fabae), chocolate spot (Botrytis fabae), Faba bean rust (Uromyces vicia-fabae), and downy mildew (Peronospora viciae). Pests: Aphids are the most important and damaging pests."
+    },
+    {
+      "commonName": "How to Grow Fennel: Plant, Grow & Harvest Bulbs and Fronds Easily",
+      "slug": "fennel",
+      "pests": [],
+      "diseases": [
+        "Root Rot"
+      ],
+      "rawText": "### Pests/Diseases\nRoot rot in wet soils."
+    },
+    {
+      "commonName": "How to Grow Figs: A Beginner’s Guide to Planting, Caring for, and Harvesting Fig Trees",
+      "slug": "figs",
+      "pests": [
+        "Rust Thrips"
+      ],
+      "diseases": [
+        "Leaf Spot",
+        "Rust"
+      ],
+      "rawText": "### Pests/Diseases\nRoot-knot nematodes Leaf spots Rust Thrips Twig dieback"
+    },
+    {
+      "commonName": "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+      "slug": "garlic",
+      "pests": [
+        "Onion Maggot",
+        "Onion Maggots",
+        "Onion Thrips"
+      ],
+      "diseases": [
+        "Roots Rot",
+        "Rot",
+        "White Rot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nGarlic has very few problems with pests in the garden (in fact, it’s a natural pest repellent), and very few problems with the diseases that plague other veggies. Keep an eye out for the same pests that bother onions. Garlic Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Onion maggots Insect Limp, yellow, or stunted plants; larvae feed on roots/bulbs/stems and may spread bacteria Use row covers; harvest on a timely basis; monitor adults with yellow sticky tra"
+    },
+    {
+      "commonName": "How to Grow Goji Berries: A Guide to This Tasty Superfruit",
+      "slug": "goji-berries",
+      "pests": [
+        "Aphids Thrips",
+        "Gall Mite"
+      ],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\nGoji gall mite Aphids Thrips"
+    },
+    {
+      "commonName": "How to Grow Gooseberries: It's Berry Easy!",
+      "slug": "gooseberries",
+      "pests": [],
+      "diseases": [
+        "Blister Rust",
+        "Powdery Mildew",
+        "Rot"
+      ],
+      "rawText": "### Pests/Diseases\nBirds can cause problems by stealing your harvest. Bird netting is an inexpensive way to protect your fruits if needed. Scale insects White pine blister rust Powdery mildew"
+    },
+    {
+      "commonName": "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+      "slug": "grapes",
+      "pests": [
+        "Aphids",
+        "Japanese Beetle",
+        "Japanese Beetles"
+      ],
+      "diseases": [
+        "Black Rot",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nAphids Japanese Beetles Powdery Mildew Black Rot"
+    },
+    {
+      "commonName": "How to Grow Honeydew Melons: Planting, Growing, and Care Tips",
+      "slug": "honeydew-melons",
+      "pests": [
+        "Cucumber Beetle",
+        "Cucumber Beetles"
+      ],
+      "diseases": [
+        "Fusarium Wilt",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nPowdery mildew Fusarium wilt Cucumber beetles\n\n### What’s Wrong With My Tomato Plant? A Visual Guide to Leaf Problems\n"
+    },
+    {
+      "commonName": "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+      "slug": "horseradish",
+      "pests": [
+        "Bugs",
+        "Collected Wireworms",
+        "Cutworms",
+        "Flea Beetle",
+        "Insects Wireworms",
+        "Lady Beetle",
+        "Lady Beetles",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Residue Flea Beetles"
+      ],
+      "diseases": [
+        "Insect Wilt",
+        "Rot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nHorseradish Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers; leaf drop; sticky “honeydew” (excretion) on leaves; sooty, black mold Knock off with water spray; apply insecticidal soap; inspect new plants carefully; use slow- release fertilizers; avoid excess nitrogen; encourage lacewings, lady beetles/bugs, spiders Cabbageworms Insect Leaves have large, ragged holes or are skeletonized; heads bored; dark "
+    },
+    {
+      "commonName": "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+      "slug": "kale",
+      "pests": [
+        "Cabbage Looper",
+        "Flea Beetle",
+        "Flea Beetles",
+        "Prevention Aphid",
+        "Prevention Aphids"
+      ],
+      "diseases": [
+        "Black Rot",
+        "Rot"
+      ],
+      "rawText": "### Pests/Diseases\nKale Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Black rot Fungus Yellow, V-shape areas on leaf"
+    },
+    {
+      "commonName": "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+      "slug": "kohlrabi",
+      "pests": [
+        "Cabbage Looper",
+        "Crops Cutworms",
+        "Flea Beetle",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Residue Thrips",
+        "Root Maggot",
+        "Root Maggots",
+        "Watering Aphid",
+        "Watering Aphids",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Clubroot",
+        "Disease Wilt",
+        "Downy Mildew",
+        "Insect Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Spot"
+      ],
+      "rawText": "### Pests/Diseases\nKohlrabi Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Black rot Fungus Yellow, V-shape areas on "
+    },
+    {
+      "commonName": "How to Grow Leeks: Planting, Growing, and Harvesting Guide",
+      "slug": "leeks",
+      "pests": [
+        "Leek Moth",
+        "Thrips"
+      ],
+      "diseases": [
+        "Leek Rust"
+      ],
+      "rawText": "### Pests/Diseases\nThrips Leek rust Leek moth"
+    },
+    {
+      "commonName": "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+      "slug": "lettuce",
+      "pests": [
+        "Adults Fly",
+        "Control Aphid",
+        "Control Aphids",
+        "Help Whiteflies",
+        "Insects Cutworms",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Residue Slugs",
+        "Snails"
+      ],
+      "diseases": [
+        "Brown Spot",
+        "Insect Wilt",
+        "Lettuce Mosaic",
+        "Mosaic Virus",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nLettuce Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Cutworms Insect Wilting; severed stems of s"
+    },
+    {
+      "commonName": "How to Grow Microgreens at Home: A Beginner's Guide",
+      "slug": "microgreens",
+      "pests": [],
+      "diseases": [
+        "Damping Off"
+      ],
+      "rawText": "### Pests/Diseases\nMold is the most common problem. It will appear as black, grey, or white fuzz and causing the microgreens to die. It’s a humidity issue that requires that you increase air circulation. Try adding fans or a dehumidifier. Damping off is caused by a soil-borne fungi. Avoid overcrowding seed in a tray. Be sure to sow evenly."
+    },
+    {
+      "commonName": "How to Grow Mint: Planting, Growing, and Harvesting Tips",
+      "slug": "mint",
+      "pests": [],
+      "diseases": [
+        "Leaf Spot",
+        "Powdery Mildew",
+        "Rust"
+      ],
+      "rawText": "### Pests/Diseases\nPowdery mildew Rust Leaf spot Anthracnose Stem canker Mice dislike the smell of peppermint. Spread it liberally where you suspect the critters. Mint is also considered a deer-resistant plant."
+    },
+    {
+      "commonName": "How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens",
+      "slug": "mustard-greens",
+      "pests": [
+        "Flea Beetle",
+        "Flea Beetles",
+        "Slugs Aphid",
+        "Slugs Aphids"
+      ],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\nFlea beetles (use row covers) Slugs Aphids"
+    },
+    {
+      "commonName": "How to Grow Okra: Planting, Growing & Harvesting Tips",
+      "slug": "okra",
+      "pests": [
+        "Adults Fly",
+        "Bugs",
+        "Fall Whiteflies",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Prevention Aphid",
+        "Prevention Aphids"
+      ],
+      "diseases": [
+        "Fusarium Wilt",
+        "Plant Wilt",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nOkra Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Fusarium wilt Fungus "
+    },
+    {
+      "commonName": "How to Grow Onions: Plant, Grow & Harvest Big Bulbs",
+      "slug": "onions",
+      "pests": [
+        "Control Thrips",
+        "If Thrips",
+        "Onion Maggot",
+        "Onion Maggots",
+        "The Thrips",
+        "Thrips"
+      ],
+      "diseases": [
+        "And Wilt",
+        "Once Rot",
+        "White Rot",
+        "Will Spot"
+      ],
+      "rawText": "### Pests/Diseases\nThrips: To control thrips—tiny insects about as fat as a sewing needle—take a dark piece of paper into the garden and knock the onion tops against it; if thrips are present, you will spot their tan-colored bodies on the paper. A couple of treatments with insecticidal soap kills them. Follow the package directions. Spray the plants twice, 3 days apart, and the thrips should disappear. To prevent future infestations, consider using row covers. Onion Maggots: Cover your emerging "
+    },
+    {
+      "commonName": "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses",
+      "slug": "oregano",
+      "pests": [
+        "Rots Aphid",
+        "Rots Aphids",
+        "Spider Mite",
+        "Spider Mites"
+      ],
+      "diseases": [
+        "Stem Rot"
+      ],
+      "rawText": "### Pests/Diseases\nRoot and stem rots Aphids Spider mites FAQ Does oregano come back every year? Yes! Oregano is a perennial in USDA Zones 4 to 9. That means it will return each year as long as it’s planted in well-draining soil and survives the winter. Can oregano be grown indoors? Absolutely. Oregano grows well indoors in containers, provided it gets at least 5 to 6 hours of sunlight per day or supplemental grow lights. What is the difference between oregano and marjoram? Oregano has a stronge"
+    },
+    {
+      "commonName": "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting",
+      "slug": "parsley",
+      "pests": [
+        "Aphids",
+        "Butterfly Caterpillar",
+        "Butterfly Caterpillars",
+        "Carrot Fly",
+        "Celery Fly"
+      ],
+      "diseases": [
+        "Leaf Spot",
+        "Rot",
+        "Stem Rot"
+      ],
+      "rawText": "### Pests/Diseases\nAphids Stem rot Leaf spots Carrot fly and celery fly larvae Parsley is a favorite of black swallowtail butterfly caterpillars as well."
+    },
+    {
+      "commonName": "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+      "slug": "parsnips",
+      "pests": [
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Residue Leaf Miners"
+      ],
+      "diseases": [
+        "Brown Spot",
+        "Carrot Rust",
+        "Insect Wilt",
+        "Root Rot",
+        "Rot",
+        "With Rust"
+      ],
+      "rawText": "### Pests/Diseases\nParsnip Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Black (Itersonilia) canker Fungus Shallow, "
+    },
+    {
+      "commonName": "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees",
+      "slug": "peaches",
+      "pests": [
+        "Borers Aphid",
+        "Borers Aphids",
+        "Japanese Beetle",
+        "Japanese Beetles"
+      ],
+      "diseases": [
+        "Brown Rot",
+        "Curl Mosaic",
+        "Mosaic Virus",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nBorers Aphids Japanese beetles Leaf hoppers Brown rot Powdery mildew Leaf curl Mosaic viruses"
+    },
+    {
+      "commonName": "How to Grow Peanuts: Planting, Growing, and Harvesting Guide",
+      "slug": "peanuts",
+      "pests": [],
+      "diseases": [
+        "Black Spot",
+        "Crop Rot",
+        "Leaf Spot"
+      ],
+      "rawText": "### Pests/Diseases\nLeaf-feeders chew on the leaves above the ground. In addition, black spots indicate a leaf spot disease. Below the ground are soil insects. In general, diseases can be avoided by buying resistant varieties, practicing crop rotation (don’t plant in the same bed as legumes from the prior year), keeping water off the leaves, and using fungicides when necessary."
+    },
+    {
+      "commonName": "How to Grow Pears: The Complete Guide",
+      "slug": "pears",
+      "pests": [
+        "Mites",
+        "Psylla Aphid",
+        "Psylla Aphids"
+      ],
+      "diseases": [
+        "Fire Blight",
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nFire blight Pear psylla Aphids Mites Powdery mildew"
+    },
+    {
+      "commonName": "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+      "slug": "peas",
+      "pests": [
+        "About Aphid",
+        "About Aphids",
+        "Attract Aphid",
+        "Attract Aphids",
+        "Bean Beetle",
+        "Bean Beetles",
+        "By Aphid",
+        "By Aphids",
+        "Collected Wireworms",
+        "Knock Aphid",
+        "Knock Aphids",
+        "Mexican Bean Beetle",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Rotation Wireworms",
+        "When Beetle"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Crop Rot",
+        "Downy Mildew",
+        "Fusarium Wilt",
+        "Plant Wilt",
+        "Plants Wilt",
+        "Powdery Mildew",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nPest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; distorted flowers/fruit; sticky “honeydew” (excrement produced by aphids); sooty, black mold that forms on honeydew; large presence of ants on plants Grow companion plants to either attract aphids away (nasturtiums) or repel them outright (basil, rosemary, strong-scented plants); knock aphids off plants with water spray, apply insecticidal soap; put banana or orange peel around plants; wipe le"
+    },
+    {
+      "commonName": null,
+      "slug": "peppers",
+      "pests": [],
+      "diseases": [],
+      "rawText": null
+    },
+    {
+      "commonName": "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit",
+      "slug": "plums",
+      "pests": [
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Plum Aphid",
+        "Plum Aphids",
+        "Plum Moth"
+      ],
+      "diseases": [
+        "Bacterial Canker"
+      ],
+      "rawText": "### Pests/Diseases\nSilver leaf disease Honey fungus Bacterial canker Pocket plum Japanese beetles Plum aphids Plum moth Contact your local cooperative extension to implement a spraying program that can help manage these pests and diseases."
+    },
+    {
+      "commonName": "Planting, Growing, and Harvesting Potatoes",
+      "slug": "potatoes",
+      "pests": [
+        "Adults Fly",
+        "Black Beetle",
+        "Black Beetles",
+        "Collected Wireworms",
+        "Colorado Potato Beetle",
+        "Flea Beetle",
+        "Flea Beetles",
+        "Mite",
+        "Mulch Wireworms",
+        "Potato Beetle",
+        "Potato Beetles",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "The Beetle",
+        "The Beetles",
+        "Tomato Hornworm",
+        "Tomato Hornworms",
+        "Whiteflies"
+      ],
+      "diseases": [
+        "Avoid Scab",
+        "Blight",
+        "But Scab",
+        "Concentric Spot",
+        "Corky Spot",
+        "Crops Blight",
+        "Do Spot",
+        "Dry Rot",
+        "Few Blight",
+        "Insects Blight",
+        "Is Scab",
+        "Late Blight",
+        "Of Blight",
+        "Out Scab",
+        "Potato Blight",
+        "Potato Scab",
+        "Root Rot",
+        "Rot",
+        "Scab",
+        "Soaked Spot",
+        "The Blight",
+        "Tiny Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nThe most common potato disease is scab, which causes rough, scabby patches on the skin. These can be peeled off along with the skin, so it’s not all bad. But scabby potatoes ain’t half ugly! So avoid scab in the first place by watering to keep the soil consistently moist at the critical time when tubers are developing—basically once the foliage has started to bush out. Adding compost or other organic matter to the soil before planting should help improve water retention, too. "
+    },
+    {
+      "commonName": "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+      "slug": "pumpkins",
+      "pests": [
+        "Bugs",
+        "Catch Moth",
+        "Catch Moths",
+        "Control Aphid",
+        "Control Aphids",
+        "Crops Aphid",
+        "Crops Aphids",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Remove Borer",
+        "Squash Bug",
+        "Squash Bugs",
+        "Squash Vine Borer",
+        "Vine Borer"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Bacterial Wilt",
+        "Black Spot",
+        "Dark Spot",
+        "Downy Mildew",
+        "End Rot",
+        "Mosaic Virus",
+        "Powdery Mildew",
+        "Residue Mosaic",
+        "Ringed Spot",
+        "Rot",
+        "Soaked Spot",
+        "Spot",
+        "Vines Wilt",
+        "White Spot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nBe aware that poor light, too much fertilizer, poor weather at bloom time, and reduced pollinating insect activity can result in poor fruit set, shape, and excessive blossom drop. Pumpkin Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Anthracnose Fungus Yellow/brown/purple/black spots on leaves; sunken, dark spots on stems and fruit; spots may develop a salmon-pink, gelatinous mass; eventually, rot Destroy infected plants; choose resistant varieties; provide "
+    },
+    {
+      "commonName": "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+      "slug": "radishes",
+      "pests": [
+        "Cabbage Worm",
+        "Crops Flea Beetles",
+        "Flea Beetle",
+        "Root Maggot",
+        "Root Maggots"
+      ],
+      "diseases": [
+        "Clubroot",
+        "Fungus Wilt",
+        "Green Spot",
+        "Insects Wilt",
+        "Rot",
+        "White Rust"
+      ],
+      "rawText": "### Pests/Diseases\nRadish Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Cabbage root maggots Insects Wilted/stunted plants; off-color leaves; larvae feeding on roots Use collars around seedling stems; monitor adults with yellow sticky traps; use row covers; destroy crop residue; till soil in fall; rotate crops Cabbage worms Insects Leaves have large, ragged holes or are skeletonized; heads bored; dark green excrement; yellowish eggs laid singly on leaf undersides Handpick; use"
+    },
+    {
+      "commonName": "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+      "slug": "raspberries",
+      "pests": [
+        "Cane Borer",
+        "Cane Borers",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Spider Mite",
+        "Spider Mites"
+      ],
+      "diseases": [
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nRaspberries are one of the few fruits that are hardly bothered by pests and diseases. (Black raspberries are more susceptible to this type of damage than red or purple.) Keep an eye out for spider mites and Japanese beetles from June through August. Raspberries are a favorite of Japanese beetles in particular. Rabbits love to eat the canes in winter. A chicken wire fence will help prevent rabbit damage. Powdery Mildew Cane Borers"
+    },
+    {
+      "commonName": "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+      "slug": "rhubarb",
+      "pests": [
+        "Insect Weevil",
+        "Like Beetle",
+        "Slugs",
+        "Snails"
+      ],
+      "diseases": [
+        "Gray Spot",
+        "Leaf Spot",
+        "Plants Wilt",
+        "Root Rot",
+        "Roots Rot",
+        "Rot",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nPests and diseases are rarely an issue with rhubarb, but they may be affected by the following problems. Rhubarb Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Botrytis (gray mold) Fungus Varies; yellow/ brown/gray spots with water-soaked margins on leaves/flowers; gray mold; buds remain closed; stem lesions; wilt/rot; scorched appearance (“fire”) in some plants Destroy infected parts/severely infected plants (do not compost); remove plant debris regularly; d"
+    },
+    {
+      "commonName": "How to Grow Rosemary: Planting, Pruning, and Harvesting This Hardy Herb",
+      "slug": "rosemary",
+      "pests": [],
+      "diseases": [
+        "Aerial Blight",
+        "Leaf Spot",
+        "Root Rot"
+      ],
+      "rawText": "### Pests/Diseases\nAerial blight Bacterial leaf spots Several types of root rot"
+    },
+    {
+      "commonName": "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+      "slug": "rutabagas",
+      "pests": [
+        "Collected Wireworms",
+        "Crops Flea Beetles",
+        "Crops Wireworms",
+        "Flea Beetle",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots"
+      ],
+      "diseases": [
+        "Black Rot",
+        "Clubroot",
+        "Fungus Wilt",
+        "Green Spot",
+        "Insect Wilt",
+        "Rot",
+        "White Rust",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nUsing floating row covers for the first few weeks will eliminate most insect pests. Rutabaga Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves: sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add n"
+    },
+    {
+      "commonName": "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+      "slug": "sage",
+      "pests": [
+        "Aphids",
+        "Spider Mite",
+        "Spider Mites",
+        "Spots Whiteflies",
+        "Whiteflies Aphid"
+      ],
+      "diseases": [
+        "Leaf Spot",
+        "Powdery Mildew",
+        "Rust",
+        "Stem Rot"
+      ],
+      "rawText": "### Pests/Diseases\nRust Powdery mildew Stem rot Fungal leaf spots Whiteflies Aphids Spider mites"
+    },
+    {
+      "commonName": "How to Grow Salsify: Planting & Care Guide for This Unique Root Vegetable",
+      "slug": "salsify",
+      "pests": [],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\n"
+    },
+    {
+      "commonName": "How to Grow Green Onions (Scallions): Planting, Growing, and Harvesting Tips",
+      "slug": "scallions",
+      "pests": [],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\nAs with most of the Allium family, green onions are rarely bothered by pests, but birds can sometimes peck at the emerging seedlings, particularly early on in the season. Cover sown areas and seedlings with row covers if this proves to be a problem."
+    },
+    {
+      "commonName": "How to Grow Shallots: Planting, Care & Harvesting Tips",
+      "slug": "shallots",
+      "pests": [],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\n"
+    },
+    {
+      "commonName": "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+      "slug": "spinach",
+      "pests": [
+        "Control Aphid",
+        "Control Aphids",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Watering Leaf Miners"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Brown Spot",
+        "Downy Mildew",
+        "Green Spot",
+        "Leaf Spot",
+        "Mosaic",
+        "Mosaic Virus",
+        "Of Spot",
+        "Ringed Spot",
+        "Rot",
+        "Spinach Blight",
+        "White Rust"
+      ],
+      "rawText": "### Pests/Diseases\nSpinach Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Downy mildew Fungus Yellow, angular spots o"
+    },
+    {
+      "commonName": "How to Grow Strawberry Plants: The Complete Guide",
+      "slug": "strawberries",
+      "pests": [
+        "Bigger Bug",
+        "Bigger Bugs",
+        "Bug",
+        "Deter Slugs",
+        "Foil Slug",
+        "Is Slugs",
+        "Japanese Beetle",
+        "Japanese Beetles",
+        "Organic Slug",
+        "Slugs",
+        "Spider Mite",
+        "Spider Mites",
+        "Up Slug"
+      ],
+      "diseases": [
+        "Powdery Mildew"
+      ],
+      "rawText": "### Pests/Diseases\nGray Mold Powdery Mildew Japanese Beetles Spider Mites Slugs Pest-Beating Tips Watch out for birds! Netting is one option to physically keep them off developing fruits; make sure it’s in place before the fruits start to swell and color up. The other pest to watch out for is slugs. Set up slug traps among your plants or, for more organic slug-control tips, use beer traps. Spread sand over the strawberry bed to deter slugs (This also works well for lettuce). Pine needles also fo"
+    },
+    {
+      "commonName": "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+      "slug": "sweet-potatoes",
+      "pests": [
+        "Adults Fly",
+        "Crops Whiteflies",
+        "Flea Beetle",
+        "Prevention Flea Beetles"
+      ],
+      "diseases": [
+        "Black Spot",
+        "Fusarium Wilt",
+        "Green Spot",
+        "Rot",
+        "Stem Rot",
+        "White Rust",
+        "Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nSweet Potato Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Flea beetles Insect Numerous tiny holes in leaves Use row covers; mulch heavily; add native plants to invite beneficial insects Fusarium wilt (stem rot) Fungus Yellow/puckered leaves; older leaves drop; wilting vines; plants eventually die; stems under-/near ground may appear slightly blue; stem cross section reveals brown/purple/black discoloration, especially near ground Destroy infected plants; ch"
+    },
+    {
+      "commonName": "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens",
+      "slug": "swiss-chard",
+      "pests": [
+        "Crops Flea Beetles",
+        "Crops Slugs",
+        "Flea Beetle",
+        "Insects Leaf Miners",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Snails"
+      ],
+      "diseases": [
+        "Brown Spot",
+        "Leaf Spot",
+        "Of Spot",
+        "Rot"
+      ],
+      "rawText": "### Pests/Diseases\nChard Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Cercospora leaf spot Fungus Many small brown "
+    },
+    {
+      "commonName": "How to Grow Thyme Plants: The Complete Guide",
+      "slug": "thyme",
+      "pests": [],
+      "diseases": [],
+      "rawText": "### Pests/Diseases\n"
+    },
+    {
+      "commonName": "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+      "slug": "tomatillos",
+      "pests": [
+        "Tomato Hornworm",
+        "Tomato Hornworms",
+        "Wilt Aphid",
+        "Wilt Aphids"
+      ],
+      "diseases": [
+        "Early Blight",
+        "Fusarium Wilt",
+        "Mosaic Virus",
+        "Tobacco Mosaic",
+        "Verticillium Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nEarly blight and tobacco mosaic virus can affect tomatillos. Verticillium wilt and Fusarium wilt Aphids, tomato hornworms"
+    },
+    {
+      "commonName": "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+      "slug": "tomatoes",
+      "pests": [
+        "As Aphid",
+        "As Aphids",
+        "Like Aphid",
+        "Like Aphids",
+        "Spider Mite",
+        "Spider Mites",
+        "Tomato Hornworm",
+        "Tomato Hornworms"
+      ],
+      "diseases": [
+        "And Wilt",
+        "Avoid Blight",
+        "Blossom End Rot",
+        "Concentric Spot",
+        "Early Blight",
+        "End Rot",
+        "Fusarium Wilt",
+        "Late Blight",
+        "Moldy Spot",
+        "Mosaic",
+        "Mosaic Virus",
+        "Of Blight",
+        "Powdery Mildew",
+        "Rot",
+        "Same Spot",
+        "Sunken Spot",
+        "White Spot"
+      ],
+      "rawText": "### Pests/Diseases\nTomato Problems If no flowers form, plants may not be getting enough sun or water. Too little of either can stop flowering. If plants are producing abundant flowers but no fruit, it could be due to insufficient light, inadequate watering or irregular watering schedule, extreme temperatures (above 75°F during the night and 90°F during the day), or insufficient pollination by bees. If flowers form but drop off the plant, this is due to high daytime temperatures (over 90°F). Prov"
+    },
+    {
+      "commonName": "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+      "slug": "tomatoes",
+      "pests": [
+        "As Aphid",
+        "As Aphids",
+        "Like Aphid",
+        "Like Aphids",
+        "Spider Mite",
+        "Spider Mites",
+        "Tomato Hornworm",
+        "Tomato Hornworms"
+      ],
+      "diseases": [
+        "And Wilt",
+        "Avoid Blight",
+        "Blossom End Rot",
+        "Concentric Spot",
+        "Early Blight",
+        "End Rot",
+        "Fusarium Wilt",
+        "Late Blight",
+        "Moldy Spot",
+        "Mosaic",
+        "Mosaic Virus",
+        "Of Blight",
+        "Powdery Mildew",
+        "Rot",
+        "Same Spot",
+        "Sunken Spot",
+        "White Spot"
+      ],
+      "rawText": "### Pests/Diseases\nTomato Problems If no flowers form, plants may not be getting enough sun or water. Too little of either can stop flowering. If plants are producing abundant flowers but no fruit, it could be due to insufficient light, inadequate watering or irregular watering schedule, extreme temperatures (above 75°F during the night and 90°F during the day), or insufficient pollination by bees. If flowers form but drop off the plant, this is due to high daytime temperatures (over 90°F). Prov"
+    },
+    {
+      "commonName": "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots",
+      "slug": "turnips",
+      "pests": [
+        "Bugs",
+        "Flea Beetle",
+        "Prevention Aphid",
+        "Prevention Aphids",
+        "Root Maggot",
+        "Root Maggots",
+        "Watering Flea Beetles"
+      ],
+      "diseases": [
+        "Angular Spot",
+        "Black Rot",
+        "Clubroot",
+        "Downy Mildew",
+        "Fungus Wilt",
+        "Green Spot",
+        "Insect Wilt",
+        "Powdery Mildew",
+        "Rot",
+        "White Rust",
+        "White Spot"
+      ],
+      "rawText": "### Pests/Diseases\nTurnip Pests and Diseases Pest/Disease Type Symptoms Control/Prevention Aphids Insect Misshapen/yellow leaves; sticky “honeydew” (excrement); sooty, black mold Grow companion plants; knock off with water spray; apply insecticidal soap; put banana or orange peels around plants; wipe leaves with a 1 to 2 percent solution of dish soap (no additives) and water every 2 to 3 days for 2 weeks; add native plants to invite beneficial insects Black rot Insect Yellow, V-shape areas on le"
+    },
+    {
+      "commonName": "How to Plant, Grow, and Harvest Watermelon",
+      "slug": "watermelon",
+      "pests": [
+        "Aphids",
+        "Cucumber Beetle",
+        "Cucumber Beetles",
+        "Moths",
+        "Squash Vine Borer",
+        "Vine Borer"
+      ],
+      "diseases": [
+        "End Rot",
+        "Fusarium Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nAphids Blossom-End Rot Cucumber Beetles Squash Vine Borer Moths Fusarium Wilt"
+    },
+    {
+      "commonName": "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips",
+      "slug": "zucchini",
+      "pests": [
+        "Adult Bug",
+        "Adult Bugs",
+        "Squash Borer",
+        "Squash Bug",
+        "Squash Bugs",
+        "Squash Vine Borer",
+        "The Bug",
+        "The Bugs",
+        "Vine Borer",
+        "Vine Borers"
+      ],
+      "diseases": [
+        "And Rot",
+        "End Rot",
+        "Powdery Mildew",
+        "Rot",
+        "To Rot",
+        "To Wilt"
+      ],
+      "rawText": "### Pests/Diseases\nZucchini produces well, but you MUST keep an eye on the plant for pests. If you ignore zucchini, the pests will come, but you must get ahead of them before they arrive. Pests Two troublemakers often pay an unwelcome visit, usually early in the season. Squash bugs feed on sap, weakening plants and threatening fruit production. Protect plants when the bugs are most active, early on in the summer, by using row covers or fleece. Then continue to check for eggs at least twice a wee"
+    }
+  ],
+  "pests_index": {
+    "About Aphid": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "About Aphids": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Adult Bug": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "Adult Bugs": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "Adults Fly": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 9
+    },
+    "And Aphid": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "And Aphids": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "And Caterpillar": {
+      "affected_plants": [
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "And Caterpillars": {
+      "affected_plants": [
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Aphids": {
+      "affected_plants": [
+        "How to Plant and Grow Basil",
+        "How to Grow Collard Greens: Planting, Growing & Harvesting Tips",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips",
+        "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Plant, Grow, and Harvest Watermelon"
+      ],
+      "plant_count": 8
+    },
+    "Aphids Thrips": {
+      "affected_plants": [
+        "How to Grow Goji Berries: A Guide to This Tasty Superfruit"
+      ],
+      "plant_count": 1
+    },
+    "Apple Maggot": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners",
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 2
+    },
+    "Apple Maggots": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners",
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 2
+    },
+    "As Aphid": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "As Aphids": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Asparagus Beetle": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Asparagus Beetles": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Attract Aphid": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Attract Aphids": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Bean Beetle": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 3
+    },
+    "Bean Beetles": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 3
+    },
+    "Bigger Bug": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Bigger Bugs": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Black Beetle": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Black Beetles": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Blueberry Maggot": {
+      "affected_plants": [
+        "How to Grow Blueberries: Plant, Prune, and Harvest Like a Pro"
+      ],
+      "plant_count": 1
+    },
+    "Borers Aphid": {
+      "affected_plants": [
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees"
+      ],
+      "plant_count": 1
+    },
+    "Borers Aphids": {
+      "affected_plants": [
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees"
+      ],
+      "plant_count": 1
+    },
+    "Bug": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Bugs": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 13
+    },
+    "Butterfly Caterpillar": {
+      "affected_plants": [
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting"
+      ],
+      "plant_count": 1
+    },
+    "Butterfly Caterpillars": {
+      "affected_plants": [
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting"
+      ],
+      "plant_count": 1
+    },
+    "By Aphid": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "By Aphids": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Cabbage Looper": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 8
+    },
+    "Cabbage Worm": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Collard Greens: Planting, Growing & Harvesting Tips",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots"
+      ],
+      "plant_count": 3
+    },
+    "Cane Borer": {
+      "affected_plants": [
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning"
+      ],
+      "plant_count": 1
+    },
+    "Cane Borers": {
+      "affected_plants": [
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning"
+      ],
+      "plant_count": 1
+    },
+    "Carrot Fly": {
+      "affected_plants": [
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting"
+      ],
+      "plant_count": 1
+    },
+    "Catch Moth": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 2
+    },
+    "Catch Moths": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 2
+    },
+    "Celery Fly": {
+      "affected_plants": [
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting"
+      ],
+      "plant_count": 1
+    },
+    "Codling Moth": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "Codling Moths": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "Collected Wireworms": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide"
+      ],
+      "plant_count": 9
+    },
+    "Colorado Potato Beetle": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "Control Aphid": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide"
+      ],
+      "plant_count": 8
+    },
+    "Control Aphids": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide"
+      ],
+      "plant_count": 8
+    },
+    "Control Thrips": {
+      "affected_plants": [
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 1
+    },
+    "Corn Earworm": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Crops Aphid": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 4
+    },
+    "Crops Aphids": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 4
+    },
+    "Crops Cutworms": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 2
+    },
+    "Crops Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 5
+    },
+    "Crops Slugs": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 2
+    },
+    "Crops Whiteflies": {
+      "affected_plants": [
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 2
+    },
+    "Crops Wireworms": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide"
+      ],
+      "plant_count": 2
+    },
+    "Cucumber Beetle": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Honeydew Melons: Planting, Growing, and Care Tips",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Plant, Grow, and Harvest Watermelon"
+      ],
+      "plant_count": 7
+    },
+    "Cucumber Beetles": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Honeydew Melons: Planting, Growing, and Care Tips",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Plant, Grow, and Harvest Watermelon"
+      ],
+      "plant_count": 7
+    },
+    "Currant Borer": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries"
+      ],
+      "plant_count": 1
+    },
+    "Cutworms": {
+      "affected_plants": [
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root"
+      ],
+      "plant_count": 1
+    },
+    "Daytime Moth": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons"
+      ],
+      "plant_count": 1
+    },
+    "Daytime Moths": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons"
+      ],
+      "plant_count": 1
+    },
+    "Debris Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes"
+      ],
+      "plant_count": 1
+    },
+    "Deter Slugs": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Encourage Aphid": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons"
+      ],
+      "plant_count": 1
+    },
+    "Fall Thrips": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro"
+      ],
+      "plant_count": 3
+    },
+    "Fall Whiteflies": {
+      "affected_plants": [
+        "How to Grow Okra: Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Flea Beetle": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 20
+    },
+    "Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 4
+    },
+    "Fly Thrips": {
+      "affected_plants": [
+        "How to Grow Chives: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Foil Slug": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "For Cutworms": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Fruit Worm": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners",
+        "How to Grow Blackberries: The Complete Guide"
+      ],
+      "plant_count": 2
+    },
+    "Gall Mite": {
+      "affected_plants": [
+        "How to Grow Goji Berries: A Guide to This Tasty Superfruit"
+      ],
+      "plant_count": 1
+    },
+    "Help Whiteflies": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves"
+      ],
+      "plant_count": 3
+    },
+    "Higher Mite": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries"
+      ],
+      "plant_count": 1
+    },
+    "Hoppers Aphid": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "Hoppers Aphids": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "If Thrips": {
+      "affected_plants": [
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 1
+    },
+    "Insect Weevil": {
+      "affected_plants": [
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden"
+      ],
+      "plant_count": 1
+    },
+    "Insects Cutworms": {
+      "affected_plants": [
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves"
+      ],
+      "plant_count": 1
+    },
+    "Insects Leaf Miners": {
+      "affected_plants": [
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 1
+    },
+    "Insects Slugs": {
+      "affected_plants": [
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks"
+      ],
+      "plant_count": 2
+    },
+    "Insects Wireworms": {
+      "affected_plants": [
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root"
+      ],
+      "plant_count": 1
+    },
+    "Is Slugs": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Japanese Beetle": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees",
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit",
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 9
+    },
+    "Japanese Beetles": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees",
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit",
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 9
+    },
+    "Knock Aphid": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Knock Aphids": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Lady Beetle": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root"
+      ],
+      "plant_count": 2
+    },
+    "Lady Beetles": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root"
+      ],
+      "plant_count": 2
+    },
+    "Leaf Miners": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite"
+      ],
+      "plant_count": 1
+    },
+    "Leek Moth": {
+      "affected_plants": [
+        "How to Grow Leeks: Planting, Growing, and Harvesting Guide"
+      ],
+      "plant_count": 1
+    },
+    "Like Aphid": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Like Aphids": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Like Beetle": {
+      "affected_plants": [
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden"
+      ],
+      "plant_count": 1
+    },
+    "Lure Beetle": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Lure Beetles": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Mexican Bean Beetle": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 3
+    },
+    "Mite": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Mites": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners",
+        "How to Grow Pears: The Complete Guide"
+      ],
+      "plant_count": 2
+    },
+    "More Cutworm": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Moth": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons"
+      ],
+      "plant_count": 1
+    },
+    "Moths": {
+      "affected_plants": [
+        "How to Plant, Grow, and Harvest Watermelon"
+      ],
+      "plant_count": 1
+    },
+    "Mulch Wireworms": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 3
+    },
+    "Nearby Cutworms": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Onion Fly": {
+      "affected_plants": [
+        "How to Grow Chives: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Onion Maggot": {
+      "affected_plants": [
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 2
+    },
+    "Onion Maggots": {
+      "affected_plants": [
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 2
+    },
+    "Onion Thrips": {
+      "affected_plants": [
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home"
+      ],
+      "plant_count": 1
+    },
+    "Organic Slug": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Overharvesting Slugs": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Places Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks"
+      ],
+      "plant_count": 1
+    },
+    "Plants Wireworms": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Plum Aphid": {
+      "affected_plants": [
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit"
+      ],
+      "plant_count": 1
+    },
+    "Plum Aphids": {
+      "affected_plants": [
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit"
+      ],
+      "plant_count": 1
+    },
+    "Plum Moth": {
+      "affected_plants": [
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit"
+      ],
+      "plant_count": 1
+    },
+    "Potato Beetle": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "Potato Beetles": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "Predatory Mite": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries"
+      ],
+      "plant_count": 1
+    },
+    "Predatory Mites": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries"
+      ],
+      "plant_count": 1
+    },
+    "Prevention Aphid": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 18
+    },
+    "Prevention Aphids": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 18
+    },
+    "Prevention Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Psylla Aphid": {
+      "affected_plants": [
+        "How to Grow Pears: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Psylla Aphids": {
+      "affected_plants": [
+        "How to Grow Pears: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Raspberry Borer": {
+      "affected_plants": [
+        "How to Grow Blackberries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Raspberry Borers": {
+      "affected_plants": [
+        "How to Grow Blackberries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Remove Beetle": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Remove Beetles": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Remove Borer": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 2
+    },
+    "Remove Caterpillar": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Remove Caterpillars": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Residue Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root"
+      ],
+      "plant_count": 1
+    },
+    "Residue Leaf Miners": {
+      "affected_plants": [
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide"
+      ],
+      "plant_count": 1
+    },
+    "Residue Slugs": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves"
+      ],
+      "plant_count": 2
+    },
+    "Residue Thrips": {
+      "affected_plants": [
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Root Maggot": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 9
+    },
+    "Root Maggots": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 9
+    },
+    "Rotation Wireworms": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "Rots Aphid": {
+      "affected_plants": [
+        "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses"
+      ],
+      "plant_count": 1
+    },
+    "Rots Aphids": {
+      "affected_plants": [
+        "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses"
+      ],
+      "plant_count": 1
+    },
+    "Rust Thrips": {
+      "affected_plants": [
+        "How to Grow Figs: A Beginner’s Guide to Planting, Caring for, and Harvesting Fig Trees"
+      ],
+      "plant_count": 1
+    },
+    "Slugs": {
+      "affected_plants": [
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 2
+    },
+    "Slugs Aphid": {
+      "affected_plants": [
+        "How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens"
+      ],
+      "plant_count": 1
+    },
+    "Slugs Aphids": {
+      "affected_plants": [
+        "How to Grow Mustard Greens: Planting & Harvesting Spicy Garden Greens"
+      ],
+      "plant_count": 1
+    },
+    "Snails": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 9
+    },
+    "Spider Mite": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses",
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Grow Strawberry Plants: The Complete Guide",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 8
+    },
+    "Spider Mites": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses",
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Grow Strawberry Plants: The Complete Guide",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 8
+    },
+    "Spots Whiteflies": {
+      "affected_plants": [
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb"
+      ],
+      "plant_count": 1
+    },
+    "Squash Borer": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "Squash Bug": {
+      "affected_plants": [
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 3
+    },
+    "Squash Bugs": {
+      "affected_plants": [
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 3
+    },
+    "Squash Vine Borer": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Plant, Grow, and Harvest Watermelon",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 4
+    },
+    "Stink Bug": {
+      "affected_plants": [
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro"
+      ],
+      "plant_count": 2
+    },
+    "Stink Bugs": {
+      "affected_plants": [
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro"
+      ],
+      "plant_count": 2
+    },
+    "The Beetle": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "The Beetles": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "The Bug": {
+      "affected_plants": [
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 2
+    },
+    "The Bugs": {
+      "affected_plants": [
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 2
+    },
+    "The Thrips": {
+      "affected_plants": [
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 1
+    },
+    "Thrips": {
+      "affected_plants": [
+        "How to Grow Leeks: Planting, Growing, and Harvesting Guide",
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 2
+    },
+    "Tomato Hornworm": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 5
+    },
+    "Tomato Hornworms": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 5
+    },
+    "Tree Borer": {
+      "affected_plants": [
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Tree Borers": {
+      "affected_plants": [
+        "How to Grow Cherries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Up Slug": {
+      "affected_plants": [
+        "How to Grow Strawberry Plants: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Vine Borer": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Plant, Grow, and Harvest Watermelon",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 4
+    },
+    "Vine Borers": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 2
+    },
+    "Watering Aphid": {
+      "affected_plants": [
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Watering Aphids": {
+      "affected_plants": [
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Watering Flea Beetles": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 7
+    },
+    "Watering Leaf Miners": {
+      "affected_plants": [
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide"
+      ],
+      "plant_count": 1
+    },
+    "Watering Slugs": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes"
+      ],
+      "plant_count": 1
+    },
+    "When Beetle": {
+      "affected_plants": [
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 1
+    },
+    "White Maggot": {
+      "affected_plants": [
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro"
+      ],
+      "plant_count": 2
+    },
+    "White Maggots": {
+      "affected_plants": [
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro"
+      ],
+      "plant_count": 2
+    },
+    "Whiteflies": {
+      "affected_plants": [
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 3
+    },
+    "Whiteflies Aphid": {
+      "affected_plants": [
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb"
+      ],
+      "plant_count": 1
+    },
+    "Wilt Aphid": {
+      "affected_plants": [
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits"
+      ],
+      "plant_count": 1
+    },
+    "Wilt Aphids": {
+      "affected_plants": [
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits"
+      ],
+      "plant_count": 1
+    },
+    "Wilt Cutworms": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 2
+    },
+    "Wireworms": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite"
+      ],
+      "plant_count": 1
+    }
+  },
+  "diseases_index": {
+    "Aerial Blight": {
+      "affected_plants": [
+        "How to Grow Rosemary: Planting, Pruning, and Harvesting This Hardy Herb"
+      ],
+      "plant_count": 1
+    },
+    "And Mildew": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "And Rot": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "And Wilt": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 4
+    },
+    "Angular Spot": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 13
+    },
+    "Aphids Mildew": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "Apple Rust": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "Apple Scab": {
+      "affected_plants": [
+        "How to Grow Apple Trees: Planting, Care, and Harvesting Tips for Home Gardeners"
+      ],
+      "plant_count": 1
+    },
+    "Are Spot": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "Aschochyta Blight": {
+      "affected_plants": [
+        "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Asparagus Rust": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Avoid Blight": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Avoid Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Avoid Wilt": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "Bacterial Canker": {
+      "affected_plants": [
+        "How to Grow Plums: Planting, Care, and Harvesting Tips for Juicy Fruit"
+      ],
+      "plant_count": 1
+    },
+    "Bacterial Wilt": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 5
+    },
+    "Bean Rust": {
+      "affected_plants": [
+        "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Black Rot": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Collard Greens: Planting, Growing & Harvesting Tips",
+        "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 10
+    },
+    "Black Spot": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Peanuts: Planting, Growing, and Harvesting Guide",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 8
+    },
+    "Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Blister Rust": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Gooseberries: It's Berry Easy!"
+      ],
+      "plant_count": 2
+    },
+    "Blossom End Rot": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Brown Rot": {
+      "affected_plants": [
+        "How to Grow Cherries: The Complete Guide",
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees"
+      ],
+      "plant_count": 2
+    },
+    "Brown Spot": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 7
+    },
+    "Bulb Rot": {
+      "affected_plants": [
+        "How to Grow Chives: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "But Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Cane Blight": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries"
+      ],
+      "plant_count": 1
+    },
+    "Carrot Rust": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide"
+      ],
+      "plant_count": 3
+    },
+    "Chocolate Spot": {
+      "affected_plants": [
+        "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Clubroot": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 9
+    },
+    "Concentric Spot": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 4
+    },
+    "Corky Spot": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Covers Mosaic": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans"
+      ],
+      "plant_count": 1
+    },
+    "Crop Rot": {
+      "affected_plants": [
+        "How to Grow Peanuts: Planting, Growing, and Harvesting Guide",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 2
+    },
+    "Crops Blight": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 2
+    },
+    "Crown Rot": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 2
+    },
+    "Crowns Rot": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 2
+    },
+    "Cucumber Mosaic": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting"
+      ],
+      "plant_count": 4
+    },
+    "Curl Mosaic": {
+      "affected_plants": [
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees"
+      ],
+      "plant_count": 1
+    },
+    "Damping Off": {
+      "affected_plants": [
+        "How to Grow Microgreens at Home: A Beginner's Guide"
+      ],
+      "plant_count": 1
+    },
+    "Dark Spot": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 5
+    },
+    "Disease Wilt": {
+      "affected_plants": [
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Do Spot": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Downy Mildew": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Collard Greens: Planting, Growing & Harvesting Tips",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Fava Beans (Broad Beans): Planting, Growing & Harvesting Tips",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 15
+    },
+    "Dry Rot": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Early Blight": {
+      "affected_plants": [
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 3
+    },
+    "End Rot": {
+      "affected_plants": [
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Plant, Grow, and Harvest Watermelon",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 7
+    },
+    "Few Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Fire Blight": {
+      "affected_plants": [
+        "How to Grow Pears: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Flowers Rot": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots"
+      ],
+      "plant_count": 1
+    },
+    "Fruit Rot": {
+      "affected_plants": [
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 3
+    },
+    "Fungal Wilt": {
+      "affected_plants": [
+        "How to Plant and Grow Cilantro and Coriander"
+      ],
+      "plant_count": 1
+    },
+    "Fungus Wilt": {
+      "affected_plants": [
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 8
+    },
+    "Fusarium Wilt": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Honeydew Melons: Planting, Growing, and Care Tips",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Plant, Grow, and Harvest Watermelon"
+      ],
+      "plant_count": 9
+    },
+    "Gray Spot": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden"
+      ],
+      "plant_count": 2
+    },
+    "Green Spot": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 9
+    },
+    "Insect Wilt": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 14
+    },
+    "Insects Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Insects Wilt": {
+      "affected_plants": [
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots"
+      ],
+      "plant_count": 1
+    },
+    "Is Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Late Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 3
+    },
+    "Leaf Spot": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cherries: The Complete Guide",
+        "How to Grow Chives: The Complete Guide",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Dill: Planting, Growing, and Harvesting Guide",
+        "How to Grow Figs: A Beginner’s Guide to Planting, Caring for, and Harvesting Fig Trees",
+        "How to Grow Mint: Planting, Growing, and Harvesting Tips",
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting",
+        "How to Grow Peanuts: Planting, Growing, and Harvesting Guide",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Rosemary: Planting, Pruning, and Harvesting This Hardy Herb",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 14
+    },
+    "Leaves Wilt": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes"
+      ],
+      "plant_count": 1
+    },
+    "Leek Rust": {
+      "affected_plants": [
+        "How to Grow Leeks: Planting, Growing, and Harvesting Guide"
+      ],
+      "plant_count": 1
+    },
+    "Lettuce Mosaic": {
+      "affected_plants": [
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves"
+      ],
+      "plant_count": 1
+    },
+    "Mildew Rust": {
+      "affected_plants": [
+        "How to Grow Chives: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "Moldy Spot": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Mosaic": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 4
+    },
+    "Mosaic Virus": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 12
+    },
+    "Of Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 3
+    },
+    "Of Spot": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens"
+      ],
+      "plant_count": 3
+    },
+    "Once Rot": {
+      "affected_plants": [
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 1
+    },
+    "Out Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Plant Wilt": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas"
+      ],
+      "plant_count": 3
+    },
+    "Plants Wilt": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden"
+      ],
+      "plant_count": 10
+    },
+    "Pods Rot": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans"
+      ],
+      "plant_count": 1
+    },
+    "Potato Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Potato Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Powdery Mildew": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Plant and Grow Basil",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Blueberries: Plant, Prune, and Harvest Like a Pro",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Cherries: The Complete Guide",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Currants: A Beginner’s Guide to Juicy, Vitamin-C Rich Berries",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Gooseberries: It's Berry Easy!",
+        "How to Grow Grapes: Planting, Pruning, and Harvesting Tips",
+        "How to Grow Honeydew Melons: Planting, Growing, and Care Tips",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Mint: Planting, Growing, and Harvesting Tips",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peaches | Planting, Pruning & Harvesting Peach Trees",
+        "How to Grow Pears: The Complete Guide",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Raspberries: A Juicy Guide to Planting, Harvesting & Pruning",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Grow Strawberry Plants: The Complete Guide",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 29
+    },
+    "Prevention Blight": {
+      "affected_plants": [
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Releasing Rust": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Residue Mosaic": {
+      "affected_plants": [
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 1
+    },
+    "Ringed Spot": {
+      "affected_plants": [
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide"
+      ],
+      "plant_count": 6
+    },
+    "Root Rot": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Fennel: Plant, Grow & Harvest Bulbs and Fronds Easily",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Rosemary: Planting, Pruning, and Harvesting This Hardy Herb"
+      ],
+      "plant_count": 7
+    },
+    "Roots Rot": {
+      "affected_plants": [
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden"
+      ],
+      "plant_count": 2
+    },
+    "Rot": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips",
+        "How to Grow Cabbage: Planting, Care & Harvest Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Gooseberries: It's Berry Easy!",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Kale: Planting, Care, and Harvest Tips for Healthy Greens",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+        "How to Grow Swiss Chard: Planting, Care & Harvest Tips for Colorful Greens",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots",
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 38
+    },
+    "Rust": {
+      "affected_plants": [
+        "How to Grow Figs: A Beginner’s Guide to Planting, Caring for, and Harvesting Fig Trees",
+        "How to Grow Mint: Planting, Growing, and Harvesting Tips",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb"
+      ],
+      "plant_count": 3
+    },
+    "Same Spot": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "Scab": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Soaked Spot": {
+      "affected_plants": [
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 4
+    },
+    "Spinach Blight": {
+      "affected_plants": [
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide"
+      ],
+      "plant_count": 1
+    },
+    "Spot": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 5
+    },
+    "Sprouts Rot": {
+      "affected_plants": [
+        "How to Grow Brussels Sprouts: Planting, Growing & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Stalks Rot": {
+      "affected_plants": [
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips"
+      ],
+      "plant_count": 1
+    },
+    "Stem Rot": {
+      "affected_plants": [
+        "How to Grow Oregano: A Complete Guide to Planting, Care, and Culinary Uses",
+        "How to Grow Parsley: A Complete Guide to Planting, Growing, and Harvesting",
+        "How to Grow Sage: A Flavorful Guide to Planting, Harvesting, and Using This Classic Culinary Herb",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 4
+    },
+    "Sunken Spot": {
+      "affected_plants": [
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting"
+      ],
+      "plant_count": 2
+    },
+    "The Blight": {
+      "affected_plants": [
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 1
+    },
+    "Tiny Spot": {
+      "affected_plants": [
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "Planting, Growing, and Harvesting Potatoes"
+      ],
+      "plant_count": 4
+    },
+    "To Rot": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "To Wilt": {
+      "affected_plants": [
+        "How to Grow Zucchini & Summer Squash: Planting, Care & Harvest Tips"
+      ],
+      "plant_count": 1
+    },
+    "Tobacco Mosaic": {
+      "affected_plants": [
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits"
+      ],
+      "plant_count": 1
+    },
+    "Verticillium Wilt": {
+      "affected_plants": [
+        "How to Grow Tomatillos: Planting, Growing & Harvesting for Salsa-Ready Fruits"
+      ],
+      "plant_count": 1
+    },
+    "Vigor Rust": {
+      "affected_plants": [
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving"
+      ],
+      "plant_count": 1
+    },
+    "Vines Wilt": {
+      "affected_plants": [
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing"
+      ],
+      "plant_count": 2
+    },
+    "White Rot": {
+      "affected_plants": [
+        "How to Grow Chives: The Complete Guide",
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 3
+    },
+    "White Rust": {
+      "affected_plants": [
+        "How to Grow Arugula: Planting, Growing & Harvesting Rocket Greens",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Radishes: Quick and Easy Guide for Harvesting Peppery Roots",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Spinach: Planting, Growing & Harvesting Guide",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 8
+    },
+    "White Spot": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Bok Choy: Planting, Growing & Harvesting Pak Choi Greens",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Kohlrabi: Planting, Growing, and Harvesting Tips",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Tomatoes: Complete Guide to Planting & Harvesting",
+        "How to Grow Turnips: Planting, Growing & Harvesting Tips for Bigger Roots"
+      ],
+      "plant_count": 15
+    },
+    "Will Spot": {
+      "affected_plants": [
+        "How to Grow Onions: Plant, Grow & Harvest Big Bulbs"
+      ],
+      "plant_count": 1
+    },
+    "Wilt": {
+      "affected_plants": [
+        "How to Grow Artichokes: Planting & Growing Globe Artichokes",
+        "How to Grow Asparagus: A Perennial Favorite That Keeps Giving",
+        "How to Grow Green Beans: Plant, Care & Harvest Guide for Bush & Pole Beans",
+        "How to Grow Beets: A Colorful, Cool-Season Garden Favorite",
+        "How to Grow Broccoli: Planting, Growing & Harvesting Tips",
+        "How to Grow Cantaloupes: Plant, Care For, and Harvest Sweet Summer Melons",
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Cauliflower: Plant, Grow & Harvest Like a Pro",
+        "How to Grow Sweet Corn: Planting, Pollination & Harvesting Tips",
+        "How to Grow Cucumber Plants: Easy Guide to Planting & Harvesting",
+        "How to Grow Edamame (Soybeans): Planting, Growing & Harvest Tips",
+        "How to Grow Eggplant (Aubergines): Planting, Growing & Harvesting Tips",
+        "How to Grow Garlic: Plant, Care & Harvest Your Own Garlic at Home",
+        "How to Grow Horseradish: Plant, Grow, and Harvest This Spicy Root",
+        "How to Grow Lettuce: Sowing, Planting & Harvesting Tips for Crisp Leaves",
+        "How to Grow Okra: Planting, Growing & Harvesting Tips",
+        "How to Grow Peas: Complete Guide to Planting, Growing, and Harvesting Peas",
+        "Planting, Growing, and Harvesting Potatoes",
+        "How to Grow Pumpkins: Complete Guide to Planting, Harvesting, and Storing",
+        "How to Grow Rhubarb: Plant, Care, & Harvest Tips for a Perennial Garden",
+        "How to Grow Rutabagas: Planting, Care & Harvest Guide",
+        "How to Grow Sweet Potatoes: Planting Slips & Harvesting Tips"
+      ],
+      "plant_count": 22
+    },
+    "Winds Spot": {
+      "affected_plants": [
+        "How to Grow Elderberries: The Complete Guide"
+      ],
+      "plant_count": 1
+    },
+    "With Rust": {
+      "affected_plants": [
+        "How to Grow Carrots: Planting, Growing & Harvesting Tips for Sweet Roots",
+        "How to Grow Celery: Planting, Growing & Harvesting Crisp Celery Stalks",
+        "How to Grow Parsnips: Planting, Growing, and Harvesting Guide"
+      ],
+      "plant_count": 3
+    }
+  }
+}

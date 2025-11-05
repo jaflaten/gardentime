@@ -1,0 +1,26 @@
+{
+  "commonName": "Garlic",
+  "cycle": null,
+  "sunNeeds": "FULL_SUN",
+  "waterNeeds": "FREQUENT",
+  "rootDepth": "MEDIUM",
+  "growthHabit": "ROOT",
+  "soilTempMinF": 45,
+  "soilTempOptimalF": null,
+  "frostTolerant": false,
+  "spacingMin": 6,
+  "spacingMax": null,
+  "plantingDepthInches": 6.0,
+  "containerSuitable": true,
+  "requiresStaking": false,
+  "requiresPruning": false,
+  "edibleParts": [
+    "root"
+  ],
+  "daysToMaturityMin": 3,
+  "daysToMaturityMax": 5,
+  "wateringInchesPerWeek": 6,
+  "fertilizingFrequencyWeeks": null,
+  "mulchRecommended": true,
+  "notes": null
+}
