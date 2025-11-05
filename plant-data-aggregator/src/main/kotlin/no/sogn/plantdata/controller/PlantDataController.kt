@@ -62,6 +62,37 @@ class PlantDataController(
     }
     
     /**
+     * POST /api/v1/plant-data/plants/bulk
+     * Get multiple plants at once
+     */
+    @PostMapping("/plants/bulk")
+    fun getBulkPlants(@RequestBody request: BulkPlantRequest): ResponseEntity<BulkPlantResponseDTO> {
+        val result = plantDataService.getBulkPlants(request.plantNames)
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
+     * GET /api/v1/plant-data/families
+     * List all plant families with counts
+     */
+    @GetMapping("/families")
+    fun getFamilies(): ResponseEntity<FamiliesResponseDTO> {
+        val result = plantDataService.getFamilies()
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
+     * GET /api/v1/plant-data/families/{familyName}/plants
+     * Get all plants in a specific family
+     */
+    @GetMapping("/families/{familyName}/plants")
+    fun getPlantsByFamily(@PathVariable familyName: String): ResponseEntity<FamilyWithPlantsDTO> {
+        val result = plantDataService.getPlantsByFamily(familyName)
+            ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
      * GET /api/v1/plant-data/plants/{name}/companions
      * Get companion planting information for a plant
      */

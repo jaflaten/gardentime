@@ -99,3 +99,43 @@ data class PaginationDTO(
     val totalElements: Long,
     val totalPages: Int
 )
+
+/**
+ * Family Summary DTO
+ */
+data class FamilySummaryDTO(
+    val name: String,
+    val plantCount: Int,
+    val examplePlants: List<String>
+)
+
+/**
+ * Family with Plants Response
+ */
+data class FamilyWithPlantsDTO(
+    val familyName: String,
+    val plantCount: Int,
+    val plants: List<PlantSummaryDTO>
+)
+
+/**
+ * Families List Response
+ */
+data class FamiliesResponseDTO(
+    val families: List<FamilySummaryDTO>
+)
+
+/**
+ * Bulk Plant Request
+ */
+data class BulkPlantRequest(
+    val plantNames: List<String>
+)
+
+/**
+ * Bulk Plant Response
+ */
+data class BulkPlantResponseDTO(
+    val plants: List<PlantDetailDTO>,
+    val notFound: List<String>
+)

@@ -112,6 +112,73 @@ class PlantDataService(
         }
     }
     
+    /**
+     * Get all plant families with counts
+     */
+    fun getFamilies(): FamiliesResponseDTO {
+        val allPlants = plantRepository.findAll()
+        
+        val familyGroups = allPlants
+            .filter { it.family != null }
+            .groupBy { it.family!! }
+            .map { (familyName, plants) ->
+                FamilySummaryDTO(
+                    name = familyName,
+                    plantCount = plants.size,
+                    examplePlants = plants.take(5).map { it.commonName ?: it.canonicalScientificName }
+                )
+            }
+            .sortedByDescending { it.plantCount }
+        
+        return FamiliesResponseDTO(families = familyGroups)
+    }
+    
+    /**
+     * Get all plants in a specific family
+     */
+    fun getPlantsByFamily(familyName: String): FamilyWithPlantsDTO? {
+        val plants = plantRepository.findAll()
+            .filter { it.family?.equals(familyName, ignoreCase = true) == true }
+        
+        if (plants.isEmpty()) {
+            return null
+        }
+        
+        val plantsWithAttributes = plants.mapNotNull { plant ->
+            plantAttributeRepository.findById(plant.id)
+                .map { attributes -> toPlantSummary(plant, attributes) }
+                .orElse(null)
+        }
+        
+        return FamilyWithPlantsDTO(
+            familyName = familyName,
+            plantCount = plantsWithAttributes.size,
+            plants = plantsWithAttributes
+        )
+    }
+    
+    /**
+     * Get multiple plants by name (bulk operation)
+     */
+    fun getBulkPlants(plantNames: List<String>): BulkPlantResponseDTO {
+        val foundPlants = mutableListOf<PlantDetailDTO>()
+        val notFound = mutableListOf<String>()
+        
+        for (name in plantNames) {
+            val plant = getPlantByName(name)
+            if (plant != null) {
+                foundPlants.add(plant)
+            } else {
+                notFound.add(name)
+            }
+        }
+        
+        return BulkPlantResponseDTO(
+            plants = foundPlants,
+            notFound = notFound
+        )
+    }
+    
     // ============ Private Mapping Functions ============
     
     private fun toPlantSummary(plant: Plant, attributes: PlantAttributes): PlantSummaryDTO {
