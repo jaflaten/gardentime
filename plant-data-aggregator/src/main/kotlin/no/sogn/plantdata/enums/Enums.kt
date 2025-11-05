@@ -15,3 +15,5 @@ enum class PrimaryNutrientContribution { NITROGEN, POTASSIUM, PHOSPHORUS, NONE }
 enum class SourceType { WEBSITE, BOOK, JOURNAL, INTERNAL }
 enum class ConflictResolutionStrategy { PREFER_TREFLE, PREFER_PERENUAL, MANUAL }
 enum class PlantCategory { VEGETABLE, FRUIT, HERB }
+enum class SeverityLevel { LOW, MEDIUM, HIGH, CRITICAL }
+

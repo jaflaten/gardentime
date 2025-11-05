@@ -3,6 +3,7 @@ package no.sogn.plantdata.controller
 import no.sogn.plantdata.dto.*
 import no.sogn.plantdata.service.CompanionPlantingService
 import no.sogn.plantdata.service.PlantDataService
+import no.sogn.plantdata.service.PestDiseaseService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.*
 @CrossOrigin(origins = ["*"])
 class PlantDataController(
     private val plantDataService: PlantDataService,
-    private val companionPlantingService: CompanionPlantingService
+    private val companionPlantingService: CompanionPlantingService,
+    private val pestDiseaseService: PestDiseaseService
 ) {
     
     /**
@@ -120,5 +122,37 @@ class PlantDataController(
         } catch (e: IllegalArgumentException) {
             ResponseEntity.badRequest().build()
         }
+    }
+    
+    /**
+     * GET /api/v1/plant-data/plants/{name}/pests
+     * Get pests that affect this plant
+     */
+    @GetMapping("/plants/{name}/pests")
+    fun getPlantPests(@PathVariable name: String): ResponseEntity<PlantPestsResponseDTO> {
+        val result = pestDiseaseService.getPlantPests(name)
+            ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
+     * GET /api/v1/plant-data/plants/{name}/diseases
+     * Get diseases that affect this plant
+     */
+    @GetMapping("/plants/{name}/diseases")
+    fun getPlantDiseases(@PathVariable name: String): ResponseEntity<PlantDiseasesResponseDTO> {
+        val result = pestDiseaseService.getPlantDiseases(name)
+            ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
+     * GET /api/v1/plant-data/diseases/soil-borne
+     * Get all soil-borne diseases (critical for rotation planning)
+     */
+    @GetMapping("/diseases/soil-borne")
+    fun getSoilBorneDiseases(): ResponseEntity<SoilBorneDiseasesResponseDTO> {
+        val result = pestDiseaseService.getSoilBorneDiseases()
+        return ResponseEntity.ok(result)
     }
 }

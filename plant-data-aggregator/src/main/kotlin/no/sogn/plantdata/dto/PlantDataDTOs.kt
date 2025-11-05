@@ -38,6 +38,8 @@ data class PlantDetailDTO(
     val plantingDetails: PlantingDetailsDTO,
     val rotationData: RotationDataDTO,
     val companionCount: CompanionCountDTO,
+    val pestCount: Int,
+    val diseaseCount: Int,
     val synonyms: List<String>
 )
 

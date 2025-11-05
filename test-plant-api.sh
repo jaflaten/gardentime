@@ -15,7 +15,7 @@ curl -s "${BASE_URL}/plants/search?q=tomato" | jq '.[0:2] | .[] | {name, scienti
 echo ""
 
 echo "3. Get plant by name 'Tomato'"
-curl -s "${BASE_URL}/plants/Tomato" | jq '{name, scientificName, family, cycle, companionCount}'
+curl -s "${BASE_URL}/plants/Tomato" | jq '{name, scientificName, family, cycle, companionCount, pestCount, diseaseCount}'
 echo ""
 
 echo "4. List all families"
@@ -40,6 +40,18 @@ echo "8. Bulk get plants"
 curl -s -X POST "${BASE_URL}/plants/bulk" \
   -H "Content-Type: application/json" \
   -d '{"plantNames": ["Tomato", "Basil", "Carrot", "NonExistent"]}' | jq '{found: .plants | length, notFound}'
+echo ""
+
+echo "9. Get pests for 'Tomato'"
+curl -s "${BASE_URL}/plants/Tomato/pests" | jq '{plantName, totalPests, pests: .pests[0:3] | map({name: .pest.name, severity: .pest.severity})}'
+echo ""
+
+echo "10. Get diseases for 'Tomato'"
+curl -s "${BASE_URL}/plants/Tomato/diseases" | jq '{plantName, totalDiseases, diseases: .diseases[0:3] | map({name: .disease.name, severity: .disease.severity})}'
+echo ""
+
+echo "11. Get soil-borne diseases"
+curl -s "${BASE_URL}/diseases/soil-borne" | jq '{diseases: .diseases[0:5] | map({name: .disease.name, persistenceYears: .disease.persistenceYears, affectedFamilies})}'
 echo ""
 
 echo "Done!"

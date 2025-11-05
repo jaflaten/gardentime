@@ -20,7 +20,9 @@ class PlantDataService(
     private val plantRepository: PlantRepository,
     private val plantAttributeRepository: PlantAttributeRepository,
     private val ediblePartsRepository: PlantAttributeEdiblePartsRepository,
-    private val companionRelationshipRepository: CompanionRelationshipRepository
+    private val companionRelationshipRepository: CompanionRelationshipRepository,
+    private val plantPestRepository: no.sogn.plantdata.repository.PlantPestRepository,
+    private val plantDiseaseRepository: no.sogn.plantdata.repository.PlantDiseaseRepository
 ) {
     
     /**
@@ -211,6 +213,10 @@ class PlantDataService(
         // Get companion count
         val companionCount = getCompanionCount(plant)
         
+        // Get pest/disease counts
+        val pestCount = plantPestRepository.countByPlantId(plant.id).toInt()
+        val diseaseCount = plantDiseaseRepository.countByPlantId(plant.id).toInt()
+        
         return PlantDetailDTO(
             id = plant.id,
             name = plant.commonName ?: plant.canonicalScientificName,
@@ -239,6 +245,8 @@ class PlantDataService(
                 primaryNutrientContribution = attributes.primaryNutrientContribution?.name
             ),
             companionCount = companionCount,
+            pestCount = pestCount,
+            diseaseCount = diseaseCount,
             synonyms = emptyList() // TODO: load from plant_synonyms table
         )
     }
