@@ -1,5 +1,6 @@
 package no.sogn.gardentime.service
 
+import no.sogn.gardentime.client.PlantDataApiClient
 import no.sogn.gardentime.db.CropRecordRepository
 import no.sogn.gardentime.db.GardenRepository
 import no.sogn.gardentime.db.PlantRepository
@@ -18,6 +19,7 @@ class CropRecordService(
     private val gardenRepository: GardenRepository,
     private val plantRepository: PlantRepository,
     private val securityUtils: SecurityUtils,
+    private val plantDataApiClient: PlantDataApiClient
 ) {
     private val logger = LoggerFactory.getLogger(CropRecordService::class.java)
 
@@ -59,10 +61,18 @@ class CropRecordService(
         val plantEntity = plantRepository.findPlantEntityById(plantIdLong)
             ?: throw IllegalArgumentException("Plant with id $plantIdLong not found")
 
+        // Fetch plant data from plant-data-aggregator API for rotation planning
+        val plantData = try {
+            plantDataApiClient.getPlantDetails(plantEntity.name)
+        } catch (e: Exception) {
+            logger.warn("Failed to fetch plant data for ${plantEntity.name}: ${e.message}")
+            null
+        }
+
         // Determine status: use provided status, or auto-set based on harvest date
         val cropStatus = status ?: if (dateHarvested != null) CropStatus.HARVESTED else CropStatus.PLANTED
 
-        // Create the crop record
+        // Create the crop record with cached plant data
         val cropRecordEntity = CropRecordEntity(
             plantingDate = datePlanted,
             harvestDate = dateHarvested,
@@ -71,9 +81,16 @@ class CropRecordService(
             name = plantEntity.name,
             notes = notes,
             outcome = outcome,
-            status = cropStatus
+            status = cropStatus,
+            // Cache rotation-critical data from API
+            plantFamily = plantData?.family,
+            plantGenus = plantData?.genus,
+            feederType = plantData?.rotationData?.feederType,
+            isNitrogenFixer = plantData?.rotationData?.isNitrogenFixer ?: false,
+            rootDepth = plantData?.plantingDetails?.rootDepth
         )
 
+        logger.info("Created crop record for ${plantEntity.name} with family=${plantData?.family}, feeder=${plantData?.rotationData?.feederType}")
         return mapCropRecordEntityToDTO(cropRecordRepository.save(cropRecordEntity))
     }
 
@@ -129,12 +146,26 @@ class CropRecordService(
             .map {growAreaEntity ->
                 requireNotNull(growAreaEntity.id)
 
+                // Fetch plant data from plant-data-aggregator API
+                val plantData = try {
+                    plantDataApiClient.getPlantDetails(plantName)
+                } catch (e: Exception) {
+                    logger.warn("Failed to fetch plant data for $plantName: ${e.message}")
+                    null
+                }
+
                 val cropRecord = CropRecordEntity(
                     plantingDate = LocalDate.now(),
                     plant = getPlantEntityByName(plantName),
                     growZoneId = growAreaEntity.id,
-                    name = plantName
-                    )
+                    name = plantName,
+                    // Cache rotation data
+                    plantFamily = plantData?.family,
+                    plantGenus = plantData?.genus,
+                    feederType = plantData?.rotationData?.feederType,
+                    isNitrogenFixer = plantData?.rotationData?.isNitrogenFixer ?: false,
+                    rootDepth = plantData?.plantingDetails?.rootDepth
+                )
                 return mapCropRecordEntityToDTO(cropRecordRepository.save(cropRecord))
         }
         throw GrowAreaIdNotFoundException("GrowArea with id $growAreaId not found in garden with id $gardenId")
@@ -229,6 +260,109 @@ class CropRecordService(
             logger.error(">>> SERVICE EXCEPTION: ${e.javaClass.simpleName} - ${e.message}")
             throw e
         }
+    }
+    
+    /**
+     * Update disease information for a crop record
+     * Used when user marks that a crop had disease issues
+     */
+    fun updateDiseaseInfo(
+        id: UUID,
+        hadDiseases: Boolean,
+        diseaseNames: String? = null,
+        diseaseNotes: String? = null
+    ): CropRecordDTO {
+        val currentUserId = securityUtils.getCurrentUserId()
+        val existingRecord = cropRecordRepository.findCropRecordEntityById(id)
+            ?: throw IllegalArgumentException("Crop record with id $id not found")
+
+        // Security check
+        val gardenEntity = gardenRepository.findAll().firstOrNull { garden ->
+            garden.growAreas.any { it.id == existingRecord.growZoneId }
+        } ?: throw IllegalArgumentException("Garden not found for this crop record")
+
+        if (gardenEntity.userId != currentUserId) {
+            throw IllegalAccessException("You don't have permission to update this crop record")
+        }
+
+        // Create updated entity with disease info
+        val updatedEntity = CropRecordEntity(
+            id = existingRecord.id,
+            name = existingRecord.name,
+            description = existingRecord.description,
+            plantingDate = existingRecord.plantingDate,
+            harvestDate = existingRecord.harvestDate,
+            plant = existingRecord.plant,
+            status = existingRecord.status,
+            growZoneId = existingRecord.growZoneId,
+            outcome = existingRecord.outcome,
+            notes = existingRecord.notes,
+            plantFamily = existingRecord.plantFamily,
+            plantGenus = existingRecord.plantGenus,
+            feederType = existingRecord.feederType,
+            isNitrogenFixer = existingRecord.isNitrogenFixer,
+            rootDepth = existingRecord.rootDepth,
+            hadDiseases = hadDiseases,
+            diseaseNames = diseaseNames,
+            diseaseNotes = diseaseNotes,
+            yieldRating = existingRecord.yieldRating,
+            soilQualityAfter = existingRecord.soilQualityAfter
+        )
+
+        return mapCropRecordEntityToDTO(cropRecordRepository.save(updatedEntity))
+    }
+    
+    /**
+     * Update yield rating for a crop record
+     */
+    fun updateYieldRating(
+        id: UUID,
+        yieldRating: Int,
+        soilQualityAfter: Int? = null
+    ): CropRecordDTO {
+        require(yieldRating in 1..5) { "Yield rating must be between 1 and 5" }
+        soilQualityAfter?.let {
+            require(it in 1..5) { "Soil quality rating must be between 1 and 5" }
+        }
+
+        val currentUserId = securityUtils.getCurrentUserId()
+        val existingRecord = cropRecordRepository.findCropRecordEntityById(id)
+            ?: throw IllegalArgumentException("Crop record with id $id not found")
+
+        // Security check
+        val gardenEntity = gardenRepository.findAll().firstOrNull { garden ->
+            garden.growAreas.any { it.id == existingRecord.growZoneId }
+        } ?: throw IllegalArgumentException("Garden not found for this crop record")
+
+        if (gardenEntity.userId != currentUserId) {
+            throw IllegalAccessException("You don't have permission to update this crop record")
+        }
+
+        // Create updated entity with yield rating
+        val updatedEntity = CropRecordEntity(
+            id = existingRecord.id,
+            name = existingRecord.name,
+            description = existingRecord.description,
+            plantingDate = existingRecord.plantingDate,
+            harvestDate = existingRecord.harvestDate,
+            plant = existingRecord.plant,
+            status = existingRecord.status,
+            growZoneId = existingRecord.growZoneId,
+            outcome = existingRecord.outcome,
+            notes = existingRecord.notes,
+            plantFamily = existingRecord.plantFamily,
+            plantGenus = existingRecord.plantGenus,
+            feederType = existingRecord.feederType,
+            isNitrogenFixer = existingRecord.isNitrogenFixer,
+            rootDepth = existingRecord.rootDepth,
+            hadDiseases = existingRecord.hadDiseases,
+            diseaseNames = existingRecord.diseaseNames,
+            diseaseNotes = existingRecord.diseaseNotes,
+            yieldRating = yieldRating,
+            soilQualityAfter = soilQualityAfter ?: existingRecord.soilQualityAfter
+        )
+
+        return mapCropRecordEntityToDTO(cropRecordRepository.save(updatedEntity))
     }
 
 }

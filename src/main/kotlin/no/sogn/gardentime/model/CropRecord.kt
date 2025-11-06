@@ -30,8 +30,23 @@ data class CropRecord(
     val growZoneId: Long,
     val outcome: String? = null,
     val notes: String? = null,
-
-    )
+    
+    // Rotation planning fields (cached from plant-data-aggregator)
+    val plantFamily: String? = null,
+    val plantGenus: String? = null,
+    val feederType: String? = null,
+    val isNitrogenFixer: Boolean = false,
+    val rootDepth: String? = null,
+    
+    // Disease tracking
+    val hadDiseases: Boolean = false,
+    val diseaseNames: String? = null,
+    val diseaseNotes: String? = null,
+    
+    // Yield tracking
+    val yieldRating: Int? = null,
+    val soilQualityAfter: Int? = null
+)
 
 @Entity
 class CropRecordEntity(
@@ -50,10 +65,37 @@ class CropRecordEntity(
     val growZoneId: Long,
     val outcome: String? = null,
     val notes: String? = null,
+    
+    // Rotation planning fields (cached from plant-data-aggregator)
+    @Column(name = "plant_family")
+    val plantFamily: String? = null,
+    @Column(name = "plant_genus")
+    val plantGenus: String? = null,
+    @Column(name = "feeder_type")
+    val feederType: String? = null,
+    @Column(name = "is_nitrogen_fixer")
+    val isNitrogenFixer: Boolean = false,
+    @Column(name = "root_depth")
+    val rootDepth: String? = null,
+    
+    // Disease tracking
+    @Column(name = "had_diseases")
+    val hadDiseases: Boolean = false,
+    @Column(name = "disease_names")
+    val diseaseNames: String? = null,
+    @Column(name = "disease_notes")
+    val diseaseNotes: String? = null,
+    
+    // Yield tracking
+    @Column(name = "yield_rating")
+    val yieldRating: Int? = null,
+    @Column(name = "soil_quality_after")
+    val soilQualityAfter: Int? = null
 ) {
-    constructor() : this(null, "", "", LocalDate.now(), null, PlantEntity(), CropStatus.UNKNOWN, 0, "", "") {
-
-    }
+    constructor() : this(
+        null, "", "", LocalDate.now(), null, PlantEntity(), CropStatus.UNKNOWN, 0, "", "",
+        null, null, null, false, null, false, null, null, null, null
+    )
 }
 
 enum class CropStatus {
@@ -76,7 +118,17 @@ fun mapCropRecordEntityToDomain(cropRecordEntity: CropRecordEntity): CropRecord 
         status = cropRecordEntity.status,
         growZoneId = cropRecordEntity.growZoneId,
         outcome = cropRecordEntity.outcome,
-        notes = cropRecordEntity.notes
+        notes = cropRecordEntity.notes,
+        plantFamily = cropRecordEntity.plantFamily,
+        plantGenus = cropRecordEntity.plantGenus,
+        feederType = cropRecordEntity.feederType,
+        isNitrogenFixer = cropRecordEntity.isNitrogenFixer,
+        rootDepth = cropRecordEntity.rootDepth,
+        hadDiseases = cropRecordEntity.hadDiseases,
+        diseaseNames = cropRecordEntity.diseaseNames,
+        diseaseNotes = cropRecordEntity.diseaseNotes,
+        yieldRating = cropRecordEntity.yieldRating,
+        soilQualityAfter = cropRecordEntity.soilQualityAfter
     )
 }
 
