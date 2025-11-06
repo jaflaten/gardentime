@@ -59,17 +59,6 @@ data class RotationBenefit(
 )
 
 /**
- * Plant recommendation for a grow area
- */
-data class PlantRecommendation(
-    val plantName: String,
-    val plantFamily: String?,
-    val score: RotationScore,
-    val suitabilityReasons: List<String>,
-    val seasonalNote: String?
-)
-
-/**
  * Planting history response
  */
 data class PlantingHistoryResponse(
