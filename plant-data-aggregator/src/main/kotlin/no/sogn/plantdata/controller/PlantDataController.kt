@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/plant-data")
-@CrossOrigin(origins = ["*"])
 class PlantDataController(
     private val plantDataService: PlantDataService,
     private val companionPlantingService: CompanionPlantingService,

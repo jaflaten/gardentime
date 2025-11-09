@@ -7,6 +7,7 @@ import { SeasonPlan, PlannedCrop, GardenClimateInfo } from '@/types/season-plann
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import GardenNavigation from '../components/GardenNavigation';
+import AddCropToSeasonModal from '@/components/AddCropToSeasonModal';
 
 export default function SeasonPlanPage() {
   const params = useParams();
@@ -21,6 +22,9 @@ export default function SeasonPlanPage() {
   const [showCreatePlan, setShowCreatePlan] = useState(false);
   const [showClimateSetup, setShowClimateSetup] = useState(false);
   const [gardenName, setGardenName] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+  const [showAddCrop, setShowAddCrop] = useState(false);
+  const [defaultGrowAreaId, setDefaultGrowAreaId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     fetchData();
@@ -32,6 +36,16 @@ export default function SeasonPlanPage() {
       const gardenRes = await api.get(`/gardens/${gardenId}`);
       if (gardenRes.data) {
         setGardenName(gardenRes.data.name);
+      }
+
+      // Fetch grow areas to get default
+      try {
+        const growAreasRes = await api.get(`/gardens/${gardenId}/grow-areas`);
+        if (growAreasRes.data && growAreasRes.data.length > 0) {
+          setDefaultGrowAreaId(growAreasRes.data[0].id);
+        }
+      } catch (err) {
+        console.log('No grow areas found');
       }
 
       // Fetch climate info
@@ -76,12 +90,17 @@ export default function SeasonPlanPage() {
 
   const handleSaveClimateInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
     const formData = new FormData(e.currentTarget);
     
+    const lastFrostDate = formData.get('lastFrostDate') as string;
+    const firstFrostDate = formData.get('firstFrostDate') as string;
+    const hardinessZone = formData.get('hardinessZone') as string;
+    
     const data = {
-      lastFrostDate: formData.get('lastFrostDate') as string || null,
-      firstFrostDate: formData.get('firstFrostDate') as string || null,
-      hardinessZone: formData.get('hardinessZone') as string || null,
+      lastFrostDate: lastFrostDate && lastFrostDate.trim() !== '' ? lastFrostDate : null,
+      firstFrostDate: firstFrostDate && firstFrostDate.trim() !== '' ? firstFrostDate : null,
+      hardinessZone: hardinessZone && hardinessZone.trim() !== '' ? hardinessZone : null,
       latitude: null,
       longitude: null
     };
@@ -91,9 +110,16 @@ export default function SeasonPlanPage() {
       if (res.data) {
         setClimateInfo(res.data);
         setShowClimateSetup(false);
+        setError(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save climate info:', error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setError('Your session has expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+      } else {
+        setError('Failed to save climate information. Please try again.');
+      }
     }
   };
 
@@ -145,12 +171,19 @@ export default function SeasonPlanPage() {
 
           {/* Climate Setup Modal */}
           {showClimateSetup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">Set Up Climate Information</h2>
-            <p className="text-gray-600 mb-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
+            <h2 className="text-2xl text-gray-900  font-bold mb-4">Set Up Climate Information</h2>
+            <p className="text-gray-900 mb-4">
               To help you plan when to start seeds indoors, we need to know your frost dates.
             </p>
+            
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+              </div>
+            )}
+            
             <form onSubmit={handleSaveClimateInfo}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -159,10 +192,12 @@ export default function SeasonPlanPage() {
                 <input
                   type="date"
                   name="lastFrostDate"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={climateInfo?.lastFrostDate || ''}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 [color-scheme:light]"
+                  style={{ colorScheme: 'light', color: '#111827' }}
                   placeholder="e.g., May 15"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   When does frost typically end in spring?
                 </p>
               </div>
@@ -174,10 +209,12 @@ export default function SeasonPlanPage() {
                 <input
                   type="date"
                   name="firstFrostDate"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={climateInfo?.firstFrostDate || ''}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 [color-scheme:light]"
+                  style={{ colorScheme: 'light', color: '#111827' }}
                   placeholder="e.g., October 1"
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-600 mt-1">
                   When does frost typically start in fall?
                 </p>
               </div>
@@ -189,7 +226,9 @@ export default function SeasonPlanPage() {
                 <input
                   type="text"
                   name="hardinessZone"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  defaultValue={climateInfo?.hardinessZone || ''}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                  style={{ color: '#111827' }}
                   placeholder="e.g., 7a"
                 />
               </div>
@@ -216,8 +255,8 @@ export default function SeasonPlanPage() {
 
           {/* Create Season Plan Modal */}
           {showCreatePlan && (
-        <div className="fixed inset-0 bg-black text-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
             <h2 className="text-2xl font-bold mb-4">Create Season Plan</h2>
             <form onSubmit={handleCreateSeasonPlan}>
               <div className="mb-4">
@@ -311,60 +350,90 @@ export default function SeasonPlanPage() {
           {/* Planned Crops */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Planned Crops</h3>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
-                Add Crop
-              </button>
+              <h3 className="text-xl text-gray-900 font-semibold">Planned Crops</h3>
+              <div className="flex gap-2">
+                {plannedCrops.length > 0 && (
+                  <button 
+                    onClick={() => router.push(`/gardens/${gardenId}/rotation-planner?seasonPlanId=${currentSeasonPlan?.id}`)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Run Rotation Planner
+                  </button>
+                )}
+                <button 
+                  onClick={() => setShowAddCrop(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+                >
+                  Add Crop
+                </button>
+              </div>
             </div>
 
             {plannedCrops.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500">No crops planned yet</p>
-                <p className="text-sm text-gray-400 mt-2">
+                <p className="text-gray-600">No crops planned yet</p>
+                <p className="text-sm text-gray-500 mt-2">
                   Add crops to your season plan to get started
                 </p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {plannedCrops.map((crop) => (
-                  <div
-                    key={crop.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{crop.plantName}</h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Quantity: {crop.quantity} | Status: {crop.status}
-                        </p>
-                        {crop.indoorStartDate && (
-                          <p className="text-sm text-blue-600 mt-1">
-                            🔵 Start seeds indoors: {new Date(crop.indoorStartDate).toLocaleDateString()}
-                          </p>
-                        )}
-                        {crop.transplantDate && (
-                          <p className="text-sm text-green-600 mt-1">
-                            🟢 Transplant outdoors: {new Date(crop.transplantDate).toLocaleDateString()}
-                          </p>
-                        )}
-                        {crop.expectedHarvestDate && (
-                          <p className="text-sm text-yellow-600 mt-1">
-                            🟡 Expected harvest: {new Date(crop.expectedHarvestDate).toLocaleDateString()}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex gap-2">
-                        <button className="text-sm text-blue-600 hover:text-blue-800">
-                          Edit
-                        </button>
-                        <button className="text-sm text-red-600 hover:text-red-800">
-                          Remove
-                        </button>
-                      </div>
+              <>
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm text-blue-900">
+                        Once you've added all your crops, click <span className="font-semibold">Run Rotation Planner</span> to get optimal placement recommendations based on crop rotation principles, soil health, and your garden's history.
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+                <div className="space-y-3">
+                  {plannedCrops.map((crop) => (
+                    <div
+                      key={crop.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{crop.plantName}</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Quantity: {crop.quantity} | Status: {crop.status}
+                          </p>
+                          {crop.indoorStartDate && (
+                            <p className="text-sm text-blue-600 mt-1">
+                              🔵 Start seeds indoors: {new Date(crop.indoorStartDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {crop.transplantDate && (
+                            <p className="text-sm text-green-600 mt-1">
+                              🟢 Transplant outdoors: {new Date(crop.transplantDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {crop.expectedHarvestDate && (
+                            <p className="text-sm text-yellow-600 mt-1">
+                              🟡 Expected harvest: {new Date(crop.expectedHarvestDate).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="text-sm text-blue-600 hover:text-blue-800">
+                            Edit
+                          </button>
+                          <button className="text-sm text-red-600 hover:text-red-800">
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
 
@@ -408,6 +477,18 @@ export default function SeasonPlanPage() {
             Create Season Plan
             </button>
           </div>
+          )}
+
+          {/* Add Crop Modal */}
+          {currentSeasonPlan && (
+            <AddCropToSeasonModal
+              isOpen={showAddCrop}
+              onClose={() => setShowAddCrop(false)}
+              gardenId={gardenId}
+              seasonPlanId={currentSeasonPlan.id}
+              growAreaId={defaultGrowAreaId}
+              onCropAdded={fetchData}
+            />
           )}
         </div>
       </div>

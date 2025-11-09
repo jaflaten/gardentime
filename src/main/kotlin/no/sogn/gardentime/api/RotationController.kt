@@ -131,59 +131,67 @@ class RotationController(
         @RequestParam(defaultValue = "false") grouped: Boolean
     ): ResponseEntity<RecommendationResponse> {
         
-        logger.info("Getting recommendations for grow area {} (garden {}, season: {}, max: {})",
-            growAreaId, gardenId, season, maxResults)
+        logger.info("=== ROTATION RECOMMENDATION REQUEST ===")
+        logger.info("Getting recommendations for grow area {} (garden {}, season: {}, max: {}, grouped: {})",
+            growAreaId, gardenId, season, maxResults, grouped)
         
-        val recommendations = rotationRecommendationService.getRecommendations(
-            growAreaId = growAreaId,
-            season = season,
-            maxResults = maxResults,
-            minScore = minScore
-        )
-        
-        val response = if (grouped) {
-            // Include grouped recommendations
-            val soilBuilders = rotationRecommendationService.getSoilImprovingRecommendations(
+        return try {
+            val recommendations = rotationRecommendationService.getRecommendations(
                 growAreaId = growAreaId,
-                maxResults = 5
+                season = season,
+                maxResults = maxResults,
+                minScore = minScore
             )
             
-            val byFamily = rotationRecommendationService.getRecommendationsByFamily(
-                growAreaId = growAreaId,
-                familiesPerGroup = 5,
-                plantsPerFamily = 3
-            )
-            
-            val toAvoid = rotationRecommendationService.getPlantsToAvoid(
-                growAreaId = growAreaId,
-                maxResults = 5
-            )
-            
-            RecommendationResponse(
-                growAreaId = growAreaId,
-                recommendations = recommendations,
-                totalEvaluated = 500,  // Approximate
-                totalSuitable = recommendations.size,
-                grouped = GroupedRecommendations(
-                    topPicks = recommendations.take(5),
-                    soilBuilders = soilBuilders,
-                    byFamily = byFamily,
-                    toAvoid = toAvoid
+            val response = if (grouped) {
+                // Include grouped recommendations
+                val soilBuilders = rotationRecommendationService.getSoilImprovingRecommendations(
+                    growAreaId = growAreaId,
+                    maxResults = 5
                 )
-            )
-        } else {
-            RecommendationResponse(
-                growAreaId = growAreaId,
-                recommendations = recommendations,
-                totalEvaluated = 500,
-                totalSuitable = recommendations.size
-            )
+                
+                val byFamily = rotationRecommendationService.getRecommendationsByFamily(
+                    growAreaId = growAreaId,
+                    familiesPerGroup = 5,
+                    plantsPerFamily = 3
+                )
+                
+                val toAvoid = rotationRecommendationService.getPlantsToAvoid(
+                    growAreaId = growAreaId,
+                    maxResults = 5
+                )
+                
+                RecommendationResponse(
+                    growAreaId = growAreaId,
+                    recommendations = recommendations,
+                    totalEvaluated = 500,  // Approximate
+                    totalSuitable = recommendations.size,
+                    grouped = GroupedRecommendations(
+                        topPicks = recommendations.take(5),
+                        soilBuilders = soilBuilders,
+                        byFamily = byFamily,
+                        toAvoid = toAvoid
+                    )
+                )
+            } else {
+                RecommendationResponse(
+                    growAreaId = growAreaId,
+                    recommendations = recommendations,
+                    totalEvaluated = 500,
+                    totalSuitable = recommendations.size
+                )
+            }
+            
+            logger.info("=== ROTATION RECOMMENDATION RESPONSE ===")
+            logger.info("Returning {} recommendations for grow area {}", 
+                recommendations.size, growAreaId)
+            
+            ResponseEntity.ok(response)
+        } catch (e: Exception) {
+            logger.error("=== ROTATION RECOMMENDATION ERROR ===", e)
+            logger.error("Error getting recommendations for grow area {}: {}", growAreaId, e.message)
+            throw e
         }
-        
-        logger.info("Returning {} recommendations for grow area {}", 
-            recommendations.size, growAreaId)
-        
-        return ResponseEntity.ok(response)
     }
     
     /**

@@ -57,37 +57,43 @@ class SeasonPlanningController(
         @PathVariable gardenId: UUID,
         @RequestBody createDto: CreateGardenClimateInfoDTO
     ): ResponseEntity<GardenClimateInfoDTO> {
-        val userId = securityUtils.getCurrentUserId()
-        
-        // Verify garden ownership
-        val garden = gardenRepository.findById(gardenId).orElse(null) 
-            ?: return ResponseEntity.notFound().build()
-        if (garden.userId != userId) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-        }
-
-        val existing = gardenClimateInfoRepository.findByGardenId(gardenId)
-        val climateInfo = if (existing != null) {
-            existing.apply {
-                lastFrostDate = createDto.lastFrostDate
-                firstFrostDate = createDto.firstFrostDate
-                hardinessZone = createDto.hardinessZone
-                latitude = createDto.latitude
-                longitude = createDto.longitude
-                updatedAt = LocalDateTime.now()
+        return try {
+            val userId = securityUtils.getCurrentUserId()
+            
+            // Verify garden ownership
+            val garden = gardenRepository.findById(gardenId).orElse(null) 
+                ?: return ResponseEntity.notFound().build()
+            if (garden.userId != userId) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
             }
-        } else {
-            GardenClimateInfo(
-                gardenId = gardenId,
-                lastFrostDate = createDto.lastFrostDate,
-                firstFrostDate = createDto.firstFrostDate,
-                hardinessZone = createDto.hardinessZone,
-                latitude = createDto.latitude,
-                longitude = createDto.longitude
-            )
-        }
 
-        return ResponseEntity.ok(gardenClimateInfoRepository.save(climateInfo).toDTO())
+            val existing = gardenClimateInfoRepository.findByGardenId(gardenId)
+            val climateInfo = if (existing != null) {
+                existing.apply {
+                    lastFrostDate = createDto.lastFrostDate
+                    firstFrostDate = createDto.firstFrostDate
+                    hardinessZone = createDto.hardinessZone
+                    latitude = createDto.latitude
+                    longitude = createDto.longitude
+                    updatedAt = LocalDateTime.now()
+                }
+            } else {
+                GardenClimateInfo(
+                    gardenId = gardenId,
+                    lastFrostDate = createDto.lastFrostDate,
+                    firstFrostDate = createDto.firstFrostDate,
+                    hardinessZone = createDto.hardinessZone,
+                    latitude = createDto.latitude,
+                    longitude = createDto.longitude
+                )
+            }
+
+            ResponseEntity.ok(gardenClimateInfoRepository.save(climateInfo).toDTO())
+        } catch (e: Exception) {
+            println("Error updating climate info: ${e.message}")
+            e.printStackTrace()
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+        }
     }
 
     // Season Plan endpoints

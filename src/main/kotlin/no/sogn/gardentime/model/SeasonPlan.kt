@@ -9,22 +9,22 @@ import java.util.*
     name = "season_plans",
     uniqueConstraints = [UniqueConstraint(columnNames = ["garden_id", "season", "year"])]
 )
-data class SeasonPlan(
+class SeasonPlan(
     @Id
     @Column(name = "id")
     val id: UUID = UUID.randomUUID(),
 
     @Column(name = "garden_id", nullable = false)
-    val gardenId: UUID,
+    val gardenId: UUID = UUID.randomUUID(),
 
     @Column(name = "user_id", nullable = false)
-    val userId: UUID,
+    val userId: UUID = UUID.randomUUID(),
 
     @Column(name = "season", nullable = false, length = 50)
-    var season: String,  // SPRING, SUMMER, FALL, WINTER
+    var season: String = "",
 
     @Column(name = "year", nullable = false)
-    var year: Int,
+    var year: Int = 0,
 
     @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),

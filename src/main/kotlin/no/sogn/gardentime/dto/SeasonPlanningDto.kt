@@ -36,8 +36,8 @@ data class CreateSeasonPlanDTO(
 data class PlannedCropDTO(
     val id: UUID,
     val seasonPlanId: UUID,
-    val plantId: Long,
-    val plantName: String?,
+    val plantId: String,
+    val plantName: String,
     val quantity: Int,
     val preferredGrowAreaId: Long?,
     val preferredGrowAreaName: String?,
@@ -53,7 +53,8 @@ data class PlannedCropDTO(
 )
 
 data class CreatePlannedCropDTO(
-    val plantId: Long,
+    val plantId: String,
+    val plantName: String,
     val quantity: Int = 1,
     val preferredGrowAreaId: Long?,
     val phase: String?,
@@ -77,7 +78,7 @@ data class CalendarEventDTO(
     val date: LocalDate,
     val type: String,  // INDOOR_START, TRANSPLANT, DIRECT_SOW, EXPECTED_HARVEST, ACTUAL_HARVEST, ACTUAL_PLANTING
     val plantName: String,
-    val plantId: Long,
+    val plantId: String,
     val plannedCropId: UUID?,
     val cropRecordId: UUID?,
     val growAreaName: String?,

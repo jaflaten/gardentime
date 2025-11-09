@@ -3,10 +3,11 @@ import { callSpringApi } from '@/lib/spring-api';
 
 // PUT /api/canvas-objects/[id] - Update a canvas object
 export async function PUT(
+
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+  props: { params: Promise<{ id: string }> }
+) {  try {
+    const params = await props.params;
     const { id } = await params;
     const body = await request.json();
 
@@ -32,10 +33,11 @@ export async function PUT(
 
 // DELETE /api/canvas-objects/[id] - Delete a canvas object
 export async function DELETE(
+
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+  props: { params: Promise<{ id: string }> }
+) {  try {
+    const params = await props.params;
     const { id } = await params;
 
     const response = await callSpringApi(`/api/canvas-objects/${id}`, {

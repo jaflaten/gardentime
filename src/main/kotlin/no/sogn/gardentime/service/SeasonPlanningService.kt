@@ -82,6 +82,7 @@ class SeasonPlanningService(
         val plannedCrop = PlannedCrop(
             seasonPlanId = seasonPlanId,
             plantId = createDto.plantId,
+            plantName = createDto.plantName,
             quantity = createDto.quantity,
             preferredGrowAreaId = createDto.preferredGrowAreaId,
             phase = createDto.phase,
@@ -135,7 +136,6 @@ class SeasonPlanningService(
         seasonPlans.forEach { seasonPlan ->
             val plannedCrops = plannedCropRepository.findBySeasonPlanId(seasonPlan.id)
             plannedCrops.forEach { plannedCrop ->
-                val plant = plantRepository.findById(plannedCrop.plantId).orElse(null)
                 val growArea = plannedCrop.preferredGrowAreaId?.let { 
                     growAreaRepository.findById(it).orElse(null) 
                 }
@@ -147,7 +147,7 @@ class SeasonPlanningService(
                             id = UUID.randomUUID(),
                             date = date,
                             type = "INDOOR_START",
-                            plantName = plant?.name ?: "Unknown",
+                            plantName = plannedCrop.plantName,
                             plantId = plannedCrop.plantId,
                             plannedCropId = plannedCrop.id,
                             cropRecordId = null,
@@ -165,7 +165,7 @@ class SeasonPlanningService(
                             id = UUID.randomUUID(),
                             date = date,
                             type = "TRANSPLANT",
-                            plantName = plant?.name ?: "Unknown",
+                            plantName = plannedCrop.plantName,
                             plantId = plannedCrop.plantId,
                             plannedCropId = plannedCrop.id,
                             cropRecordId = plannedCrop.cropRecordId,
@@ -183,7 +183,7 @@ class SeasonPlanningService(
                             id = UUID.randomUUID(),
                             date = date,
                             type = "DIRECT_SOW",
-                            plantName = plant?.name ?: "Unknown",
+                            plantName = plannedCrop.plantName,
                             plantId = plannedCrop.plantId,
                             plannedCropId = plannedCrop.id,
                             cropRecordId = plannedCrop.cropRecordId,
@@ -201,7 +201,7 @@ class SeasonPlanningService(
                             id = UUID.randomUUID(),
                             date = date,
                             type = "EXPECTED_HARVEST",
-                            plantName = plant?.name ?: "Unknown",
+                            plantName = plannedCrop.plantName,
                             plantId = plannedCrop.plantId,
                             plannedCropId = plannedCrop.id,
                             cropRecordId = plannedCrop.cropRecordId,
@@ -227,7 +227,7 @@ class SeasonPlanningService(
                         date = cropRecord.plantingDate,
                         type = "ACTUAL_PLANTING",
                         plantName = cropRecord.plant.name ?: "Unknown",
-                        plantId = cropRecord.plant.id ?: 0L,
+                        plantId = cropRecord.plant.id?.toString() ?: "0",
                         plannedCropId = null,
                         cropRecordId = cropRecord.id,
                         growAreaName = growArea.name,
@@ -244,7 +244,7 @@ class SeasonPlanningService(
                             date = harvestDate,
                             type = "ACTUAL_HARVEST",
                             plantName = cropRecord.plant.name ?: "Unknown",
-                            plantId = cropRecord.plant.id ?: 0L,
+                            plantId = cropRecord.plant.id?.toString() ?: "0",
                             plannedCropId = null,
                             cropRecordId = cropRecord.id,
                             growAreaName = growArea.name,
@@ -278,14 +278,13 @@ class SeasonPlanningService(
     )
 
     private fun PlannedCrop.toDTO(): PlannedCropDTO {
-        val plant = plantRepository.findById(plantId).orElse(null)
         val growArea = preferredGrowAreaId?.let { growAreaRepository.findById(it).orElse(null) }
 
         return PlannedCropDTO(
             id = id,
             seasonPlanId = seasonPlanId,
             plantId = plantId,
-            plantName = plant?.name,
+            plantName = plantName,
             quantity = quantity,
             preferredGrowAreaId = preferredGrowAreaId,
             preferredGrowAreaName = growArea?.name,

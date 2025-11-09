@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder
  */
 @Component
 class PlantDataApiClient(
-    private val restTemplate: RestTemplate
+    private val plantDataRestTemplate: RestTemplate
 ) {
     
     @Value("\${plantdata.api.url:http://localhost:8081}")
@@ -38,7 +38,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/plants/{name}"
             logger.debug("Fetching plant details for: {}", plantName)
             
-            restTemplate.getForObject(url, PlantDetailDTO::class.java, plantName)
+            plantDataRestTemplate.getForObject(url, PlantDetailDTO::class.java, plantName)
         } catch (e: HttpClientErrorException) {
             when (e.statusCode) {
                 HttpStatus.NOT_FOUND -> {
@@ -82,7 +82,7 @@ class PlantDataApiClient(
             val url = uriBuilder.toUriString()
             logger.debug("Fetching plant list: {}", url)
             
-            restTemplate.getForObject(url, PlantListResponseDTO::class.java)
+            plantDataRestTemplate.getForObject(url, PlantListResponseDTO::class.java)
                 ?: PlantListResponseDTO(emptyList(), PaginationDTO(0, 0, 0, 0))
         } catch (e: Exception) {
             logger.error("Error fetching plant list: {}", e.message)
@@ -102,7 +102,7 @@ class PlantDataApiClient(
             
             logger.debug("Searching plants: {}", query)
             
-            restTemplate.getForObject(url, Array<PlantSummaryDTO>::class.java)
+            plantDataRestTemplate.getForObject(url, Array<PlantSummaryDTO>::class.java)
                 ?.toList() ?: emptyList()
         } catch (e: Exception) {
             logger.error("Error searching plants: {}", e.message)
@@ -120,7 +120,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/families"
             logger.debug("Fetching plant families")
             
-            restTemplate.getForObject(url, FamiliesResponseDTO::class.java)
+            plantDataRestTemplate.getForObject(url, FamiliesResponseDTO::class.java)
                 ?: FamiliesResponseDTO(emptyList())
         } catch (e: Exception) {
             logger.error("Error fetching families: {}", e.message)
@@ -137,7 +137,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/families/{familyName}/plants"
             logger.debug("Fetching plants for family: {}", familyName)
             
-            restTemplate.getForObject(url, FamilyWithPlantsDTO::class.java, familyName)
+            plantDataRestTemplate.getForObject(url, FamilyWithPlantsDTO::class.java, familyName)
         } catch (e: HttpClientErrorException) {
             when (e.statusCode) {
                 HttpStatus.NOT_FOUND -> {
@@ -165,7 +165,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/diseases/soil-borne"
             logger.debug("Fetching soil-borne diseases")
             
-            restTemplate.getForObject(url, SoilBorneDiseasesResponseDTO::class.java)
+            plantDataRestTemplate.getForObject(url, SoilBorneDiseasesResponseDTO::class.java)
                 ?: SoilBorneDiseasesResponseDTO(emptyList())
         } catch (e: Exception) {
             logger.error("Error fetching soil-borne diseases: {}", e.message)
@@ -183,7 +183,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/plants/{name}/companions"
             logger.debug("Fetching companions for: {}", plantName)
             
-            restTemplate.getForObject(url, CompanionListDTO::class.java, plantName)
+            plantDataRestTemplate.getForObject(url, CompanionListDTO::class.java, plantName)
         } catch (e: HttpClientErrorException) {
             when (e.statusCode) {
                 HttpStatus.NOT_FOUND -> {
@@ -210,7 +210,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/plants/{name}/pests"
             logger.debug("Fetching pests for: {}", plantName)
             
-            restTemplate.getForObject(url, PlantPestsResponseDTO::class.java, plantName)
+            plantDataRestTemplate.getForObject(url, PlantPestsResponseDTO::class.java, plantName)
         } catch (e: HttpClientErrorException) {
             when (e.statusCode) {
                 HttpStatus.NOT_FOUND -> {
@@ -237,7 +237,7 @@ class PlantDataApiClient(
             val url = "$apiUrl$API_BASE_PATH/plants/{name}/diseases"
             logger.debug("Fetching diseases for: {}", plantName)
             
-            restTemplate.getForObject(url, PlantDiseasesResponseDTO::class.java, plantName)
+            plantDataRestTemplate.getForObject(url, PlantDiseasesResponseDTO::class.java, plantName)
         } catch (e: HttpClientErrorException) {
             when (e.statusCode) {
                 HttpStatus.NOT_FOUND -> {
@@ -252,6 +252,43 @@ class PlantDataApiClient(
         } catch (e: Exception) {
             logger.error("Unexpected error fetching diseases: {}", e.message)
             null
+        }
+    }
+    
+    /**
+     * Check compatibility between multiple plants
+     */
+    @Cacheable(value = ["compatibility"], key = "#plantNames.sorted().joinToString()")
+    fun checkCompatibility(plantNames: List<String>): CompatibilityCheckResponse? {
+        return try {
+            val url = "$apiUrl$API_BASE_PATH/companions/check"
+            val request = CompatibilityCheckRequest(plantNames)
+            logger.debug("Checking compatibility for: {}", plantNames)
+            
+            plantDataRestTemplate.postForObject(url, request, CompatibilityCheckResponse::class.java)
+        } catch (e: HttpClientErrorException) {
+            logger.error("Error checking compatibility: {}", e.message)
+            null
+        } catch (e: Exception) {
+            logger.error("Unexpected error checking compatibility: {}", e.message)
+            null
+        }
+    }
+    
+    /**
+     * Get multiple plants in a single request
+     */
+    fun getBulkPlants(plantNames: List<String>): BulkPlantResponseDTO {
+        return try {
+            val url = "$apiUrl$API_BASE_PATH/plants/bulk"
+            val request = BulkPlantRequest(plantNames)
+            logger.debug("Fetching bulk plants: {}", plantNames)
+            
+            plantDataRestTemplate.postForObject(url, request, BulkPlantResponseDTO::class.java)
+                ?: BulkPlantResponseDTO(emptyList(), plantNames)
+        } catch (e: Exception) {
+            logger.error("Error fetching bulk plants: {}", e.message)
+            BulkPlantResponseDTO(emptyList(), plantNames)
         }
     }
 }

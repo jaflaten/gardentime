@@ -29,74 +29,15 @@ class PlantingDateCalculatorService(
      * - Plant's characteristics (frost tolerance, indoor start requirements)
      * - Plant's maturity time
      */
-    fun calculatePlantingDates(gardenId: UUID, plantId: Long): CalculatedDates {
-        val climateInfo = gardenClimateInfoRepository.findByGardenId(gardenId)
-        val plantDetails = plantDetailsRepository.findByPlantId(plantId)
-        val plant = plantRepository.findById(plantId).orElse(null)
-
-        // If no frost date info, return null dates with recommendation
-        if (climateInfo?.lastFrostDate == null) {
-            return CalculatedDates(
-                indoorStartDate = null,
-                transplantDate = null,
-                directSowDate = null,
-                expectedHarvestDate = null,
-                recommendedMethod = determineRecommendedMethod(plantDetails)
-            )
-        }
-
-        val lastFrostDate = climateInfo.lastFrostDate!!
-        var indoorStartDate: LocalDate? = null
-        var transplantDate: LocalDate? = null
-        var directSowDate: LocalDate? = null
-        var expectedHarvestDate: LocalDate? = null
-
-        // Calculate indoor start date if applicable
-        if (plantDetails?.weeksBeforeFrostIndoor != null && plantDetails.weeksBeforeFrostIndoor!! > 0) {
-            indoorStartDate = lastFrostDate.minusWeeks(plantDetails.weeksBeforeFrostIndoor!!.toLong())
-        }
-
-        // Calculate transplant or direct sow dates based on frost tolerance
-        when (plantDetails?.frostTolerance) {
-            "HARDY" -> {
-                // Hardy plants can go out 4-6 weeks before last frost
-                transplantDate = lastFrostDate.minusWeeks(4)
-                directSowDate = lastFrostDate.minusWeeks(4)
-            }
-            "SEMI_HARDY" -> {
-                // Semi-hardy can go out 2-4 weeks before last frost
-                transplantDate = lastFrostDate.minusWeeks(2)
-                directSowDate = lastFrostDate.minusWeeks(2)
-            }
-            "TENDER" -> {
-                // Tender plants need to wait until after frost danger
-                transplantDate = lastFrostDate.plusWeeks(1)
-                directSowDate = lastFrostDate.plusWeeks(1)
-            }
-            else -> {
-                // Default: conservative approach, after last frost
-                transplantDate = lastFrostDate
-                directSowDate = lastFrostDate
-            }
-        }
-
-        // Calculate expected harvest date
-        val plantingDate = when {
-            plantDetails?.canTransplant == true && transplantDate != null -> transplantDate
-            directSowDate != null -> directSowDate
-            else -> lastFrostDate
-        }
-
-        if (plant?.maturityTime != null && plant.maturityTime > 0) {
-            expectedHarvestDate = plantingDate.plusDays(plant.maturityTime.toLong())
-        }
-
+    fun calculatePlantingDates(gardenId: UUID, plantId: String): CalculatedDates {
+        // TODO: Integrate with plant-data-aggregator API to fetch plant details
+        // For now, return empty dates - user will manually set them
         return CalculatedDates(
-            indoorStartDate = indoorStartDate,
-            transplantDate = if (plantDetails?.canTransplant == true) transplantDate else null,
-            directSowDate = if (plantDetails?.canDirectSow == true) directSowDate else null,
-            expectedHarvestDate = expectedHarvestDate,
-            recommendedMethod = determineRecommendedMethod(plantDetails)
+            indoorStartDate = null,
+            transplantDate = null,
+            directSowDate = null,
+            expectedHarvestDate = null,
+            recommendedMethod = "EITHER"
         )
     }
 
@@ -114,7 +55,7 @@ class PlantingDateCalculatorService(
     /**
      * Check if we're currently in a planting window for this plant
      */
-    fun isInPlantingWindow(gardenId: UUID, plantId: Long, currentDate: LocalDate = LocalDate.now()): Boolean {
+    fun isInPlantingWindow(gardenId: UUID, plantId: String, currentDate: LocalDate = LocalDate.now()): Boolean {
         val dates = calculatePlantingDates(gardenId, plantId)
         
         // Check if current date is within 2 weeks of indoor start date

@@ -30,9 +30,10 @@ logging:
 plantdata:
   api:
     url: ${PLANT_DATA_API_URL:http://localhost:8081}
+    key: ${PLANT_DATA_API_KEY:dev-key-change-in-production-make-it-very-secure-and-random}
 
 # Cache configuration
 spring.cache:
-  cache-names: plantDetails,plantList,plantSearch,families,familyPlants,soilBorneDiseases,companions,plantPests,plantDiseases
+  cache-names: plantDetails,plantList,plantSearch,families,familyPlants,soilBorneDiseases,companions,plantPests,plantDiseases,compatibility
   caffeine:
     spec: maximumSize=500,expireAfterWrite=3600s

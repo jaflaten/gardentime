@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
+
   request: NextRequest,
-  { params }: { params: { id: string; seasonPlanId: string } }
-) {
-  try {
+  props: { params: Promise<{ id: string; seasonPlanId: string }> }
+) {  try {
+    const params = await props.params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -43,10 +44,11 @@ export async function GET(
 }
 
 export async function POST(
+
   request: NextRequest,
-  { params }: { params: { id: string; seasonPlanId: string } }
-) {
-  try {
+  props: { params: Promise<{ id: string; seasonPlanId: string }> }
+) {  try {
+    const params = await props.params;
     const token = getTokenFromRequest(request);
 
     if (!token) {

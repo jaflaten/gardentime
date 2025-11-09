@@ -3,9 +3,10 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const token = getTokenFromRequest(request);
 
     if (!token) {
@@ -39,9 +40,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const token = getTokenFromRequest(request);
 
     if (!token) {

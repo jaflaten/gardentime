@@ -628,7 +628,6 @@ export default function GrowAreasListPage() {
             setCropModalGrowArea(null);
             fetchGardenData();
           }}
-          gardenId={gardenId}
           growAreaId={cropModalGrowArea.id}
           growAreaName={cropModalGrowArea.name}
         />

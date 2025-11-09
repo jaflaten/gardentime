@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function GET(
+
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+  props: { params: Promise<{ id: string }> }
+) {  try {
+    const params = await props.params;
     const { id } = await params;
     const token = getTokenFromRequest(request);
 
@@ -39,10 +40,11 @@ export async function GET(
 }
 
 export async function PUT(
+
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+  props: { params: Promise<{ id: string }> }
+) {  try {
+    const params = await props.params;
     const { id } = await params;
     const token = getTokenFromRequest(request);
 
@@ -78,10 +80,11 @@ export async function PUT(
 }
 
 export async function DELETE(
+
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
+  props: { params: Promise<{ id: string }> }
+) {  try {
+    const params = await props.params;
     const { id } = await params;
     const token = getTokenFromRequest(request);
 

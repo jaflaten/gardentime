@@ -7,10 +7,10 @@ import java.util.*
 
 @Entity
 @Table(name = "garden_climate_info")
-data class GardenClimateInfo(
+class GardenClimateInfo(
     @Id
     @Column(name = "garden_id")
-    val gardenId: UUID,
+    val gardenId: UUID = UUID.randomUUID(),
 
     @Column(name = "last_frost_date")
     var lastFrostDate: LocalDate? = null,

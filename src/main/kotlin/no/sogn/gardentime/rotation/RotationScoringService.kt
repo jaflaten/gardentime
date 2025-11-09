@@ -16,7 +16,8 @@ import java.time.temporal.ChronoUnit
 @Service
 class RotationScoringService(
     private val cropRecordRepository: CropRecordRepository,
-    private val plantDataApiClient: PlantDataApiClient
+    private val plantDataApiClient: PlantDataApiClient,
+    private val messageService: RotationMessageService
 ) {
     private val logger = LoggerFactory.getLogger(RotationScoringService::class.java)
     
@@ -391,28 +392,29 @@ class RotationScoringService(
             
             val recommendedInterval = RotationRules.getRecommendedInterval(family)
             
-            when {
-                yearsSince < 1 -> issues.add(
-                    RotationIssue(
-                        IssueSeverity.CRITICAL,
-                        "Family Rotation",
-                        "$family planted in the same location within 1 year",
-                        "Wait at least $recommendedInterval years between $family crops"
-                    )
+            // Get disease history for this family
+            val diseaseHistory = extractDiseaseHistory(history.filter { it.plantFamily == family }, plantingDate)
+            
+            // Generate detailed issue using message service
+            if (yearsSince < recommendedInterval) {
+                val issue = messageService.generateFamilyRotationIssue(
+                    family, yearsSince, recommendedInterval, diseaseHistory
                 )
-                yearsSince < 2 -> issues.add(
-                    RotationIssue(
-                        IssueSeverity.WARNING,
-                        "Family Rotation",
-                        "$family last planted ${String.format("%.1f", yearsSince)} years ago",
-                        "Recommended interval is $recommendedInterval years"
-                    )
-                )
-                yearsSince >= recommendedInterval -> benefits.add(
+                issues.add(issue)
+            } else {
+                // Add benefit for good rotation
+                benefits.add(
                     RotationBenefit(
                         "Family Rotation",
                         "Proper $family rotation interval met (${String.format("%.1f", yearsSince)} years)",
-                        "Reduced disease pressure and soil depletion"
+                        "Reduced disease pressure and soil depletion",
+                        detailedExplanation = "Waiting the full ${recommendedInterval}-year interval allows soil pathogens to decline naturally.",
+                        expectedResults = listOf(
+                            "Healthier plants with better disease resistance",
+                            "Improved yields compared to short rotations",
+                            "Reduced need for chemical interventions"
+                        ),
+                        timeframe = "Benefits realized this growing season"
                     )
                 )
             }
@@ -437,31 +439,39 @@ class RotationScoringService(
         val lastCrop = history.maxByOrNull { it.plantingDate }
         if (lastCrop == null) return
         
-        val previousFeederType = lastCrop.feederType
+        val previousFeederType = lastCrop.feederType ?: "MODERATE"
+        val currentType = currentFeederType ?: "MODERATE"
         
-        when {
-            isNitrogenFixer && previousFeederType == "HEAVY" -> benefits.add(
-                RotationBenefit(
-                    "Nutrient Balance",
-                    "Nitrogen-fixing crop after heavy feeder",
-                    "Will restore nitrogen levels and improve soil fertility"
+        // Check for heavy-heavy succession using message service
+        val nutrientIssue = messageService.generateNutrientBalanceIssue(previousFeederType, currentType)
+        if (nutrientIssue != null) {
+            issues.add(nutrientIssue)
+        } else {
+            // Add benefits for good sequences
+            when {
+                isNitrogenFixer && previousFeederType == "HEAVY" -> benefits.add(
+                    RotationBenefit(
+                        "Nutrient Balance",
+                        "Nitrogen-fixing crop after heavy feeder",
+                        "Will restore nitrogen levels and improve soil fertility",
+                        detailedExplanation = "Legumes form symbiotic relationships with soil bacteria to fix atmospheric nitrogen.",
+                        expectedResults = listOf(
+                            "40-200 lbs nitrogen added per acre",
+                            "Reduced fertilizer needs for next crop",
+                            "Improved soil structure"
+                        ),
+                        timeframe = "Nitrogen available next season"
+                    )
                 )
-            )
-            currentFeederType == "HEAVY" && previousFeederType == "HEAVY" -> issues.add(
-                RotationIssue(
-                    IssueSeverity.WARNING,
-                    "Nutrient Balance",
-                    "Two heavy feeders in succession",
-                    "Consider adding compost or planting nitrogen-fixers next season"
+                currentType == "LIGHT" && previousFeederType == "HEAVY" -> benefits.add(
+                    RotationBenefit(
+                        "Nutrient Balance",
+                        "Light feeder after heavy feeder",
+                        "Allows soil to recover nutrient levels",
+                        timeframe = "Soil recovery begins this season"
+                    )
                 )
-            )
-            currentFeederType == "LIGHT" && previousFeederType == "HEAVY" -> benefits.add(
-                RotationBenefit(
-                    "Nutrient Balance",
-                    "Light feeder after heavy feeder",
-                    "Allows soil to recover nutrient levels"
-                )
-            )
+            }
         }
     }
     
@@ -473,28 +483,35 @@ class RotationScoringService(
     ) {
         if (family == null) return
         
-        val diseasedCrops = history.filter { 
-            it.hadDiseases && it.plantFamily == family 
-        }
+        val diseaseHistory = extractDiseaseHistory(history.filter { it.plantFamily == family }, LocalDate.now())
         
-        if (diseasedCrops.isNotEmpty()) {
-            val mostRecent = diseasedCrops.maxByOrNull { it.plantingDate }!!
-            val yearsSince = ChronoUnit.DAYS.between(
-                mostRecent.plantingDate,
-                LocalDate.now()
-            ) / 365.0
-            
-            if (yearsSince < 3) {
-                issues.add(
-                    RotationIssue(
-                        IssueSeverity.WARNING,
-                        "Disease History",
-                        "$family crops had disease issues ${String.format("%.1f", yearsSince)} years ago",
-                        "Disease may persist in soil - monitor closely and consider resistant varieties"
-                    )
-                )
+        if (diseaseHistory.isNotEmpty()) {
+            val diseaseIssue = messageService.generateDiseaseRiskIssue(diseaseHistory)
+            if (diseaseIssue != null) {
+                issues.add(diseaseIssue)
             }
         }
+    }
+    
+    /**
+     * Extract disease history from crop records
+     */
+    private fun extractDiseaseHistory(
+        crops: List<CropRecordEntity>,
+        currentDate: LocalDate
+    ): List<DiseaseIncident> {
+        return crops
+            .filter { it.hadDiseases && it.name != null }
+            .map { crop ->
+                val yearsSince = ChronoUnit.DAYS.between(crop.plantingDate, currentDate) / 365.0
+                DiseaseIncident(
+                    plantName = crop.name!!,
+                    plantFamily = crop.plantFamily,
+                    diseaseNames = crop.diseaseNames ?: "Unknown disease",
+                    plantingDate = crop.plantingDate.toString(),
+                    yearsAgo = yearsSince
+                )
+            }
     }
     
     private fun collectRootDepthIssues(
@@ -508,15 +525,10 @@ class RotationScoringService(
             .take(3)
             .mapNotNull { it.rootDepth }
         
-        if (RotationRules.RootDepth.isDepthRepeated(currentDepth, recentDepths)) {
-            issues.add(
-                RotationIssue(
-                    IssueSeverity.INFO,
-                    "Root Depth",
-                    "Same root depth ($currentDepth) for 3+ consecutive crops",
-                    "Vary root depths to improve soil structure and prevent compaction"
-                )
-            )
+        // Check for root depth issue using message service
+        val rootIssue = messageService.generateRootDepthIssue(currentDepth, recentDepths)
+        if (rootIssue != null) {
+            issues.add(rootIssue)
         } else if (recentDepths.isNotEmpty()) {
             val uniqueDepths = (recentDepths + currentDepth).distinct().size
             if (uniqueDepths >= 3) {
@@ -524,7 +536,14 @@ class RotationScoringService(
                     RotationBenefit(
                         "Root Depth Diversity",
                         "Good variation in root depths",
-                        "Improves soil structure and nutrient access at different levels"
+                        "Improves soil structure and nutrient access at different levels",
+                        detailedExplanation = "Different root depths naturally aerate soil and access nutrients from multiple layers.",
+                        expectedResults = listOf(
+                            "Improved water infiltration",
+                            "Reduced soil compaction",
+                            "Better overall soil structure"
+                        ),
+                        timeframe = "Gradual improvement over 1-2 seasons"
                     )
                 )
             }

@@ -190,3 +190,41 @@ data class PlantDiseaseDTO(
     val notes: String?,
     val preventionTips: String?
 )
+
+// ============ Bulk Plant DTOs ============
+
+data class BulkPlantRequest(
+    val plantNames: List<String>
+)
+
+data class BulkPlantResponseDTO(
+    val plants: List<PlantDetailDTO>,
+    val notFound: List<String>
+)
+
+// ============ Compatibility Check DTOs ============
+
+data class CompatibilityCheckRequest(
+    val plantNames: List<String>
+)
+
+data class CompatibilityCheckResponse(
+    val compatible: Boolean,
+    val relationships: List<PlantRelationshipDTO>,
+    val warnings: List<CompatibilityWarningDTO>,
+    val suggestions: List<String>
+)
+
+data class PlantRelationshipDTO(
+    val plant1: String,
+    val plant2: String,
+    val relationship: String,
+    val reason: String?,
+    val mechanism: String?,
+    val confidenceLevel: String
+)
+
+data class CompatibilityWarningDTO(
+    val severity: String,
+    val message: String
+)

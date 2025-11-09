@@ -40,7 +40,13 @@ data class RotationIssue(
     val severity: IssueSeverity,
     val category: String,
     val message: String,
-    val suggestion: String?
+    val suggestion: String?,
+    
+    // Enhanced explanation fields
+    val detailedExplanation: String? = null,
+    val learnMore: LearnMoreContent? = null,
+    val affectedYears: List<Int>? = null,
+    val relatedPlants: List<String>? = null
 )
 
 enum class IssueSeverity {
@@ -55,7 +61,32 @@ enum class IssueSeverity {
 data class RotationBenefit(
     val category: String,
     val message: String,
-    val impact: String  // Expected positive outcome
+    val impact: String,  // Expected positive outcome
+    
+    // Enhanced benefit fields
+    val detailedExplanation: String? = null,
+    val expectedResults: List<String>? = null,
+    val timeframe: String? = null
+)
+
+/**
+ * Learn more content for expandable educational sections
+ */
+data class LearnMoreContent(
+    val title: String,
+    val content: String,
+    val scientificBasis: String? = null,
+    val examples: List<String>? = null,
+    val externalLinks: List<ExternalLink>? = null
+)
+
+/**
+ * External resource link
+ */
+data class ExternalLink(
+    val title: String,
+    val url: String,
+    val description: String? = null
 )
 
 /**

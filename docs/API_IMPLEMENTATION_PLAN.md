@@ -2,7 +2,13 @@
 
 ## Overview
 
-Building a comprehensive REST API to serve plant data for intelligent crop rotation planning in GardenTime.
+Building a comprehensive REST API in **plant-data-aggregator** to serve plant data for intelligent crop rotation planning in **gardentime**.
+
+**Architecture:**
+- **plant-data-aggregator**: Provides REST API with plant data (characteristics, families, companions, pests, diseases)
+- **gardentime**: Consumes the plant data API and implements rotation planning logic based on user's garden history
+
+**Important:** Rotation planning logic lives in gardentime, NOT in plant-data-aggregator. This service only provides the plant data that gardentime needs to make intelligent rotation decisions.
 
 ---
 
@@ -22,9 +28,10 @@ Building a comprehensive REST API to serve plant data for intelligent crop rotat
    - `GET /api/v1/plant-data/plants/{slug}/companions` - Get companions
    - `POST /api/v1/plant-data/companions/check` - Check compatibility
 
-4. **Rotation Planning** (2 endpoints)
-   - `POST /api/v1/plant-data/rotation/validate` - Validate rotation
-   - `GET /api/v1/plant-data/rotation/recommendations` - Get recommendations
+4. **Rotation Planning** ✅ (IMPLEMENTED IN GARDENTIME - CORRECT LOCATION)
+   - Rotation endpoints are in gardentime, NOT plant-data-aggregator
+   - `POST /api/gardens/{gardenId}/grow-areas/{growAreaId}/rotation/validate`
+   - `GET /api/gardens/{gardenId}/grow-areas/{growAreaId}/rotation/recommendations`
 
 5. **Pest & Disease** (3 endpoints)
    - `GET /api/v1/plant-data/plants/{slug}/pests` - Plant pests
@@ -37,7 +44,7 @@ Building a comprehensive REST API to serve plant data for intelligent crop rotat
 7. **Bulk Operations** (1 endpoint)
    - `POST /api/v1/plant-data/plants/bulk` - Multiple plant details
 
-**Total:** 13 endpoints across 7 functional areas
+**Total:** 11 endpoints in plant-data-aggregator (2 rotation endpoints correctly in gardentime)
 
 ---
 
@@ -124,61 +131,23 @@ Building a comprehensive REST API to serve plant data for intelligent crop rotat
 
 ---
 
-### Phase 3: Rotation Planning (Priority 3)
-**Goal:** Intelligent rotation validation and recommendations
+### Phase 3: Rotation Planning ✅ (CORRECTLY IN GARDENTIME)
+**Status:** IMPLEMENTED IN GARDENTIME (correct location!)
 
-#### Service Layer
-- [ ] Create `RotationPlanningService`
-  - [ ] `validateRotation(currentPlant, history)` - Validate plan
-  - [ ] `scoreRotation(plantSlug, history)` - Calculate score (0-100)
-  - [ ] `getRecommendations(history, filters)` - Suggest plants
-  - [ ] `checkFamilyRotation(familyId, history)` - Family rule check
-  - [ ] `analyzeSoilHealth(history)` - Nutrient balance analysis
+Rotation planning logic is correctly implemented in the gardentime application, NOT in plant-data-aggregator.
 
-#### Rotation Scoring Algorithm
-- [ ] **Family Rotation Rules** (35 points)
-  - [ ] Years since same family planted
-  - [ ] Critical: 0-1 years = 0 points (FAIL)
-  - [ ] Warning: 2 years = 15 points
-  - [ ] Good: 3+ years = 35 points
+**Why this is correct:**
+- Rotation planning requires user's garden history (grow areas, past plantings)
+- plant-data-aggregator only provides botanical data (characteristics, families, companions)
+- gardentime fetches plant data from aggregator and applies rotation logic with user context
 
-- [ ] **Nutrient Balance** (25 points)
-  - [ ] Heavy feeder succession = low score
-  - [ ] Nitrogen fixer bonus = high score
-  - [ ] Light feeder after heavy = high score
+**Implemented in gardentime:**
+- `RotationController` - REST API endpoints
+- `RotationScoringService` - Scoring algorithm
+- `RotationRecommendationService` - Recommendation engine
+- `PlantDataApiClient` - Client to fetch data from aggregator
 
-- [ ] **Disease Risk** (20 points)
-  - [ ] Soil-borne disease history
-  - [ ] Persistence years check
-  - [ ] Affected family overlap
-
-- [ ] **Root Depth Diversity** (10 points)
-  - [ ] Varying root depths = bonus
-  - [ ] Same depth repeatedly = penalty
-
-- [ ] **Companion Compatibility** (10 points)
-  - [ ] Check against nearby plantings
-  - [ ] Beneficial neighbors = bonus
-
-#### DTOs
-- [ ] Create `RotationValidationDTO`
-- [ ] Create `RotationIssueDTO`
-- [ ] Create `RotationBenefitDTO`
-- [ ] Create `RotationRecommendationDTO`
-- [ ] Create `PlantHistoryDTO`
-
-#### Controller
-- [ ] Add rotation endpoints
-  - [ ] `POST /rotation/validate`
-  - [ ] `GET /rotation/recommendations`
-
-#### Testing
-- [ ] Test rotation scoring algorithm
-- [ ] Test edge cases (no history, all same family, etc.)
-- [ ] Test recommendation logic
-- [ ] Integration tests with real data
-
-**Estimated:** 4-6 days
+This architecture is correct and follows separation of concerns!
 
 ---
 

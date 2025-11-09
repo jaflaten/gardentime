@@ -16,7 +16,10 @@ data class PlannedCrop(
     val seasonPlanId: UUID,
 
     @Column(name = "plant_id", nullable = false)
-    val plantId: Long,
+    val plantId: String,  // External plant identifier from plant-data-aggregator
+
+    @Column(name = "plant_name")
+    val plantName: String,  // Store the name for quick access
 
     @Column(name = "quantity")
     var quantity: Int = 1,
