@@ -11,16 +11,50 @@ export const api = axios.create({
   },
 });
 
+// Helper to check if JWT token is expired
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+}
+
 // Add request interceptor to include auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
     if (token) {
+      // Check if token is expired
+      if (isTokenExpired(token)) {
+        console.warn('Token expired, clearing auth data');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        window.location.href = '/login';
+        return Promise.reject(new Error('Token expired'));
+      }
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle 401 errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn('Received 401, clearing auth data');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('username');
+      localStorage.removeItem('email');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );

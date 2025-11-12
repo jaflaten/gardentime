@@ -21,6 +21,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
+  // Helper to check if JWT token is expired
+  const isTokenExpired = (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  };
+
   useEffect(() => {
     // Check for existing auth token on mount
     const storedToken = localStorage.getItem('authToken');
@@ -28,10 +38,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedEmail = localStorage.getItem('email');
 
     if (storedToken && storedUsername && storedEmail) {
-      setToken(storedToken);
-      setUsername(storedUsername);
-      setEmail(storedEmail);
-      setIsAuthenticated(true);
+      // Check if token is expired
+      if (isTokenExpired(storedToken)) {
+        console.warn('Stored token is expired, clearing auth data');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+      } else {
+        setToken(storedToken);
+        setUsername(storedUsername);
+        setEmail(storedEmail);
+        setIsAuthenticated(true);
+      }
     }
 
     setIsLoading(false); // Auth check complete

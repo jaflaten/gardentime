@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
-
-const GARDENTIME_API = process.env.NEXT_PUBLIC_SPRING_API_URL || 'http://localhost:8080';
+import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; seasonPlanId: string }> }
 ) {
   try {
-    const token = await getToken({ req: request });
+    const token = getTokenFromRequest(request);
     
-    if (!token?.accessToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -22,29 +20,23 @@ export async function POST(
     
     console.log('Running rotation planner:', url);
 
-    const response = await fetch(`${GARDENTIME_API}${url}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token.accessToken}`,
-        'Content-Type': 'application/json'
-      }
+    const response = await springApi.post(url, {}, {
+      headers: { Authorization: `Bearer ${token}` }
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Rotation planner error:', response.status, errorText);
+    console.log('Rotation planner completed successfully');
+    
+    return NextResponse.json(response.data);
+  } catch (error: any) {
+    console.error('Run rotation planner error:', error);
+    
+    if (error.response) {
       return NextResponse.json(
-        { error: 'Failed to run rotation planner', details: errorText },
-        { status: response.status }
+        { error: error.response.data?.message || 'Failed to run rotation planner' },
+        { status: error.response.status }
       );
     }
 
-    const data = await response.json();
-    console.log('Rotation planner completed successfully');
-    
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Run rotation planner error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
