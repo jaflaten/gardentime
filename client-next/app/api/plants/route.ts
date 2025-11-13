@@ -16,7 +16,9 @@ export async function GET(request: NextRequest) {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    return NextResponse.json(response.data, { status: 200 });
+    // Extract plants array from PlantListResponseDTO { plants: [], pagination: {} }
+    const plants = response.data.plants || [];
+    return NextResponse.json(plants, { status: 200 });
   } catch (error: any) {
     console.error('Get plants error:', error);
 

@@ -8,7 +8,7 @@ import java.util.*
 data class CropRecordDTO(
     val id: UUID?,
     val growAreaId: Long,
-    val plantId: Long,
+    val plantId: String,  // UUID string from plant-data-aggregator
     val plantName: String,
     val datePlanted: String,  // ISO date string
     val dateHarvested: String? = null,  // ISO date string
@@ -25,7 +25,8 @@ data class CropRecord(
     val description: String? = null,
     val plantingDate: LocalDate,
     val harvestDate: LocalDate? = null,
-    val plant: Plant,
+    val plantId: String,  // UUID string from plant-data-aggregator
+    val plantName: String,
     val status: CropStatus? = null,
     val growZoneId: Long,
     val outcome: String? = null,
@@ -57,9 +58,10 @@ class CropRecordEntity(
     val description: String? = null,
     val plantingDate: LocalDate,
     val harvestDate: LocalDate? = null,
-    @ManyToOne
-    @JoinColumn(name = "plant_id", nullable = false)
-    val plant: PlantEntity,
+    @Column(name = "plant_id", nullable = false)
+    val plantId: String,  // UUID string from plant-data-aggregator
+    @Column(name = "plant_name", nullable = false)
+    val plantName: String,
     @Convert(converter = CropStatusConverter::class)
     val status: CropStatus? = null,
     val growZoneId: Long,
@@ -93,7 +95,7 @@ class CropRecordEntity(
     val soilQualityAfter: Int? = null
 ) {
     constructor() : this(
-        null, "", "", LocalDate.now(), null, PlantEntity(), CropStatus.UNKNOWN, 0, "", "",
+        null, "", "", LocalDate.now(), null, "", "", CropStatus.UNKNOWN, 0, "", "",
         null, null, null, false, null, false, null, null, null, null
     )
 }
@@ -114,7 +116,8 @@ fun mapCropRecordEntityToDomain(cropRecordEntity: CropRecordEntity): CropRecord 
         description = cropRecordEntity.description,
         plantingDate = cropRecordEntity.plantingDate,
         harvestDate = cropRecordEntity.harvestDate,
-        plant = mapPlantToDomain(cropRecordEntity.plant),
+        plantId = cropRecordEntity.plantId,
+        plantName = cropRecordEntity.plantName,
         status = cropRecordEntity.status,
         growZoneId = cropRecordEntity.growZoneId,
         outcome = cropRecordEntity.outcome,
@@ -136,8 +139,8 @@ fun mapCropRecordToDTO(cropRecord: CropRecord): CropRecordDTO {
     return CropRecordDTO(
         id = cropRecord.id,
         growAreaId = cropRecord.growZoneId,
-        plantId = cropRecord.plant.id ?: 0L,
-        plantName = cropRecord.plant.name,
+        plantId = cropRecord.plantId,
+        plantName = cropRecord.plantName,
         datePlanted = cropRecord.plantingDate.toString(),
         dateHarvested = cropRecord.harvestDate?.toString(),
         notes = cropRecord.notes,
@@ -150,8 +153,8 @@ fun mapCropRecordEntityToDTO(cropRecordEntity: CropRecordEntity): CropRecordDTO 
     return CropRecordDTO(
         id = cropRecordEntity.id,
         growAreaId = cropRecordEntity.growZoneId,
-        plantId = cropRecordEntity.plant.id ?: 0L,
-        plantName = cropRecordEntity.plant.name,
+        plantId = cropRecordEntity.plantId,
+        plantName = cropRecordEntity.plantName,
         datePlanted = cropRecordEntity.plantingDate.toString(),
         dateHarvested = cropRecordEntity.harvestDate?.toString(),
         notes = cropRecordEntity.notes,

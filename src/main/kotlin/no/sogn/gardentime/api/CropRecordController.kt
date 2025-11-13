@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory
 
 data class CreateCropRecordRequest(
     val growAreaId: String,  // Changed to String to handle frontend sending string IDs
-    val plantId: String,  // String to handle both UUID and Long formats
+    val plantId: String,  // UUID string from plant-data-aggregator
+    val plantName: String,  // Plant name for display and lookup
     val datePlanted: LocalDate,
     val dateHarvested: LocalDate? = null,
     val notes: String? = null,
@@ -44,6 +45,7 @@ class CropRecordController(
         val createdCropRecord = cropRecordService.createCropRecord(
             growAreaId = request.growAreaId,
             plantId = request.plantId,
+            plantName = request.plantName,
             datePlanted = request.datePlanted,
             dateHarvested = request.dateHarvested,
             notes = request.notes,

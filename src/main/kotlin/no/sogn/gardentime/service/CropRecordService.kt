@@ -26,6 +26,7 @@ class CropRecordService(
     fun createCropRecord(
         growAreaId: String,
         plantId: String,
+        plantName: String,
         datePlanted: LocalDate,
         dateHarvested: LocalDate? = null,
         notes: String? = null,
@@ -50,39 +51,34 @@ class CropRecordService(
             throw IllegalAccessException("You don't have permission to add crop records to this grow area")
         }
 
-        // Convert plantId string to Long
-        val plantIdLong = try {
-            plantId.toLong()
-        } catch (e: NumberFormatException) {
-            throw IllegalArgumentException("Invalid plant ID format: $plantId")
+        // Validate plant exists in Plant Data Aggregator and fetch rotation data
+        val plantData = try {
+            plantDataApiClient.getPlantDetails(plantName)
+        } catch (e: Exception) {
+            logger.warn("Failed to fetch plant data for $plantName: ${e.message}")
+            null
         }
 
-        // Get the plant
-        val plantEntity = plantRepository.findPlantEntityById(plantIdLong)
-            ?: throw IllegalArgumentException("Plant with id $plantIdLong not found")
-
-        // Fetch plant data from plant-data-aggregator API for rotation planning
-        val plantData = try {
-            plantDataApiClient.getPlantDetails(plantEntity.name)
-        } catch (e: Exception) {
-            logger.warn("Failed to fetch plant data for ${plantEntity.name}: ${e.message}")
-            null
+        // Validate plantId matches if we got plant data
+        if (plantData != null && plantData.id.toString() != plantId) {
+            logger.warn("Plant ID mismatch: expected $plantId, got ${plantData.id}")
         }
 
         // Determine status: use provided status, or auto-set based on harvest date
         val cropStatus = status ?: if (dateHarvested != null) CropStatus.HARVESTED else CropStatus.PLANTED
 
-        // Create the crop record with cached plant data
+        // Create the crop record with cached plant data from plant-data-aggregator
         val cropRecordEntity = CropRecordEntity(
             plantingDate = datePlanted,
             harvestDate = dateHarvested,
-            plant = plantEntity,
+            plantId = plantId,
+            plantName = plantName,
             growZoneId = growAreaIdLong,
-            name = plantEntity.name,
+            name = plantName,  // Record name same as plant name
             notes = notes,
             outcome = outcome,
             status = cropStatus,
-            // Cache rotation-critical data from API
+            // Cache rotation-critical data from plant-data-aggregator API
             plantFamily = plantData?.family,
             plantGenus = plantData?.genus,
             feederType = plantData?.rotationData?.feederType,
@@ -90,7 +86,7 @@ class CropRecordService(
             rootDepth = plantData?.plantingDetails?.rootDepth
         )
 
-        logger.info("Created crop record for ${plantEntity.name} with family=${plantData?.family}, feeder=${plantData?.rotationData?.feederType}")
+        logger.info("Created crop record for $plantName (ID: $plantId) with family=${plantData?.family}, feeder=${plantData?.rotationData?.feederType}")
         return mapCropRecordEntityToDTO(cropRecordRepository.save(cropRecordEntity))
     }
 
@@ -122,11 +118,22 @@ class CropRecordService(
             description = existingRecord.description,
             plantingDate = datePlanted ?: existingRecord.plantingDate,
             harvestDate = dateHarvested ?: existingRecord.harvestDate,
-            plant = existingRecord.plant,
+            plantId = existingRecord.plantId,
+            plantName = existingRecord.plantName,
             status = status ?: existingRecord.status,
             growZoneId = existingRecord.growZoneId,
             outcome = outcome ?: existingRecord.outcome,
-            notes = notes ?: existingRecord.notes
+            notes = notes ?: existingRecord.notes,
+            plantFamily = existingRecord.plantFamily,
+            plantGenus = existingRecord.plantGenus,
+            feederType = existingRecord.feederType,
+            isNitrogenFixer = existingRecord.isNitrogenFixer,
+            rootDepth = existingRecord.rootDepth,
+            hadDiseases = existingRecord.hadDiseases,
+            diseaseNames = existingRecord.diseaseNames,
+            diseaseNotes = existingRecord.diseaseNotes,
+            yieldRating = existingRecord.yieldRating,
+            soilQualityAfter = existingRecord.soilQualityAfter
         )
 
         return mapCropRecordEntityToDTO(cropRecordRepository.save(updatedEntity))
@@ -156,7 +163,8 @@ class CropRecordService(
 
                 val cropRecord = CropRecordEntity(
                     plantingDate = LocalDate.now(),
-                    plant = getPlantEntityByName(plantName),
+                    plantId = plantData?.id?.toString() ?: UUID.randomUUID().toString(),
+                    plantName = plantName,
                     growZoneId = growAreaEntity.id,
                     name = plantName,
                     // Cache rotation data
@@ -231,7 +239,7 @@ class CropRecordService(
                 logger.error(">>> SERVICE ERROR: Crop record not found with ID: $id")
                 throw IllegalArgumentException("Crop record with id $id not found")
             }
-            logger.info(">>> SERVICE: Found crop record - ID: ${record.id}, Plant: ${record.plant.name}, GrowZoneId: ${record.growZoneId}")
+            logger.info(">>> SERVICE: Found crop record - ID: ${record.id}, Plant: ${record.plantName}, GrowZoneId: ${record.growZoneId}")
 
             // Security check: verify the crop record belongs to a grow area in the user's garden
             val growAreaEntity = record.growZoneId
@@ -292,7 +300,8 @@ class CropRecordService(
             description = existingRecord.description,
             plantingDate = existingRecord.plantingDate,
             harvestDate = existingRecord.harvestDate,
-            plant = existingRecord.plant,
+            plantId = existingRecord.plantId,
+            plantName = existingRecord.plantName,
             status = existingRecord.status,
             growZoneId = existingRecord.growZoneId,
             outcome = existingRecord.outcome,
@@ -345,7 +354,8 @@ class CropRecordService(
             description = existingRecord.description,
             plantingDate = existingRecord.plantingDate,
             harvestDate = existingRecord.harvestDate,
-            plant = existingRecord.plant,
+            plantId = existingRecord.plantId,
+            plantName = existingRecord.plantName,
             status = existingRecord.status,
             growZoneId = existingRecord.growZoneId,
             outcome = existingRecord.outcome,

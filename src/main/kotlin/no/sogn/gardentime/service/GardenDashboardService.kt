@@ -122,7 +122,7 @@ class GardenDashboardService(
             .map { crop ->
                 RecentHarvestItem(
                     id = crop.id ?: UUID.randomUUID(),
-                    plantName = crop.plant.name,
+                    plantName = crop.plantName,
                     harvestDate = crop.harvestDate!!.toString(),
                     quantity = null, // TODO: Add quantity field to CropRecord
                     unit = null,
@@ -147,7 +147,7 @@ class GardenDashboardService(
                     UpcomingTask(
                         type = TaskType.ATTENTION_NEEDED,
                         cropId = crop.id,
-                        plantName = crop.plant.name,
+                        plantName = crop.plantName,
                         growAreaName = growArea?.name,
                         expectedDate = null,
                         daysOverdue = null,
@@ -167,7 +167,7 @@ class GardenDashboardService(
                         UpcomingTask(
                             type = TaskType.HARVEST_READY,
                             cropId = crop.id,
-                            plantName = crop.plant.name,
+                            plantName = crop.plantName,
                             growAreaName = growArea?.name,
                             expectedDate = today.toString(),
                             daysOverdue = 0,
@@ -180,7 +180,7 @@ class GardenDashboardService(
                         UpcomingTask(
                             type = TaskType.HARVEST_SOON,
                             cropId = crop.id,
-                            plantName = crop.plant.name,
+                            plantName = crop.plantName,
                             growAreaName = growArea?.name,
                             expectedDate = crop.plantingDate.plusDays(60).toString(),
                             daysOverdue = null,
@@ -277,7 +277,7 @@ class GardenDashboardService(
                 CalendarEvent(
                     date = date.toString(),
                     type = CalendarEventType.PLANTED,
-                    plantName = crops.first().plant.name,
+                    plantName = crops.first().plantName,
                     count = crops.size
                 )
             )
@@ -296,7 +296,7 @@ class GardenDashboardService(
                     CalendarEvent(
                         date = date.toString(),
                         type = CalendarEventType.ACTUAL_HARVEST,
-                        plantName = crops.first().plant.name,
+                        plantName = crops.first().plantName,
                         count = crops.size
                     )
                 )

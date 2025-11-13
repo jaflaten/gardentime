@@ -67,9 +67,18 @@ export default function AddCropModal({
     setError('');
 
     try {
+      // Find the selected plant to get its name
+      const selectedPlant = plants.find(p => p.id === newCropRecord.plantId);
+      if (!selectedPlant) {
+        setError('Please select a plant');
+        setLoading(false);
+        return;
+      }
+
       await cropRecordService.create({
         growAreaId: growAreaId,
         plantId: newCropRecord.plantId,
+        plantName: selectedPlant.name,  // Pass plant name for backend
         datePlanted: newCropRecord.datePlanted,
         dateHarvested: newCropRecord.dateHarvested || undefined,
         notes: newCropRecord.notes || undefined,

@@ -1,21 +1,20 @@
 package no.sogn.gardentime.service
 
+import no.sogn.gardentime.client.PlantDataApiClient
 import no.sogn.gardentime.db.CropRecordRepository
 import no.sogn.gardentime.db.GardenRepository
 import no.sogn.gardentime.db.GrowZoneRepository
+import no.sogn.gardentime.dto.PlantSummaryDTO
 import no.sogn.gardentime.model.CropRecordEntity
 import no.sogn.gardentime.model.GardenEntity
 import no.sogn.gardentime.model.GrowZoneEntity
-import no.sogn.gardentime.model.mapPlantToEntity
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
-import org.mockito.hamcrest.MockitoHamcrest
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.anyOrNull
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,6 +38,9 @@ class CropRecordServiceTest {
 
     @MockitoBean
     lateinit var growZoneRepository: GrowZoneRepository
+
+    @MockitoBean
+    lateinit var plantDataApiClient: PlantDataApiClient
 
     @BeforeEach
     fun setup() {
@@ -65,13 +67,22 @@ class CropRecordServiceTest {
         Assertions.assertNotNull(garden.id, "Garden should have an ID")
         Mockito.`when`(gardenRepository.findGardenEntityById(anyOrNull())).thenReturn(garden)
 
-        val cropRecord = testCropRecordEntity(growZone.id!!)
+        val testPlantId = UUID.randomUUID().toString()
+        val testPlant = PlantSummaryDTO(
+            id = testPlantId,
+            name = "Carrot",
+            scientificName = "Daucus carota",
+            family = "Apiaceae"
+        )
+        Mockito.`when`(plantDataApiClient.getPlantByName("Carrot")).thenReturn(testPlant)
+
+        val cropRecord = testCropRecordEntity(growZone.id!!, testPlantId, "Carrot")
         Mockito.`when`(cropRecordRepository.save(any())).thenReturn(cropRecord)
 
         val res = cropRecordService.addCropRecord("Carrot", garden.id!!, growZone.id!!)
         Assertions.assertNotNull(res, "Crop record should not be null")
 
-        Assertions.assertEquals(res.plant.name, cropRecord.plant.name, "Crop record should have name Carrot")
+        Assertions.assertEquals(res.plantName, cropRecord.plantName, "Crop record should have name Carrot")
     }
 
 }
@@ -94,11 +105,12 @@ fun emptyTestGrowZoneEntity(gardenId: UUID): GrowZoneEntity {
     )
 }
 
-fun testCropRecordEntity(growZoneId: Long): CropRecordEntity {
+fun testCropRecordEntity(growZoneId: Long, plantId: String, plantName: String): CropRecordEntity {
     return CropRecordEntity(
         id = UUID.randomUUID(),
         plantingDate = LocalDate.now(),
-        plant = testCarrotEntity(),
+        plantId = plantId,
+        plantName = plantName,
         growZoneId = growZoneId
     )
 }

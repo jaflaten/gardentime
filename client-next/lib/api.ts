@@ -247,7 +247,8 @@ export interface CropRecord {
 
 export interface CreateCropRecordRequest {
   growAreaId: string;  // UUID
-  plantId: string;  // UUID
+  plantId: string;  // UUID string from plant-data-aggregator
+  plantName: string;  // Plant name for display and lookup
   datePlanted: string;
   dateHarvested?: string;
   notes?: string;
@@ -259,20 +260,31 @@ export interface CreateCropRecordRequest {
 
 // Plant types - FIXED: id is number (Long in backend)
 export interface Plant {
-  id: number;  // Long in backend
+  id: string;  // UUID string from plant-data-aggregator
   name: string;
   scientificName?: string;
-  plantType?: string;  // ROOT_VEGETABLE, LEAFY_GREEN, TUBER, FRUIT_VEGETABLE, HERB, LEGUME, GRAIN, FLOWERING_PLANT, ALLIUM
-  maturityTime?: number;  // Days to maturity
-  growingSeason?: string;  // WINTER, SPRING, SUMMER, AUTUMN
-  sunReq?: string;  // Sun requirements
-  waterReq?: string;  // Water requirements
-  soilType?: string;  // Soil type
-  spaceReq?: string;  // Space requirements
-  category?: string;  // Deprecated: use plantType instead
-  description?: string;  // Deprecated
-  createdAt: string;
-  updatedAt: string;
+  family?: string | null;
+  genus?: string | null;
+  cycle?: string | null;
+  sunNeeds?: string | null;
+  waterNeeds?: string | null;
+  rootDepth?: string;
+  growthHabit?: string | null;
+  feederType?: string | null;
+  isNitrogenFixer?: boolean;
+  edibleParts?: string[];
+  maturityDaysMin?: number | null;
+  maturityDaysMax?: number | null;
+  // Legacy fields - may not be present
+  plantType?: string;
+  maturityTime?: number;
+  growingSeason?: string;
+  sunReq?: string;
+  waterReq?: string;
+  soilType?: string;
+  spaceReq?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Auth service - calls Next.js BFF
