@@ -4,6 +4,7 @@ import no.sogn.plantdata.dto.*
 import no.sogn.plantdata.service.CompanionPlantingService
 import no.sogn.plantdata.service.PlantDataService
 import no.sogn.plantdata.service.PestDiseaseService
+import no.sogn.plantdata.service.SeasonalPlanningService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 class PlantDataController(
     private val plantDataService: PlantDataService,
     private val companionPlantingService: CompanionPlantingService,
-    private val pestDiseaseService: PestDiseaseService
+    private val pestDiseaseService: PestDiseaseService,
+    private val seasonalPlanningService: SeasonalPlanningService
 ) {
     
     /**
@@ -152,6 +154,28 @@ class PlantDataController(
     @GetMapping("/diseases/soil-borne")
     fun getSoilBorneDiseases(): ResponseEntity<SoilBorneDiseasesResponseDTO> {
         val result = pestDiseaseService.getSoilBorneDiseases()
+        return ResponseEntity.ok(result)
+    }
+    
+    /**
+     * GET /api/v1/plant-data/plants/seasonal
+     * Get plants suitable for a given season and zone
+     */
+    @GetMapping("/plants/seasonal")
+    fun getSeasonalPlants(
+        @RequestParam(required = false) season: String?,
+        @RequestParam(required = false) zone: String?,
+        @RequestParam(required = false) month: Int?,
+        @RequestParam(required = false) directSow: Boolean?,
+        @RequestParam(required = false) indoorStart: Boolean?
+    ): ResponseEntity<List<PlantSummaryDTO>> {
+        val result = seasonalPlanningService.getSeasonalPlants(
+            season = season,
+            zone = zone,
+            month = month,
+            directSow = directSow,
+            indoorStart = indoorStart
+        )
         return ResponseEntity.ok(result)
     }
 }

@@ -260,6 +260,29 @@ class SeasonPlanningController(
         return ResponseEntity.noContent().build()
     }
 
+    // Rotation Planner endpoint
+    @PostMapping("/season-plans/{seasonPlanId}/run-rotation-planner")
+    fun runRotationPlanner(
+        @PathVariable gardenId: UUID,
+        @PathVariable seasonPlanId: UUID
+    ): ResponseEntity<CropPlacementPlanDTO> {
+        val userId = securityUtils.getCurrentUserId()
+        
+        // Verify garden ownership
+        val garden = gardenRepository.findById(gardenId).orElse(null) 
+            ?: return ResponseEntity.notFound().build()
+        if (garden.userId != userId) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }
+
+        return try {
+            val placementPlan = seasonPlanningService.runRotationPlanner(gardenId, seasonPlanId)
+            ResponseEntity.ok(placementPlan)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().build()
+        }
+    }
+
     // Calendar endpoints
     @GetMapping("/calendar")
     fun getCalendarEvents(

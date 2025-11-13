@@ -17,7 +17,8 @@ class SeasonPlanningService(
     private val plantRepository: PlantRepository,
     private val growAreaRepository: GrowAreaRepository,
     private val cropRecordRepository: CropRecordRepository,
-    private val plantingDateCalculator: PlantingDateCalculatorService
+    private val plantingDateCalculator: PlantingDateCalculatorService,
+    private val rotationScoringService: no.sogn.gardentime.rotation.RotationScoringService
 ) {
 
     fun getSeasonPlans(gardenId: UUID): List<SeasonPlanDTO> {
@@ -267,6 +268,142 @@ class SeasonPlanningService(
             in 9..11 -> "FALL"
             else -> "WINTER"
         }
+    }
+
+    // Rotation Planner
+    fun runRotationPlanner(gardenId: UUID, seasonPlanId: UUID): CropPlacementPlanDTO {
+        val seasonPlan = seasonPlanRepository.findById(seasonPlanId).orElseThrow {
+            IllegalArgumentException("Season plan not found")
+        }
+        
+        if (seasonPlan.gardenId != gardenId) {
+            throw IllegalArgumentException("Season plan does not belong to this garden")
+        }
+
+        val plannedCrops = plannedCropRepository.findBySeasonPlanId(seasonPlanId)
+        val growAreas = growAreaRepository.findAllByGardenId(gardenId)
+        
+        if (growAreas.isEmpty()) {
+            throw IllegalArgumentException("No grow areas found in this garden")
+        }
+
+        val assignments = plannedCrops.map { crop ->
+            // Score this crop in each grow area
+            val scores = growAreas.mapNotNull { growArea ->
+                growArea.id?.let { growAreaId ->
+                    val score = rotationScoringService.scoreRotation(
+                        growAreaId = growAreaId,
+                        plantName = crop.plantName,
+                        plantingDate = crop.directSowDate ?: crop.transplantDate ?: LocalDate.now()
+                    )
+                    Pair(growAreaId to growArea.name, score)
+                }
+            }
+
+            // Find best grow area
+            val bestScore = scores.maxByOrNull { it.second.totalScore }
+                ?: throw IllegalArgumentException("No valid grow areas for ${crop.plantName}")
+
+            val (bestGrowArea, rotationScore) = bestScore
+
+            // Create alternative locations list (excluding the best one)
+            val alternatives = scores
+                .filter { it.first.first != bestGrowArea.first }
+                .sortedByDescending { it.second.totalScore }
+                .take(3)
+                .map { (growArea, score) ->
+                    AlternativeLocationDTO(
+                        growAreaId = growArea.first,
+                        growAreaName = growArea.second,
+                        score = score.totalScore,
+                        grade = score.grade,
+                        summary = score.recommendation
+                    )
+                }
+
+            CropAssignmentDTO(
+                plannedCropId = crop.id,
+                plantName = crop.plantName,
+                plantId = crop.plantId,
+                quantity = crop.quantity,
+                recommendedGrowAreaId = bestGrowArea.first,
+                growAreaName = bestGrowArea.second,
+                score = RotationScoreDTO(
+                    totalScore = rotationScore.totalScore,
+                    grade = rotationScore.grade,
+                    recommendation = rotationScore.recommendation,
+                    issues = rotationScore.issues.map { issue ->
+                        RotationIssueDTO(
+                            severity = issue.severity.name,
+                            category = issue.category,
+                            message = issue.message,
+                            suggestion = issue.suggestion
+                        )
+                    },
+                    benefits = rotationScore.benefits.map { benefit ->
+                        RotationBenefitDTO(
+                            category = benefit.category,
+                            message = benefit.message,
+                            impact = benefit.impact
+                        )
+                    }
+                ),
+                alternativeLocations = alternatives
+            )
+        }
+
+        // Calculate summary statistics
+        val excellentCount = assignments.count { it.score.grade == "EXCELLENT" }
+        val goodCount = assignments.count { it.score.grade == "GOOD" }
+        val fairCount = assignments.count { it.score.grade == "FAIR" }
+        val poorCount = assignments.count { it.score.grade == "POOR" }
+        val avoidCount = assignments.count { it.score.grade == "AVOID" }
+
+        val avgScore = if (assignments.isNotEmpty()) {
+            assignments.map { it.score.totalScore }.average().toInt()
+        } else {
+            0
+        }
+
+        val overallGrade = when {
+            avgScore >= 85 -> "EXCELLENT"
+            avgScore >= 70 -> "GOOD"
+            avgScore >= 60 -> "FAIR"
+            avgScore >= 40 -> "POOR"
+            else -> "AVOID"
+        }
+
+        val recommendations = mutableListOf<String>()
+        val warnings = mutableListOf<String>()
+
+        if (excellentCount > 0) {
+            recommendations.add("$excellentCount crop(s) have excellent rotation compatibility")
+        }
+        if (poorCount > 0) {
+            warnings.add("$poorCount crop(s) have poor rotation compatibility - consider alternative locations")
+        }
+        if (avoidCount > 0) {
+            warnings.add("$avoidCount crop(s) should be avoided in their recommended locations - high disease risk")
+        }
+
+        val summary = PlacementSummaryDTO(
+            totalCrops = assignments.size,
+            excellentPlacements = excellentCount,
+            goodPlacements = goodCount,
+            fairPlacements = fairCount,
+            poorPlacements = poorCount + avoidCount,
+            overallScore = avgScore,
+            overallGrade = overallGrade,
+            recommendations = recommendations,
+            warnings = warnings
+        )
+
+        return CropPlacementPlanDTO(
+            seasonPlanId = seasonPlanId,
+            gardenId = gardenId,
+            assignments = assignments,
+            summary = summary
+        )
     }
 
     private fun SeasonPlan.toDTO() = SeasonPlanDTO(

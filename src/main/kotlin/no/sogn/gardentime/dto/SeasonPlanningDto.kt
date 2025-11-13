@@ -99,3 +99,63 @@ data class PlantDetailsDTO(
     val indoorStartMethod: String?,
     val transplantGuidance: String?
 )
+
+// Rotation Planner DTOs
+data class CropAssignmentDTO(
+    val plannedCropId: UUID,
+    val plantName: String,
+    val plantId: String,
+    val quantity: Int,
+    val recommendedGrowAreaId: Long,
+    val growAreaName: String,
+    val score: RotationScoreDTO,
+    val alternativeLocations: List<AlternativeLocationDTO>
+)
+
+data class AlternativeLocationDTO(
+    val growAreaId: Long,
+    val growAreaName: String,
+    val score: Int,
+    val grade: String,
+    val summary: String
+)
+
+data class RotationScoreDTO(
+    val totalScore: Int,
+    val grade: String,
+    val recommendation: String,
+    val issues: List<RotationIssueDTO>,
+    val benefits: List<RotationBenefitDTO>
+)
+
+data class RotationIssueDTO(
+    val severity: String,
+    val category: String,
+    val message: String,
+    val suggestion: String?
+)
+
+data class RotationBenefitDTO(
+    val category: String,
+    val message: String,
+    val impact: String
+)
+
+data class PlacementSummaryDTO(
+    val totalCrops: Int,
+    val excellentPlacements: Int,
+    val goodPlacements: Int,
+    val fairPlacements: Int,
+    val poorPlacements: Int,
+    val overallScore: Int,
+    val overallGrade: String,
+    val recommendations: List<String>,
+    val warnings: List<String>
+)
+
+data class CropPlacementPlanDTO(
+    val seasonPlanId: UUID,
+    val gardenId: UUID,
+    val assignments: List<CropAssignmentDTO>,
+    val summary: PlacementSummaryDTO
+)
