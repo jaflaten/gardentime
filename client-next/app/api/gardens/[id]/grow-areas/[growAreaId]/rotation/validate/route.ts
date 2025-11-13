@@ -3,7 +3,7 @@ import { springApi, getTokenFromRequest } from '@/lib/spring-api';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string; growAreaId: string } }
+  { params }: { params: Promise<{ id: string; growAreaId: string }> }
 ) {
   try {
     const token = getTokenFromRequest(request);
@@ -12,8 +12,9 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const resolvedParams = await params;
     const body = await request.json();
-    const url = `/api/gardens/${params.id}/grow-areas/${params.growAreaId}/rotation/validate`;
+    const url = `/api/gardens/${resolvedParams.id}/grow-areas/${resolvedParams.growAreaId}/rotation/validate`;
     
     console.log('Validating rotation at:', url, 'with body:', body);
 
