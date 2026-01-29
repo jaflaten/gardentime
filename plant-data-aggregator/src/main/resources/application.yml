@@ -2,7 +2,7 @@ spring:
   application:
     name: plant-data-aggregator
   datasource:
-    url: jdbc:postgresql://localhost:5432/plant_data_aggregator
+    url: jdbc:postgresql://localhost:5432/plant_data_aggregator?sslmode=disable
     username: ${DB_USER:gardentime}
     password: ${DB_PASSWORD:gardentime}
   jpa:
