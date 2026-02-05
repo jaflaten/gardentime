@@ -146,6 +146,22 @@ export default function GardenBoardPage() {
     }
   };
 
+  const handleUpdateRotation = async (id: string, rotation: number) => {
+    // Optimistic update
+    setGrowAreas(prevAreas =>
+      prevAreas.map(area =>
+        area.id === id ? { ...area, rotation } : area
+      )
+    );
+
+    try {
+      await growAreaService.update(id, { rotation });
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to update rotation');
+      fetchGardenData();
+    }
+  };
+
   const handleSelectGrowAreaFromBoard = (growArea: GrowArea) => {
     // Navigate to grow area details
     router.push(`/gardens/${gardenId}/grow-areas/${growArea.id}`);
@@ -221,6 +237,7 @@ export default function GardenBoardPage() {
             onUpdatePosition={handleUpdatePosition}
             onUpdatePositions={handleUpdatePositions}
             onUpdateDimensions={handleUpdateDimensions}
+            onUpdateRotation={handleUpdateRotation}
             onSelectGrowArea={handleSelectGrowAreaFromBoard}
             onAddCrop={openAddCropModal}
           />

@@ -46,7 +46,7 @@ export default function RegisterPage() {
         firstName: formData.firstName,
         lastName: formData.lastName,
       });
-      login(response.token, response.username, response.email);
+      login(response.token, response.username, response.email, response.firstName);
       router.push('/gardens');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');

@@ -1,5 +1,23 @@
 # GardenTime - TODO List
 
+## Recently Completed ✅
+
+### 2026-02-05 - Grow Area Rotation
+- [x] **Rotate grow areas on canvas** - See `GROW_AREA_ROTATION_FEATURE.md`
+  - Rotation handle on selected grow areas
+  - 22.5° snap increments
+  - Persists to database
+  - Migrations V14 + V15
+
+### 2026-02-05 - User Management (Previously completed)
+- [x] **User profile page** - View/edit profile, change password
+- [x] **Password reset flow** - Forgot password with console-logged tokens
+- [x] **Delete account** - With password confirmation
+- [x] **Welcome message** - Navbar shows "Welcome, {firstName}"
+- See `USER_MANAGEMENT_PLAN.md`
+
+---
+
 ## High Priority - User Feedback
 
 ### Database Schema Updates

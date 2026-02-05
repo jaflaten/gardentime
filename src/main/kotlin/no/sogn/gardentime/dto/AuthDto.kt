@@ -17,10 +17,20 @@ data class AuthResponse(
     val token: String,
     val type: String = "Bearer",
     val username: String,
-    val email: String
+    val email: String,
+    val firstName: String? = null
 )
 
 data class MessageResponse(
     val message: String
+)
+
+data class ForgotPasswordRequest(
+    val email: String
+)
+
+data class ResetPasswordRequest(
+    val token: String,
+    val newPassword: String
 )
 

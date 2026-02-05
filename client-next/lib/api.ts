@@ -77,6 +77,7 @@ export interface AuthResponse {
   token: string;
   username: string;
   email: string;
+  firstName?: string | null;
 }
 
 // Garden types - FIXED: id is UUID string, not number
@@ -114,6 +115,8 @@ export interface GrowArea {
   width?: number;  // Optional: real-world width in cm
   length?: number;  // Optional: real-world length in cm
   height?: number;  // Optional: real-world height in cm (for vertical gardens)
+  // Rotation angle in degrees (0-360)
+  rotation?: number;  // Optional: defaults to 0
   createdAt: string;
   updatedAt: string;
   // Current crops (Step 27.8)
@@ -136,6 +139,8 @@ export interface CreateGrowAreaRequest {
   width?: number;  // Optional
   length?: number;  // Optional
   height?: number;  // Optional
+  // Rotation angle in degrees
+  rotation?: number;  // Optional
 }
 
 export interface UpdateGrowAreaRequest {
@@ -151,6 +156,8 @@ export interface UpdateGrowAreaRequest {
   width?: number;  // Optional
   length?: number;  // Optional
   height?: number;  // Optional
+  // Rotation angle in degrees
+  rotation?: number;  // Optional
 }
 
 // Canvas Object types - for drawing shapes, text, arrows, etc.
@@ -489,5 +496,47 @@ export const canvasObjectService = {
   batchCreate: async (objects: CreateCanvasObjectRequest[]): Promise<CanvasObject[]> => {
     const response = await api.post('/canvas-objects/batch', { objects });
     return response.data;
+  },
+};
+
+// User types
+export interface UserProfile {
+  id: string;
+  email: string;
+  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: string;
+  createdAt: string;
+}
+
+export interface UpdateProfileRequest {
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+// User service - calls Next.js BFF
+export const userService = {
+  getProfile: async (): Promise<UserProfile> => {
+    const response = await api.get('/users/me');
+    return response.data;
+  },
+
+  updateProfile: async (data: UpdateProfileRequest): Promise<UserProfile> => {
+    const response = await api.put('/users/me', data);
+    return response.data;
+  },
+
+  changePassword: async (data: ChangePasswordRequest): Promise<void> => {
+    await api.put('/users/me/password', data);
+  },
+
+  deleteAccount: async (password: string): Promise<void> => {
+    await api.delete('/users/me', { data: { password } });
   },
 };

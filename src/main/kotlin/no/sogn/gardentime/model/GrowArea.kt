@@ -19,6 +19,8 @@ data class GrowArea(
     val width: Double? = null,
     val length: Double? = null,
     val height: Double? = null,
+    // Rotation angle in degrees (0-360)
+    val rotation: Double? = 0.0,
 )
 
 @Entity
@@ -46,6 +48,9 @@ data class GrowAreaEntity(
     val length: Double? = null,
     @Column(name = "height")
     val height: Double? = null,
+    // Rotation angle in degrees (0-360)
+    @Column(name = "rotation")
+    val rotation: Double? = 0.0,
 )
 
 fun mapGrowAreaEntityToDomain(
@@ -67,7 +72,8 @@ fun mapGrowAreaEntityToDomain(
         positionY = growAreaEntity.positionY,
         width = growAreaEntity.width,
         length = growAreaEntity.length,
-        height = growAreaEntity.height
+        height = growAreaEntity.height,
+        rotation = growAreaEntity.rotation
     )
 }
 
@@ -85,6 +91,7 @@ fun mapGrowAreaToEntity(growArea: GrowArea): GrowAreaEntity {
         positionY = growArea.positionY,
         width = growArea.width,
         length = growArea.length,
-        height = growArea.height
+        height = growArea.height,
+        rotation = growArea.rotation
     )
 }

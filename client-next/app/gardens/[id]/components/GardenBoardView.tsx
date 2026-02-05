@@ -32,6 +32,7 @@ interface GardenBoardViewProps {
   onUpdatePosition: (id: string, x: number, y: number) => void;
   onUpdatePositions?: (updates: Array<{ id: string; x: number; y: number }>) => void;
   onUpdateDimensions: (id: string, width: number, height: number) => void;
+  onUpdateRotation?: (id: string, rotation: number) => void;
   onSelectGrowArea: (growArea: GrowArea) => void;
   onAddGrowArea?: () => void;
   onDeleteGrowArea?: (growArea: GrowArea) => void;
@@ -44,6 +45,7 @@ export default function GardenBoardView({
   onUpdatePosition,
   onUpdatePositions,
   onUpdateDimensions,
+  onUpdateRotation,
   onSelectGrowArea,
   onAddGrowArea,
   onDeleteGrowArea,
@@ -676,7 +678,7 @@ export default function GardenBoardView({
 
               return (
                 <GrowAreaBox
-                  key={`${growArea.id}-${growArea.width}-${growArea.length}`}
+                  key={`${growArea.id}-${growArea.width}-${growArea.length}-${growArea.rotation ?? 0}`}
                   growArea={growArea}
                   isSelected={selectedId === growArea.id && selectedIds.size <= 1}
                   isMultiSelected={showAsMultiSelected}
@@ -745,6 +747,9 @@ export default function GardenBoardView({
                       after: { width, height },
                     });
                     onUpdateDimensions(growArea.id, width, height);
+                  }}
+                  onRotate={(rotation) => {
+                    onUpdateRotation?.(growArea.id, rotation);
                   }}
                   onSelect={() => {
                     if (selectedIds.has(growArea.id)) {

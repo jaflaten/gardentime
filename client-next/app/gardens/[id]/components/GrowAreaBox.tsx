@@ -13,6 +13,7 @@ interface GrowAreaBoxProps {
   onDragStart: () => void;
   onDragEnd: (x: number, y: number) => void;
   onResize?: (width: number, height: number) => void;
+  onRotate?: (rotation: number) => void;
   onSelect: () => void;
   onDoubleClick: () => void;
 }
@@ -33,11 +34,13 @@ export default function GrowAreaBox({
   onDragStart,
   onDragEnd,
   onResize,
+  onRotate,
   onSelect,
   onDoubleClick,
 }: GrowAreaBoxProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
+  const groupRef = React.useRef<Konva.Group>(null);
   const shapeRef = React.useRef<Konva.Shape>(null);
   const transformerRef = React.useRef<Konva.Transformer>(null);
 
@@ -82,21 +85,22 @@ export default function GrowAreaBox({
   // For buckets, calculate radius (use average of width/height, or just width if square)
   const radius = isBucket ? Math.max(width, height) / 2 : 0;
 
-  // Attach transformer when selected
+  // Attach transformer when selected - attach to group for rotation
   React.useEffect(() => {
-    if (isSelected && shapeRef.current && transformerRef.current) {
-      // Attach transformer to the shape
-      transformerRef.current.nodes([shapeRef.current]);
+    if (isSelected && groupRef.current && transformerRef.current) {
+      // Attach transformer to the group (for rotation support)
+      transformerRef.current.nodes([groupRef.current]);
       transformerRef.current.getLayer()?.batchDraw();
     }
   }, [isSelected]);
 
   const handleTransformEnd = () => {
-    if (!shapeRef.current || !onResize) return;
+    if (!groupRef.current) return;
 
-    const node = shapeRef.current;
+    const node = groupRef.current;
     const scaleX = node.scaleX();
     const scaleY = node.scaleY();
+    const newRotation = node.rotation();
 
     // Calculate new dimensions
     let newWidth: number;
@@ -120,26 +124,50 @@ export default function GrowAreaBox({
     setIsTransforming(false);
 
     // Call the resize callback with new dimensions
-    onResize(Math.round(newWidth), Math.round(newHeight));
+    if (onResize && (scaleX !== 1 || scaleY !== 1)) {
+      onResize(Math.round(newWidth), Math.round(newHeight));
+    }
+
+    // Call the rotation callback if rotation changed
+    const currentRotation = growArea.rotation ?? 0;
+    if (onRotate && Math.abs(newRotation - currentRotation) > 0.1) {
+      // Normalize rotation to 0-360
+      const normalizedRotation = ((newRotation % 360) + 360) % 360;
+      onRotate(normalizedRotation);
+    }
   };
 
+  // Rotation angle from props
+  const rotation = growArea.rotation ?? 0;
+
+  // Calculate offset for rotation around center
+  const offsetX = isBucket ? radius : width / 2;
+  const offsetY = isBucket ? radius : height / 2;
+
   return (
-    <Group
-      x={x}
-      y={y}
-      draggable={isDraggingEnabled}
-      onDragStart={(e) => {
-        e.cancelBubble = true;
-        const stage = e.target.getStage();
-        if (stage) {
+    <>
+      <Group
+        ref={groupRef}
+        x={x + offsetX}
+        y={y + offsetY}
+        rotation={rotation}
+        offsetX={offsetX}
+        offsetY={offsetY}
+        draggable={isDraggingEnabled}
+        onTransformEnd={handleTransformEnd}
+        onDragStart={(e) => {
+          e.cancelBubble = true;
+          const stage = e.target.getStage();
+          if (stage) {
           stage.draggable(false);
         }
         onDragStart();
       }}
       onDragEnd={(e) => {
         const node = e.target;
-        const newX = node.x();
-        const newY = node.y();
+        // Adjust back from offset
+        const newX = node.x() - offsetX;
+        const newY = node.y() - offsetY;
         onDragEnd(newX, newY);
 
         const stage = e.target.getStage();
@@ -185,7 +213,6 @@ export default function GrowAreaBox({
           shadowBlur={shadowBlur}
           shadowOpacity={0.3}
           shadowOffset={{ x: 2, y: 2 }}
-          onTransformEnd={handleTransformEnd}
         />
       ) : (
         <Rect
@@ -204,37 +231,10 @@ export default function GrowAreaBox({
           shadowOpacity={0.3}
           shadowOffset={{ x: 2, y: 2 }}
           hitStrokeWidth={0}
-          onTransformEnd={handleTransformEnd}
         />
       )}
 
-      {/* Transformer for resizing (only when selected) */}
-      {isSelected && (
-        <Transformer
-          ref={transformerRef}
-          borderStroke="#10b981"
-          borderStrokeWidth={2}
-          anchorFill="#10b981"
-          anchorStroke="#059669"
-          anchorStrokeWidth={1}
-          anchorSize={12}
-          anchorCornerRadius={2}
-          rotateEnabled={false}
-          enabledAnchors={
-            isBucket
-              ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // Corners only for circles
-              : ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right', 'top-center', 'bottom-center'] // All anchors for rectangles
-          }
-          boundBoxFunc={(oldBox, newBox) => {
-            // Limit minimum size
-            if (newBox.width < 44 || newBox.height < 44) {
-              return oldBox;
-            }
-            return newBox;
-          }}
-          onTransformStart={() => setIsTransforming(true)}
-        />
-      )}
+      {/* Transformer moved outside Group - must be sibling to work */}
 
       {/* Multi-select visual feedback - MOVED HERE to render on top */}
       {isMultiSelected && (
@@ -434,5 +434,36 @@ export default function GrowAreaBox({
         </Group>
       )}
     </Group>
+
+    {/* Transformer for resizing and rotating (only when selected) - must be sibling of Group */}
+    {isSelected && (
+      <Transformer
+        ref={transformerRef}
+        borderStroke="#10b981"
+        borderStrokeWidth={2}
+        anchorFill="#10b981"
+        anchorStroke="#059669"
+        anchorStrokeWidth={1}
+        anchorSize={12}
+        anchorCornerRadius={2}
+        rotateEnabled={true}
+        rotationSnaps={[0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5]}
+        rotationSnapTolerance={5}
+        enabledAnchors={
+          isBucket
+            ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // Corners only for circles
+            : ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right', 'top-center', 'bottom-center'] // All anchors for rectangles
+        }
+        boundBoxFunc={(oldBox, newBox) => {
+          // Limit minimum size
+          if (newBox.width < 44 || newBox.height < 44) {
+            return oldBox;
+          }
+          return newBox;
+        }}
+        onTransformStart={() => setIsTransforming(true)}
+      />
+    )}
+  </>
   );
 }

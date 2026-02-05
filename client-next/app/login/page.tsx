@@ -21,7 +21,7 @@ export default function LoginPage() {
 
     try {
       const response = await authService.login({ username, password });
-      login(response.token, response.username, response.email);
+      login(response.token, response.username, response.email, response.firstName);
       router.push('/gardens');
     } catch (err: any) {
       console.error('Login error:', err);
@@ -91,7 +91,13 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="text-center">
+          <div className="flex flex-col items-center space-y-2">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-gray-600 hover:text-green-600"
+            >
+              Forgot your password?
+            </Link>
             <Link
               href="/register"
               className="font-medium text-green-600 hover:text-green-500"

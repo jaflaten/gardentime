@@ -34,7 +34,8 @@ class GrowAreaService(
         positionY: Double? = null,
         width: Double? = null,
         length: Double? = null,
-        height: Double? = null
+        height: Double? = null,
+        rotation: Double? = null
     ): GrowArea {
         val currentUserId = securityUtils.getCurrentUserId()
         val gardenEntity = gardenRepository.findGardenEntityById(gardenId)
@@ -67,7 +68,8 @@ class GrowAreaService(
             positionY = positionY,
             width = width,
             length = length,
-            height = height
+            height = height,
+            rotation = rotation ?: 0.0
         )
         val growAreaEntity = growAreaRepository.save(mapGrowAreaToEntity(growArea))
 
@@ -85,7 +87,8 @@ class GrowAreaService(
         positionY: Double? = null,
         width: Double? = null,
         length: Double? = null,
-        height: Double? = null
+        height: Double? = null,
+        rotation: Double? = null
     ): GrowArea {
         val currentUserId = securityUtils.getCurrentUserId()
         val growAreaEntity = growAreaRepository.findById(id)
@@ -125,7 +128,8 @@ class GrowAreaService(
             positionY = positionY ?: growAreaEntity.positionY,
             width = width ?: growAreaEntity.width,
             length = length ?: growAreaEntity.length,
-            height = height ?: growAreaEntity.height
+            height = height ?: growAreaEntity.height,
+            rotation = rotation ?: growAreaEntity.rotation
         )
 
         val savedEntity = growAreaRepository.save(updatedEntity)

@@ -19,4 +19,7 @@ interface UserRepository : JpaRepository<UserEntity, UUID> {
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u WHERE u.email = :email")
     fun existsByEmail(email: String): Boolean
+    
+    @Query("SELECT u FROM UserEntity u WHERE u.passwordResetToken = :token")
+    fun findByPasswordResetToken(token: String): Optional<UserEntity>
 }

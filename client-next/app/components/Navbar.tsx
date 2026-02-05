@@ -14,12 +14,14 @@ interface NavbarProps {
 
 export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) {
   const router = useRouter();
-  const { isAuthenticated, username, logout } = useAuth();
+  const { isAuthenticated, username, firstName, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
     router.push('/login');
   };
+
+  const displayName = firstName || username;
 
   return (
     <nav className="bg-white shadow-sm">
@@ -58,9 +60,15 @@ export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) 
                 🔍 Search
               </Link>
             )}
-            {isAuthenticated && username && (
+            {isAuthenticated && displayName && (
               <>
-                <span className="text-gray-700">Welcome, {username}</span>
+                <Link
+                  href="/profile"
+                  className="text-gray-700 hover:text-green-600 transition"
+                  title="Profile"
+                >
+                  Welcome, {displayName}
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 transition"
@@ -75,4 +83,3 @@ export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) 
     </nav>
   );
 }
-

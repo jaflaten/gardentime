@@ -20,7 +20,9 @@ data class CreateGrowAreaRequest(
     // Physical dimension fields (in centimeters)
     val width: Double? = null,
     val length: Double? = null,
-    val height: Double? = null
+    val height: Double? = null,
+    // Rotation angle in degrees (0-360)
+    val rotation: Double? = null
 )
 
 data class UpdateGrowAreaRequest(
@@ -35,7 +37,9 @@ data class UpdateGrowAreaRequest(
     // Physical dimension fields (in centimeters)
     val width: Double? = null,
     val length: Double? = null,
-    val height: Double? = null
+    val height: Double? = null,
+    // Rotation angle in degrees (0-360)
+    val rotation: Double? = null
 )
 
 @RestController
@@ -58,7 +62,8 @@ class GrowAreaController(
             positionY = request.positionY,
             width = request.width,
             length = request.length,
-            height = request.height
+            height = request.height,
+            rotation = request.rotation
         )
         return ResponseEntity.ok(createdGrowArea)
     }
@@ -76,7 +81,8 @@ class GrowAreaController(
             positionY = request.positionY,
             width = request.width,
             length = request.length,
-            height = request.height
+            height = request.height,
+            rotation = request.rotation
         )
         return ResponseEntity.ok(updatedGrowArea)
     }

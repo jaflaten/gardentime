@@ -45,10 +45,16 @@ class UserEntity(
     val enabled: Boolean = true,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    
+    @Column(name = "password_reset_token")
+    var passwordResetToken: String? = null,
+    
+    @Column(name = "password_reset_token_expiry")
+    var passwordResetTokenExpiry: LocalDateTime? = null
 ) : UserDetails {
 
-    constructor() : this(null, "", "", "", null, null, UserRole.USER, true, LocalDateTime.now(), LocalDateTime.now())
+    constructor() : this(null, "", "", "", null, null, UserRole.USER, true, LocalDateTime.now(), LocalDateTime.now(), null, null)
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         return mutableListOf(SimpleGrantedAuthority("ROLE_${role.name}"))
