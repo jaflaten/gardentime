@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, gardenService } from '@/lib/api';
 import { SeasonPlan, PlannedCrop, GardenClimateInfo } from '@/types/season-planning';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
@@ -143,6 +143,23 @@ export default function SeasonPlanPage() {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const exportData = await gardenService.exportGarden(gardenId);
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${gardenName || 'garden'}-export.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError('Failed to export garden');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -161,7 +178,7 @@ export default function SeasonPlanPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      <GardenNavigation gardenId={gardenId} gardenName={gardenName} />
+      <GardenNavigation gardenId={gardenId} gardenName={gardenName} onExport={handleExport} />
       <div className="flex-1">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-6">

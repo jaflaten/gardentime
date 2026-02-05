@@ -151,6 +151,23 @@ export default function GardenBoardPage() {
     router.push(`/gardens/${gardenId}/grow-areas/${growArea.id}`);
   };
 
+  const handleExport = async () => {
+    try {
+      const exportData = await gardenService.exportGarden(gardenId);
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${garden?.name || 'garden'}-export.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError('Failed to export garden');
+    }
+  };
+
   if (isLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -171,7 +188,7 @@ export default function GardenBoardPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      <GardenNavigation gardenId={gardenId} gardenName={garden?.name} />
+      <GardenNavigation gardenId={gardenId} gardenName={garden?.name} onExport={handleExport} />
 
       <main className="flex-grow">
         {error && (

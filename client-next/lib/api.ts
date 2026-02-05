@@ -306,6 +306,51 @@ export const authService = {
   },
 };
 
+// Garden Import/Export types
+export interface GardenExportData {
+  exportVersion: string;
+  exportedAt: string;
+  garden: {
+    name: string;
+    description?: string;
+    location?: string;
+  };
+  growAreas: Array<{
+    name: string;
+    zoneSize?: string;
+    zoneType?: ZoneType;
+    nrOfRows?: number;
+    notes?: string;
+    positionX?: number;
+    positionY?: number;
+    width?: number;
+    length?: number;
+    height?: number;
+  }>;
+}
+
+export interface GardenImportRequest {
+  exportVersion?: string;
+  gardenName: string;
+  garden: {
+    name: string;
+    description?: string;
+    location?: string;
+  };
+  growAreas: Array<{
+    name: string;
+    zoneSize?: string;
+    zoneType?: ZoneType;
+    nrOfRows?: number;
+    notes?: string;
+    positionX?: number;
+    positionY?: number;
+    width?: number;
+    length?: number;
+    height?: number;
+  }>;
+}
+
 // Garden service - calls Next.js BFF
 export const gardenService = {
   getAll: async (): Promise<Garden[]> => {
@@ -330,6 +375,16 @@ export const gardenService = {
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/gardens/${id}`);
+  },
+
+  exportGarden: async (id: string): Promise<GardenExportData> => {
+    const response = await api.get(`/gardens/${id}/export`);
+    return response.data;
+  },
+
+  importGarden: async (data: GardenImportRequest): Promise<Garden> => {
+    const response = await api.post('/gardens/import', data);
+    return response.data;
   },
 };
 

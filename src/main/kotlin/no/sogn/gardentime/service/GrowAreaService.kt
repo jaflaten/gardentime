@@ -150,6 +150,10 @@ class GrowAreaService(
         growAreaRepository.deleteById(id)
     }
 
+    fun deleteAllByGardenId(gardenId: UUID) {
+        growAreaRepository.deleteAllByGardenId(gardenId)
+    }
+
     fun getCropRecordsForGarden(id: UUID): MutableList<CropRecordEntity> {
         val garden = (gardenRepository.findGardenEntityById(id)
             ?: throw GardenIdNotFoundException("Garden with id $id not found"))

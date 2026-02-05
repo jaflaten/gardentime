@@ -1,0 +1,56 @@
+{
+  "exportVersion": "1.0",
+  "exportedAt": "2026-01-29T12:00:00Z",
+  "garden": {
+    "name": "Family Garden 2026"
+  },
+  "growAreas": [
+    {
+      "name": "Tomato Bed",
+      "zoneType": "BOX",
+      "zoneSize": "120x80cm",
+      "width": 120,
+      "length": 80,
+      "height": 30,
+      "positionX": 50,
+      "positionY": 50,
+      "notes": "Full sun, south facing"
+    },
+    {
+      "name": "Herb Corner",
+      "zoneType": "BED",
+      "width": 60,
+      "length": 60,
+      "positionX": 200,
+      "positionY": 50,
+      "notes": "Near kitchen for easy access"
+    },
+    {
+      "name": "Carrot Row",
+      "zoneType": "BOX",
+      "nrOfRows": 3,
+      "width": 40,
+      "length": 200,
+      "positionX": 50,
+      "positionY": 150,
+      "notes": "Deep soil for root vegetables"
+    },
+    {
+      "name": "Salad Greens",
+      "zoneType": "BOX",
+      "width": 100,
+      "length": 60,
+      "positionX": 200,
+      "positionY": 150
+    },
+    {
+      "name": "Cucumber Trellis",
+      "zoneType": "BED",
+      "width": 80,
+      "length": 120,
+      "positionX": 50,
+      "positionY": 280,
+      "notes": "Vertical growing with trellis"
+    }
+  ]
+}

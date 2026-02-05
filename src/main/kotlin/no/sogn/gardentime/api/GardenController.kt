@@ -1,5 +1,7 @@
 package no.sogn.gardentime.api
 
+import no.sogn.gardentime.dto.GardenExportDto
+import no.sogn.gardentime.dto.GardenImportRequest
 import no.sogn.gardentime.model.Garden
 import no.sogn.gardentime.model.GardenInfo
 import no.sogn.gardentime.service.GardenService
@@ -37,6 +39,18 @@ class GardenController(
     fun deleteGardenById(@PathVariable id: UUID): ResponseEntity<Unit> {
         gardenService.deleteGardenById(id)
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/{id}/export")
+    fun exportGarden(@PathVariable id: UUID): ResponseEntity<GardenExportDto> {
+        val exportData = gardenService.exportGarden(id)
+        return ResponseEntity.ok(exportData)
+    }
+
+    @PostMapping("/import")
+    fun importGarden(@RequestBody request: GardenImportRequest): ResponseEntity<Garden> {
+        val createdGarden = gardenService.importGarden(request)
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdGarden)
     }
 }
 

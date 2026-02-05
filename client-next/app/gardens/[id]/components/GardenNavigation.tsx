@@ -2,14 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, List, Grid3x3, Calendar } from 'lucide-react';
+import { LayoutDashboard, List, Grid3x3, Calendar, Download } from 'lucide-react';
 
 interface GardenNavigationProps {
   gardenId: string;
   gardenName?: string;
+  onExport?: () => void;
 }
 
-export default function GardenNavigation({ gardenId, gardenName }: GardenNavigationProps) {
+export default function GardenNavigation({ gardenId, gardenName, onExport }: GardenNavigationProps) {
   const pathname = usePathname();
   
   const isActive = (path: string) => {
@@ -46,8 +47,18 @@ export default function GardenNavigation({ gardenId, gardenName }: GardenNavigat
     <div className="bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {gardenName && (
-          <div className="py-3 border-b border-gray-100">
+          <div className="py-3 border-b border-gray-100 flex justify-between items-center">
             <h1 className="text-xl font-semibold text-gray-900">{gardenName}</h1>
+            {onExport && (
+              <button
+                onClick={onExport}
+                className="flex items-center space-x-1 px-3 py-1.5 text-sm text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition"
+                title="Export garden configuration"
+              >
+                <Download className="w-4 h-4" />
+                <span>Export</span>
+              </button>
+            )}
           </div>
         )}
         <nav className="flex space-x-8" aria-label="Garden navigation">

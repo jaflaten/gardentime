@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Garden Management', () => {
-  const createdGardens: string[] = [];
+  const createdGardenIds: string[] = [];
 
   test.beforeEach(async ({ page }) => {
     // Login before each test
@@ -16,7 +16,7 @@ test.describe('Garden Management', () => {
     await expect(page.locator('text=My Gardens')).toBeVisible();
   });
 
-  test('should create a new garden', async ({ page }) => {
+  test('should create a new garden', async ({ page, request }) => {
     // Open create garden modal
     await page.click('button:has-text("New Garden")');
 
@@ -25,7 +25,6 @@ test.describe('Garden Management', () => {
 
     // Fill in garden details using label-based selectors
     const gardenName = `Test Garden ${Date.now()}`;
-    createdGardens.push(gardenName);
     await page.locator('input[type="text"]').first().fill(gardenName);
     await page.locator('textarea').fill('A beautiful test garden');
     await page.locator('input[type="text"]').nth(1).fill('Test Location');
@@ -35,6 +34,17 @@ test.describe('Garden Management', () => {
 
     // Wait for modal to close and garden to appear in list
     await expect(page.locator(`text=${gardenName}`)).toBeVisible({ timeout: 10000 });
+
+    // Get the garden ID for cleanup
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    if (token) {
+      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok()) {
+        const gardens = await resp.json();
+        const created = gardens.find((g: any) => g.name === gardenName);
+        if (created) createdGardenIds.push(created.id);
+      }
+    }
   });
 
   test('should view garden details', async ({ page }) => {
@@ -43,7 +53,6 @@ test.describe('Garden Management', () => {
     await expect(page.locator('text=Create New Garden')).toBeVisible();
 
     const gardenName = `Test Garden ${Date.now()}`;
-    createdGardens.push(gardenName);
     await page.locator('input[type="text"]').first().fill(gardenName);
     await page.click('button[type="submit"]:has-text("Create Garden")');
 
@@ -54,7 +63,11 @@ test.describe('Garden Management', () => {
     await page.click(`text=${gardenName}`);
 
     // Should navigate to garden detail page
-    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+$/, { timeout: 10000 });
+    await expect(page).toHaveURL(/\/gardens\/([a-f0-9-]+)$/, { timeout: 10000 });
+
+    // Capture garden ID for cleanup
+    const match = page.url().match(/\/gardens\/([a-f0-9-]+)/);
+    if (match) createdGardenIds.push(match[1]);
 
     // Wait for the page to finish loading (check for "Grow Areas" heading)
     await expect(page.locator('h2:has-text("Grow Areas")')).toBeVisible({ timeout: 10000 });
@@ -64,40 +77,29 @@ test.describe('Garden Management', () => {
   });
 
   test.afterEach(async ({ page, request }) => {
-    if (createdGardens.length === 0) return;
+    if (createdGardenIds.length === 0) return;
     try {
-      // Retrieve auth token from the browser context
       const token = await page.evaluate(() => localStorage.getItem('authToken'));
       if (!token) {
         console.warn('No auth token found for cleanup. Skipping garden deletion.');
-        createdGardens.length = 0;
+        createdGardenIds.length = 0;
         return;
       }
-      // Fetch gardens with auth header
-      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
-      if (!resp.ok()) {
-        console.warn('Garden list fetch failed for cleanup:', resp.status());
-        return;
-      }
-      const allGardens = await resp.json();
-      for (const name of createdGardens) {
-        const matches = allGardens.filter((g: any) => g.name === name);
-        for (const g of matches) {
-          try {
-            const delResp = await request.delete(`/api/gardens/${g.id}`, { headers: { Authorization: `Bearer ${token}` } });
-            if (!delResp.ok()) {
-              console.warn('Failed to delete garden id', g.id, 'status', delResp.status());
-            }
-          } catch (e) {
-            console.warn('Exception deleting garden', g.id, e);
+      for (const gid of createdGardenIds) {
+        try {
+          const delResp = await request.delete(`/api/gardens/${gid}`, { headers: { Authorization: `Bearer ${token}` } });
+          if (!delResp.ok()) {
+            console.warn('Failed to delete garden id', gid, 'status', delResp.status());
           }
+        } catch (e) {
+          console.warn('Exception deleting garden', gid, e);
         }
       }
-      // Verification (best-effort)
+      // Verification
       const verifyResp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
       if (verifyResp.ok()) {
         const remaining = await verifyResp.json();
-        const stillPresent = remaining.filter((g: any) => createdGardens.includes(g.name));
+        const stillPresent = remaining.filter((g: any) => createdGardenIds.includes(g.id));
         if (stillPresent.length > 0) {
           console.warn('Some gardens still present after cleanup:', stillPresent.map((g: any) => g.id));
         }
@@ -105,7 +107,7 @@ test.describe('Garden Management', () => {
     } catch (err) {
       console.warn('Garden cleanup failed:', err);
     } finally {
-      createdGardens.length = 0;
+      createdGardenIds.length = 0;
     }
   });
 });

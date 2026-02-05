@@ -1,7 +1,7 @@
 # Garden Import/Export Feature - Implementation Plan
 
 **Created**: 2026-01-29  
-**Status**: Planned
+**Status**: ✅ Complete
 
 ---
 
@@ -621,3 +621,46 @@ Add modal:
 - Export multiple gardens at once
 - Garden templates/presets
 - Share gardens via link (cloud storage)
+
+---
+
+## Implementation Summary (Completed 2026-01-29)
+
+### What was built:
+
+**Backend (Kotlin/Spring Boot):**
+- `src/main/kotlin/no/sogn/gardentime/dto/GardenImportExportDto.kt` - NEW file with 4 DTOs
+- `src/main/kotlin/no/sogn/gardentime/api/GardenController.kt` - Added 2 endpoints
+- `src/main/kotlin/no/sogn/gardentime/service/GardenService.kt` - Added 2 service methods
+
+**Frontend (Next.js/React/TypeScript):**
+- `client-next/lib/api.ts` - Added `GardenExportData` and `GardenImportRequest` types + service methods
+- `client-next/app/api/gardens/[id]/export/route.ts` - NEW BFF route for export
+- `client-next/app/api/gardens/import/route.ts` - NEW BFF route for import
+- `client-next/app/gardens/[id]/components/GardenNavigation.tsx` - Added export button with Download icon
+- `client-next/app/gardens/[id]/board/page.tsx` - Added `handleExport` function
+- `client-next/app/gardens/[id]/dashboard/page.tsx` - Added `handleExport` function
+- `client-next/app/gardens/[id]/grow-areas/page.tsx` - Added `handleExport` function
+- `client-next/app/gardens/[id]/season-plan/page.tsx` - Added `handleExport` function
+- `client-next/app/gardens/page.tsx` - Added import button + modal with file picker and name input
+
+**Documentation:**
+- `docs/sample-garden-export.json` - Sample export file with 5 grow areas for testing
+
+### How to use:
+
+1. **Export a garden:**
+   - Navigate to any garden page (Dashboard, Board, Grow Areas, or Season Plan)
+   - Click the "Export" button in the garden header
+   - A JSON file will download: `{garden-name}-export.json`
+
+2. **Import a garden:**
+   - Go to "My Gardens" page (`/gardens`)
+   - Click "Import Garden" button
+   - Select a JSON export file
+   - Optionally rename the garden
+   - Click "Import" to create the new garden with all grow areas
+
+### Build verification:
+- ✅ Backend compiles successfully (`./gradlew compileKotlin`)
+- ✅ Frontend builds successfully (`npm run build`)

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import { api, gardenService } from '@/lib/api';
 import { GardenDashboard } from '@/types/dashboard';
 import GardenSummaryCard from '@/components/dashboard/GardenSummaryCard';
 import ActiveCropsWidget from '@/components/dashboard/ActiveCropsWidget';
@@ -43,6 +43,23 @@ export default function GardenDashboardPage() {
 
     fetchDashboard();
   }, [gardenId]);
+
+  const handleExport = async () => {
+    try {
+      const exportData = await gardenService.exportGarden(gardenId);
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${dashboard?.summary.gardenName || 'garden'}-export.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError('Failed to export garden');
+    }
+  };
 
   if (loading) {
     return (
@@ -94,7 +111,7 @@ export default function GardenDashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      <GardenNavigation gardenId={gardenId} gardenName={dashboard.summary.gardenName} />
+      <GardenNavigation gardenId={gardenId} gardenName={dashboard.summary.gardenName} onExport={handleExport} />
       
       <main className="flex-grow p-6">
         <div className="max-w-7xl mx-auto">
