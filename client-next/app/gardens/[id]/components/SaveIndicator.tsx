@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import DevLabel from '@/components/DevLabel';
 
 type SaveStatus = 'idle' | 'pending' | 'saving' | 'saved' | 'error';
 
@@ -9,7 +10,7 @@ interface SaveIndicatorProps {
   onRetry?: () => void;
 }
 
-export default function SaveIndicator({ status, onRetry }: SaveIndicatorProps) {
+function SaveIndicatorContent({ status, onRetry }: SaveIndicatorProps) {
   if (status === 'idle') return null;
 
   return (
@@ -57,5 +58,13 @@ export default function SaveIndicator({ status, onRetry }: SaveIndicatorProps) {
         </>
       )}
     </div>
+  );
+}
+
+export default function SaveIndicator(props: SaveIndicatorProps) {
+  return (
+    <DevLabel name="SaveIndicator">
+      <SaveIndicatorContent {...props} />
+    </DevLabel>
   );
 }

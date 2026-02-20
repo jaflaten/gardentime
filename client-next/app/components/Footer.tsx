@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import DevLabel from '@/components/DevLabel';
 
-export default function Footer() {
+function FooterContent() {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -72,5 +73,13 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+  );
+}
+
+export default function Footer() {
+  return (
+    <DevLabel name="Footer">
+      <FooterContent />
+    </DevLabel>
   );
 }

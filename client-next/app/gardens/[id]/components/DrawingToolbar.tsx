@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import DevLabel from '@/components/DevLabel';
 
 export type DrawingTool = 'SELECT' | 'PAN' | 'RECTANGLE' | 'CIRCLE' | 'LINE' | 'ARROW' | 'TEXT' | 'FREEHAND';
 
@@ -27,7 +28,7 @@ const tools: { id: DrawingTool; label: string; icon: string; help: string; short
   { id: 'FREEHAND', label: 'Freehand', icon: '✏️', help: 'Freehand drawing', shortcut: '8' },
 ];
 
-export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea, brushSize = 3, onBrushSizeChange, canUndo = false, canRedo = false, onUndo, onRedo }: DrawingToolbarProps) {
+function DrawingToolbarContent({ activeTool, onToolChange, onAddGrowArea, brushSize = 3, onBrushSizeChange, canUndo = false, canRedo = false, onUndo, onRedo }: DrawingToolbarProps) {
   const activeToolInfo = tools.find(t => t.id === activeTool);
 
   return (
@@ -129,5 +130,13 @@ export default function DrawingToolbar({ activeTool, onToolChange, onAddGrowArea
         )}
       </div>
     </div>
+  );
+}
+
+export default function DrawingToolbar(props: DrawingToolbarProps) {
+  return (
+    <DevLabel name="DrawingToolbar">
+      <DrawingToolbarContent {...props} />
+    </DevLabel>
   );
 }

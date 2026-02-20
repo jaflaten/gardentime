@@ -1,12 +1,13 @@
 'use client';
 
 import { GardenSummary } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface GardenSummaryCardProps {
   summary: GardenSummary;
 }
 
-export default function GardenSummaryCard({ summary }: GardenSummaryCardProps) {
+function GardenSummaryCardContent({ summary }: GardenSummaryCardProps) {
   const formatArea = (areaCm2: number | null) => {
     if (!areaCm2) return 'N/A';
     // Convert cm² to m²
@@ -62,5 +63,13 @@ export default function GardenSummaryCard({ summary }: GardenSummaryCardProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GardenSummaryCard(props: GardenSummaryCardProps) {
+  return (
+    <DevLabel name="GardenSummaryCard">
+      <GardenSummaryCardContent {...props} />
+    </DevLabel>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { plantService, Plant } from '@/lib/api';
+import DevLabel from '@/components/DevLabel';
 
 interface PlantSearchProps {
   placeholder?: string;
@@ -11,7 +12,7 @@ interface PlantSearchProps {
   initialValue?: string;
 }
 
-export default function PlantSearch({
+function PlantSearchContent({
   placeholder = 'Search plants...',
   onSelect,
   autoFocus = false,
@@ -186,5 +187,13 @@ export default function PlantSearch({
         </div>
       )}
     </div>
+  );
+}
+
+export default function PlantSearch(props: PlantSearchProps) {
+  return (
+    <DevLabel name="PlantSearch">
+      <PlantSearchContent {...props} />
+    </DevLabel>
   );
 }

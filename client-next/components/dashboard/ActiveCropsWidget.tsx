@@ -1,12 +1,13 @@
 'use client';
 
 import { ActiveCropsWidget } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface ActiveCropsWidgetProps {
   data: ActiveCropsWidget;
 }
 
-export default function ActiveCropsWidgetComponent({ data }: ActiveCropsWidgetProps) {
+function ActiveCropsWidgetContent({ data }: ActiveCropsWidgetProps) {
   const getPercentage = (value: number) => {
     if (data.total === 0) return 0;
     return Math.round((value / data.total) * 100);
@@ -66,5 +67,13 @@ export default function ActiveCropsWidgetComponent({ data }: ActiveCropsWidgetPr
         </div>
       )}
     </div>
+  );
+}
+
+export default function ActiveCropsWidgetComponent(props: ActiveCropsWidgetProps) {
+  return (
+    <DevLabel name="ActiveCropsWidget">
+      <ActiveCropsWidgetContent {...props} />
+    </DevLabel>
   );
 }

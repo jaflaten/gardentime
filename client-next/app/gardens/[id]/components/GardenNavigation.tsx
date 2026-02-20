@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, List, Grid3x3, Calendar, Download } from 'lucide-react';
+import DevLabel from '@/components/DevLabel';
 
 interface GardenNavigationProps {
   gardenId: string;
@@ -10,7 +11,7 @@ interface GardenNavigationProps {
   onExport?: () => void;
 }
 
-export default function GardenNavigation({ gardenId, gardenName, onExport }: GardenNavigationProps) {
+function GardenNavigationContent({ gardenId, gardenName, onExport }: GardenNavigationProps) {
   const pathname = usePathname();
   
   const isActive = (path: string) => {
@@ -87,5 +88,13 @@ export default function GardenNavigation({ gardenId, gardenName, onExport }: Gar
         </nav>
       </div>
     </div>
+  );
+}
+
+export default function GardenNavigation(props: GardenNavigationProps) {
+  return (
+    <DevLabel name="GardenNavigation">
+      <GardenNavigationContent {...props} />
+    </DevLabel>
   );
 }

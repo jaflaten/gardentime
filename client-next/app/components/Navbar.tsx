@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDevMode } from '@/contexts/DevModeContext';
+import DevLabel from '@/components/DevLabel';
 
 interface NavbarProps {
   breadcrumbs?: Array<{
@@ -12,9 +14,10 @@ interface NavbarProps {
   showSearch?: boolean;
 }
 
-export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) {
+function NavbarContent({ breadcrumbs, showSearch = true }: NavbarProps) {
   const router = useRouter();
   const { isAuthenticated, username, firstName, logout } = useAuth();
+  const { isDevMode, toggleDevMode } = useDevMode();
 
   const handleLogout = () => {
     logout();
@@ -52,6 +55,17 @@ export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) 
             )}
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggleDevMode}
+              className={`px-3 py-1 text-xs font-mono rounded transition ${
+                isDevMode 
+                  ? 'bg-yellow-400 text-black' 
+                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              }`}
+              title="Toggle component labels for development"
+            >
+              {isDevMode ? '🏷️ DEV ON' : '🏷️ DEV'}
+            </button>
             {isAuthenticated && showSearch && (
               <Link
                 href="/search"
@@ -81,5 +95,13 @@ export default function Navbar({ breadcrumbs, showSearch = true }: NavbarProps) 
         </div>
       </div>
     </nav>
+  );
+}
+
+export default function Navbar(props: NavbarProps) {
+  return (
+    <DevLabel name="Navbar">
+      <NavbarContent {...props} />
+    </DevLabel>
   );
 }

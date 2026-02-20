@@ -1,12 +1,13 @@
 'use client';
 
 import { GardenCapacityWidget as CapacityData } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface Props {
   data: CapacityData;
 }
 
-export default function GardenCapacityWidget({ data }: Props) {
+function GardenCapacityWidgetContent({ data }: Props) {
   const getCapacityColor = (percent: number) => {
     if (percent < 50) return 'bg-blue-500';
     if (percent < 75) return 'bg-green-500';
@@ -142,5 +143,13 @@ export default function GardenCapacityWidget({ data }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function GardenCapacityWidget(props: Props) {
+  return (
+    <DevLabel name="GardenCapacityWidget">
+      <GardenCapacityWidgetContent {...props} />
+    </DevLabel>
   );
 }

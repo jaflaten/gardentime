@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, AlertCircle, AlertTriangle, Info } from 'lucide-react';
 import { RotationIssue, IssueSeverity } from '@/types/rotation';
+import DevLabel from '@/components/DevLabel';
 
 interface Props {
   issue: RotationIssue;
 }
 
-export default function RotationIssueCard({ issue }: Props) {
+function RotationIssueCardContent({ issue }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   const severityConfig = {
@@ -168,5 +169,13 @@ export default function RotationIssueCard({ issue }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RotationIssueCard(props: Props) {
+  return (
+    <DevLabel name="RotationIssueCard">
+      <RotationIssueCardContent {...props} />
+    </DevLabel>
   );
 }

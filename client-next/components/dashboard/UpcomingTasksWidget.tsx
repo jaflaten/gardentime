@@ -1,12 +1,13 @@
 'use client';
 
 import { UpcomingTask, TaskType } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface UpcomingTasksWidgetProps {
   tasks: UpcomingTask[];
 }
 
-export default function UpcomingTasksWidget({ tasks }: UpcomingTasksWidgetProps) {
+function UpcomingTasksWidgetContent({ tasks }: UpcomingTasksWidgetProps) {
   const getTaskIcon = (type: TaskType) => {
     switch (type) {
       case TaskType.HARVEST_READY:
@@ -123,5 +124,13 @@ export default function UpcomingTasksWidget({ tasks }: UpcomingTasksWidgetProps)
         </div>
       )}
     </div>
+  );
+}
+
+export default function UpcomingTasksWidget(props: UpcomingTasksWidgetProps) {
+  return (
+    <DevLabel name="UpcomingTasksWidget">
+      <UpcomingTasksWidgetContent {...props} />
+    </DevLabel>
   );
 }

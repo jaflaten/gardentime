@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { growAreaService, GrowArea } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import DevLabel from '@/components/DevLabel';
 
 interface GrowAreaSearchProps {
   placeholder?: string;
@@ -11,7 +12,7 @@ interface GrowAreaSearchProps {
   className?: string;
 }
 
-export default function GrowAreaSearch({
+function GrowAreaSearchContent({
   placeholder = 'Search grow areas...',
   onSelect,
   autoFocus = false,
@@ -171,5 +172,13 @@ export default function GrowAreaSearch({
         </div>
       )}
     </div>
+  );
+}
+
+export default function GrowAreaSearch(props: GrowAreaSearchProps) {
+  return (
+    <DevLabel name="GrowAreaSearch">
+      <GrowAreaSearchContent {...props} />
+    </DevLabel>
   );
 }

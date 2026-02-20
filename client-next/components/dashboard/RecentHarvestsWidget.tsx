@@ -1,12 +1,13 @@
 'use client';
 
 import { RecentHarvestItem } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface Props {
   harvests: RecentHarvestItem[];
 }
 
-export default function RecentHarvestsWidget({ harvests }: Props) {
+function RecentHarvestsWidgetContent({ harvests }: Props) {
   const getOutcomeBadge = (outcome: string | null) => {
     if (!outcome) return null;
     
@@ -92,5 +93,13 @@ export default function RecentHarvestsWidget({ harvests }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RecentHarvestsWidget(props: Props) {
+  return (
+    <DevLabel name="RecentHarvestsWidget">
+      <RecentHarvestsWidgetContent {...props} />
+    </DevLabel>
   );
 }

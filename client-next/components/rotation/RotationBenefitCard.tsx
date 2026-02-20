@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { RotationBenefit } from '@/types/rotation';
+import DevLabel from '@/components/DevLabel';
 
 interface Props {
   benefit: RotationBenefit;
 }
 
-export default function RotationBenefitCard({ benefit }: Props) {
+function RotationBenefitCardContent({ benefit }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -79,5 +80,13 @@ export default function RotationBenefitCard({ benefit }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RotationBenefitCard(props: Props) {
+  return (
+    <DevLabel name="RotationBenefitCard">
+      <RotationBenefitCardContent {...props} />
+    </DevLabel>
   );
 }

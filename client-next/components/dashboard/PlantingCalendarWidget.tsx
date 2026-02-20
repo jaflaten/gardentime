@@ -1,12 +1,13 @@
 'use client';
 
 import { PlantingCalendarWidget, CalendarEventType } from '@/types/dashboard';
+import DevLabel from '@/components/DevLabel';
 
 interface PlantingCalendarWidgetProps {
   data: PlantingCalendarWidget;
 }
 
-export default function PlantingCalendarWidgetComponent({ data }: PlantingCalendarWidgetProps) {
+function PlantingCalendarWidgetContent({ data }: PlantingCalendarWidgetProps) {
   const getEventIcon = (type: CalendarEventType) => {
     switch (type) {
       case CalendarEventType.PLANTED:
@@ -90,5 +91,13 @@ export default function PlantingCalendarWidgetComponent({ data }: PlantingCalend
         </div>
       )}
     </div>
+  );
+}
+
+export default function PlantingCalendarWidgetComponent(props: PlantingCalendarWidgetProps) {
+  return (
+    <DevLabel name="PlantingCalendarWidget">
+      <PlantingCalendarWidgetContent {...props} />
+    </DevLabel>
   );
 }

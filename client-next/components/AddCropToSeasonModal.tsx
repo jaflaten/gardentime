@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { api } from '@/lib/api';
+import DevLabel from '@/components/DevLabel';
 
 interface AddCropToSeasonModalProps {
   isOpen: boolean;
@@ -19,7 +20,7 @@ interface Plant {
   family?: string;
 }
 
-export default function AddCropToSeasonModal({
+function AddCropToSeasonModalContent({
   isOpen,
   onClose,
   gardenId,
@@ -235,5 +236,13 @@ export default function AddCropToSeasonModal({
         )}
       </div>
     </div>
+  );
+}
+
+export default function AddCropToSeasonModal(props: AddCropToSeasonModalProps) {
+  return (
+    <DevLabel name="AddCropToSeasonModal">
+      <AddCropToSeasonModalContent {...props} />
+    </DevLabel>
   );
 }
