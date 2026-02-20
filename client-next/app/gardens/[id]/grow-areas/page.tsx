@@ -174,6 +174,20 @@ export default function GrowAreasListPage() {
     setShowAddCropModal(true);
   };
 
+  const handleDuplicateGrowArea = (growArea: GrowArea) => {
+    setNewGrowArea({
+      name: `${growArea.name} (Copy)`,
+      zoneSize: growArea.zoneSize || '',
+      zoneType: growArea.zoneType || '',
+      nrOfRows: growArea.nrOfRows?.toString() || '',
+      notes: growArea.notes || '',
+      width: growArea.width?.toString() || '',
+      length: growArea.length?.toString() || '',
+      height: growArea.height?.toString() || '',
+    });
+    setShowCreateModal(true);
+  };
+
   const handleExport = async () => {
     try {
       const exportData = await gardenService.exportGarden(gardenId);
@@ -312,6 +326,12 @@ export default function GrowAreasListPage() {
                           className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition"
                         >
                           Edit
+                        </button>
+                        <button
+                          onClick={() => handleDuplicateGrowArea(growArea)}
+                          className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition"
+                        >
+                          Duplicate
                         </button>
                         <button
                           onClick={() => openDeleteConfirm(growArea)}
