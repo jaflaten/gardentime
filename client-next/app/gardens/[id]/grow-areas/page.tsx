@@ -345,7 +345,7 @@ export default function GrowAreasListPage() {
                     required
                     value={newGrowArea.name}
                     onChange={(e) => setNewGrowArea({ ...newGrowArea, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
 
@@ -354,7 +354,7 @@ export default function GrowAreasListPage() {
                   <select
                     value={newGrowArea.zoneType}
                     onChange={(e) => setNewGrowArea({ ...newGrowArea, zoneType: e.target.value as ZoneType })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900"
                   >
                     <option value="">Select type...</option>
                     <option value="BOX">Box</option>
@@ -373,7 +373,7 @@ export default function GrowAreasListPage() {
                       step="0.1"
                       value={newGrowArea.width}
                       onChange={(e) => setNewGrowArea({ ...newGrowArea, width: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
@@ -383,7 +383,7 @@ export default function GrowAreasListPage() {
                       step="0.1"
                       value={newGrowArea.length}
                       onChange={(e) => setNewGrowArea({ ...newGrowArea, length: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -405,7 +405,7 @@ export default function GrowAreasListPage() {
                         value={newGrowArea.zoneSize}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, zoneSize: e.target.value })}
                         placeholder="e.g., 80x120cm"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -415,7 +415,7 @@ export default function GrowAreasListPage() {
                         type="number"
                         value={newGrowArea.nrOfRows}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, nrOfRows: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -426,7 +426,7 @@ export default function GrowAreasListPage() {
                         step="0.1"
                         value={newGrowArea.height}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, height: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -436,7 +436,7 @@ export default function GrowAreasListPage() {
                         value={newGrowArea.notes}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, notes: e.target.value })}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
                   </>
@@ -446,7 +446,7 @@ export default function GrowAreasListPage() {
               <div className="mt-6 flex gap-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
                   Create
                 </button>
@@ -457,7 +457,7 @@ export default function GrowAreasListPage() {
                     setShowAdvanced(false);
                     setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
                   }}
-                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
@@ -481,7 +481,7 @@ export default function GrowAreasListPage() {
                     required
                     value={newGrowArea.name}
                     onChange={(e) => setNewGrowArea({ ...newGrowArea, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                   />
                 </div>
 
@@ -490,7 +490,7 @@ export default function GrowAreasListPage() {
                   <select
                     value={newGrowArea.zoneType}
                     onChange={(e) => setNewGrowArea({ ...newGrowArea, zoneType: e.target.value as ZoneType })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900"
                   >
                     <option value="">Select type...</option>
                     <option value="BOX">Box</option>
@@ -509,7 +509,7 @@ export default function GrowAreasListPage() {
                       step="0.1"
                       value={newGrowArea.width}
                       onChange={(e) => setNewGrowArea({ ...newGrowArea, width: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <div>
@@ -519,7 +519,7 @@ export default function GrowAreasListPage() {
                       step="0.1"
                       value={newGrowArea.length}
                       onChange={(e) => setNewGrowArea({ ...newGrowArea, length: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                 </div>
@@ -540,7 +540,7 @@ export default function GrowAreasListPage() {
                         type="text"
                         value={newGrowArea.zoneSize}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, zoneSize: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -550,7 +550,7 @@ export default function GrowAreasListPage() {
                         type="number"
                         value={newGrowArea.nrOfRows}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, nrOfRows: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -561,7 +561,7 @@ export default function GrowAreasListPage() {
                         step="0.1"
                         value={newGrowArea.height}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, height: e.target.value })}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
 
@@ -571,7 +571,7 @@ export default function GrowAreasListPage() {
                         value={newGrowArea.notes}
                         onChange={(e) => setNewGrowArea({ ...newGrowArea, notes: e.target.value })}
                         rows={3}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border"
+                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm px-3 py-2 border text-gray-900 placeholder:text-gray-500"
                       />
                     </div>
                   </>
@@ -581,7 +581,7 @@ export default function GrowAreasListPage() {
               <div className="mt-6 flex gap-3">
                 <button
                   type="submit"
-                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
                   Save Changes
                 </button>
@@ -593,7 +593,7 @@ export default function GrowAreasListPage() {
                     setShowAdvanced(false);
                     setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
                   }}
-                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+                  className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
                   Cancel
                 </button>
