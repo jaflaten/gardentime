@@ -488,6 +488,12 @@ export default function GardenBoardView({
     const growArea = growAreas.find(ga => ga.id === selectedId);
     if (!growArea) return;
 
+    // Notify parent component of rotation changes for immediate canvas update
+    if (updates.rotation !== undefined && onUpdateRotation) {
+      onUpdateRotation(selectedId, updates.rotation);
+      return; // onUpdateRotation handles both optimistic update and API call
+    }
+
     try {
       // Make API call to update grow area
       const response = await fetch(`/api/grow-areas/${selectedId}`, {

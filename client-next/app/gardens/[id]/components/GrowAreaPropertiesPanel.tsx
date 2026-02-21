@@ -157,6 +157,100 @@ export default function GrowAreaPropertiesPanel({
           </div>
         </div>
 
+        {/* Rotation */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Rotation: {Math.round(selectedGrowArea.rotation || 0)}°
+          </label>
+          <div className="space-y-3">
+            {/* Rotation slider */}
+            <input
+              type="range"
+              min="0"
+              max="360"
+              step="22.5"
+              value={selectedGrowArea.rotation || 0}
+              onChange={(e) => onUpdate({ rotation: parseFloat(e.target.value) })}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+            />
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>0°</span>
+              <span>90°</span>
+              <span>180°</span>
+              <span>270°</span>
+              <span>360°</span>
+            </div>
+            
+            {/* Rotation increment buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const current = selectedGrowArea.rotation || 0;
+                  const newRotation = ((current - 22.5) % 360 + 360) % 360;
+                  onUpdate({ rotation: newRotation });
+                }}
+                className="flex-1 px-3 py-2 bg-white border-2 border-gray-300 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+              >
+                ↺ Rotate Left
+              </button>
+              <button
+                onClick={() => {
+                  const current = selectedGrowArea.rotation || 0;
+                  const newRotation = (current + 22.5) % 360;
+                  onUpdate({ rotation: newRotation });
+                }}
+                className="flex-1 px-3 py-2 bg-white border-2 border-gray-300 rounded text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+              >
+                Rotate Right ↻
+              </button>
+            </div>
+            
+            {/* Quick rotation presets */}
+            <div className="grid grid-cols-4 gap-2">
+              <button
+                onClick={() => onUpdate({ rotation: 0 })}
+                className={`px-2 py-1.5 rounded text-xs font-semibold transition-colors ${
+                  (selectedGrowArea.rotation || 0) === 0
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                }`}
+              >
+                0°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 90 })}
+                className={`px-2 py-1.5 rounded text-xs font-semibold transition-colors ${
+                  (selectedGrowArea.rotation || 0) === 90
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                }`}
+              >
+                90°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 180 })}
+                className={`px-2 py-1.5 rounded text-xs font-semibold transition-colors ${
+                  (selectedGrowArea.rotation || 0) === 180
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                }`}
+              >
+                180°
+              </button>
+              <button
+                onClick={() => onUpdate({ rotation: 270 })}
+                className={`px-2 py-1.5 rounded text-xs font-semibold transition-colors ${
+                  (selectedGrowArea.rotation || 0) === 270
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                }`}
+              >
+                270°
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Zone Size */}
         {selectedGrowArea.zoneSize && (
           <div>

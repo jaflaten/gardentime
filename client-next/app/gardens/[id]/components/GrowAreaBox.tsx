@@ -130,10 +130,12 @@ export default function GrowAreaBox({
 
     // Call the rotation callback if rotation changed
     const currentRotation = growArea.rotation ?? 0;
-    if (onRotate && Math.abs(newRotation - currentRotation) > 0.1) {
-      // Normalize rotation to 0-360
-      const normalizedRotation = ((newRotation % 360) + 360) % 360;
-      onRotate(normalizedRotation);
+    // Normalize both values for comparison
+    const normalizedNew = ((newRotation % 360) + 360) % 360;
+    const normalizedCurrent = ((currentRotation % 360) + 360) % 360;
+    
+    if (onRotate && Math.abs(normalizedNew - normalizedCurrent) > 0.1) {
+      onRotate(normalizedNew);
     }
   };
 
