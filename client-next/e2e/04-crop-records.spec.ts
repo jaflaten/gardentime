@@ -6,7 +6,7 @@ test.describe('Crop Record Management', () => {
   let gardenId: string;
   const createdGardenIds: string[] = [];
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, request }) => {
     // Login before each test
     await page.goto('/login');
     await page.fill('input[name="username"]', 'testuser');
@@ -25,19 +25,31 @@ test.describe('Crop Record Management', () => {
     await page.click('button[type="submit"]:has-text("Create Garden")');
     await expect(page.locator(`text=${gardenName}`)).toBeVisible({ timeout: 10000 });
 
-    // Navigate to garden detail page
-    await page.click(`text=${gardenName}`);
-    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+$/);
-    // Capture gardenId from URL
-    const gardenMatch = page.url().match(/\/gardens\/([a-f0-9-]+)/);
-    if (gardenMatch) {
-      gardenId = gardenMatch[1];
-      createdGardenIds.push(gardenId);
+    // Capture gardenId immediately via API (before navigation which might fail)
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    if (token) {
+      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok()) {
+        const gardens = await resp.json();
+        const created = gardens.find((g: any) => g.name === gardenName);
+        if (created) {
+          gardenId = created.id;
+          createdGardenIds.push(gardenId);
+        }
+      }
     }
 
+    // Navigate to garden detail page (now redirects to /dashboard)
+    await page.click(`text=${gardenName}`);
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+/);
+
+    // Navigate to grow areas list
+    await page.click('a:has-text("Grow Areas")');
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+\/grow-areas$/);
+
     // Create a grow area
-    await page.click('button:has-text("New Grow Area")');
-    await expect(page.locator('text=Create New Grow Area')).toBeVisible();
+    await page.click('button:has-text("Add Grow Area")');
+    await expect(page.locator('text=Create Grow Area')).toBeVisible();
 
     growAreaName = `Test Grow Area ${Date.now()}`;
     await page.locator('input[type="text"]').first().fill(growAreaName);
@@ -45,7 +57,7 @@ test.describe('Crop Record Management', () => {
     await expect(page.locator(`text=${growAreaName}`)).toBeVisible({ timeout: 10000 });
 
     // Navigate to grow area detail page
-    await page.click(`text=${growAreaName}`);
+    await page.click(`a:has-text("View Details")`);
     await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+\/grow-areas\/[a-f0-9-]+$/);
   });
 

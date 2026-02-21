@@ -22,7 +22,7 @@ test.describe('Authentication', () => {
 
     // Should redirect to gardens page
     await expect(page).toHaveURL('/gardens');
-    await expect(page.locator('text=My Gardens')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My Gardens' })).toBeVisible();
   });
 
   test('should show error with invalid credentials', async ({ page }) => {
@@ -33,8 +33,8 @@ test.describe('Authentication', () => {
 
     await page.click('button[type="submit"]');
 
-    // Should show error message
-    await expect(page.locator('text=/invalid|error|failed/i')).toBeVisible();
+    // Should show error message in red-50 bg container with red-800 text
+    await expect(page.locator('.bg-red-50 .text-red-800')).toBeVisible({ timeout: 5000 });
   });
 
   test('should logout successfully', async ({ page }) => {

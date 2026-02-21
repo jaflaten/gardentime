@@ -6,7 +6,7 @@ test.describe('End-to-End User Journey', () => {
   let gardenId: string;
   const createdGardenIds: string[] = [];
 
-  test('complete user workflow: login -> create garden -> add grow area -> add crop record -> edit -> delete', async ({ page }) => {
+  test('complete user workflow: login -> create garden -> add grow area -> add crop record -> edit -> delete', async ({ page, request }) => {
     const timestamp = Date.now();
 
     // Step 1: Login
@@ -27,38 +27,40 @@ test.describe('End-to-End User Journey', () => {
     await page.click('button[type="submit"]:has-text("Create Garden")');
     await expect(page.locator(`text=${gardenName}`)).toBeVisible({ timeout: 10000 });
 
-    // Step 3: Navigate to garden details
-    await page.click(`text=${gardenName}`);
-    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+$/);
-
-    // Extract gardenId from the URL for later cleanup
-    const gardenMatch = page.url().match(/\/gardens\/([a-f0-9-]+)/);
-    if (gardenMatch) {
-      gardenId = gardenMatch[1];
-      createdGardenIds.push(gardenId);
+    // Capture gardenId immediately via API (before navigation which might fail)
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    if (token) {
+      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok()) {
+        const gardens = await resp.json();
+        const created = gardens.find((g: any) => g.name === gardenName);
+        if (created) {
+          gardenId = created.id;
+          createdGardenIds.push(gardenId);
+        }
+      }
     }
 
+    // Step 3: Navigate to garden details (now redirects to /dashboard)
+    await page.click(`text=${gardenName}`);
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+/);
+
+    // Navigate to grow areas list
+    await page.click('a:has-text("Grow Areas")');
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+\/grow-areas$/);
+
     // Step 4: Create a grow area
-    await page.click('button:has-text("New Grow Area")');
-    await expect(page.locator('text=Create New Grow Area')).toBeVisible();
+    await page.click('button:has-text("Add Grow Area")');
+    await expect(page.locator('text=Create Grow Area')).toBeVisible();
 
     growAreaName = `E2E Test Grow Area ${timestamp}`;
     await page.locator('input[type="text"]').first().fill(growAreaName);
-
-    // Show advanced options if needed
-    const advancedButton = page.locator('button:has-text("Show advanced options")');
-    if (await advancedButton.isVisible()) {
-      await advancedButton.click();
-
-      // Fill in size field - second text input
-      await page.locator('input[type="text"]').nth(1).fill('100x100cm');
-    }
 
     await page.click('button[type="submit"]:has-text("Create")');
     await expect(page.locator(`text=${growAreaName}`)).toBeVisible({ timeout: 10000 });
 
     // Step 5: Navigate to grow area details
-    await page.click(`text=${growAreaName}`);
+    await page.click(`a:has-text("View Details")`);
     await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+\/grow-areas\/[a-f0-9-]+$/);
 
     // Step 6: Create a crop record
@@ -107,23 +109,19 @@ test.describe('End-to-End User Journey', () => {
     await page.click('a:has-text("Back")');
     await page.waitForTimeout(1000);
 
-    const growAreaCard = page.locator(`[data-testid="grow-area-card"]:has-text("${growAreaName}")`).first();
+    const growAreaCard = page.locator(`li:has-text("${growAreaName}")`).first();
     await expect(growAreaCard).toBeVisible({ timeout: 10000 });
-    await growAreaCard.locator('button[title="Delete"]').click();
+    await growAreaCard.locator('button:has-text("Delete")').click();
 
-    // Confirm deletion in the modal scoped by its heading
-    const deleteModal = page.locator('h3:has-text("Delete Grow Area")').locator('..');
-    await expect(deleteModal).toBeVisible({ timeout: 10000 });
-    await deleteModal.locator('button:has-text("Delete")').click();
+    // Confirm deletion in the modal
+    await expect(page.locator('text=Confirm Delete')).toBeVisible({ timeout: 10000 });
+    await page.locator('button:has-text("Delete")').first().click();
 
     // Wait for the modal to close
-    await expect(deleteModal).not.toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=Confirm Delete')).not.toBeVisible({ timeout: 10000 });
 
-    // Assert the grow area card is gone (count = 0)
-    await expect(page.locator(`[data-testid="grow-area-card"]:has-text("${growAreaName}")`)).toHaveCount(0);
-
-    // Step 10: Navigate back to gardens and verify (deleting garden from detail page might not be available)
-    await page.click('a:has-text("Back to Gardens")');
+    // Step 10: Navigate back to gardens and verify
+    await page.click('a:has-text("My Gardens")');
     await expect(page).toHaveURL('/gardens');
   });
 

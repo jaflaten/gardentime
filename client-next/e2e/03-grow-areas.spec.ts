@@ -6,7 +6,7 @@ test.describe('Grow Area Management', () => {
   const createdGrowAreas: string[] = [];
   const createdGardenIds: string[] = [];
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, request }) => {
     // Login before each test
     await page.goto('/login');
     await page.fill('input[name="username"]', 'testuser');
@@ -25,16 +25,27 @@ test.describe('Grow Area Management', () => {
     await page.click('button[type="submit"]:has-text("Create Garden")');
     await expect(page.locator(`text=${gardenName}`)).toBeVisible({ timeout: 10000 });
 
-    // Navigate to garden detail page
-    await page.click(`text=${gardenName}`);
-    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+$/);
-    // Capture gardenId for cleanup
-    const match = page.url().match(/\/gardens\/([a-f0-9-]+)/);
-    if (match) {
-      gardenId = match[1];
-      createdGardenIds.push(gardenId);
+    // Capture gardenId immediately via API (before navigation which might fail)
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    if (token) {
+      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok()) {
+        const gardens = await resp.json();
+        const created = gardens.find((g: any) => g.name === gardenName);
+        if (created) {
+          gardenId = created.id;
+          createdGardenIds.push(gardenId);
+        }
+      }
     }
-    await expect(page.locator('h2:has-text("Grow Areas")')).toBeVisible({ timeout: 10000 });
+
+    // Navigate to garden detail page (now redirects to /dashboard)
+    await page.click(`text=${gardenName}`);
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+/);
+    
+    // Navigate to grow areas list
+    await page.click('a:has-text("Grow Areas")');
+    await expect(page).toHaveURL(/\/gardens\/[a-f0-9-]+\/grow-areas$/);
   });
 
   test('should create a new grow area with basic fields', async ({ page }) => {

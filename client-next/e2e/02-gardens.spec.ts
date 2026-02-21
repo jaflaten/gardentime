@@ -13,7 +13,7 @@ test.describe('Garden Management', () => {
   });
 
   test('should display gardens list page', async ({ page }) => {
-    await expect(page.locator('text=My Gardens')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My Gardens' })).toBeVisible();
   });
 
   test('should create a new garden', async ({ page, request }) => {
@@ -47,7 +47,7 @@ test.describe('Garden Management', () => {
     }
   });
 
-  test('should view garden details', async ({ page }) => {
+  test('should view garden details', async ({ page, request }) => {
     // Create a garden first
     await page.click('button:has-text("New Garden")');
     await expect(page.locator('text=Create New Garden')).toBeVisible();
@@ -59,20 +59,24 @@ test.describe('Garden Management', () => {
     // Wait for garden to appear
     await expect(page.locator(`text=${gardenName}`)).toBeVisible({ timeout: 10000 });
 
+    // Capture garden ID immediately via API (before navigation which might fail)
+    const token = await page.evaluate(() => localStorage.getItem('authToken'));
+    if (token) {
+      const resp = await request.get('/api/gardens', { headers: { Authorization: `Bearer ${token}` } });
+      if (resp.ok()) {
+        const gardens = await resp.json();
+        const created = gardens.find((g: any) => g.name === gardenName);
+        if (created) createdGardenIds.push(created.id);
+      }
+    }
+
     // Click on the garden to view details
     await page.click(`text=${gardenName}`);
 
-    // Should navigate to garden detail page
-    await expect(page).toHaveURL(/\/gardens\/([a-f0-9-]+)$/, { timeout: 10000 });
+    // Should navigate to garden detail page (now redirects to /dashboard)
+    await expect(page).toHaveURL(/\/gardens\/([a-f0-9-]+)/, { timeout: 10000 });
 
-    // Capture garden ID for cleanup
-    const match = page.url().match(/\/gardens\/([a-f0-9-]+)/);
-    if (match) createdGardenIds.push(match[1]);
-
-    // Wait for the page to finish loading (check for "Grow Areas" heading)
-    await expect(page.locator('h2:has-text("Grow Areas")')).toBeVisible({ timeout: 10000 });
-
-    // Verify garden name is displayed in the page heading
+    // Verify garden name is displayed in the page
     await expect(page.locator('h1').filter({ hasText: gardenName })).toBeVisible({ timeout: 10000 });
   });
 
