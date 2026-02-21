@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Group, Rect, Text, Circle, Transformer } from 'react-konva';
 import { GrowArea } from '@/lib/api';
 import Konva from 'konva';
@@ -18,6 +18,35 @@ interface GrowAreaBoxProps {
   onDoubleClick: () => void;
 }
 
+// Custom comparison function for React.memo
+// Ignores callback props (they change reference but do the same thing)
+function arePropsEqual(prev: GrowAreaBoxProps, next: GrowAreaBoxProps): boolean {
+  // Compare grow area data that affects rendering
+  const ga1 = prev.growArea;
+  const ga2 = next.growArea;
+  
+  return (
+    ga1.id === ga2.id &&
+    ga1.positionX === ga2.positionX &&
+    ga1.positionY === ga2.positionY &&
+    ga1.width === ga2.width &&
+    ga1.length === ga2.length &&
+    ga1.rotation === ga2.rotation &&
+    ga1.name === ga2.name &&
+    ga1.zoneType === ga2.zoneType &&
+    ga1.zoneSize === ga2.zoneSize &&
+    ga1.nrOfRows === ga2.nrOfRows &&
+    (ga1 as any).customColor === (ga2 as any).customColor &&
+    // Compare currentCrops by length and IDs (avoid deep comparison)
+    (ga1.currentCrops?.length ?? 0) === (ga2.currentCrops?.length ?? 0) &&
+    (ga1.currentCrops?.map(c => c.id).join(',') ?? '') === (ga2.currentCrops?.map(c => c.id).join(',') ?? '') &&
+    // Compare selection state
+    prev.isSelected === next.isSelected &&
+    prev.isMultiSelected === next.isMultiSelected &&
+    prev.isDraggingEnabled === next.isDraggingEnabled
+  );
+}
+
 // Color mapping based on zone type (Step 19.2)
 const ZONE_TYPE_COLORS = {
   BOX: '#3b82f6',      // blue
@@ -26,7 +55,7 @@ const ZONE_TYPE_COLORS = {
   BUCKET: '#6b7280',   // gray
 } as const;
 
-export default function GrowAreaBox({
+function GrowAreaBoxComponent({
   growArea,
   isSelected,
   isMultiSelected = false,
@@ -40,29 +69,19 @@ export default function GrowAreaBox({
 }: GrowAreaBoxProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const groupRef = React.useRef<Konva.Group>(null);
   const shapeRef = React.useRef<Konva.Shape>(null);
   const transformerRef = React.useRef<Konva.Transformer>(null);
 
-  // Debug logging for props received
-  React.useEffect(() => {
-    console.log(`📊 GrowAreaBox "${growArea.name}" (${growArea.id}) render:`, {
-      isSelected,
-      isMultiSelected,
-      isDraggingEnabled,
-    });
-  }, [isSelected, isMultiSelected, isDraggingEnabled, growArea.name, growArea.id]);
-
-  // Debug logging for multi-select visual feedback
-  React.useEffect(() => {
-    if (isMultiSelected) {
-      console.log(`GrowArea ${growArea.name} is multi-selected:`, { isMultiSelected, isSelected });
-    }
-  }, [isMultiSelected, isSelected, growArea.name]);
-
-  // Position and dimensions
-  const x = growArea.positionX ?? 0;
-  const y = growArea.positionY ?? 0;
+  // Position from props (used when not dragging)
+  const propsX = growArea.positionX ?? 0;
+  const propsY = growArea.positionY ?? 0;
+  
+  // During drag, Konva controls position natively - we don't interfere
+  // Only sync from props when not dragging
+  const x = propsX;
+  const y = propsY;
 
   // Ensure minimum touch-friendly size (Step 19.6)
   // Convert cm to pixels (1cm = 1px at 100% zoom) with minimum 44px
@@ -77,13 +96,36 @@ export default function GrowAreaBox({
   // Hover effect colors (Step 19.5)
   const strokeColor = isSelected ? '#10b981' : isMultiSelected ? '#3b82f6' : isHovered ? '#1f2937' : '#374151';
   const strokeWidth = isSelected ? 4 : isMultiSelected ? 3 : isHovered ? 3 : 2;
-  const shadowBlur = isSelected ? 15 : isMultiSelected ? 12 : isHovered ? 10 : 5;
+  
+  // Disable shadows during drag for better performance (GPU-intensive blur calculations)
+  const shadowBlur = isDragging ? 0 : (isSelected ? 15 : isMultiSelected ? 12 : isHovered ? 10 : 5);
+  const shadowEnabled = !isDragging;
 
   // Check if this is a bucket (should be circular)
   const isBucket = growArea.zoneType === 'BUCKET';
 
   // For buckets, calculate radius (use average of width/height, or just width if square)
   const radius = isBucket ? Math.max(width, height) / 2 : 0;
+
+  // Calculate offset for rotation around center
+  const offsetX = isBucket ? radius : width / 2;
+  const offsetY = isBucket ? radius : height / 2;
+
+  // Sync Konva node position from props when not dragging
+  // This ensures external updates (like undo) are reflected
+  React.useEffect(() => {
+    if (!isDragging && groupRef.current) {
+      const node = groupRef.current;
+      const targetX = propsX + offsetX;
+      const targetY = propsY + offsetY;
+      // Only update if position actually differs (avoid unnecessary Konva updates)
+      if (Math.abs(node.x() - targetX) > 0.1 || Math.abs(node.y() - targetY) > 0.1) {
+        node.x(targetX);
+        node.y(targetY);
+        node.getLayer()?.batchDraw();
+      }
+    }
+  }, [isDragging, propsX, propsY, offsetX, offsetY]);
 
   // Attach transformer when selected - attach to group for rotation
   React.useEffect(() => {
@@ -142,10 +184,6 @@ export default function GrowAreaBox({
   // Rotation angle from props
   const rotation = growArea.rotation ?? 0;
 
-  // Calculate offset for rotation around center
-  const offsetX = isBucket ? radius : width / 2;
-  const offsetY = isBucket ? radius : height / 2;
-
   return (
     <>
       <Group
@@ -159,24 +197,28 @@ export default function GrowAreaBox({
         onTransformEnd={handleTransformEnd}
         onDragStart={(e) => {
           e.cancelBubble = true;
+          setIsDragging(true);
           const stage = e.target.getStage();
           if (stage) {
-          stage.draggable(false);
-        }
-        onDragStart();
-      }}
-      onDragEnd={(e) => {
-        const node = e.target;
-        // Adjust back from offset
-        const newX = node.x() - offsetX;
-        const newY = node.y() - offsetY;
-        onDragEnd(newX, newY);
+            stage.draggable(false);
+          }
+          onDragStart();
+        }}
+        onDragEnd={(e) => {
+          const node = e.target;
+          // Adjust back from offset
+          const newX = node.x() - offsetX;
+          const newY = node.y() - offsetY;
+          
+          // End drag state before calling callback
+          setIsDragging(false);
+          onDragEnd(newX, newY);
 
-        const stage = e.target.getStage();
-        if (stage) {
-          stage.draggable(true);
-        }
-      }}
+          const stage = e.target.getStage();
+          if (stage) {
+            stage.draggable(true);
+          }
+        }}
       onMouseDown={(e) => {
         e.cancelBubble = true;
       }}
@@ -215,6 +257,7 @@ export default function GrowAreaBox({
           shadowBlur={shadowBlur}
           shadowOpacity={0.3}
           shadowOffset={{ x: 2, y: 2 }}
+          shadowEnabled={shadowEnabled}
         />
       ) : (
         <Rect
@@ -232,6 +275,7 @@ export default function GrowAreaBox({
           shadowBlur={shadowBlur}
           shadowOpacity={0.3}
           shadowOffset={{ x: 2, y: 2 }}
+          shadowEnabled={shadowEnabled}
           hitStrokeWidth={0}
         />
       )}
@@ -469,3 +513,7 @@ export default function GrowAreaBox({
   </>
   );
 }
+
+// Export memoized component to prevent unnecessary re-renders
+const GrowAreaBox = memo(GrowAreaBoxComponent, arePropsEqual);
+export default GrowAreaBox;

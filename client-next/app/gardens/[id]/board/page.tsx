@@ -10,6 +10,7 @@ import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import GardenNavigation from '../components/GardenNavigation';
 import AddCropModal from '../components/AddCropModal';
+import { useGrowAreaSaver } from '../hooks/useGrowAreaSaver';
 
 // Dynamically import GardenBoardView with SSR disabled (Konva requires browser environment)
 const GardenBoardView = dynamic(() => import('../components/GardenBoardView'), {
@@ -32,6 +33,9 @@ export default function GardenBoardPage() {
   const [error, setError] = useState('');
   const [showAddCropModal, setShowAddCropModal] = useState(false);
   const [cropModalGrowArea, setCropModalGrowArea] = useState<GrowArea | null>(null);
+  
+  // Debounced grow area saver for better performance
+  const { scheduleUpdate: scheduleGrowAreaSave } = useGrowAreaSaver(500);
 
   useEffect(() => {
     if (isLoading) return;
@@ -87,25 +91,20 @@ export default function GardenBoardPage() {
     fetchGardenData();
   };
 
-  const handleUpdatePosition = async (id: string, x: number, y: number) => {
+  const handleUpdatePosition = (id: string, x: number, y: number) => {
+    // Optimistic update (instant UI feedback)
     setGrowAreas(prevAreas =>
       prevAreas.map(area =>
         area.id === id ? { ...area, positionX: x, positionY: y } : area
       )
     );
 
-    try {
-      await growAreaService.update(id, {
-        positionX: x,
-        positionY: y,
-      });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update position');
-      fetchGardenData();
-    }
+    // Debounced save to backend
+    scheduleGrowAreaSave(id, { positionX: x, positionY: y });
   };
 
-  const handleUpdatePositions = async (updates: Array<{ id: string; x: number; y: number }>) => {
+  const handleUpdatePositions = (updates: Array<{ id: string; x: number; y: number }>) => {
+    // Optimistic update (instant UI feedback)
     setGrowAreas(prevAreas =>
       prevAreas.map(area => {
         const update = updates.find(u => u.id === area.id);
@@ -113,53 +112,34 @@ export default function GardenBoardPage() {
       })
     );
 
-    try {
-      await Promise.all(
-        updates.map(update =>
-          growAreaService.update(update.id, {
-            positionX: update.x,
-            positionY: update.y,
-          })
-        )
-      );
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update positions');
-      fetchGardenData();
-    }
+    // Debounced save to backend (each update is batched)
+    updates.forEach(update => {
+      scheduleGrowAreaSave(update.id, { positionX: update.x, positionY: update.y });
+    });
   };
 
-  const handleUpdateDimensions = async (id: string, width: number, height: number) => {
-    try {
-      await growAreaService.update(id, {
-        width: width,
-        length: height,
-      });
+  const handleUpdateDimensions = (id: string, width: number, height: number) => {
+    // Optimistic update (instant UI feedback)
+    setGrowAreas(prevAreas =>
+      prevAreas.map(area =>
+        area.id === id ? { ...area, width: width, length: height } : area
+      )
+    );
 
-      setGrowAreas(prevAreas =>
-        prevAreas.map(area =>
-          area.id === id ? { ...area, width: width, length: height } : area
-        )
-      );
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update dimensions');
-      fetchGardenData();
-    }
+    // Debounced save to backend
+    scheduleGrowAreaSave(id, { width: width, length: height });
   };
 
-  const handleUpdateRotation = async (id: string, rotation: number) => {
-    // Optimistic update
+  const handleUpdateRotation = (id: string, rotation: number) => {
+    // Optimistic update (instant UI feedback)
     setGrowAreas(prevAreas =>
       prevAreas.map(area =>
         area.id === id ? { ...area, rotation } : area
       )
     );
 
-    try {
-      await growAreaService.update(id, { rotation });
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update rotation');
-      fetchGardenData();
-    }
+    // Debounced save to backend
+    scheduleGrowAreaSave(id, { rotation });
   };
 
   const handleSelectGrowAreaFromBoard = (growArea: GrowArea) => {

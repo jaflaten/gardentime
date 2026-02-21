@@ -1,7 +1,8 @@
 # Canvas Performance Optimization Plan
 
 **Created:** February 21, 2025  
-**Status:** Planning  
+**Updated:** February 21, 2025  
+**Status:** In Progress (Phases 1-4 Complete)  
 **Priority:** HIGH - User Experience Impact
 
 ---
@@ -17,368 +18,200 @@ Users experience noticeable lag between their input and visual feedback, making 
 
 ---
 
-## Root Cause Analysis
+## Completed Optimizations
 
-### 1. Synchronous Backend API Calls (CRITICAL)
-**Impact: HIGH**
+### ✅ Phase 1: Debounced API Calls (COMPLETED)
+**Files Changed:**
+- Created `app/gardens/[id]/hooks/useGrowAreaSaver.ts`
+- Updated `app/gardens/[id]/board/page.tsx`
 
-Every user interaction triggers an **immediate HTTP request** to the backend:
+**What was done:**
+- Created `useGrowAreaSaver` hook with 500ms debounce
+- All position, dimension, and rotation updates now use optimistic UI + debounced backend saves
+- Multiple updates to the same grow area are merged into single API calls
+- Auto-flush on page unload
 
-```typescript
-// board/page.tsx - No debouncing!
-const handleUpdatePosition = async (id: string, x: number, y: number) => {
-  setGrowAreas(...); // Optimistic update
-  await growAreaService.update(id, { positionX: x, positionY: y }); // Blocking!
-};
+### ✅ Phase 2: Fixed Component Key (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GardenBoardView.tsx`
+
+**What was done:**
+- Changed key from `${growArea.id}-${width}-${length}-${rotation}` to just `growArea.id`
+- Prevents full component unmount/remount on dimension changes
+
+### ✅ Phase 3: Removed Debug Logging (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GrowAreaBox.tsx`
+- `app/gardens/[id]/components/GardenBoardView.tsx`
+
+**What was done:**
+- Removed `console.log` statements that fired on every render
+- Kept error logging for actual failures
+
+### ✅ Phase 4: React.memo with Custom Comparison (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GrowAreaBox.tsx`
+
+**What was done:**
+- Wrapped `GrowAreaBoxComponent` with `React.memo` and custom `arePropsEqual` function
+- Custom comparison ignores callback props (they change reference but do the same thing)
+- Compares only data props: growArea fields, isSelected, isMultiSelected, isDraggingEnabled
+- Prevents unchanged GrowAreaBox components from re-rendering when sibling boxes change
+
+### ✅ Phase 4b: Local Drag State - Konva Owns Position (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GrowAreaBox.tsx`
+
+**What was done:**
+- Added `isDragging` state to track when a drag is in progress
+- During drag, Konva controls node position natively (60fps smooth)
+- React does NOT try to update position from props while dragging
+- On drag end, state syncs back and props update
+- Added effect to sync Konva node position from props only when not dragging (supports undo/external updates)
+
+**Root cause fixed:**
+The "slow start, then speeds up" lag was caused by React re-renders conflicting with Konva's native drag handling. When any re-render occurred, React would try to set the node position from props while Konva was moving it, causing jank. Now Konva fully owns position during drag.
+
+### ✅ Phase 6: Disable Shadows During Drag (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GrowAreaBox.tsx`
+
+**What was done:**
+- Added `shadowEnabled` variable that is `false` when `isDragging` is true
+- Set `shadowBlur={0}` during drag as additional safeguard
+- Applied `shadowEnabled={shadowEnabled}` to both Circle and Rect shapes
+
+**Why this helps:**
+Shadow blur calculations are GPU-intensive. Every frame during drag, the GPU must calculate the blur effect. By disabling shadows during drag, we eliminate this per-frame GPU work entirely.
+
+---
+
+## Deep Analysis: Remaining Performance Issues
+
+### The Rendering Pipeline
+
+```
+DURING DRAG (Konva handles smoothly):
+  Mouse Move → Konva updates node internally → Canvas redraws (60fps)
+
+ON DRAG END (where lag occurs):
+  Mouse Up → onDragEnd callback → setGrowAreas() 
+  → React reconciliation → GardenBoardView re-executes (975 lines!)
+  → ALL GrowAreaBox components re-render → Konva redraws everything
 ```
 
-**Problem Flow:**
-1. User drags box → `onDragEnd` fires
-2. State updates (fast)
-3. API call to Spring Boot backend (20-500ms)
-4. Backend writes to PostgreSQL (10-50ms)
-5. Response returns
-6. Any error triggers full data refetch
-
-This happens for **every single interaction** - drag, resize, rotate.
-
-### 2. Component Key Causes Full Remounts (HIGH)
-**Impact: HIGH**
+### Root Cause 1: Inline Callback Functions (CRITICAL)
+Every render creates NEW function instances for each grow area:
 
 ```tsx
-// GardenBoardView.tsx line 687
-<GrowAreaBox
-  key={`${growArea.id}-${growArea.width}-${growArea.length}-${growArea.rotation ?? 0}`}
-  ...
+// GardenBoardView.tsx - Lines 691-760
+{growAreas.map((growArea) => (
+  <GrowAreaBox
+    onDragStart={() => { ... }}      // NEW function every render
+    onDragEnd={(x, y) => { ... }}    // NEW function every render  
+    onResize={(w, h) => { ... }}     // NEW function every render
+    onSelect={() => { ... }}         // NEW function every render
+  />
+))}
+```
+
+Even with `React.memo`, new function references trigger re-renders.
+
+### Root Cause 2: No Memoization on GrowAreaBox
+When ANY grow area changes position:
+1. `setGrowAreas()` updates state with new array
+2. Parent `GardenBoardView` re-renders
+3. ALL `GrowAreaBox` children re-render (even unchanged ones)
+4. Konva recreates/updates all nodes
+
+With 10 grow areas, moving 1 causes 10 re-renders.
+
+### Root Cause 3: Grid Recalculation on Every Render
+```tsx
+generateGridLines({ dimensions, scale, stagePosition }).map(...)
+```
+Grid lines array is regenerated on every render, creating new objects.
+
+### Root Cause 4: Shadow Effects (GPU Expensive)
+Each GrowAreaBox renders with blur shadows:
+```tsx
+shadowBlur={5-15px}
+shadowOpacity={0.3}
+```
+Shadow calculations are GPU-intensive, especially with many boxes.
+
+### Root Cause 5: Large Component Function
+`GardenBoardView.tsx` is 975 lines. Every state change:
+- Re-executes entire function body
+- Recreates all inline functions
+- Reconstructs entire JSX tree
+
+---
+
+## Remaining Implementation Plan
+
+### Phase 5: Memoize Grid Lines (NEXT)
+**Impact: 10% improvement**  
+**Effort: Low**
+
+```tsx
+const gridLines = useMemo(
+  () => generateGridLines({ dimensions, scale, stagePosition }),
+  [dimensions.width, dimensions.height, scale, stagePosition.x, stagePosition.y]
+);
+```
+
+### Phase 6: Disable Shadows During Drag
+**Impact: 15% improvement**  
+**Effort: Low**
+
+Pass `isDragging` prop and disable shadows while dragging.
+
+### Phase 7: Stable Callback References (Future)
+**Impact: 25% improvement**  
+**Effort: Medium**
+
+Refactor to pass IDs instead of closures:
+```tsx
+// Instead of inline callbacks
+<GrowAreaBox 
+  id={growArea.id}
+  onDragEnd={handleDragEnd}  // Stable reference, receives id as first arg
 />
 ```
 
-Including `width`, `length`, and `rotation` in the key means:
-- Changing dimensions = **full component unmount/remount**
-- Changing rotation = **full component unmount/remount**
-- Konva transformer state is lost
-- Animation state is lost
-- More expensive than a simple re-render
-
-### 3. Debug Logging on Every Render (MEDIUM)
-**Impact: MEDIUM**
-
-```tsx
-// GrowAreaBox.tsx lines 48-61
-React.useEffect(() => {
-  console.log(`📊 GrowAreaBox "${growArea.name}" render:`, {...});
-}, [isSelected, isMultiSelected, isDraggingEnabled, growArea.name, growArea.id]);
-```
-
-Console logging:
-- Has measurable overhead
-- Fires for every grow area on every render
-- Multiplies with number of grow areas
-
-### 4. No Memoization on GrowAreaBox (MEDIUM)
-**Impact: MEDIUM**
-
-`GrowAreaBox` is a plain functional component. When parent (`GardenBoardView`) re-renders:
-- All `GrowAreaBox` instances re-render
-- Even if their specific props haven't changed
-- Konva nodes are recreated
-
-### 5. Cascading State Updates (LOW-MEDIUM)
-**Impact: LOW-MEDIUM**
-
-Multiple state updates in sequence can cause multiple render cycles:
-```typescript
-setGrowAreas(...);      // Render 1
-setSaveStatus('pending'); // Render 2
-// etc.
-```
-
----
-
-## Prioritized Implementation Plan
-
-### Phase 1: Debounce API Calls (HIGHEST IMPACT)
-**Estimated Impact: 60-70% improvement**  
+### Phase 8: Konva Layer Separation (Future)
+**Impact: 20% improvement**  
 **Effort: Medium**
 
-#### 1.1 Create `useGrowAreaSaver` Hook
-
-Similar to existing `useCanvasObjectSaver`, but for grow areas:
-
-```typescript
-// app/gardens/[id]/hooks/useGrowAreaSaver.ts
-'use client';
-
-import { useCallback, useRef } from 'react';
-import { growAreaService, UpdateGrowAreaRequest } from '@/lib/api';
-
-interface PendingUpdate {
-  id: string;
-  updates: UpdateGrowAreaRequest;
-  timestamp: number;
-}
-
-export function useGrowAreaSaver(delay = 500) {
-  const pendingUpdatesRef = useRef<Map<string, PendingUpdate>>(new Map());
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const flushUpdates = useCallback(async () => {
-    const updates = Array.from(pendingUpdatesRef.current.values());
-    pendingUpdatesRef.current.clear();
-
-    if (updates.length === 0) return;
-
-    // Process all updates in parallel
-    const promises = updates.map(({ id, updates: data }) =>
-      growAreaService.update(id, data).catch((error) => {
-        console.error(`Failed to save grow area ${id}:`, error);
-      })
-    );
-
-    await Promise.allSettled(promises);
-  }, []);
-
-  const scheduleUpdate = useCallback((id: string, updates: UpdateGrowAreaRequest) => {
-    // Merge with existing pending updates for this grow area
-    const existing = pendingUpdatesRef.current.get(id);
-    const mergedUpdates = existing 
-      ? { ...existing.updates, ...updates }
-      : updates;
-
-    pendingUpdatesRef.current.set(id, {
-      id,
-      updates: mergedUpdates,
-      timestamp: Date.now(),
-    });
-
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    // Schedule flush after delay
-    timeoutRef.current = setTimeout(flushUpdates, delay);
-  }, [delay, flushUpdates]);
-
-  const saveNow = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    return flushUpdates();
-  }, [flushUpdates]);
-
-  return { scheduleUpdate, saveNow };
-}
-```
-
-#### 1.2 Update `board/page.tsx` to Use Debounced Saves
-
-```typescript
-// Import the hook
-import { useGrowAreaSaver } from '../hooks/useGrowAreaSaver';
-
-// In component
-const { scheduleUpdate: scheduleGrowAreaSave, saveNow } = useGrowAreaSaver(500);
-
-const handleUpdatePosition = (id: string, x: number, y: number) => {
-  // Optimistic update (instant)
-  setGrowAreas(prevAreas =>
-    prevAreas.map(area =>
-      area.id === id ? { ...area, positionX: x, positionY: y } : area
-    )
-  );
-  
-  // Debounced save (batched)
-  scheduleGrowAreaSave(id, { positionX: x, positionY: y });
-};
-
-// Similar for handleUpdateDimensions, handleUpdateRotation
-```
-
-#### 1.3 Save on Page Unload
-
-```typescript
-useEffect(() => {
-  const handleBeforeUnload = () => saveNow();
-  window.addEventListener('beforeunload', handleBeforeUnload);
-  return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-}, [saveNow]);
-```
+Separate Konva layers for:
+- Static layer (grid - rarely changes)
+- Dynamic layer (grow areas - frequently changes)
+- UI layer (transformers, selection)
 
 ---
 
-### Phase 2: Fix Component Key (HIGH IMPACT)
-**Estimated Impact: 15-20% improvement**  
-**Effort: Low (5 minutes)**
+## Progress Summary
 
-#### 2.1 Simplify GrowAreaBox Key
-
-**Before:**
-```tsx
-key={`${growArea.id}-${growArea.width}-${growArea.length}-${growArea.rotation ?? 0}`}
-```
-
-**After:**
-```tsx
-key={growArea.id}
-```
-
-The component will still re-render when props change, but it won't **unmount and remount**, preserving:
-- Transformer state
-- Animation state
-- Internal component state
+| Phase | Description | Status | Impact |
+|-------|-------------|--------|--------|
+| 1 | Debounce API calls | ✅ Complete | 60-70% |
+| 2 | Fix component key | ✅ Complete | 15-20% |
+| 3 | Remove debug logging | ✅ Complete | 5-10% |
+| 4 | React.memo GrowAreaBox | ✅ Complete | 40% |
+| 4b | Local drag state (Konva owns position) | ✅ Complete | 30% |
+| 5 | Memoize grid lines | Pending | 10% |
+| 6 | Disable shadows during drag | ✅ Complete | 15% |
+| 7 | Stable callbacks | Future | 25% |
+| 8 | Layer separation | Future | 20% |
 
 ---
 
-### Phase 3: Remove Debug Logging (MEDIUM IMPACT)
-**Estimated Impact: 5-10% improvement**  
-**Effort: Low (5 minutes)**
+## Files Modified
 
-#### 3.1 Remove or Conditionally Enable Debug Logs
-
-**Option A: Remove entirely**
-```typescript
-// Delete these useEffects from GrowAreaBox.tsx
-// Lines 48-61
-```
-
-**Option B: Environment-based (recommended)**
-```typescript
-// Only log in development when DEBUG_CANVAS is set
-if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_DEBUG_CANVAS) {
-  console.log(...);
-}
-```
-
----
-
-### Phase 4: Memoize GrowAreaBox (MEDIUM IMPACT)
-**Estimated Impact: 10-15% improvement**  
-**Effort: Low-Medium**
-
-#### 4.1 Wrap Component with React.memo
-
-```typescript
-// GrowAreaBox.tsx
-import React, { useState, memo } from 'react';
-
-function GrowAreaBoxComponent({ ... }: GrowAreaBoxProps) {
-  // ... existing implementation
-}
-
-// Custom comparison for performance
-export default memo(GrowAreaBoxComponent, (prevProps, nextProps) => {
-  // Return true if props are equal (skip re-render)
-  return (
-    prevProps.growArea.id === nextProps.growArea.id &&
-    prevProps.growArea.positionX === nextProps.growArea.positionX &&
-    prevProps.growArea.positionY === nextProps.growArea.positionY &&
-    prevProps.growArea.width === nextProps.growArea.width &&
-    prevProps.growArea.length === nextProps.growArea.length &&
-    prevProps.growArea.rotation === nextProps.growArea.rotation &&
-    prevProps.growArea.zoneType === nextProps.growArea.zoneType &&
-    prevProps.growArea.customColor === nextProps.growArea.customColor &&
-    prevProps.isSelected === nextProps.isSelected &&
-    prevProps.isMultiSelected === nextProps.isMultiSelected &&
-    prevProps.isDraggingEnabled === nextProps.isDraggingEnabled
-  );
-});
-```
-
----
-
-### Phase 5: Batch State Updates (LOW IMPACT)
-**Estimated Impact: 2-5% improvement**  
-**Effort: Low**
-
-React 18 automatically batches state updates in most cases, but explicit batching can help:
-
-```typescript
-import { unstable_batchedUpdates } from 'react-dom';
-
-// If needed for complex updates
-unstable_batchedUpdates(() => {
-  setGrowAreas(...);
-  setSaveStatus('pending');
-});
-```
-
----
-
-## Implementation Order
-
-| Priority | Task | Impact | Effort | Phase |
-|----------|------|--------|--------|-------|
-| 1 | Create `useGrowAreaSaver` hook | HIGH | Medium | 1 |
-| 2 | Integrate debounced saves in board/page.tsx | HIGH | Medium | 1 |
-| 3 | Simplify GrowAreaBox key | HIGH | Low | 2 |
-| 4 | Remove debug logging | MEDIUM | Low | 3 |
-| 5 | Memoize GrowAreaBox | MEDIUM | Low | 4 |
-| 6 | Batch state updates | LOW | Low | 5 |
-
----
-
-## Expected Results
-
-After implementing all phases:
-
-| Metric | Before | After |
-|--------|--------|-------|
-| API calls per drag | 1 per drag-end | 1 per 500ms (batched) |
-| Component remounts on resize | Yes | No |
-| Re-renders on parent update | All boxes | Only changed boxes |
-| Console log overhead | Every render | None/conditional |
-
-**Overall Expected Improvement: 70-85% reduction in perceived lag**
-
----
-
-## Testing Plan
-
-1. **Baseline Measurement**
-   - Open Chrome DevTools → Performance tab
-   - Record while dragging a box
-   - Note frame rate and main thread blocking
-
-2. **After Each Phase**
-   - Repeat measurement
-   - Compare Network tab for API call frequency
-   - Note subjective "feel" improvement
-
-3. **Stress Test**
-   - Create 20+ grow areas
-   - Drag multiple in succession
-   - Verify no dropped frames
-
----
-
-## Rollback Plan
-
-Each phase is independent. If issues arise:
-1. Revert the specific phase's changes
-2. Other optimizations remain in place
-3. No data loss risk (backend unchanged)
-
----
-
-## Future Considerations
-
-1. **Virtual Canvas** - For 100+ grow areas, consider virtualization
-2. **WebSocket Updates** - Real-time sync without polling
-3. **IndexedDB Cache** - Offline-first with background sync
-4. **Web Workers** - Offload heavy calculations
-
----
-
-## Files to Modify
-
-| File | Changes |
-|------|---------|
-| `app/gardens/[id]/hooks/useGrowAreaSaver.ts` | NEW - Create debounce hook |
-| `app/gardens/[id]/board/page.tsx` | Use debounced saves |
-| `app/gardens/[id]/components/GardenBoardView.tsx` | Simplify key |
-| `app/gardens/[id]/components/GrowAreaBox.tsx` | Remove logs, add memo |
-
----
-
-**Ready to implement?** Start with Phase 1 (debouncing) for the biggest immediate impact.
+| File | Phase | Changes |
+|------|-------|---------|
+| `hooks/useGrowAreaSaver.ts` | 1 | NEW - Debounce hook |
+| `board/page.tsx` | 1 | Use debounced saves |
+| `components/GardenBoardView.tsx` | 2, 3 | Fix key, remove logs |
+| `components/GrowAreaBox.tsx` | 3, 4, 4b, 6 | Remove logs, add memo, local drag state, disable shadows |

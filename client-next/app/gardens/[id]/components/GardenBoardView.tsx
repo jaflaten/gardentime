@@ -182,10 +182,9 @@ export default function GardenBoardView({
     const loadCanvasObjects = async () => {
       try {
         const objects = await canvasObjectService.getByGardenId(gardenId);
-        console.log(`✅ Loaded ${objects.length} canvas objects from backend:`, objects);
         setCanvasObjects(objects);
       } catch (error) {
-        console.error('❌ Failed to load canvas objects:', error);
+        console.error('Failed to load canvas objects:', error);
       }
     };
     loadCanvasObjects();
@@ -684,7 +683,7 @@ export default function GardenBoardView({
 
               return (
                 <GrowAreaBox
-                  key={`${growArea.id}-${growArea.width}-${growArea.length}-${growArea.rotation ?? 0}`}
+                  key={growArea.id}
                   growArea={growArea}
                   isSelected={selectedId === growArea.id && selectedIds.size <= 1}
                   isMultiSelected={showAsMultiSelected}
