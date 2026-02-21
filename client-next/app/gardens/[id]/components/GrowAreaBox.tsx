@@ -198,10 +198,6 @@ function GrowAreaBoxComponent({
         onDragStart={(e) => {
           e.cancelBubble = true;
           setIsDragging(true);
-          const stage = e.target.getStage();
-          if (stage) {
-            stage.draggable(false);
-          }
           onDragStart();
         }}
         onDragEnd={(e) => {
@@ -213,11 +209,6 @@ function GrowAreaBoxComponent({
           // End drag state before calling callback
           setIsDragging(false);
           onDragEnd(newX, newY);
-
-          const stage = e.target.getStage();
-          if (stage) {
-            stage.draggable(true);
-          }
         }}
       onMouseDown={(e) => {
         e.cancelBubble = true;

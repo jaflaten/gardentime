@@ -379,8 +379,7 @@ export default function GrowAreasListPage() {
                     <option value="">Select type...</option>
                     <option value="BOX">Box</option>
                     <option value="BED">Bed</option>
-                    <option value="ROW">Row</option>
-                    <option value="CONTAINER">Container</option>
+                    <option value="BUCKET">Bucket</option>
                     <option value="FIELD">Field</option>
                   </select>
                 </div>
@@ -515,8 +514,7 @@ export default function GrowAreasListPage() {
                     <option value="">Select type...</option>
                     <option value="BOX">Box</option>
                     <option value="BED">Bed</option>
-                    <option value="ROW">Row</option>
-                    <option value="CONTAINER">Container</option>
+                    <option value="BUCKET">Bucket</option>
                     <option value="FIELD">Field</option>
                   </select>
                 </div>
