@@ -9,6 +9,7 @@ import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import PageSkeleton from '@/app/components/PageSkeleton';
 import { Button, Input, Modal, FormField, Card } from '@/components/ui';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function GardensPage() {
   const router = useRouter();
@@ -40,8 +41,8 @@ export default function GardensPage() {
       setLoading(true);
       const data = await gardenService.getAll();
       setGardens(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load gardens');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to load gardens'));
     } finally {
       setLoading(false);
     }
@@ -54,8 +55,8 @@ export default function GardensPage() {
       setShowCreateModal(false);
       setNewGarden({ name: '', description: '', location: '' });
       fetchGardens();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create garden');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to create garden'));
     }
   };
 
@@ -99,8 +100,8 @@ export default function GardensPage() {
       setImportData(null);
       setImportName('');
       fetchGardens();
-    } catch (err: any) {
-      setImportError(err.response?.data?.message || 'Import failed');
+    } catch (err) {
+      setImportError(extractErrorMessage(err, 'Import failed'));
     } finally {
       setImporting(false);
     }
@@ -119,8 +120,8 @@ export default function GardensPage() {
       await gardenService.delete(gardenToDelete.id);
       setGardenToDelete(null);
       fetchGardens();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete garden');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to delete garden'));
       setGardenToDelete(null);
     }
   };

@@ -10,6 +10,7 @@ import Footer from '@/app/components/Footer';
 import PageSkeleton from '@/app/components/PageSkeleton';
 import GardenNavigation from '../components/GardenNavigation';
 import AddCropModal from '../components/AddCropModal';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function GrowAreasListPage() {
   const router = useRouter();
@@ -73,8 +74,8 @@ export default function GrowAreasListPage() {
       );
       
       setGrowAreas(growAreasWithCrops.sort((a, b) => a.name.localeCompare(b.name)));
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load garden data');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to load garden data'));
     } finally {
       setLoading(false);
     }
@@ -104,8 +105,8 @@ export default function GrowAreasListPage() {
       setShowAdvanced(false);
       setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
       fetchGardenData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create grow area');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to create grow area'));
     }
   };
 
@@ -129,8 +130,8 @@ export default function GrowAreasListPage() {
       setShowAdvanced(false);
       setNewGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '', width: '', length: '', height: '' });
       fetchGardenData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update grow area');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to update grow area'));
     }
   };
 
@@ -142,8 +143,8 @@ export default function GrowAreasListPage() {
       setShowDeleteConfirm(false);
       setSelectedGrowArea(null);
       fetchGardenData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete grow area');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to delete grow area'));
     }
   };
 
@@ -198,7 +199,7 @@ export default function GrowAreasListPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err) {
       setError('Failed to export garden');
     }
   };

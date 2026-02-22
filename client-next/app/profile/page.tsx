@@ -6,6 +6,7 @@ import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { userService, UserProfile } from '@/lib/api';
 import Navbar from '@/app/components/Navbar';
 import PageSkeleton from '@/app/components/PageSkeleton';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function ProfilePage() {
       setProfile(data);
       setFirstName(data.firstName || '');
       setLastName(data.lastName || '');
-    } catch (err: any) {
+    } catch (err) {
       setError('Failed to load profile');
     } finally {
       setLoading(false);
@@ -60,8 +61,8 @@ export default function ProfilePage() {
       });
       setProfile(updated);
       setEditMode(false);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update profile');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to update profile'));
     } finally {
       setSaving(false);
     }
@@ -94,8 +95,8 @@ export default function ProfilePage() {
       setNewPassword('');
       setConfirmPassword('');
       setShowPasswordForm(false);
-    } catch (err: any) {
-      setPasswordError(err.response?.data?.message || 'Failed to change password');
+    } catch (err) {
+      setPasswordError(extractErrorMessage(err, 'Failed to change password'));
     } finally {
       setChangingPassword(false);
     }
@@ -363,8 +364,8 @@ function DeleteAccountSection({ onDelete }: { onDelete: () => void }) {
     try {
       await userService.deleteAccount(password);
       onDelete();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete account');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to delete account'));
       setDeleting(false);
     }
   };

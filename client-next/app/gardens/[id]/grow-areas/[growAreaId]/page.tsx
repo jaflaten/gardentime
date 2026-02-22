@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import PageSkeleton from '@/app/components/PageSkeleton';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function GrowAreaDetailPage() {
   const router = useRouter();
@@ -72,8 +73,8 @@ export default function GrowAreaDetailPage() {
       setCropRecords(cropRecordsData);
       // Ensure plantsData is an array before setting
       setPlants(Array.isArray(plantsData) ? plantsData : []);
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Failed to load data');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to load data'));
       // Set empty arrays on error to prevent map errors
       setPlants([]);
       setCropRecords([]);
@@ -116,8 +117,8 @@ export default function GrowAreaDetailPage() {
         unit: '',
       });
       fetchData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create crop record');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to create crop record'));
     }
   };
 
@@ -150,8 +151,8 @@ export default function GrowAreaDetailPage() {
       setShowAdvanced(false);
       setEditGrowArea({ name: '', zoneSize: '', zoneType: '', nrOfRows: '', notes: '' });
       fetchData();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update grow area');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to update grow area'));
     }
   };
 
@@ -712,8 +713,8 @@ export default function GrowAreaDetailPage() {
                   unit: '',
                 });
                 fetchData();
-              } catch (err: any) {
-                setError(err.response?.data?.message || 'Failed to update crop record');
+              } catch (err) {
+                setError(extractErrorMessage(err, 'Failed to update crop record'));
               }
             }} className="space-y-4">
               <div>
@@ -859,8 +860,8 @@ export default function GrowAreaDetailPage() {
                     setShowDeleteCropModal(false);
                     setSelectedCropRecord(null);
                     fetchData();
-                  } catch (err: any) {
-                    setError(err.response?.data?.message || 'Failed to delete crop record');
+                  } catch (err) {
+                    setError(extractErrorMessage(err, 'Failed to delete crop record'));
                   }
                 }}
                 className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition"

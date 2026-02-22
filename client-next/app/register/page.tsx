@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/lib/api';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -48,8 +49,8 @@ export default function RegisterPage() {
       });
       login(response.token, response.username, response.email, response.firstName);
       router.push('/gardens');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Registration failed. Please try again.'));
     } finally {
       setLoading(false);
     }

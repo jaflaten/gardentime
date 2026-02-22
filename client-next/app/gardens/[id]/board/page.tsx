@@ -12,6 +12,7 @@ import PageSkeleton from '@/app/components/PageSkeleton';
 import GardenNavigation from '../components/GardenNavigation';
 import AddCropModal from '../components/AddCropModal';
 import { useGrowAreaSaver } from '../hooks/useGrowAreaSaver';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 // Dynamically import GardenBoardView with SSR disabled (Konva requires browser environment)
 const GardenBoardView = dynamic(() => import('../components/GardenBoardView'), {
@@ -73,8 +74,8 @@ export default function GardenBoardPage() {
       );
       
       setGrowAreas(growAreasWithCrops.sort((a, b) => a.name.localeCompare(b.name)));
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to load garden data');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to load garden data'));
     } finally {
       setLoading(false);
     }
@@ -157,7 +158,7 @@ export default function GardenBoardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err) {
       setError('Failed to export garden');
     }
   };

@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -63,8 +64,8 @@ function ResetPasswordForm() {
         newPassword: password,
       });
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to reset password');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to reset password'));
     } finally {
       setLoading(false);
     }

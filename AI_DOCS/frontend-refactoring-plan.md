@@ -64,6 +64,24 @@ WCAG improvements:
 - Changed yellow from `#eab308` (Yellow-500) to `#ca8a04` (Yellow-600) for better contrast
 - Changed cyan from `#06b6d4` (Cyan-500) to `#0891b2` (Cyan-600) for better contrast
 
+### 5. Standardize Error Handling (Phase 4) - DONE
+Created `lib/utils/errors.ts` with `extractErrorMessage()` utility function for consistent error extraction.
+
+Updated 11 files to use the utility:
+- `gardens/page.tsx` (4 catch blocks)
+- `login/page.tsx`, `register/page.tsx`, `reset-password/page.tsx` (1 each)
+- `profile/page.tsx` (4 catch blocks)
+- `gardens/[id]/board/page.tsx` (2 catch blocks)
+- `gardens/[id]/dashboard/page.tsx` (2 catch blocks)
+- `gardens/[id]/grow-areas/page.tsx` (5 catch blocks)
+- `gardens/[id]/grow-areas/[growAreaId]/page.tsx` (5 catch blocks)
+- `gardens/[id]/components/AddCropModal.tsx` (1 catch block)
+
+Benefits:
+- Removed all `err: any` type annotations in favor of `err` (typed as `unknown`)
+- Consistent error message extraction pattern across the codebase
+- Eliminated duplicate error handling boilerplate
+
 ---
 
 ## Executive Summary

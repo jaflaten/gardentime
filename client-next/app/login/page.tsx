@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/lib/api';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,8 +24,8 @@ export default function LoginPage() {
       const response = await authService.login({ username, password });
       login(response.token, response.username, response.email, response.firstName);
       router.push('/gardens');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Login failed. Please check your credentials.'));
     } finally {
       setLoading(false);
     }

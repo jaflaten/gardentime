@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { cropRecordService, plantService, Plant, CropStatus } from '@/lib/api';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 interface AddCropModalProps {
   growAreaId: string;
@@ -93,9 +94,8 @@ export default function AddCropModal({
       // Success!
       onSuccess?.();
       onClose();
-    } catch (err: any) {
-      console.error('Failed to create crop:', err);
-      setError(err.response?.data?.message || 'Failed to create crop record');
+    } catch (err) {
+      setError(extractErrorMessage(err, 'Failed to create crop record'));
     } finally {
       setLoading(false);
     }

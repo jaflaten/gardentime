@@ -13,6 +13,7 @@ import PlantingCalendarWidget from '@/components/dashboard/PlantingCalendarWidge
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import GardenNavigation from '../components/GardenNavigation';
+import { extractErrorMessage } from '@/lib/utils/errors';
 
 export default function GardenDashboardPage() {
   const params = useParams();
@@ -33,9 +34,8 @@ export default function GardenDashboardPage() {
         
         const response = await api.get<GardenDashboard>(`/gardens/${gardenId}/dashboard`);
         setDashboard(response.data);
-      } catch (err: any) {
-        console.error('Error fetching dashboard:', err);
-        setError(err.response?.data?.message || err.message || 'An error occurred');
+      } catch (err) {
+        setError(extractErrorMessage(err, 'An error occurred'));
       } finally {
         setLoading(false);
       }
@@ -56,7 +56,7 @@ export default function GardenDashboardPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err) {
       setError('Failed to export garden');
     }
   };
