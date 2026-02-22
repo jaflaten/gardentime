@@ -478,6 +478,11 @@ export const cropRecordService = {
     return response.data;
   },
 
+  getByGardenId: async (gardenId: string): Promise<CropRecord[]> => {
+    const response = await api.get(`/gardens/${gardenId}/crop-records`);
+    return response.data;
+  },
+
   create: async (data: CreateCropRecordRequest): Promise<CropRecord> => {
     const response = await api.post('/crop-records', data);
     return response.data;

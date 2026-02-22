@@ -94,6 +94,12 @@ class CropRecordController(
         return ResponseEntity.ok(cropRecords)
     }
 
+    @GetMapping("/garden/{gardenId}")
+    fun getCropRecordsByGardenId(@PathVariable gardenId: UUID): ResponseEntity<List<CropRecordDTO>> {
+        val cropRecords = cropRecordService.getCropRecordsByGardenId(gardenId)
+        return ResponseEntity.ok(cropRecords)
+    }
+
     @DeleteMapping("/{id}")
     fun deleteCropRecordById(@PathVariable id: UUID): ResponseEntity<Unit> {
         logger.info("=== DELETE REQUEST RECEIVED ===")

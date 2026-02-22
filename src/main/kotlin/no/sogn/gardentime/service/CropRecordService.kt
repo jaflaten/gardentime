@@ -226,6 +226,24 @@ class CropRecordService(
         return cropRecords
     }
 
+    fun getCropRecordsByGardenId(gardenId: UUID): List<CropRecordDTO> {
+        val currentUserId = securityUtils.getCurrentUserId()
+        val gardenEntity = gardenRepository.findGardenEntityById(gardenId)
+            ?: throw GardenIdNotFoundException("Garden with id $gardenId not found")
+
+        if (gardenEntity.userId != currentUserId) {
+            throw IllegalAccessException("You don't have permission to access crop records for this garden")
+        }
+
+        val growAreaIds = gardenEntity.growAreas.mapNotNull { it.id }
+        if (growAreaIds.isEmpty()) {
+            return emptyList()
+        }
+
+        return cropRecordRepository.findByGrowZoneIdIn(growAreaIds)
+            .map { mapCropRecordEntityToDTO(it) }
+    }
+
     fun deleteCropRecordById(id: UUID) {
         logger.info(">>> SERVICE: Starting delete operation for crop record ID: $id")
 

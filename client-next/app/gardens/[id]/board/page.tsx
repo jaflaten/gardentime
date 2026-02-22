@@ -48,30 +48,26 @@ export default function GardenBoardPage() {
   const fetchGardenData = async () => {
     try {
       setLoading(true);
-      const [gardenData, growAreasData] = await Promise.all([
+      const [gardenData, growAreasData, allCropRecords] = await Promise.all([
         gardenService.getById(gardenId),
         growAreaService.getByGardenId(gardenId),
+        cropRecordService.getByGardenId(gardenId),
       ]);
       setGarden(gardenData);
       
-      // Fetch current crops for each grow area
-      const growAreasWithCrops = await Promise.all(
-        growAreasData.map(async (growArea) => {
-          try {
-            const crops = await cropRecordService.getByGrowAreaId(growArea.id);
-            const activeCrops = crops.filter(
-              (crop) => crop.status === 'PLANTED' || crop.status === 'GROWING' || !crop.status
-            );
-            return {
-              ...growArea,
-              currentCrops: activeCrops,
-            };
-          } catch (err) {
-            console.warn(`Failed to fetch crops for grow area ${growArea.name}:`, err);
-            return { ...growArea, currentCrops: [] };
-          }
-        })
-      );
+      // Map crop records to grow areas
+      const growAreasWithCrops = growAreasData.map((growArea) => {
+        const crops = allCropRecords.filter(
+          (crop) => String(crop.growAreaId) === String(growArea.id)
+        );
+        const activeCrops = crops.filter(
+          (crop) => crop.status === 'PLANTED' || crop.status === 'GROWING' || !crop.status
+        );
+        return {
+          ...growArea,
+          currentCrops: activeCrops,
+        };
+      });
       
       setGrowAreas(growAreasWithCrops.sort((a, b) => a.name.localeCompare(b.name)));
     } catch (err) {
