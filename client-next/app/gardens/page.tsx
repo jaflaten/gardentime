@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { gardenService, Garden, GardenExportData } from '@/lib/api';
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import PageSkeleton from '@/app/components/PageSkeleton';
 
 export default function GardensPage() {
   const router = useRouter();
-  const { isAuthenticated, logout, username } = useAuth();
+  const { isReady, logout } = useRequireAuth();
   const [gardens, setGardens] = useState<Garden[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,12 +29,10 @@ export default function GardensPage() {
   const [gardenToDelete, setGardenToDelete] = useState<Garden | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
+    if (isReady) {
+      fetchGardens();
     }
-    fetchGardens();
-  }, [isAuthenticated, router]);
+  }, [isReady]);
 
   const fetchGardens = async () => {
     try {
@@ -137,8 +136,8 @@ export default function GardensPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gardenToDelete]);
 
-  if (!isAuthenticated) {
-    return null;
+  if (!isReady) {
+    return <PageSkeleton />;
   }
 
   return (

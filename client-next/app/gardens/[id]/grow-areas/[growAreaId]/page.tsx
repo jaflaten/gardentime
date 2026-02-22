@@ -2,18 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { growAreaService, cropRecordService, plantService, GrowArea, CropRecord, Plant, ZoneType, CropStatus } from '@/lib/api';
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import PageSkeleton from '@/app/components/PageSkeleton';
 
 export default function GrowAreaDetailPage() {
   const router = useRouter();
   const params = useParams();
   const gardenId = params.id as string;
   const growAreaId = params.growAreaId as string;
-  const { isAuthenticated, logout, username, isLoading } = useAuth();
+  const { isReady } = useRequireAuth();
   const [growArea, setGrowArea] = useState<GrowArea | null>(null);
   const [cropRecords, setCropRecords] = useState<CropRecord[]>([]);
   const [plants, setPlants] = useState<Plant[]>([]);
@@ -54,14 +55,10 @@ export default function GrowAreaDetailPage() {
   });
 
   useEffect(() => {
-    if (isLoading) return;
-
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
+    if (isReady) {
+      fetchData();
     }
-    fetchData();
-  }, [isAuthenticated, isLoading, growAreaId, router]);
+  }, [isReady, growAreaId]);
 
   const fetchData = async () => {
     try {
@@ -168,11 +165,6 @@ export default function GrowAreaDetailPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
-
   const getOutcomeBadgeColor = (outcome?: string) => {
     switch (outcome) {
       case 'EXCELLENT': return 'bg-green-100 text-green-800';
@@ -214,16 +206,8 @@ export default function GrowAreaDetailPage() {
   const activeCrops = cropRecords.filter(isActiveCrop);
   const historicalCrops = cropRecords.filter(record => !isActiveCrop(record));
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
+  if (!isReady || loading) {
+    return <PageSkeleton />;
   }
 
   return (

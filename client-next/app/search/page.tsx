@@ -1,38 +1,22 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import GrowAreaSearch from '../gardens/components/GrowAreaSearch';
 import PlantSearch from '../gardens/components/PlantSearch';
 import { GrowArea, Plant } from '@/lib/api';
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import PageSkeleton from '@/app/components/PageSkeleton';
 
 export default function SearchPage() {
-  const router = useRouter();
-  const { isAuthenticated, isLoading, username } = useAuth();
+  const { isReady } = useRequireAuth();
   const [selectedGrowArea, setSelectedGrowArea] = useState<GrowArea | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
 
-  useEffect(() => {
-    if (isLoading) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
+  if (!isReady) {
+    return <PageSkeleton />;
   }
 
   return (

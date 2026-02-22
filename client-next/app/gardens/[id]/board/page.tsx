@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { gardenService, growAreaService, cropRecordService, Garden, GrowArea } from '@/lib/api';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import PageSkeleton from '@/app/components/PageSkeleton';
 import GardenNavigation from '../components/GardenNavigation';
 import AddCropModal from '../components/AddCropModal';
 import { useGrowAreaSaver } from '../hooks/useGrowAreaSaver';
@@ -26,7 +27,7 @@ export default function GardenBoardPage() {
   const router = useRouter();
   const params = useParams();
   const gardenId = params.id as string;
-  const { isAuthenticated, logout, username, isLoading } = useAuth();
+  const { isReady } = useRequireAuth();
   const [garden, setGarden] = useState<Garden | null>(null);
   const [growAreas, setGrowAreas] = useState<GrowArea[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +39,10 @@ export default function GardenBoardPage() {
   const { scheduleUpdate: scheduleGrowAreaSave } = useGrowAreaSaver(2000);
 
   useEffect(() => {
-    if (isLoading) return;
-    if (!isAuthenticated) {
-      router.push('/login');
-      return;
+    if (isReady) {
+      fetchGardenData();
     }
-    fetchGardenData();
-  }, [isAuthenticated, isLoading, gardenId, router]);
+  }, [isReady, gardenId]);
 
   const fetchGardenData = async () => {
     try {
@@ -164,7 +162,7 @@ export default function GardenBoardPage() {
     }
   };
 
-  if (isLoading || loading) {
+  if (!isReady || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
         <Navbar />
@@ -175,10 +173,6 @@ export default function GardenBoardPage() {
         <Footer />
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return null;
   }
 
   return (

@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { userService, UserProfile } from '@/lib/api';
 import Navbar from '@/app/components/Navbar';
+import PageSkeleton from '@/app/components/PageSkeleton';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading, logout } = useAuth();
+  const { isReady, logout } = useRequireAuth();
   
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,15 +31,10 @@ export default function ProfilePage() {
   const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/login');
-      return;
-    }
-
-    if (isAuthenticated) {
+    if (isReady) {
       loadProfile();
     }
-  }, [isAuthenticated, authLoading, router]);
+  }, [isReady]);
 
   const loadProfile = async () => {
     try {
@@ -106,12 +102,8 @@ export default function ProfilePage() {
     }
   };
 
-  if (authLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
-      </div>
-    );
+  if (!isReady || loading) {
+    return <PageSkeleton />;
   }
 
   if (!profile) {
