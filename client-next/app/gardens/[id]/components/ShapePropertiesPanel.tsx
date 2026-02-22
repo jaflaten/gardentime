@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { CanvasObject } from '@/lib/api';
+import { SHAPE_COLOR_PRESETS } from '@/lib/constants/colors';
 
 interface ShapePropertiesPanelProps {
   selectedObject: CanvasObject | null;
@@ -10,20 +11,6 @@ interface ShapePropertiesPanelProps {
   onDuplicate?: () => void;
   onClose: () => void;
 }
-
-// Color presets for quick selection
-const COLOR_PRESETS = [
-  '#000000', // Black
-  '#ffffff', // White
-  '#ef4444', // Red
-  '#f59e0b', // Orange
-  '#eab308', // Yellow
-  '#22c55e', // Green
-  '#3b82f6', // Blue
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#6b7280', // Gray
-];
 
 export default function ShapePropertiesPanel({
   selectedObject,
@@ -94,7 +81,7 @@ export default function ShapePropertiesPanel({
             
             {/* Color presets */}
             <div className="grid grid-cols-5 gap-2 mb-2">
-              {COLOR_PRESETS.map((color) => (
+              {SHAPE_COLOR_PRESETS.map((color) => (
                 <button
                   key={color}
                   onClick={() => handleColorChange('fillColor', color)}
@@ -143,7 +130,7 @@ export default function ShapePropertiesPanel({
           
           {/* Color presets */}
           <div className="grid grid-cols-5 gap-2 mb-2">
-            {COLOR_PRESETS.map((color) => (
+            {SHAPE_COLOR_PRESETS.map((color) => (
               <button
                 key={color}
                 onClick={() => handleColorChange('strokeColor', color)}

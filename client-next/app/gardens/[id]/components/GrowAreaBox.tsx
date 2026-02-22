@@ -3,6 +3,7 @@
 import React, { useState, memo } from 'react';
 import { Group, Rect, Text, Circle, Transformer } from 'react-konva';
 import { GrowArea } from '@/lib/api';
+import { ZONE_TYPE_COLORS } from '@/lib/constants/colors';
 import Konva from 'konva';
 
 interface GrowAreaBoxProps {
@@ -46,14 +47,6 @@ function arePropsEqual(prev: GrowAreaBoxProps, next: GrowAreaBoxProps): boolean 
     prev.isDraggingEnabled === next.isDraggingEnabled
   );
 }
-
-// Color mapping based on zone type (Step 19.2)
-const ZONE_TYPE_COLORS = {
-  BOX: '#3b82f6',      // blue
-  FIELD: '#22c55e',    // green
-  BED: '#92400e',      // brown
-  BUCKET: '#6b7280',   // gray
-} as const;
 
 function GrowAreaBoxComponent({
   growArea,

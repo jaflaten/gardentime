@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CanvasObject } from '@/lib/api';
+import { SHAPE_COLOR_PRESETS } from '@/lib/constants/colors';
 
 interface BulkActionsPanelProps {
   selectedCount: number;
@@ -10,20 +11,6 @@ interface BulkActionsPanelProps {
   onBulkDelete: () => void;
   onClose: () => void;
 }
-
-// Color presets for quick selection
-const COLOR_PRESETS = [
-  '#000000', // Black
-  '#ffffff', // White
-  '#ef4444', // Red
-  '#f59e0b', // Orange
-  '#eab308', // Yellow
-  '#22c55e', // Green
-  '#3b82f6', // Blue
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#6b7280', // Gray
-];
 
 export default function BulkActionsPanel({
   selectedCount,
@@ -106,7 +93,7 @@ export default function BulkActionsPanel({
             {showColorPicker && (
               <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10">
                 <div className="grid grid-cols-5 gap-2">
-                  {COLOR_PRESETS.map((color) => (
+                  {SHAPE_COLOR_PRESETS.map((color) => (
                     <button
                       key={color}
                       onClick={() => handleBulkColorChange(color)}
@@ -141,7 +128,7 @@ export default function BulkActionsPanel({
             {showStrokePicker && (
               <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10">
                 <div className="grid grid-cols-5 gap-2">
-                  {COLOR_PRESETS.map((color) => (
+                  {SHAPE_COLOR_PRESETS.map((color) => (
                     <button
                       key={color}
                       onClick={() => handleBulkStrokeChange(color)}

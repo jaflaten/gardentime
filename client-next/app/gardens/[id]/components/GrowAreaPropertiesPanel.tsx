@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { GrowArea } from '@/lib/api';
+import { GROW_AREA_COLOR_PRESETS } from '@/lib/constants/colors';
 
 interface GrowAreaPropertiesPanelProps {
   selectedGrowArea: GrowArea;
@@ -9,20 +10,6 @@ interface GrowAreaPropertiesPanelProps {
   onDelete?: () => void;
   onClose: () => void;
 }
-
-// Color presets for grow areas
-const COLOR_PRESETS = [
-  '#3b82f6', // Blue (BOX default)
-  '#22c55e', // Green (FIELD default)
-  '#92400e', // Brown (BED default)
-  '#6b7280', // Gray (BUCKET default)
-  '#ef4444', // Red
-  '#f59e0b', // Orange
-  '#eab308', // Yellow
-  '#8b5cf6', // Purple
-  '#ec4899', // Pink
-  '#06b6d4', // Cyan
-];
 
 export default function GrowAreaPropertiesPanel({
   selectedGrowArea,
@@ -125,7 +112,7 @@ export default function GrowAreaPropertiesPanel({
             {showColorPicker && (
               <div className="absolute top-full mt-2 left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10">
                 <div className="grid grid-cols-5 gap-2">
-                  {COLOR_PRESETS.map((color) => (
+                  {GROW_AREA_COLOR_PRESETS.map((color) => (
                     <button
                       key={color}
                       onClick={() => handleColorChange(color)}

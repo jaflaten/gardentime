@@ -44,6 +44,26 @@ Refactored `gardens/page.tsx` as proof of concept, replacing:
 - Manual modal structure → `<Modal>` component  
 - Label + input patterns → `<FormField>` + `<Input>` components
 
+### 4. Consolidate Color Presets (Phase 5) - DONE
+Created `lib/constants/colors.ts` with WCAG-compliant color definitions:
+- `ZONE_TYPE_COLORS` - BOX (blue), FIELD (green), BED (brown), BUCKET (gray)
+- `SHAPE_COLOR_PRESETS` - 10 colors optimized for canvas shapes, WCAG-compliant yellows/oranges
+- `GROW_AREA_COLOR_PRESETS` - 10 nature-inspired colors for grow areas
+- `SEMANTIC_COLORS` - success/warning/danger/info/neutral with bg/text/border combos
+- `getContrastTextColor()` - helper to pick white/black text based on background
+- `meetsWcagAA()` - validation helper for contrast ratios
+
+Updated components to use centralized colors:
+- `ShapePropertiesPanel.tsx` → imports `SHAPE_COLOR_PRESETS`
+- `BulkActionsPanel.tsx` → imports `SHAPE_COLOR_PRESETS`
+- `GrowAreaPropertiesPanel.tsx` → imports `GROW_AREA_COLOR_PRESETS`
+- `GrowAreaBox.tsx` → imports `ZONE_TYPE_COLORS`
+
+WCAG improvements:
+- Changed orange from `#f59e0b` (Orange-500) to `#ea580c` (Orange-600) for better contrast
+- Changed yellow from `#eab308` (Yellow-500) to `#ca8a04` (Yellow-600) for better contrast
+- Changed cyan from `#06b6d4` (Cyan-500) to `#0891b2` (Cyan-600) for better contrast
+
 ---
 
 ## Executive Summary
