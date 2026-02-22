@@ -90,9 +90,10 @@ function GrowAreaBoxComponent({
   const strokeColor = isSelected ? '#10b981' : isMultiSelected ? '#3b82f6' : isHovered ? '#1f2937' : '#374151';
   const strokeWidth = isSelected ? 4 : isMultiSelected ? 3 : isHovered ? 3 : 2;
   
-  // Disable shadows during drag for better performance (GPU-intensive blur calculations)
-  const shadowBlur = isDragging ? 0 : (isSelected ? 15 : isMultiSelected ? 12 : isHovered ? 10 : 5);
-  const shadowEnabled = !isDragging;
+  // PERF: Shadows disabled - GPU blur calculations are expensive and cause lag during drag
+  // The visual impact is minimal but the performance gain is significant
+  const shadowBlur = 0;
+  const shadowEnabled = false;
 
   // Check if this is a bucket (should be circular)
   const isBucket = growArea.zoneType === 'BUCKET';

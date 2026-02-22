@@ -11,7 +11,9 @@ interface GridLine {
   strokeWidth: number;
 }
 
-export const GRID_SIZE = 50; // 50cm intervals
+// PERF: 100cm grid intervals - fewer lines = better performance
+// Was 50cm but that doubled the line count without significant visual benefit
+export const GRID_SIZE = 100;
 
 export function generateGridLines({ dimensions, scale, stagePosition }: GridLinesProps): GridLine[] {
   const lines: GridLine[] = [];
