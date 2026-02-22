@@ -24,7 +24,6 @@ export default function LoginPage() {
       login(response.token, response.username, response.email, response.firstName);
       router.push('/gardens');
     } catch (err: any) {
-      console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);

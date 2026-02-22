@@ -44,7 +44,6 @@ export default function ProfilePage() {
       setLastName(data.lastName || '');
     } catch (err: any) {
       setError('Failed to load profile');
-      console.error('Profile load error:', err);
     } finally {
       setLoading(false);
     }

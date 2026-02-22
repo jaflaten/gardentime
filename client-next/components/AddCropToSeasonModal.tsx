@@ -50,7 +50,7 @@ function AddCropToSeasonModalContent({
       });
       setPlants(res.data || []);
     } catch (error) {
-      console.error('Failed to search plants:', error);
+      setPlants([]);
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,6 @@ function AddCropToSeasonModalContent({
       onCropAdded();
       handleClose();
     } catch (error) {
-      console.error('Failed to add crop:', error);
       alert('Failed to add crop. Please try again.');
     } finally {
       setSaving(false);

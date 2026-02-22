@@ -29,34 +29,23 @@ export function useCopyPaste({
       object: objectToCopy,
       timestamp: Date.now(),
     });
-
-    console.log('📋 Copied object:', objectToCopy.type);
   }, [selectedObjectId, canvasObjects]);
 
   const pasteObject = useCallback(async () => {
-    if (!copiedObject) {
-      console.log('📋 No object to paste');
-      return;
-    }
+    if (!copiedObject) return;
 
-    try {
-      const { id, ...objectData } = copiedObject.object;
-      
-      // Create a copy with offset position to avoid overlapping
-      const pastedObject: Partial<CanvasObject> = {
-        ...objectData,
-        x: copiedObject.object.x + 20,
-        y: copiedObject.object.y + 20,
-        zIndex: (copiedObject.object.zIndex || 0) + 1,
-      };
+    const { id, ...objectData } = copiedObject.object;
+    
+    // Create a copy with offset position to avoid overlapping
+    const pastedObject: Partial<CanvasObject> = {
+      ...objectData,
+      x: copiedObject.object.x + 20,
+      y: copiedObject.object.y + 20,
+      zIndex: (copiedObject.object.zIndex || 0) + 1,
+    };
 
-      // Call the creation handler which will save to backend
-      onObjectCreated(pastedObject as CanvasObject);
-      
-      console.log('📋 Pasted object:', copiedObject.object.type);
-    } catch (error) {
-      console.error('Failed to paste object:', error);
-    }
+    // Call the creation handler which will save to backend
+    onObjectCreated(pastedObject as CanvasObject);
   }, [copiedObject, onObjectCreated]);
 
   return {

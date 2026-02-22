@@ -63,21 +63,16 @@ export default function GrowAreaDetailPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      console.log('Fetching grow area with ID:', growAreaId);
       const [growAreaData, cropRecordsData, plantsData] = await Promise.all([
         growAreaService.getById(growAreaId),
         cropRecordService.getByGrowAreaId(growAreaId),
         plantService.getAll(),
       ]);
-      console.log('Grow area data received:', growAreaData);
-      console.log('Plants data received:', plantsData);
       setGrowArea(growAreaData);
       setCropRecords(cropRecordsData);
       // Ensure plantsData is an array before setting
       setPlants(Array.isArray(plantsData) ? plantsData : []);
     } catch (err: any) {
-      console.error('Failed to fetch data:', err);
-      console.error('Error response:', err.response);
       setError(err.response?.data?.message || err.message || 'Failed to load data');
       // Set empty arrays on error to prevent map errors
       setPlants([]);
@@ -127,11 +122,7 @@ export default function GrowAreaDetailPage() {
   };
 
   const handleEditGrowArea = () => {
-    console.log('Edit button clicked!', { growArea, showEditModal });
-    if (!growArea) {
-      console.error('No grow area data available');
-      return;
-    }
+    if (!growArea) return;
 
     setEditGrowArea({
       name: growArea.name,
@@ -141,7 +132,6 @@ export default function GrowAreaDetailPage() {
       notes: growArea.notes || '',
     });
     setShowEditModal(true);
-    console.log('Modal should be shown now');
   };
 
   const handleUpdateGrowArea = async (e: React.FormEvent) => {

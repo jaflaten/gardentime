@@ -94,15 +94,12 @@ export default function RotationPlannerPage() {
       }
 
       // Run rotation planner
-      console.log('Running rotation planner for season plan:', seasonPlanId);
       const plannerRes = await api.post(
         `/gardens/${gardenId}/season-plans/${seasonPlanId}/run-rotation-planner`
       );
 
-      console.log('Rotation planner result:', plannerRes.data);
       setPlacementPlan(plannerRes.data);
     } catch (err: any) {
-      console.error('Failed to run rotation planner:', err);
       setError(err.response?.data?.error || err.message || 'Failed to run rotation planner');
     } finally {
       setLoading(false);

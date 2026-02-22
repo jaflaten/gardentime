@@ -1,8 +1,32 @@
 2# Frontend Refactoring Plan
 
 **Created:** February 22, 2026  
-**Status:** Draft  
+**Status:** In Progress  
 **Priority:** Medium - Technical debt reduction
+
+---
+
+## Completed Tasks ✅
+
+### 1. Extract Authentication Guard HOC/Hook (Phase 1) - DONE
+Already implemented as `useRequireAuth` hook in `hooks/useRequireAuth.ts`. Used by 6 pages:
+- `gardens/page.tsx`
+- `gardens/[id]/board/page.tsx`
+- `gardens/[id]/grow-areas/page.tsx`
+- `gardens/[id]/grow-areas/[growAreaId]/page.tsx`
+- `profile/page.tsx`
+- `search/page.tsx`
+
+### 2. Remove Console Statements (Phase 2) - DONE
+Removed ~15 debug console.log statements from client-side code:
+- `grow-areas/[growAreaId]/page.tsx` - removed 8 debug logs
+- `rotation-planner/page.tsx` - removed 3 debug logs  
+- `useCopyPaste.ts` - removed 4 debug logs
+- `season-plan/page.tsx` - removed 2 debug logs
+- `profile/page.tsx`, `login/page.tsx` - removed error logs
+- `AddCropToSeasonModal.tsx`, search components - removed error logs
+
+Kept: E2E test logs (useful), BFF route logs (server-side debugging), error handling logs in critical paths.
 
 ---
 

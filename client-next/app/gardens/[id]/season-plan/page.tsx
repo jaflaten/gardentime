@@ -45,7 +45,7 @@ export default function SeasonPlanPage() {
           setDefaultGrowAreaId(growAreasRes.data[0].id);
         }
       } catch (err) {
-        console.log('No grow areas found');
+        // No grow areas found, continue without error
       }
 
       // Fetch climate info
@@ -82,7 +82,7 @@ export default function SeasonPlanPage() {
         }
       }
     } catch (error) {
-      console.error('Failed to fetch season planning data:', error);
+      setError('Failed to load season planning data');
     } finally {
       setLoading(false);
     }
@@ -113,7 +113,6 @@ export default function SeasonPlanPage() {
         setError(null);
       }
     } catch (error: any) {
-      console.error('Failed to save climate info:', error);
       if (error.response?.status === 401 || error.response?.status === 403) {
         setError('Your session has expired. Please log in again.');
         setTimeout(() => router.push('/login'), 2000);
@@ -139,7 +138,7 @@ export default function SeasonPlanPage() {
         setShowCreatePlan(false);
       }
     } catch (error) {
-      console.error('Failed to create season plan:', error);
+      setError('Failed to create season plan');
     }
   };
 

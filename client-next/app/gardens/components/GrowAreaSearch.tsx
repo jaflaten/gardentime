@@ -61,7 +61,6 @@ function GrowAreaSearchContent({
       setShowResults(true);
       setSelectedIndex(-1);
     } catch (error) {
-      console.error('Search error:', error);
       setResults([]);
     } finally {
       setIsSearching(false);
