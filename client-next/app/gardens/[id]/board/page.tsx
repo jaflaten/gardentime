@@ -34,8 +34,8 @@ export default function GardenBoardPage() {
   const [showAddCropModal, setShowAddCropModal] = useState(false);
   const [cropModalGrowArea, setCropModalGrowArea] = useState<GrowArea | null>(null);
   
-  // Debounced grow area saver for better performance
-  const { scheduleUpdate: scheduleGrowAreaSave } = useGrowAreaSaver(500);
+  // Debounced grow area saver for better performance (2s delay to batch rapid changes)
+  const { scheduleUpdate: scheduleGrowAreaSave } = useGrowAreaSaver(2000);
 
   useEffect(() => {
     if (isLoading) return;

@@ -2,7 +2,7 @@
 
 **Created:** February 21, 2025  
 **Updated:** February 21, 2025  
-**Status:** In Progress (Phases 1-4 Complete)  
+**Status:** In Progress (Phases 1-6 Complete, Phase 5 now Complete)  
 **Priority:** HIGH - User Experience Impact
 
 ---
@@ -148,24 +148,29 @@ Shadow calculations are GPU-intensive, especially with many boxes.
 
 ---
 
+### ✅ Phase 5: Memoize Grid Lines (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GardenBoardView.tsx`
+
+**What was done:**
+- Added `useMemo` hook to memoize `generateGridLines` result
+- Dependencies: `dimensions.width`, `dimensions.height`, `scale`, `stagePosition.x`, `stagePosition.y`
+- Grid lines are now only recalculated when pan/zoom/resize actually changes
+
+**Why this helps:**
+Previously, grid lines were regenerated on every render (even unrelated state changes like selections). Now they're cached and reused.
+
+### ✅ Phase 5b: Increased Debounce to 2 Seconds (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/board/page.tsx`
+
+**What was done:**
+- Changed `useGrowAreaSaver(500)` to `useGrowAreaSaver(2000)`
+- API calls now batch for 2 seconds after last move, reducing network traffic
+
+---
+
 ## Remaining Implementation Plan
-
-### Phase 5: Memoize Grid Lines (NEXT)
-**Impact: 10% improvement**  
-**Effort: Low**
-
-```tsx
-const gridLines = useMemo(
-  () => generateGridLines({ dimensions, scale, stagePosition }),
-  [dimensions.width, dimensions.height, scale, stagePosition.x, stagePosition.y]
-);
-```
-
-### Phase 6: Disable Shadows During Drag
-**Impact: 15% improvement**  
-**Effort: Low**
-
-Pass `isDragging` prop and disable shadows while dragging.
 
 ### Phase 7: Stable Callback References (Future)
 **Impact: 25% improvement**  
@@ -200,7 +205,8 @@ Separate Konva layers for:
 | 3 | Remove debug logging | ✅ Complete | 5-10% |
 | 4 | React.memo GrowAreaBox | ✅ Complete | 40% |
 | 4b | Local drag state (Konva owns position) | ✅ Complete | 30% |
-| 5 | Memoize grid lines | Pending | 10% |
+| 5 | Memoize grid lines | ✅ Complete | 10% |
+| 5b | Increase debounce to 2 seconds | ✅ Complete | 5% |
 | 6 | Disable shadows during drag | ✅ Complete | 15% |
 | 7 | Stable callbacks | Future | 25% |
 | 8 | Layer separation | Future | 20% |
@@ -212,6 +218,6 @@ Separate Konva layers for:
 | File | Phase | Changes |
 |------|-------|---------|
 | `hooks/useGrowAreaSaver.ts` | 1 | NEW - Debounce hook |
-| `board/page.tsx` | 1 | Use debounced saves |
-| `components/GardenBoardView.tsx` | 2, 3 | Fix key, remove logs |
+| `board/page.tsx` | 1, 5b | Use debounced saves, increase to 2s |
+| `components/GardenBoardView.tsx` | 2, 3, 5 | Fix key, remove logs, memoize grid |
 | `components/GrowAreaBox.tsx` | 3, 4, 4b, 6 | Remove logs, add memo, local drag state, disable shadows |

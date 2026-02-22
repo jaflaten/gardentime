@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Stage, Layer, Rect, Line } from 'react-konva';
 import { GrowArea, CanvasObject, canvasObjectService } from '@/lib/api';
 import Konva from 'konva';
@@ -174,6 +174,12 @@ export default function GardenBoardView({
       setSelectedObjectId(created.id);
     },
   });
+
+  // Memoize grid lines to avoid recalculating on every render
+  const gridLines = useMemo(
+    () => generateGridLines({ dimensions, scale, stagePosition }),
+    [dimensions.width, dimensions.height, scale, stagePosition.x, stagePosition.y]
+  );
 
   // Load canvas objects from backend
   useEffect(() => {
@@ -662,7 +668,7 @@ export default function GardenBoardView({
 
             {/* Grid */}
             {showGrid &&
-              generateGridLines({ dimensions, scale, stagePosition }).map((line) => (
+              gridLines.map((line) => (
                 <Line
                   key={line.key}
                   points={line.points}
