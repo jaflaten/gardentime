@@ -82,6 +82,24 @@ Benefits:
 - Consistent error message extraction pattern across the codebase
 - Eliminated duplicate error handling boilerplate
 
+### 6. Split Grow Area Detail Page (Phase 7) - DONE
+Decomposed 877-line `grow-areas/[growAreaId]/page.tsx` into reusable components.
+
+Created `grow-areas/[growAreaId]/components/` directory with:
+- `cropRecordUtils.ts` - Shared types and helper functions (badge colors, status icons)
+- `CropRecordCard.tsx` - Reusable card component for active and historical crop records
+- `CreateCropModal.tsx` - Modal for creating new crop records (uses shared UI components)
+- `EditGrowAreaModal.tsx` - Modal for editing grow area properties
+- `EditCropModal.tsx` - Modal for editing existing crop records
+- `DeleteCropModal.tsx` - Confirmation modal for deleting crop records
+- `index.ts` - Barrel export
+
+Results:
+- Main page reduced from 877 → 401 lines (**54% reduction**)
+- Eliminated ~80 lines of duplicated crop record card rendering
+- Modals now use shared `Modal`, `Button`, `Input`, `Select`, `FormField` components
+- Logic handlers remain in main page for data consistency
+
 ---
 
 ## Executive Summary
