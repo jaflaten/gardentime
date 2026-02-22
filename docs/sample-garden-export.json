@@ -1,6 +1,6 @@
 {
-  "exportVersion": "1.0",
-  "exportedAt": "2026-01-29T12:00:00Z",
+  "exportVersion": "1.1",
+  "exportedAt": "2026-02-22T12:00:00Z",
   "garden": {
     "name": "Family Garden 2026"
   },
@@ -15,7 +15,39 @@
       "positionX": 50,
       "positionY": 50,
       "rotation": 0,
-      "notes": "Full sun, south facing"
+      "notes": "Full sun, south facing",
+      "cropRecords": [
+        {
+          "plantId": "550e8400-e29b-41d4-a716-446655440001",
+          "plantName": "Tomato",
+          "datePlanted": "2025-05-15",
+          "dateHarvested": "2025-09-01",
+          "status": "HARVESTED",
+          "notes": "Great yield this year",
+          "outcome": "EXCELLENT",
+          "plantFamily": "Solanaceae",
+          "feederType": "HEAVY",
+          "isNitrogenFixer": false,
+          "rootDepth": "DEEP",
+          "hadDiseases": false,
+          "yieldRating": 5
+        },
+        {
+          "plantId": "550e8400-e29b-41d4-a716-446655440002",
+          "plantName": "Pepper",
+          "datePlanted": "2024-05-20",
+          "dateHarvested": "2024-08-15",
+          "status": "HARVESTED",
+          "plantFamily": "Solanaceae",
+          "feederType": "HEAVY",
+          "isNitrogenFixer": false,
+          "rootDepth": "MEDIUM",
+          "hadDiseases": true,
+          "diseaseNames": "Blossom end rot",
+          "diseaseNotes": "Watering was inconsistent",
+          "yieldRating": 3
+        }
+      ]
     },
     {
       "name": "Herb Corner",
@@ -25,7 +57,20 @@
       "positionX": 200,
       "positionY": 50,
       "rotation": 45,
-      "notes": "Near kitchen for easy access"
+      "notes": "Near kitchen for easy access",
+      "cropRecords": [
+        {
+          "plantId": "550e8400-e29b-41d4-a716-446655440003",
+          "plantName": "Basil",
+          "datePlanted": "2025-06-01",
+          "status": "GROWING",
+          "plantFamily": "Lamiaceae",
+          "feederType": "LIGHT",
+          "isNitrogenFixer": false,
+          "rootDepth": "SHALLOW",
+          "hadDiseases": false
+        }
+      ]
     },
     {
       "name": "Carrot Row",
@@ -36,7 +81,23 @@
       "positionX": 50,
       "positionY": 150,
       "rotation": 0,
-      "notes": "Deep soil for root vegetables"
+      "notes": "Deep soil for root vegetables",
+      "cropRecords": [
+        {
+          "plantId": "550e8400-e29b-41d4-a716-446655440004",
+          "plantName": "Carrot",
+          "datePlanted": "2025-04-10",
+          "dateHarvested": "2025-07-20",
+          "status": "HARVESTED",
+          "plantFamily": "Apiaceae",
+          "feederType": "LIGHT",
+          "isNitrogenFixer": false,
+          "rootDepth": "DEEP",
+          "hadDiseases": false,
+          "yieldRating": 4,
+          "soilQualityAfter": 4
+        }
+      ]
     },
     {
       "name": "Salad Greens",
@@ -45,7 +106,8 @@
       "length": 60,
       "positionX": 200,
       "positionY": 150,
-      "rotation": 90
+      "rotation": 90,
+      "cropRecords": []
     },
     {
       "name": "Cucumber Trellis",
@@ -55,7 +117,24 @@
       "positionX": 50,
       "positionY": 280,
       "rotation": 0,
-      "notes": "Vertical growing with trellis"
+      "notes": "Vertical growing with trellis",
+      "cropRecords": [
+        {
+          "plantId": "550e8400-e29b-41d4-a716-446655440005",
+          "plantName": "Bean",
+          "datePlanted": "2024-05-25",
+          "dateHarvested": "2024-08-10",
+          "status": "HARVESTED",
+          "notes": "Planted beans to fix nitrogen before cucumbers",
+          "plantFamily": "Fabaceae",
+          "feederType": "LIGHT",
+          "isNitrogenFixer": true,
+          "rootDepth": "MEDIUM",
+          "hadDiseases": false,
+          "yieldRating": 4,
+          "soilQualityAfter": 5
+        }
+      ]
     }
   ]
 }

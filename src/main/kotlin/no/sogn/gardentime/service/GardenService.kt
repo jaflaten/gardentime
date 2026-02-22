@@ -1,10 +1,14 @@
 package no.sogn.gardentime.service
 
+import no.sogn.gardentime.db.CropRecordRepository
 import no.sogn.gardentime.db.GardenRepository
+import no.sogn.gardentime.dto.CropRecordExportDto
 import no.sogn.gardentime.dto.GardenDataDto
 import no.sogn.gardentime.dto.GardenExportDto
 import no.sogn.gardentime.dto.GardenImportRequest
 import no.sogn.gardentime.dto.GrowAreaExportDto
+import no.sogn.gardentime.model.CropRecordEntity
+import no.sogn.gardentime.model.CropStatus
 import no.sogn.gardentime.model.Garden
 import no.sogn.gardentime.model.GardenEntity
 import no.sogn.gardentime.model.GardenInfo
@@ -14,12 +18,14 @@ import no.sogn.gardentime.model.mapToGardenEntity
 import no.sogn.gardentime.security.SecurityUtils
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.LocalDate
 import java.util.UUID
 
 @Service
 class GardenService(
     private val gardenRepository: GardenRepository,
     private val growAreaService: GrowAreaService,
+    private val cropRecordRepository: CropRecordRepository,
     private val securityUtils: SecurityUtils,
 ) {
 
@@ -75,7 +81,7 @@ class GardenService(
             ?: throw IllegalArgumentException("Garden not found")
 
         return GardenExportDto(
-            exportVersion = "1.0",
+            exportVersion = "1.1",
             exportedAt = Instant.now(),
             garden = GardenDataDto(name = garden.name),
             growAreas = garden.growAreas.map { area ->
@@ -90,7 +96,30 @@ class GardenService(
                     width = area.width,
                     length = area.length,
                     height = area.height,
-                    rotation = area.rotation
+                    rotation = area.rotation,
+                    cropRecords = area.cropRecord.map { record ->
+                        CropRecordExportDto(
+                            plantId = record.plantId,
+                            plantName = record.plantName,
+                            datePlanted = record.plantingDate.toString(),
+                            dateHarvested = record.harvestDate?.toString(),
+                            status = record.status?.name,
+                            notes = record.notes,
+                            outcome = record.outcome,
+                            name = record.name,
+                            description = record.description,
+                            plantFamily = record.plantFamily,
+                            plantGenus = record.plantGenus,
+                            feederType = record.feederType,
+                            isNitrogenFixer = record.isNitrogenFixer,
+                            rootDepth = record.rootDepth,
+                            hadDiseases = record.hadDiseases,
+                            diseaseNames = record.diseaseNames,
+                            diseaseNotes = record.diseaseNotes,
+                            yieldRating = record.yieldRating,
+                            soilQualityAfter = record.soilQualityAfter
+                        )
+                    }
                 )
             }
         )
@@ -106,9 +135,9 @@ class GardenService(
         )
         val savedGarden = gardenRepository.save(mapToGardenEntity(newGarden))
 
-        // Create grow areas
+        // Create grow areas and their crop records
         request.growAreas.forEach { areaDto ->
-            growAreaService.addGrowArea(
+            val createdArea = growAreaService.addGrowArea(
                 name = areaDto.name,
                 gardenId = savedGarden.id!!,
                 zoneSize = areaDto.zoneSize,
@@ -122,6 +151,33 @@ class GardenService(
                 height = areaDto.height,
                 rotation = areaDto.rotation
             )
+
+            // Create crop records for this grow area
+            areaDto.cropRecords.forEach { recordDto ->
+                val cropRecordEntity = CropRecordEntity(
+                    plantingDate = LocalDate.parse(recordDto.datePlanted),
+                    harvestDate = recordDto.dateHarvested?.let { LocalDate.parse(it) },
+                    plantId = recordDto.plantId,
+                    plantName = recordDto.plantName,
+                    growZoneId = createdArea.id!!,
+                    name = recordDto.name,
+                    description = recordDto.description,
+                    notes = recordDto.notes,
+                    outcome = recordDto.outcome,
+                    status = recordDto.status?.let { CropStatus.valueOf(it) },
+                    plantFamily = recordDto.plantFamily,
+                    plantGenus = recordDto.plantGenus,
+                    feederType = recordDto.feederType,
+                    isNitrogenFixer = recordDto.isNitrogenFixer,
+                    rootDepth = recordDto.rootDepth,
+                    hadDiseases = recordDto.hadDiseases,
+                    diseaseNames = recordDto.diseaseNames,
+                    diseaseNotes = recordDto.diseaseNotes,
+                    yieldRating = recordDto.yieldRating,
+                    soilQualityAfter = recordDto.soilQualityAfter
+                )
+                cropRecordRepository.save(cropRecordEntity)
+            }
         }
 
         return getGardenById(savedGarden.id!!)!!

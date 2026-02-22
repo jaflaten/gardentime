@@ -314,6 +314,36 @@ export const authService = {
 };
 
 // Garden Import/Export types
+// Crop record export DTO - includes all fields for complete backup/restore
+export interface CropRecordExportDto {
+  // Core fields
+  plantId: string;
+  plantName: string;
+  datePlanted: string;  // ISO date string
+  dateHarvested?: string;
+  status?: CropStatus;
+  notes?: string;
+  outcome?: string;
+  name?: string;
+  description?: string;
+  
+  // Rotation planning fields
+  plantFamily?: string;
+  plantGenus?: string;
+  feederType?: string;
+  isNitrogenFixer?: boolean;
+  rootDepth?: string;
+  
+  // Disease tracking
+  hadDiseases?: boolean;
+  diseaseNames?: string;
+  diseaseNotes?: string;
+  
+  // Yield tracking
+  yieldRating?: number;
+  soilQualityAfter?: number;
+}
+
 export interface GardenExportData {
   exportVersion: string;
   exportedAt: string;
@@ -334,6 +364,7 @@ export interface GardenExportData {
     length?: number;
     height?: number;
     rotation?: number;
+    cropRecords?: CropRecordExportDto[];
   }>;
 }
 
@@ -357,6 +388,7 @@ export interface GardenImportRequest {
     length?: number;
     height?: number;
     rotation?: number;
+    cropRecords?: CropRecordExportDto[];
   }>;
 }
 
