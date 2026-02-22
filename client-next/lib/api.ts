@@ -333,6 +333,7 @@ export interface GardenExportData {
     width?: number;
     length?: number;
     height?: number;
+    rotation?: number;
   }>;
 }
 
@@ -355,6 +356,7 @@ export interface GardenImportRequest {
     width?: number;
     length?: number;
     height?: number;
+    rotation?: number;
   }>;
 }
 

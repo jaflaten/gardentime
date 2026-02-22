@@ -168,31 +168,38 @@ Previously, grid lines were regenerated on every render (even unrelated state ch
 - Changed `useGrowAreaSaver(500)` to `useGrowAreaSaver(2000)`
 - API calls now batch for 2 seconds after last move, reducing network traffic
 
----
+### ✅ Phase 7: Stable Callback References (COMPLETED)
+**Files Changed:**
+- `app/gardens/[id]/components/GardenBoardView.tsx`
+- `app/gardens/[id]/components/GrowAreaBox.tsx`
 
-## Remaining Implementation Plan
+**What was done:**
+- Changed GrowAreaBox callback signatures to accept `id` as first parameter
+- Created stable `useCallback` handlers in GardenBoardView:
+  - `handleGrowAreaDragStart(id)`
+  - `handleGrowAreaDragEnd(id, x, y)`
+  - `handleGrowAreaResize(id, width, height)`
+  - `handleGrowAreaRotate(id, rotation)`
+  - `handleGrowAreaSelect(id)`
+  - `handleGrowAreaDoubleClick(id)`
+- Replaced inline arrow functions with stable callback references
+- GrowAreaBox's existing `React.memo` with `arePropsEqual` now fully benefits
 
-### Phase 7: Stable Callback References (Future)
-**Impact: 25% improvement**  
-**Effort: Medium**
+**Why this helps:**
+Previously, every render created new function instances for each grow area. Even with `React.memo`, callback props changed reference on each render. Now the same function reference is passed, so `React.memo` can skip re-renders for unchanged grow areas.
 
-Refactor to pass IDs instead of closures:
-```tsx
-// Instead of inline callbacks
-<GrowAreaBox 
-  id={growArea.id}
-  onDragEnd={handleDragEnd}  // Stable reference, receives id as first arg
-/>
-```
+### ❌ Phase 8: Konva Layer Separation (REVERTED - NOT RECOMMENDED)
+**Status:** Attempted and reverted - caused worse performance
 
-### Phase 8: Konva Layer Separation (Future)
-**Impact: 20% improvement**  
-**Effort: Medium**
+**What was tried:**
+- Split single `<Layer>` into three separate layers (Static, Objects, UI)
 
-Separate Konva layers for:
-- Static layer (grid - rarely changes)
-- Dynamic layer (grow areas - frequently changes)
-- UI layer (transformers, selection)
+**Why it didn't work:**
+- Multiple canvas contexts have GPU overhead
+- Layer compositing cost outweighed benefits
+- Canvas doesn't have enough elements to benefit from layer separation
+
+**Recommendation:** Keep single layer approach. React.memo + Konva's internal optimizations work better for this use case.
 
 ---
 
@@ -208,8 +215,8 @@ Separate Konva layers for:
 | 5 | Memoize grid lines | ✅ Complete | 10% |
 | 5b | Increase debounce to 2 seconds | ✅ Complete | 5% |
 | 6 | Disable shadows during drag | ✅ Complete | 15% |
-| 7 | Stable callbacks | Future | 25% |
-| 8 | Layer separation | Future | 20% |
+| 7 | Stable callbacks | ✅ Complete | 25% |
+| 8 | Layer separation | ❌ Reverted | N/A |
 
 ---
 
@@ -219,5 +226,5 @@ Separate Konva layers for:
 |------|-------|---------|
 | `hooks/useGrowAreaSaver.ts` | 1 | NEW - Debounce hook |
 | `board/page.tsx` | 1, 5b | Use debounced saves, increase to 2s |
-| `components/GardenBoardView.tsx` | 2, 3, 5 | Fix key, remove logs, memoize grid |
-| `components/GrowAreaBox.tsx` | 3, 4, 4b, 6 | Remove logs, add memo, local drag state, disable shadows |
+| `components/GardenBoardView.tsx` | 2, 3, 5, 8 | Fix key, remove logs, memoize grid, layer separation |
+| `components/GrowAreaBox.tsx` | 3, 4, 4b, 6, 7 | Remove logs, add memo, local drag state, disable shadows, ID-based callbacks |

@@ -26,7 +26,8 @@ data class GrowAreaExportDto(
     val positionY: Double? = null,
     val width: Double? = null,
     val length: Double? = null,
-    val height: Double? = null
+    val height: Double? = null,
+    val rotation: Double? = null
 )
 
 // Import request structure

@@ -14,6 +14,7 @@
       "height": 30,
       "positionX": 50,
       "positionY": 50,
+      "rotation": 0,
       "notes": "Full sun, south facing"
     },
     {
@@ -23,6 +24,7 @@
       "length": 60,
       "positionX": 200,
       "positionY": 50,
+      "rotation": 45,
       "notes": "Near kitchen for easy access"
     },
     {
@@ -33,6 +35,7 @@
       "length": 200,
       "positionX": 50,
       "positionY": 150,
+      "rotation": 0,
       "notes": "Deep soil for root vegetables"
     },
     {
@@ -41,7 +44,8 @@
       "width": 100,
       "length": 60,
       "positionX": 200,
-      "positionY": 150
+      "positionY": 150,
+      "rotation": 90
     },
     {
       "name": "Cucumber Trellis",
@@ -50,6 +54,7 @@
       "length": 120,
       "positionX": 50,
       "positionY": 280,
+      "rotation": 0,
       "notes": "Vertical growing with trellis"
     }
   ]

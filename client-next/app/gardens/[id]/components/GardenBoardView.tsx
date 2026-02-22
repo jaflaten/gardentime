@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { Stage, Layer, Rect, Line } from 'react-konva';
 import { GrowArea, CanvasObject, canvasObjectService } from '@/lib/api';
 import Konva from 'konva';
@@ -180,6 +180,101 @@ export default function GardenBoardView({
     () => generateGridLines({ dimensions, scale, stagePosition }),
     [dimensions.width, dimensions.height, scale, stagePosition.x, stagePosition.y]
   );
+
+  // Stable callbacks for GrowAreaBox to prevent unnecessary re-renders
+  const handleGrowAreaDragStart = useCallback((id: string) => {
+    const growArea = growAreas.find(ga => ga.id === id);
+    if (!growArea) return;
+    
+    draggingIdRef.current = id;
+    dragStartPosRef.current = {
+      id,
+      x: growArea.positionX ?? 0,
+      y: growArea.positionY ?? 0,
+      isGrowArea: true,
+    };
+  }, [growAreas]);
+
+  const handleGrowAreaDragEnd = useCallback((id: string, x: number, y: number) => {
+    const growArea = growAreas.find(ga => ga.id === id);
+    if (!growArea) return;
+    
+    const deltaX = x - (growArea.positionX ?? 0);
+    const deltaY = y - (growArea.positionY ?? 0);
+
+    if (selectedIds.has(id) && selectedIds.size > 1) {
+      // Multi-select batch move
+      const moves = Array.from(selectedIds).map((areaId) => {
+        const area = growAreas.find((a) => a.id === areaId);
+        if (area && area.positionX !== undefined && area.positionY !== undefined) {
+          return {
+            id: areaId,
+            isGrowArea: true,
+            before: { x: area.positionX, y: area.positionY },
+            after: { x: area.positionX + deltaX, y: area.positionY + deltaY },
+          };
+        }
+        return null;
+      }).filter((m): m is { id: string; isGrowArea: boolean; before: { x: number; y: number }; after: { x: number; y: number } } => m !== null);
+
+      if (moves.length > 0) {
+        recordAction({ type: 'BATCH_MOVE', moves });
+      }
+
+      const updates = moves.map(m => ({ id: m.id, x: m.after.x, y: m.after.y }));
+      onUpdatePositions?.(updates);
+    } else {
+      // Single grow area move
+      if (dragStartPosRef.current) {
+        recordAction({
+          type: 'MOVE_GROW_AREA',
+          areaId: id,
+          before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
+          after: { x, y },
+        });
+      }
+      onUpdatePosition(id, x, y);
+    }
+
+    draggingIdRef.current = null;
+    dragStartPosRef.current = null;
+  }, [growAreas, selectedIds, recordAction, onUpdatePositions, onUpdatePosition]);
+
+  const handleGrowAreaResize = useCallback((id: string, width: number, height: number) => {
+    const growArea = growAreas.find(ga => ga.id === id);
+    if (!growArea) return;
+    
+    const before = {
+      width: growArea.width ?? 100,
+      height: growArea.length ?? 100,
+    };
+    recordAction({
+      type: 'RESIZE_GROW_AREA',
+      areaId: id,
+      before,
+      after: { width, height },
+    });
+    onUpdateDimensions(id, width, height);
+  }, [growAreas, recordAction, onUpdateDimensions]);
+
+  const handleGrowAreaRotate = useCallback((id: string, rotation: number) => {
+    onUpdateRotation?.(id, rotation);
+  }, [onUpdateRotation]);
+
+  const handleGrowAreaSelect = useCallback((id: string) => {
+    if (selectedIds.has(id)) return;
+    const growArea = growAreas.find(ga => ga.id === id);
+    if (growArea) {
+      selectGrowArea(growArea);
+    }
+  }, [selectedIds, growAreas, selectGrowArea]);
+
+  const handleGrowAreaDoubleClick = useCallback((id: string) => {
+    const growArea = growAreas.find(ga => ga.id === id);
+    if (growArea) {
+      onSelectGrowArea(growArea);
+    }
+  }, [growAreas, onSelectGrowArea]);
 
   // Load canvas objects from backend
   useEffect(() => {
@@ -694,81 +789,12 @@ export default function GardenBoardView({
                   isSelected={selectedId === growArea.id && selectedIds.size <= 1}
                   isMultiSelected={showAsMultiSelected}
                   isDraggingEnabled={activeTool === 'SELECT'}
-                  onDragStart={() => {
-                    draggingIdRef.current = growArea.id;
-                    // Store starting position for undo
-                    dragStartPosRef.current = {
-                      id: growArea.id,
-                      x: growArea.positionX ?? 0,
-                      y: growArea.positionY ?? 0,
-                      isGrowArea: true,
-                    };
-                  }}
-                  onDragEnd={(x, y) => {
-                    const deltaX = x - (growArea.positionX ?? 0);
-                    const deltaY = y - (growArea.positionY ?? 0);
-
-                    if (selectedIds.has(growArea.id) && selectedIds.size > 1) {
-                      // Multi-select batch move
-                      const moves = Array.from(selectedIds).map((id) => {
-                        const area = growAreas.find((a) => a.id === id);
-                        if (area && area.positionX !== undefined && area.positionY !== undefined) {
-                          return {
-                            id,
-                            isGrowArea: true,
-                            before: { x: area.positionX, y: area.positionY },
-                            after: { x: area.positionX + deltaX, y: area.positionY + deltaY },
-                          };
-                        }
-                        return null;
-                      }).filter((m): m is { id: string; isGrowArea: boolean; before: { x: number; y: number }; after: { x: number; y: number } } => m !== null);
-
-                      if (moves.length > 0) {
-                        recordAction({ type: 'BATCH_MOVE', moves });
-                      }
-
-                      const updates = moves.map(m => ({ id: m.id, x: m.after.x, y: m.after.y }));
-                      onUpdatePositions?.(updates);
-                    } else {
-                      // Single grow area move
-                      if (dragStartPosRef.current) {
-                        recordAction({
-                          type: 'MOVE_GROW_AREA',
-                          areaId: growArea.id,
-                          before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
-                          after: { x, y },
-                        });
-                      }
-                      onUpdatePosition(growArea.id, x, y);
-                    }
-
-                    draggingIdRef.current = null;
-                    dragStartPosRef.current = null;
-                  }}
-                  onResize={(width, height) => {
-                    // Record resize action for undo
-                    const before = {
-                      width: growArea.width ?? 100,
-                      height: growArea.length ?? 100,
-                    };
-                    recordAction({
-                      type: 'RESIZE_GROW_AREA',
-                      areaId: growArea.id,
-                      before,
-                      after: { width, height },
-                    });
-                    onUpdateDimensions(growArea.id, width, height);
-                  }}
-                  onRotate={(rotation) => {
-                    onUpdateRotation?.(growArea.id, rotation);
-                  }}
-                  onSelect={() => {
-                    if (selectedIds.has(growArea.id)) {
-                      return;
-                    }
-                    selectGrowArea(growArea);
-                  }}
-                  onDoubleClick={() => onSelectGrowArea(growArea)}
+                  onDragStart={handleGrowAreaDragStart}
+                  onDragEnd={handleGrowAreaDragEnd}
+                  onResize={handleGrowAreaResize}
+                  onRotate={handleGrowAreaRotate}
+                  onSelect={handleGrowAreaSelect}
+                  onDoubleClick={handleGrowAreaDoubleClick}
                 />
               );
             })}

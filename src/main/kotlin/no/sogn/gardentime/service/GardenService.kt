@@ -89,7 +89,8 @@ class GardenService(
                     positionY = area.positionY,
                     width = area.width,
                     length = area.length,
-                    height = area.height
+                    height = area.height,
+                    rotation = area.rotation
                 )
             }
         )
@@ -118,7 +119,8 @@ class GardenService(
                 positionY = areaDto.positionY,
                 width = areaDto.width,
                 length = areaDto.length,
-                height = areaDto.height
+                height = areaDto.height,
+                rotation = areaDto.rotation
             )
         }
 

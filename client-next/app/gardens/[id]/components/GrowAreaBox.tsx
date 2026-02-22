@@ -10,12 +10,12 @@ interface GrowAreaBoxProps {
   isSelected: boolean;
   isMultiSelected?: boolean; // New prop for multi-select visual feedback
   isDraggingEnabled: boolean;
-  onDragStart: () => void;
-  onDragEnd: (x: number, y: number) => void;
-  onResize?: (width: number, height: number) => void;
-  onRotate?: (rotation: number) => void;
-  onSelect: () => void;
-  onDoubleClick: () => void;
+  onDragStart: (id: string) => void;
+  onDragEnd: (id: string, x: number, y: number) => void;
+  onResize?: (id: string, width: number, height: number) => void;
+  onRotate?: (id: string, rotation: number) => void;
+  onSelect: (id: string) => void;
+  onDoubleClick: (id: string) => void;
 }
 
 // Custom comparison function for React.memo
@@ -167,7 +167,7 @@ function GrowAreaBoxComponent({
 
     // Call the resize callback with new dimensions
     if (onResize && (scaleX !== 1 || scaleY !== 1)) {
-      onResize(Math.round(newWidth), Math.round(newHeight));
+      onResize(growArea.id, Math.round(newWidth), Math.round(newHeight));
     }
 
     // Call the rotation callback if rotation changed
@@ -177,7 +177,7 @@ function GrowAreaBoxComponent({
     const normalizedCurrent = ((currentRotation % 360) + 360) % 360;
     
     if (onRotate && Math.abs(normalizedNew - normalizedCurrent) > 0.1) {
-      onRotate(normalizedNew);
+      onRotate(growArea.id, normalizedNew);
     }
   };
 
@@ -198,7 +198,7 @@ function GrowAreaBoxComponent({
         onDragStart={(e) => {
           e.cancelBubble = true;
           setIsDragging(true);
-          onDragStart();
+          onDragStart(growArea.id);
         }}
         onDragEnd={(e) => {
           const node = e.target;
@@ -208,26 +208,26 @@ function GrowAreaBoxComponent({
           
           // End drag state before calling callback
           setIsDragging(false);
-          onDragEnd(newX, newY);
+          onDragEnd(growArea.id, newX, newY);
         }}
       onMouseDown={(e) => {
         e.cancelBubble = true;
       }}
       onClick={(e) => {
         e.cancelBubble = true;
-        onSelect();
+        onSelect(growArea.id);
       }}
       onDblClick={(e) => {
         e.cancelBubble = true;
-        onDoubleClick();
+        onDoubleClick(growArea.id);
       }}
       onTap={(e) => {
         e.cancelBubble = true;
-        onSelect();
+        onSelect(growArea.id);
       }}
       onDblTap={(e) => {
         e.cancelBubble = true;
-        onDoubleClick();
+        onDoubleClick(growArea.id);
       }}
       // Hover effects (Step 19.5)
       onMouseEnter={() => setIsHovered(true)}
