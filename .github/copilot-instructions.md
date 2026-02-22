@@ -96,9 +96,11 @@ client-next/
 │   ├── gardens/   # Garden pages (uses App Router)
 │   └── ...
 ├── components/    # React components
+│   └── ui/        # Shared UI library (Button, Input, Modal, etc.)
 ├── contexts/      # React contexts (auth, etc.)
 ├── hooks/         # Custom hooks
 ├── lib/           # API clients, utilities
+│   └── constants/ # Shared constants (colors.ts)
 ├── types/         # TypeScript types
 └── e2e/           # Playwright tests
 ```

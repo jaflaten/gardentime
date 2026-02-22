@@ -2,6 +2,51 @@
 
 This document outlines the WCAG 2.1 AA compliance standards for GardenTime UI components.
 
+## Centralized Color System
+
+All colors are defined in `lib/constants/colors.ts`. Use these imports instead of hardcoding colors:
+
+```tsx
+import { 
+  SHAPE_COLOR_PRESETS,
+  GROW_AREA_COLOR_PRESETS,
+  ZONE_TYPE_COLORS,
+  SEMANTIC_COLORS,
+  getContrastTextColor,
+  meetsWcagAA 
+} from '@/lib/constants/colors';
+```
+
+### Available Exports
+- `ZONE_TYPE_COLORS` - Default colors for BOX, FIELD, BED, BUCKET
+- `SHAPE_COLOR_PRESETS` - 10 WCAG-compliant colors for canvas shapes
+- `GROW_AREA_COLOR_PRESETS` - 10 nature-inspired colors for grow areas
+- `SEMANTIC_COLORS` - Success/warning/danger/info with proper bg/text/border
+- `getContrastTextColor(hex)` - Returns '#ffffff' or '#000000' based on background
+- `meetsWcagAA(fg, bg)` - Validates 4.5:1 contrast ratio
+
+## Shared UI Components
+
+Use components from `components/ui/` instead of raw HTML elements:
+
+```tsx
+import { Button, Input, Select, Modal, FormField, Card, Badge } from '@/components/ui';
+
+// Button variants: primary, secondary, danger, ghost, outline
+<Button variant="primary" size="md">Submit</Button>
+<Button variant="danger">Delete</Button>
+
+// Form elements with consistent styling
+<FormField label="Name" required>
+  <Input value={name} onChange={...} />
+</FormField>
+
+// Modal with Escape key and backdrop click handling
+<Modal isOpen={show} onClose={close} title="Edit Item">
+  {/* content */}
+</Modal>
+```
+
 ## Color Contrast Requirements
 
 ### Text Contrast Ratios (WCAG 2.1 Level AA)
