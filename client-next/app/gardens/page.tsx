@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import PageSkeleton from '@/app/components/PageSkeleton';
+import { Button, Input, Modal, FormField, Card } from '@/components/ui';
 
 export default function GardensPage() {
   const router = useRouter();
@@ -149,18 +150,15 @@ export default function GardensPage() {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900">My Gardens</h2>
           <div className="flex gap-3">
-            <button
+            <Button
+              variant="outline"
               onClick={() => setShowImportModal(true)}
-              className="px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition"
             >
               Import Garden
-            </button>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-            >
+            </Button>
+            <Button onClick={() => setShowCreateModal(true)}>
               + New Garden
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -226,163 +224,119 @@ export default function GardensPage() {
       </div>
 
       {/* Create Garden Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">
-              Create New Garden
-            </h3>
-            <form onSubmit={handleCreateGarden}>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Garden Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    value={newGarden.name}
-                    onChange={(e) =>
-                      setNewGarden({ ...newGarden, name: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    rows={3}
-                    value={newGarden.description}
-                    onChange={(e) =>
-                      setNewGarden({ ...newGarden, description: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    value={newGarden.location}
-                    onChange={(e) =>
-                      setNewGarden({ ...newGarden, location: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="mt-6 flex gap-3 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 text-gray-700 hover:text-gray-900"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                >
-                  Create Garden
-                </button>
-              </div>
-            </form>
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create New Garden">
+        <form onSubmit={handleCreateGarden}>
+          <div className="space-y-4">
+            <FormField label="Garden Name" required>
+              <Input
+                type="text"
+                required
+                value={newGarden.name}
+                onChange={(e) =>
+                  setNewGarden({ ...newGarden, name: e.target.value })
+                }
+              />
+            </FormField>
+            <FormField label="Description">
+              <textarea
+                className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                rows={3}
+                value={newGarden.description}
+                onChange={(e) =>
+                  setNewGarden({ ...newGarden, description: e.target.value })
+                }
+              />
+            </FormField>
+            <FormField label="Location">
+              <Input
+                type="text"
+                value={newGarden.location}
+                onChange={(e) =>
+                  setNewGarden({ ...newGarden, location: e.target.value })
+                }
+              />
+            </FormField>
           </div>
-        </div>
-      )}
+          <div className="mt-6 flex gap-3 justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setShowCreateModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              Create Garden
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Import Garden Modal */}
-      {showImportModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
-            <h3 className="text-xl font-bold mb-4 text-gray-900">Import Garden</h3>
+      <Modal isOpen={showImportModal} onClose={closeImportModal} title="Import Garden">
+        <FormField label="Select JSON file">
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleFileSelect}
+            className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+          />
+        </FormField>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Select JSON file
-              </label>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileSelect}
-                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+        {importData && (
+          <div className="mt-4">
+            <FormField label="Garden Name" required>
+              <Input
+                type="text"
+                value={importName}
+                onChange={(e) => setImportName(e.target.value)}
+                placeholder="Enter name for imported garden"
               />
-            </div>
-
-            {importData && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Garden Name *
-                </label>
-                <input
-                  type="text"
-                  value={importName}
-                  onChange={(e) => setImportName(e.target.value)}
-                  className="w-full px-3 py-2 border text-gray-900 border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Enter name for imported garden"
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  {importData.growAreas.length} grow area(s) will be imported
-                </p>
-              </div>
-            )}
-
-            {importError && (
-              <div className="mb-4 p-3 bg-red-50 text-red-800 rounded text-sm">
-                {importError}
-              </div>
-            )}
-
-            <div className="flex gap-3 justify-end">
-              <button
-                type="button"
-                onClick={closeImportModal}
-                className="px-4 py-2 text-gray-700 hover:text-gray-900"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleImport}
-                disabled={!importData || !importName.trim() || importing}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {importing ? 'Importing...' : 'Import'}
-              </button>
-            </div>
+            </FormField>
+            <p className="mt-2 text-sm text-gray-500">
+              {importData.growAreas.length} grow area(s) will be imported
+            </p>
           </div>
+        )}
+
+        {importError && (
+          <div className="mt-4 p-3 bg-red-50 text-red-800 rounded text-sm">
+            {importError}
+          </div>
+        )}
+
+        <div className="mt-6 flex gap-3 justify-end">
+          <Button variant="ghost" onClick={closeImportModal}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleImport}
+            disabled={!importData || !importName.trim() || importing}
+          >
+            {importing ? 'Importing...' : 'Import'}
+          </Button>
         </div>
-      )}
+      </Modal>
 
       {/* Delete Confirmation Modal */}
-      {gardenToDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-xl font-bold mb-2 text-gray-900">Delete Garden</h3>
-            <p className="text-gray-600 mb-4">
-              Are you sure you want to delete <strong>{gardenToDelete.name}</strong>? This will also delete all grow areas and cannot be undone.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                type="button"
-                onClick={() => setGardenToDelete(null)}
-                className="px-4 py-2 text-gray-700 hover:text-gray-900"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteGarden}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+      <Modal 
+        isOpen={!!gardenToDelete} 
+        onClose={() => setGardenToDelete(null)} 
+        title="Delete Garden"
+        size="sm"
+      >
+        <p className="text-gray-600 mb-4">
+          Are you sure you want to delete <strong>{gardenToDelete?.name}</strong>? This will also delete all grow areas and cannot be undone.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <Button variant="ghost" onClick={() => setGardenToDelete(null)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteGarden}>
+            Delete
+          </Button>
         </div>
-      )}
+      </Modal>
 
       <Footer />
     </div>

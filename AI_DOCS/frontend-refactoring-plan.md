@@ -28,6 +28,22 @@ Removed ~15 debug console.log statements from client-side code:
 
 Kept: E2E test logs (useful), BFF route logs (server-side debugging), error handling logs in critical paths.
 
+### 3. Shared UI Component Library (Phase 3) - DONE
+Created `components/ui/` directory with reusable components:
+- `Button.tsx` - variants: primary, secondary, danger, ghost, outline; sizes: sm, md, lg
+- `Input.tsx` - styled input with error state support
+- `Select.tsx` - styled select with error state support
+- `Modal.tsx` - reusable modal with Escape key handling and backdrop click
+- `FormField.tsx` - label + children + error wrapper
+- `Card.tsx` - card container with padding variants
+- `Badge.tsx` - badge component with variants: default, success, warning, danger, info
+- `index.ts` - barrel export for easy imports
+
+Refactored `gardens/page.tsx` as proof of concept, replacing:
+- Raw button elements → `<Button>` component
+- Manual modal structure → `<Modal>` component  
+- Label + input patterns → `<FormField>` + `<Input>` components
+
 ---
 
 ## Executive Summary
