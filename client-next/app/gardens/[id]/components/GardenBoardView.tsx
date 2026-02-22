@@ -1,15 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Stage, Layer, Rect, Line } from 'react-konva';
+import { Stage } from 'react-konva';
 import { GrowArea, CanvasObject, canvasObjectService } from '@/lib/api';
 import Konva from 'konva';
-import GrowAreaBox from './GrowAreaBox';
 import DrawingToolbar, { DrawingTool } from './DrawingToolbar';
-import CanvasShape from './CanvasShape';
-import ZoomControls from './ZoomControls';
-import ViewOptions from './ViewOptions';
-import SelectionRectangle from './SelectionRectangle';
+import CanvasToolbar from './CanvasToolbar';
+import CanvasLayer from './CanvasLayer';
 import ShapePropertiesPanel from './ShapePropertiesPanel';
 import BulkActionsPanel from './BulkActionsPanel';
 import GrowAreaPropertiesPanel from './GrowAreaPropertiesPanel';
@@ -25,7 +22,10 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useCanvasObjectSaver } from '../hooks/useCanvasObjectSaver';
 import { useUndoRedo } from '../hooks/useUndoRedo';
 import { useCopyPaste } from '../hooks/useCopyPaste';
-import { generateGridLines, snapPositionToGrid, GRID_SIZE } from '../utils/gridUtils';
+import { useCanvasObjectOperations } from '../hooks/useCanvasObjectOperations';
+import { useGrowAreaOperations } from '../hooks/useGrowAreaOperations';
+import { useStageEventHandlers } from '../hooks/useStageEventHandlers';
+import { generateGridLines } from '../utils/gridUtils';
 
 interface GardenBoardViewProps {
   growAreas: GrowArea[];
@@ -36,7 +36,7 @@ interface GardenBoardViewProps {
   onSelectGrowArea: (growArea: GrowArea) => void;
   onAddGrowArea?: () => void;
   onDeleteGrowArea?: (growArea: GrowArea) => void;
-  onAddCrop?: (growArea: GrowArea) => void; // New: for adding crops from board
+  onAddCrop?: (growArea: GrowArea) => void;
   gardenId: string;
 }
 
@@ -54,22 +54,17 @@ export default function GardenBoardView({
 }: GardenBoardViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
-  const draggingIdRef = useRef<string | null>(null);
-  const dragStartPosRef = useRef<{ id: string; x: number; y: number; isGrowArea: boolean } | null>(null);
-  const resizeStartRef = useRef<{ id: string; width: number; height: number; isGrowArea: boolean } | null>(null);
 
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [activeTool, setActiveTool] = useState<DrawingTool>('SELECT');
   const [canvasObjects, setCanvasObjects] = useState<CanvasObject[]>([]);
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; objectId: number } | null>(null);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'pending' | 'saving' | 'saved' | 'error'>('idle');
-  const [brushSize, setBrushSize] = useState(3); // Default brush size for freehand
-  const [snapToGrid, setSnapToGrid] = useState(false); // Snap-to-grid toggle
-  const [showMiniMap, setShowMiniMap] = useState(true); // Mini-map visibility
-  const [showShortcutsModal, setShowShortcutsModal] = useState(false); // Keyboard shortcuts help modal
+  const [brushSize, setBrushSize] = useState(3);
+  const [snapToGrid, setSnapToGrid] = useState(false);
+  const [showMiniMap, setShowMiniMap] = useState(true);
+  const [showShortcutsModal, setShowShortcutsModal] = useState(false);
 
   // Auto-save hook for canvas objects
-  const { scheduleUpdate: scheduleCanvasObjectSave, saveNow: saveCanvasObjectsNow } = useCanvasObjectSaver(800);
+  const { scheduleUpdate: scheduleCanvasObjectSave } = useCanvasObjectSaver(800);
 
   // Undo/Redo hook
   const { canUndo, canRedo, undo, redo, recordAction } = useUndoRedo({
@@ -106,10 +101,11 @@ export default function GardenBoardView({
     },
   });
 
-  // Use custom hooks
+  // Canvas persistence (position, scale, grid)
   const { stagePosition, setStagePosition, scale, setScale, showGrid, setShowGrid } =
     useCanvasPersistence(gardenId);
 
+  // Zoom controls
   const { handleZoomChange, handleWheel, handleFitToView, currentZoomPercent } =
     useCanvasZoom({
       scale,
@@ -120,6 +116,7 @@ export default function GardenBoardView({
       growAreas,
     });
 
+  // Selection state
   const {
     selectedId,
     setSelectedId,
@@ -137,6 +134,7 @@ export default function GardenBoardView({
     selectCanvasObject,
   } = useSelectionState(growAreas, canvasObjects, scale, stagePosition);
 
+  // Drawing interaction
   const {
     isDrawing,
     currentDrawing,
@@ -149,132 +147,98 @@ export default function GardenBoardView({
     activeTool,
     scale,
     stagePosition,
-    brushSize, // Pass current brush size
+    brushSize,
     onObjectCreated: (obj) => {
       setCanvasObjects((prev) => [...prev, obj]);
-      // Record create action for undo
-      recordAction({
-        type: 'CREATE_OBJECT',
-        object: obj,
-      });
+      recordAction({ type: 'CREATE_OBJECT', object: obj });
     },
   });
 
   // Copy/Paste hook
-  const { copySelectedObject, pasteObject, hasCopiedObject } = useCopyPaste({
+  const { copySelectedObject, pasteObject } = useCopyPaste({
     canvasObjects,
     selectedObjectId,
     onObjectCreated: async (obj) => {
       const created = await canvasObjectService.create(obj);
       setCanvasObjects((prev) => [...prev, created]);
-      recordAction({
-        type: 'CREATE_OBJECT',
-        object: created,
-      });
+      recordAction({ type: 'CREATE_OBJECT', object: created });
       setSelectedObjectId(created.id);
     },
   });
 
-  // Memoize grid lines to avoid recalculating on every render
+  // Canvas object operations (CRUD, bulk actions, context menu)
+  const {
+    saveStatus,
+    setSaveStatus,
+    contextMenu,
+    setContextMenu,
+    deleteSelectedObject,
+    duplicateSelectedObject,
+    handleBulkUpdate,
+    handleBulkDelete,
+    handleUpdateObjectProperties,
+    handleBringToFront,
+    handleBringForward,
+    handleSendBackward,
+    handleSendToBack,
+    handleMoveObject,
+  } = useCanvasObjectOperations({
+    canvasObjects,
+    setCanvasObjects,
+    selectedObjectId,
+    setSelectedObjectId,
+    selectedObjectIds,
+    clearSelection,
+    recordAction,
+    scheduleCanvasObjectSave,
+  });
+
+  // Grow area operations
+  const {
+    dragStartPosRef,
+    handleGrowAreaDragStart,
+    handleGrowAreaDragEnd,
+    handleGrowAreaResize,
+    handleGrowAreaRotate,
+    handleGrowAreaSelect,
+    handleGrowAreaDoubleClick,
+    handleUpdateGrowAreaProperties,
+    handleMoveGrowArea,
+  } = useGrowAreaOperations({
+    growAreas,
+    selectedId,
+    setSelectedId,
+    selectedIds,
+    selectGrowArea,
+    recordAction,
+    onUpdatePosition,
+    onUpdatePositions,
+    onUpdateDimensions,
+    onUpdateRotation,
+    onSelectGrowArea,
+  });
+
+  // Stage event handlers
+  const { handleStageMouseDown, handleStageMouseMove, handleStageMouseUp } =
+    useStageEventHandlers({
+      activeTool,
+      stageRef,
+      isDrawing,
+      isSelecting,
+      startSelectionRect,
+      updateSelectionRect,
+      completeSelection,
+      handleDrawingMouseDown,
+      handleDrawingMouseMove,
+      handleDrawingMouseUp,
+      setContextMenu,
+    });
+
+  // Grid lines (memoized)
   const gridLines = useMemo(
     () => generateGridLines({ dimensions, scale, stagePosition }),
     [dimensions.width, dimensions.height, scale, stagePosition.x, stagePosition.y]
   );
-
-  // Stable callbacks for GrowAreaBox to prevent unnecessary re-renders
-  const handleGrowAreaDragStart = useCallback((id: string) => {
-    const growArea = growAreas.find(ga => ga.id === id);
-    if (!growArea) return;
-    
-    draggingIdRef.current = id;
-    dragStartPosRef.current = {
-      id,
-      x: growArea.positionX ?? 0,
-      y: growArea.positionY ?? 0,
-      isGrowArea: true,
-    };
-  }, [growAreas]);
-
-  const handleGrowAreaDragEnd = useCallback((id: string, x: number, y: number) => {
-    const growArea = growAreas.find(ga => ga.id === id);
-    if (!growArea) return;
-    
-    const deltaX = x - (growArea.positionX ?? 0);
-    const deltaY = y - (growArea.positionY ?? 0);
-
-    if (selectedIds.has(id) && selectedIds.size > 1) {
-      // Multi-select batch move
-      const moves = Array.from(selectedIds).map((areaId) => {
-        const area = growAreas.find((a) => a.id === areaId);
-        if (area && area.positionX !== undefined && area.positionY !== undefined) {
-          return {
-            id: areaId,
-            isGrowArea: true,
-            before: { x: area.positionX, y: area.positionY },
-            after: { x: area.positionX + deltaX, y: area.positionY + deltaY },
-          };
-        }
-        return null;
-      }).filter((m): m is { id: string; isGrowArea: boolean; before: { x: number; y: number }; after: { x: number; y: number } } => m !== null);
-
-      if (moves.length > 0) {
-        recordAction({ type: 'BATCH_MOVE', moves });
-      }
-
-      const updates = moves.map(m => ({ id: m.id, x: m.after.x, y: m.after.y }));
-      onUpdatePositions?.(updates);
-    } else {
-      // Single grow area move
-      if (dragStartPosRef.current) {
-        recordAction({
-          type: 'MOVE_GROW_AREA',
-          areaId: id,
-          before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
-          after: { x, y },
-        });
-      }
-      onUpdatePosition(id, x, y);
-    }
-
-    draggingIdRef.current = null;
-    dragStartPosRef.current = null;
-  }, [growAreas, selectedIds, recordAction, onUpdatePositions, onUpdatePosition]);
-
-  const handleGrowAreaResize = useCallback((id: string, width: number, height: number) => {
-    const growArea = growAreas.find(ga => ga.id === id);
-    if (!growArea) return;
-    
-    const before = {
-      width: growArea.width ?? 100,
-      height: growArea.length ?? 100,
-    };
-    recordAction({
-      type: 'RESIZE_GROW_AREA',
-      areaId: id,
-      before,
-      after: { width, height },
-    });
-    onUpdateDimensions(id, width, height);
-  }, [growAreas, recordAction, onUpdateDimensions]);
-
-  const handleGrowAreaRotate = useCallback((id: string, rotation: number) => {
-    onUpdateRotation?.(id, rotation);
-  }, [onUpdateRotation]);
-
-  const handleGrowAreaSelect = useCallback((id: string) => {
-    if (selectedIds.has(id)) return;
-    const growArea = growAreas.find(ga => ga.id === id);
-    if (growArea) {
-      selectGrowArea(growArea);
-    }
-  }, [selectedIds, growAreas, selectGrowArea]);
-
-  const handleGrowAreaDoubleClick = useCallback((id: string) => {
-    const growArea = growAreas.find(ga => ga.id === id);
-    if (growArea) {
-      onSelectGrowArea(growArea);
-    }
-  }, [growAreas, onSelectGrowArea]);
 
   // Load canvas objects from backend
   useEffect(() => {
@@ -306,181 +270,100 @@ export default function GardenBoardView({
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Delete selected canvas object (no confirmation - undo/redo available)
-  const deleteSelectedObject = async () => {
-    if (!selectedObjectId) return;
+  // Zoom functions for keyboard shortcuts
+  const handleZoomIn = useCallback(() => {
+    setScale(Math.min(scale * 1.1, 5));
+  }, [scale, setScale]);
 
-    const objectToDelete = canvasObjects.find((obj) => obj.id === selectedObjectId);
-    if (!objectToDelete) return;
+  const handleZoomOut = useCallback(() => {
+    setScale(Math.max(scale / 1.1, 0.1));
+  }, [scale, setScale]);
 
-    try {
-      // Record undo action before deleting
-      recordAction({
-        type: 'DELETE_OBJECT',
-        object: objectToDelete,
-      });
+  // Context menu handler
+  const handleContextMenuOpen = useCallback((e: any, objectId: number) => {
+    e.evt.preventDefault();
+    const stage = stageRef.current;
+    if (!stage) return;
 
-      await canvasObjectService.delete(selectedObjectId);
-      setCanvasObjects((prev) => prev.filter((obj) => obj.id !== selectedObjectId));
-      setSelectedObjectId(null);
-    } catch (error) {
-      console.error('Failed to delete canvas object:', error);
-      alert('Failed to delete shape. Please try again.');
+    const pointerPosition = stage.getPointerPosition();
+    if (pointerPosition) {
+      setContextMenu({ x: pointerPosition.x, y: pointerPosition.y, objectId });
+      setSelectedObjectId(objectId);
     }
-  };
+  }, [setContextMenu, setSelectedObjectId]);
 
-  // Duplicate selected canvas object
-  const duplicateSelectedObject = async () => {
-    if (!selectedObjectId) return;
+  // Object drag handlers with undo support
+  const handleObjectDragStart = useCallback((obj: CanvasObject) => {
+    dragStartPosRef.current = {
+      id: obj.id.toString(),
+      x: obj.x,
+      y: obj.y,
+      isGrowArea: false,
+    };
+  }, [dragStartPosRef]);
 
-    const objectToDuplicate = canvasObjects.find((obj) => obj.id === selectedObjectId);
-    if (!objectToDuplicate) return;
-
-    try {
-      // Create a copy with offset position
-      const { id, ...objectData } = objectToDuplicate;
-      const duplicatedObject = await canvasObjectService.create({
-        ...objectData,
-        x: objectToDuplicate.x + 20,
-        y: objectToDuplicate.y + 20,
-        zIndex: (objectToDuplicate.zIndex || 0) + 1,
-      });
-      
-      // Record undo action for duplicate (create)
+  const handleObjectDragEnd = useCallback((obj: CanvasObject, x: number, y: number) => {
+    if (dragStartPosRef.current) {
       recordAction({
-        type: 'CREATE_OBJECT',
-        object: duplicatedObject,
+        type: 'UPDATE_OBJECT',
+        objectId: obj.id,
+        before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
+        after: { x, y },
       });
-      
-      setCanvasObjects((prev) => [...prev, duplicatedObject]);
-      setSelectedObjectId(duplicatedObject.id);
-    } catch (error) {
-      console.error('Failed to duplicate canvas object:', error);
-      alert('Failed to duplicate shape. Please try again.');
     }
-  };
+    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y } : s)));
+    setSaveStatus('pending');
+    scheduleCanvasObjectSave(obj.id, { x, y });
+    setTimeout(() => setSaveStatus('saving'), 100);
+    setTimeout(() => setSaveStatus('saved'), 900);
+    setTimeout(() => setSaveStatus('idle'), 2900);
+    dragStartPosRef.current = null;
+  }, [dragStartPosRef, recordAction, scheduleCanvasObjectSave, setSaveStatus]);
 
-  // Move selected canvas object with arrow keys
-  const handleMoveObject = (dx: number, dy: number) => {
-    if (!selectedObjectId) return;
-
-    const obj = canvasObjects.find((o) => o.id === selectedObjectId);
-    if (!obj) return;
-
-    const newX = obj.x + dx;
-    const newY = obj.y + dy;
-
-    // Record undo action
+  const handleObjectResize = useCallback((obj: CanvasObject, x: number, y: number, width: number, height: number) => {
     recordAction({
       type: 'UPDATE_OBJECT',
       objectId: obj.id,
-      before: { x: obj.x, y: obj.y },
-      after: { x: newX, y: newY },
+      before: { x: obj.x, y: obj.y, width: obj.width, height: obj.height },
+      after: { x, y, width, height },
     });
+    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x, y, width, height } : s)));
+    setSaveStatus('pending');
+    scheduleCanvasObjectSave(obj.id, { x, y, width, height });
+    setTimeout(() => setSaveStatus('saving'), 100);
+    setTimeout(() => setSaveStatus('saved'), 900);
+    setTimeout(() => setSaveStatus('idle'), 2900);
+  }, [recordAction, scheduleCanvasObjectSave, setSaveStatus]);
 
-    // Update locally and save
-    setCanvasObjects((prev) =>
-      prev.map((o) => (o.id === selectedObjectId ? { ...o, x: newX, y: newY } : o))
-    );
-    scheduleCanvasObjectSave(selectedObjectId, { x: newX, y: newY });
-  };
+  const handleObjectUpdatePoints = useCallback((obj: CanvasObject, points: number[]) => {
+    const pointsString = JSON.stringify(points);
+    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, points: pointsString } : s)));
+    setSaveStatus('pending');
+    scheduleCanvasObjectSave(obj.id, { points: pointsString });
+    setTimeout(() => setSaveStatus('saving'), 100);
+    setTimeout(() => setSaveStatus('saved'), 900);
+    setTimeout(() => setSaveStatus('idle'), 2900);
+  }, [scheduleCanvasObjectSave, setSaveStatus]);
 
-  // Move selected grow area with arrow keys
-  const handleMoveGrowArea = (dx: number, dy: number) => {
-    if (!selectedId) return;
-
-    const growArea = growAreas.find((ga) => ga.id === selectedId);
-    if (!growArea || growArea.positionX === undefined || growArea.positionY === undefined) return;
-
-    const newX = growArea.positionX + dx;
-    const newY = growArea.positionY + dy;
-
-    // Record undo action
-    recordAction({
-      type: 'MOVE_GROW_AREA',
-      areaId: selectedId,
-      before: { x: growArea.positionX, y: growArea.positionY },
-      after: { x: newX, y: newY },
-    });
-
-    onUpdatePosition(selectedId, newX, newY);
-  };
-
-  // Zoom functions for keyboard shortcuts
-  const handleZoomIn = () => {
-    const newScale = Math.min(scale * 1.1, 5);
-    setScale(newScale);
-  };
-
-  const handleZoomOut = () => {
-    const newScale = Math.max(scale / 1.1, 0.1);
-    setScale(newScale);
-  };
-
-  // Bulk update for multi-selected objects
-  const handleBulkUpdate = async (updates: Partial<CanvasObject>) => {
-    if (selectedObjectIds.size === 0) return;
-
-    const objectsToUpdate = canvasObjects.filter(obj => selectedObjectIds.has(obj.id));
-    
-    try {
-      // Optimistic update
-      setCanvasObjects((prev) =>
-        prev.map((obj) => 
-          selectedObjectIds.has(obj.id) ? { ...obj, ...updates } : obj
-        )
-      );
-
-      // Save each object
-      for (const obj of objectsToUpdate) {
-        scheduleCanvasObjectSave(obj.id, updates);
-      }
-    } catch (error) {
-      console.error('Failed to update objects:', error);
-      alert('Failed to update shapes. Please try again.');
-    }
-  };
-
-  // Bulk delete for multi-selected objects
-  const handleBulkDelete = async () => {
-    if (selectedObjectIds.size === 0) return;
-
-    const objectsToDelete = canvasObjects.filter(obj => selectedObjectIds.has(obj.id));
-    
-    try {
-      // Record undo actions for all deleted objects
-      for (const obj of objectsToDelete) {
-        recordAction({
-          type: 'DELETE_OBJECT',
-          object: obj,
-        });
-      }
-
-      // Delete all objects
-      for (const obj of objectsToDelete) {
-        await canvasObjectService.delete(obj.id);
-      }
-      
-      setCanvasObjects((prev) => prev.filter((obj) => !selectedObjectIds.has(obj.id)));
-      clearSelection();
-    } catch (error) {
-      console.error('Failed to delete objects:', error);
-      alert('Failed to delete shapes. Please try again.');
-    }
-  };
+  const handleObjectTextEdit = useCallback((obj: CanvasObject, text: string) => {
+    setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, text } : s)));
+    setSaveStatus('pending');
+    scheduleCanvasObjectSave(obj.id, { text });
+    setTimeout(() => setSaveStatus('saving'), 100);
+    setTimeout(() => setSaveStatus('saved'), 900);
+    setTimeout(() => setSaveStatus('idle'), 2900);
+  }, [scheduleCanvasObjectSave, setSaveStatus]);
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
     selectedObjectId,
     selectedGrowAreaId: selectedId,
     onDeleteObject: () => {
-      // Handle bulk delete if multiple objects selected
       if (selectedObjectIds.size > 1) {
         handleBulkDelete();
       } else if (selectedObjectId) {
         deleteSelectedObject();
       } else if (selectedId && onDeleteGrowArea) {
-        // Delete grow area if one is selected
         const growArea = growAreas.find(ga => ga.id === selectedId);
         if (growArea && confirm(`Delete "${growArea.name}"? This cannot be undone.`)) {
           onDeleteGrowArea(growArea);
@@ -493,16 +376,8 @@ export default function GardenBoardView({
       cancelDrawing();
       setActiveTool('SELECT');
     },
-    onUndo: () => {
-      if (canUndo) {
-        undo();
-      }
-    },
-    onRedo: () => {
-      if (canRedo) {
-        redo();
-      }
-    },
+    onUndo: () => canUndo && undo(),
+    onRedo: () => canRedo && redo(),
     onCopy: copySelectedObject,
     onPaste: pasteObject,
     onDuplicate: duplicateSelectedObject,
@@ -514,149 +389,6 @@ export default function GardenBoardView({
     onZoomOut: handleZoomOut,
   });
 
-  // Handle stage mouse down
-  const handleStageMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const clickedOnEmpty = e.target === e.target.getStage();
-
-    // Close context menu on any click
-    setContextMenu(null);
-
-    // Handle selection rectangle in SELECT mode
-    if (activeTool === 'SELECT' && clickedOnEmpty) {
-      startSelectionRect(stageRef.current);
-      return;
-    }
-
-    // Handle drawing
-    if (clickedOnEmpty) {
-      handleDrawingMouseDown(stageRef.current, clickedOnEmpty);
-    }
-  };
-
-  // Handle stage mouse move
-  const handleStageMouseMove = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    // Handle selection rectangle in SELECT mode
-    if (activeTool === 'SELECT' && isSelecting) {
-      updateSelectionRect(stage);
-      return;
-    }
-
-    // Handle drawing
-    if (isDrawing) {
-      handleDrawingMouseMove(stage);
-    }
-  };
-
-  // Handle stage mouse up
-  const handleStageMouseUp = async () => {
-    // Handle selection rectangle completion
-    if (isSelecting) {
-      completeSelection();
-      return;
-    }
-
-    // Handle drawing completion
-    if (isDrawing) {
-      await handleDrawingMouseUp();
-    }
-  };
-
-  // Update canvas object properties
-  const handleUpdateObjectProperties = async (updates: Partial<CanvasObject>) => {
-    if (!selectedObjectId) return;
-
-    // Optimistic update
-    setCanvasObjects((prev) =>
-      prev.map((obj) => (obj.id === selectedObjectId ? { ...obj, ...updates } : obj))
-    );
-
-    // Debounced save
-    setSaveStatus('pending');
-    scheduleCanvasObjectSave(selectedObjectId, updates);
-    setTimeout(() => setSaveStatus('saving'), 100);
-    setTimeout(() => setSaveStatus('saved'), 900);
-    setTimeout(() => setSaveStatus('idle'), 2900);
-  };
-
-  // Update grow area properties (Step 27.9 - color customization)
-  const handleUpdateGrowAreaProperties = async (updates: Partial<GrowArea>) => {
-    if (!selectedId) return;
-
-    const growArea = growAreas.find(ga => ga.id === selectedId);
-    if (!growArea) return;
-
-    // Notify parent component of rotation changes for immediate canvas update
-    if (updates.rotation !== undefined && onUpdateRotation) {
-      onUpdateRotation(selectedId, updates.rotation);
-      return; // onUpdateRotation handles both optimistic update and API call
-    }
-
-    try {
-      // Make API call to update grow area
-      const response = await fetch(`/api/grow-areas/${selectedId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update grow area');
-      }
-
-      // The parent component will re-fetch and update the grow areas
-      // So we don't need to do anything else here
-    } catch (error) {
-      console.error('Failed to update grow area:', error);
-      alert('Failed to update grow area. Please try again.');
-    }
-  };
-
-  // Context menu handlers
-  const handleContextMenuOpen = (e: any, objectId: number) => {
-    e.evt.preventDefault();
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const pointerPosition = stage.getPointerPosition();
-    if (pointerPosition) {
-      setContextMenu({
-        x: pointerPosition.x,
-        y: pointerPosition.y,
-        objectId,
-      });
-      setSelectedObjectId(objectId);
-    }
-  };
-
-  const handleBringToFront = () => {
-    if (!contextMenu) return;
-    const maxZIndex = Math.max(...canvasObjects.map(obj => obj.zIndex || 0), 0);
-    handleUpdateObjectProperties({ zIndex: maxZIndex + 1 });
-  };
-
-  const handleBringForward = () => {
-    if (!contextMenu) return;
-    const obj = canvasObjects.find(o => o.id === contextMenu.objectId);
-    handleUpdateObjectProperties({ zIndex: (obj?.zIndex || 0) + 1 });
-  };
-
-  const handleSendBackward = () => {
-    if (!contextMenu) return;
-    const obj = canvasObjects.find(o => o.id === contextMenu.objectId);
-    handleUpdateObjectProperties({ zIndex: Math.max(0, (obj?.zIndex || 0) - 1) });
-  };
-
-  const handleSendToBack = () => {
-    if (!contextMenu) return;
-    handleUpdateObjectProperties({ zIndex: 0 });
-  };
-
-  // Get selected canvas object
   const selectedCanvasObject = canvasObjects.find((obj) => obj.id === selectedObjectId) || null;
 
   return (
@@ -675,50 +407,23 @@ export default function GardenBoardView({
       />
 
       {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between gap-4 flex-wrap">
-        <ZoomControls
-          scale={scale}
-          currentZoomPercent={currentZoomPercent}
-          onZoomChange={handleZoomChange}
-          onFitToView={handleFitToView}
-          showGrid={showGrid}
-          onToggleGrid={() => setShowGrid(!showGrid)}
-          snapToGrid={snapToGrid}
-          onToggleSnap={() => setSnapToGrid(!snapToGrid)}
-        />
-
-        <ViewOptions
-          showGrid={showGrid}
-          onGridToggle={setShowGrid}
-          selectedIds={selectedIds}
-          selectedObjectIds={selectedObjectIds}
-          growAreas={growAreas}
-        />
-
-        {/* Help and Mini-map buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowMiniMap(!showMiniMap)}
-            className={`p-2 rounded hover:bg-gray-100 transition-colors ${
-              showMiniMap ? 'bg-blue-50 text-blue-600' : 'text-gray-600'
-            }`}
-            title="Toggle Mini-map"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setShowShortcutsModal(true)}
-            className="p-2 rounded hover:bg-gray-100 transition-colors text-gray-600"
-            title="Keyboard Shortcuts (?)"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <CanvasToolbar
+        scale={scale}
+        currentZoomPercent={currentZoomPercent}
+        onZoomChange={handleZoomChange}
+        onFitToView={handleFitToView}
+        showGrid={showGrid}
+        onToggleGrid={() => setShowGrid(!showGrid)}
+        snapToGrid={snapToGrid}
+        onToggleSnap={() => setSnapToGrid(!snapToGrid)}
+        onGridToggle={setShowGrid}
+        selectedIds={selectedIds}
+        selectedObjectIds={selectedObjectIds}
+        growAreas={growAreas}
+        showMiniMap={showMiniMap}
+        onToggleMiniMap={() => setShowMiniMap(!showMiniMap)}
+        onShowShortcuts={() => setShowShortcutsModal(true)}
+      />
 
       {/* Canvas Container */}
       <div ref={containerRef} className="flex-1 bg-gray-100 overflow-hidden relative">
@@ -735,10 +440,7 @@ export default function GardenBoardView({
           onDragEnd={(e) => {
             const target = e.target;
             if (target === stageRef.current) {
-              setStagePosition({
-                x: target.x(),
-                y: target.y(),
-              });
+              setStagePosition({ x: target.x(), y: target.y() });
             }
           }}
           onClick={(e) => {
@@ -750,160 +452,32 @@ export default function GardenBoardView({
           onMouseMove={handleStageMouseMove}
           onMouseUp={handleStageMouseUp}
         >
-          <Layer>
-            {/* Background */}
-            <Rect
-              x={-10000}
-              y={-10000}
-              width={20000}
-              height={20000}
-              fill="#ffffff"
-              listening={false}
-            />
-
-            {/* Grid */}
-            {showGrid &&
-              gridLines.map((line) => (
-                <Line
-                  key={line.key}
-                  points={line.points}
-                  stroke={line.stroke}
-                  strokeWidth={line.strokeWidth}
-                  listening={false}
-                />
-              ))}
-
-            {/* Grow Areas */}
-            {growAreas.map((growArea) => {
-              if (growArea.positionX === undefined || growArea.positionY === undefined) {
-                return null;
-              }
-
-              const isPartOfMultiSelect = selectedIds.has(growArea.id);
-              const showAsMultiSelected = isPartOfMultiSelect && selectedIds.size > 1;
-
-              return (
-                <GrowAreaBox
-                  key={growArea.id}
-                  growArea={growArea}
-                  isSelected={selectedId === growArea.id && selectedIds.size <= 1}
-                  isMultiSelected={showAsMultiSelected}
-                  isDraggingEnabled={activeTool === 'SELECT'}
-                  onDragStart={handleGrowAreaDragStart}
-                  onDragEnd={handleGrowAreaDragEnd}
-                  onResize={handleGrowAreaResize}
-                  onRotate={handleGrowAreaRotate}
-                  onSelect={handleGrowAreaSelect}
-                  onDoubleClick={handleGrowAreaDoubleClick}
-                />
-              );
-            })}
-
-            {/* Canvas Objects - sorted by zIndex */}
-            {[...canvasObjects]
-              .sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0))
-              .map((obj) => (
-              <CanvasShape
-                key={obj.id}
-                canvasObject={obj}
-                isSelected={selectedObjectId === obj.id}
-                isDraggingEnabled={activeTool === 'SELECT'}
-                onSelect={() => selectCanvasObject(obj.id)}
-                onDragStart={() => {
-                  // Store starting position for undo
-                  dragStartPosRef.current = {
-                    id: obj.id.toString(),
-                    x: obj.x,
-                    y: obj.y,
-                    isGrowArea: false,
-                  };
-                }}
-                onDragEnd={(x, y) => {
-                  // Apply snap-to-grid if enabled
-                  const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
-                  
-                  // Record undo action
-                  if (dragStartPosRef.current) {
-                    recordAction({
-                      type: 'UPDATE_OBJECT',
-                      objectId: obj.id,
-                      before: { x: dragStartPosRef.current.x, y: dragStartPosRef.current.y },
-                      after: { x: finalPos.x, y: finalPos.y },
-                    });
-                  }
-                  
-                  // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y } : s)));
-                  setSaveStatus('pending');
-                  // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { x: finalPos.x, y: finalPos.y });
-                  setTimeout(() => setSaveStatus('saving'), 100);
-                  setTimeout(() => setSaveStatus('saved'), 900);
-                  setTimeout(() => setSaveStatus('idle'), 2900);
-                  
-                  dragStartPosRef.current = null;
-                }}
-                onResize={async (x, y, width, height) => {
-                  // Apply snap-to-grid if enabled
-                  const finalPos = snapToGrid ? snapPositionToGrid({ x, y }, GRID_SIZE) : { x, y };
-                  
-                  // Record undo action
-                  recordAction({
-                    type: 'UPDATE_OBJECT',
-                    objectId: obj.id,
-                    before: { x: obj.x, y: obj.y, width: obj.width, height: obj.height },
-                    after: { x: finalPos.x, y: finalPos.y, width, height },
-                  });
-                  
-                  // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, x: finalPos.x, y: finalPos.y, width, height } : s)));
-                  setSaveStatus('pending');
-                  // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { x: finalPos.x, y: finalPos.y, width, height });
-                  setTimeout(() => setSaveStatus('saving'), 100);
-                  setTimeout(() => setSaveStatus('saved'), 900);
-                  setTimeout(() => setSaveStatus('idle'), 2900);
-                }}
-                onUpdatePoints={async (points) => {
-                  const pointsString = JSON.stringify(points);
-                  // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, points: pointsString } : s)));
-                  setSaveStatus('pending');
-                  // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { points: pointsString });
-                  setTimeout(() => setSaveStatus('saving'), 100);
-                  setTimeout(() => setSaveStatus('saved'), 900);
-                  setTimeout(() => setSaveStatus('idle'), 2900);
-                }}
-                onContextMenu={(e) => handleContextMenuOpen(e, obj.id)}
-                onTextEdit={(text) => {
-                  // Optimistic update
-                  setCanvasObjects((prev) => prev.map((s) => (s.id === obj.id ? { ...s, text } : s)));
-                  setSaveStatus('pending');
-                  // Debounced save
-                  scheduleCanvasObjectSave(obj.id, { text });
-                  setTimeout(() => setSaveStatus('saving'), 100);
-                  setTimeout(() => setSaveStatus('saved'), 900);
-                  setTimeout(() => setSaveStatus('idle'), 2900);
-                }}
-              />
-            ))}
-
-            {/* Drawing Preview */}
-            {currentDrawing && (
-              <CanvasShape
-                canvasObject={currentDrawing}
-                isSelected={false}
-                isDraggingEnabled={false}
-                onSelect={() => {}}
-                onDragEnd={() => {}}
-                onResize={() => {}}
-              />
-            )}
-
-            {/* Selection Rectangle */}
-            {selectionRect && <SelectionRectangle rect={selectionRect} />}
-          </Layer>
+          <CanvasLayer
+            showGrid={showGrid}
+            gridLines={gridLines}
+            growAreas={growAreas}
+            selectedId={selectedId}
+            selectedIds={selectedIds}
+            activeTool={activeTool}
+            onGrowAreaDragStart={handleGrowAreaDragStart}
+            onGrowAreaDragEnd={handleGrowAreaDragEnd}
+            onGrowAreaResize={handleGrowAreaResize}
+            onGrowAreaRotate={handleGrowAreaRotate}
+            onGrowAreaSelect={handleGrowAreaSelect}
+            onGrowAreaDoubleClick={handleGrowAreaDoubleClick}
+            canvasObjects={canvasObjects}
+            selectedObjectId={selectedObjectId}
+            snapToGrid={snapToGrid}
+            onObjectSelect={selectCanvasObject}
+            onObjectDragStart={handleObjectDragStart}
+            onObjectDragEnd={handleObjectDragEnd}
+            onObjectResize={handleObjectResize}
+            onObjectUpdatePoints={handleObjectUpdatePoints}
+            onObjectContextMenu={handleContextMenuOpen}
+            onObjectTextEdit={handleObjectTextEdit}
+            currentDrawing={currentDrawing}
+            selectionRect={selectionRect}
+          />
         </Stage>
       </div>
 
@@ -929,7 +503,7 @@ export default function GardenBoardView({
         />
       )}
 
-      {/* Grow Area Properties Panel - when grow area is selected (Step 27.9) */}
+      {/* Grow Area Properties Panel */}
       {selectedId && !selectedObjectId && selectedObjectIds.size === 0 && (
         <GrowAreaPropertiesPanel
           selectedGrowArea={growAreas.find(ga => ga.id === selectedId)!}
@@ -959,7 +533,7 @@ export default function GardenBoardView({
         />
       )}
 
-      {/* Add Crop Button - shown when a grow area is selected */}
+      {/* Add Crop Button */}
       {selectedId && !selectedObjectId && onAddCrop && (
         <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
           <button
@@ -982,7 +556,7 @@ export default function GardenBoardView({
       {/* Save Status Indicator */}
       <SaveIndicator status={saveStatus} />
 
-      {/* Mini-map - Step 27.10 */}
+      {/* Mini-map */}
       {showMiniMap && (
         <MiniMap
           growAreas={growAreas}
@@ -991,13 +565,11 @@ export default function GardenBoardView({
           scale={scale}
           viewportWidth={dimensions.width}
           viewportHeight={dimensions.height}
-          onViewportClick={(x, y) => {
-            setStagePosition({ x, y });
-          }}
+          onViewportClick={(x, y) => setStagePosition({ x, y })}
         />
       )}
 
-      {/* Keyboard Shortcuts Modal - Step 27.11 */}
+      {/* Keyboard Shortcuts Modal */}
       <KeyboardShortcutsModal
         isOpen={showShortcutsModal}
         onClose={() => setShowShortcutsModal(false)}

@@ -100,6 +100,25 @@ Results:
 - Modals now use shared `Modal`, `Button`, `Input`, `Select`, `FormField` components
 - Logic handlers remain in main page for data consistency
 
+### 7. Split GardenBoardView Component (Phase 6) - DONE
+Decomposed 1007-line `GardenBoardView.tsx` into focused hooks and components.
+
+Created new hooks in `app/gardens/[id]/hooks/`:
+- `useCanvasObjectOperations.ts` (207 lines) - Canvas object CRUD, bulk actions, context menu handlers
+- `useGrowAreaOperations.ts` (192 lines) - Grow area drag/resize/rotate/select handlers
+- `useStageEventHandlers.ts` (87 lines) - Stage mouse event handlers
+
+Created new components in `app/gardens/[id]/components/`:
+- `CanvasToolbar.tsx` (92 lines) - Zoom controls, view options, help/minimap buttons
+- `CanvasLayer.tsx` (174 lines) - Konva Layer with grid, grow areas, canvas objects rendering
+
+Results:
+- Main component reduced from 1007 → 579 lines (**43% reduction**)
+- Total extracted code: 752 lines across 5 new modules
+- Better separation of concerns: operations, events, rendering
+- Each hook/component has a single responsibility
+- Easier to test and maintain individual pieces
+
 ---
 
 ## Executive Summary
