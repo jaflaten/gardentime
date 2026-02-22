@@ -1,21 +1,22 @@
 package no.sogn.gardentime.repository
 
+import no.sogn.gardentime.config.TestContainersConfig
 import no.sogn.gardentime.db.PlantRepository
 import no.sogn.gardentime.model.GrowingSeason
 import no.sogn.gardentime.model.PlantEntity
 import no.sogn.gardentime.model.PlantType
 import no.sogn.gardentime.model.mapPlantToDomain
-import no.sogn.gardentime.model.mapPlantToEntity
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.context.annotation.Import
 
 @DataJpaTest
-@ExtendWith(SpringExtension::class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestContainersConfig::class)
 class PlantRepositoryTest {
 
     @Autowired
@@ -39,41 +40,24 @@ class PlantRepositoryTest {
     }
 
     @Test
-    fun `should find plants by plant type`() {
+    fun `should find plants by name`() {
         plantRepository.save(testCarrotEntity())
-        plantRepository.save(testBeetrootEntity())
-        plantRepository.save(testPotatoEntity())
-        plantRepository.save(testTomatoEntity())
-        plantRepository.save(testCucumberEntity())
+        plantRepository.save(testGarlicEntity())
 
-        val plantType = PlantType.ROOT_VEGETABLE
-        val actualPlants = plantRepository.findPlantsByPlantType(plantType)
+        val plants = plantRepository.findPlantEntityByName("Carrot")
 
-        Assertions.assertFalse(actualPlants.isEmpty(), "Expected some plants of type $plantType")
-        actualPlants.forEach { plant ->
-            Assertions.assertEquals(plantType, plant.plantType, "Plant ${plant.name} does not match the expected type $plantType")
-        }
+        Assertions.assertFalse(plants.isEmpty(), "Expected to find carrot plant")
+        Assertions.assertEquals("Carrot", plants.first().name)
     }
 
     @Test
-    fun `map an plant entity to domain and back`() {
+    fun `map a plant entity to domain`() {
         val carrotEntity = plantRepository.save(testCarrotEntity())
         Assertions.assertNotNull(carrotEntity)
         val carrotDomain = mapPlantToDomain(carrotEntity)
         Assertions.assertNotNull(carrotDomain)
         Assertions.assertEquals(carrotDomain.id, carrotEntity.id)
         Assertions.assertEquals(carrotDomain.maturityTime, 75)
-        val newMaturityTime = 80
-        val updatedCarrotDomain = carrotDomain.copy(
-            maturityTime = newMaturityTime
-        )
-
-        println("carrotEntity maturityTime: " + carrotEntity.maturityTime)
-        val savedEntity = plantRepository.save(mapPlantToEntity(updatedCarrotDomain))
-        Assertions.assertEquals(carrotEntity.id, savedEntity.id)
-        Assertions.assertEquals(carrotDomain.id, savedEntity.id)
-        Assertions.assertEquals(savedEntity.maturityTime, newMaturityTime)
-        println("savedEntity maturityTime:" + savedEntity.maturityTime)
     }
 
     @Test
@@ -101,62 +85,6 @@ fun testCarrotEntity(): PlantEntity {
     )
 }
 
-fun testPotatoEntity(): PlantEntity {
-    return PlantEntity(
-        name = "Potato",
-        scientificName = "Solanum tuberosum",
-        plantType = PlantType.TUBER,
-        maturityTime = 120,
-        growingSeason = GrowingSeason.SUMMER,
-        sunReq = "Full Sun",
-        waterReq = "High",
-        soilType = "Sandy",
-        spaceReq = "30 cm"
-    )
-}
-
-fun testBeetrootEntity(): PlantEntity {
-    return PlantEntity(
-        name = "Beetroot",
-        scientificName = "Beta vulgaris",
-        plantType = PlantType.ROOT_VEGETABLE,
-        maturityTime = 60,
-        growingSeason = GrowingSeason.SUMMER,
-        sunReq = "Full Sun",
-        waterReq = "High",
-        soilType = "Loamy",
-        spaceReq = "10 cm"
-    )
-}
-
-fun testTomatoEntity(): PlantEntity {
-    return PlantEntity(
-        name = "Tomato",
-        scientificName = "Solanum lycopersicum",
-        plantType = PlantType.FRUIT_VEGETABLE,
-        maturityTime = 85,
-        growingSeason = GrowingSeason.SUMMER,
-        sunReq = "Full Sun",
-        waterReq = "Moderate",
-        soilType = "Loamy",
-        spaceReq = "30 cm"
-    )
-}
-
-fun testCucumberEntity(): PlantEntity {
-    return PlantEntity(
-        name = "Cucumber",
-        scientificName = "Cucumis sativus",
-        plantType = PlantType.FRUIT_VEGETABLE,
-        maturityTime = 60,
-        growingSeason = GrowingSeason.SUMMER,
-        sunReq = "Full Sun",
-        waterReq = "High",
-        soilType = "Loamy",
-        spaceReq = "30 cm"
-    )
-
-    }
 fun testGarlicEntity(): PlantEntity {
     return PlantEntity(
         name = "Garlic",

@@ -1,5 +1,6 @@
 package no.sogn.gardentime.service
 
+import no.sogn.gardentime.config.TestContainersConfig
 import no.sogn.gardentime.db.PlantRepository
 import no.sogn.gardentime.model.GrowingSeason
 import no.sogn.gardentime.model.PlantEntity
@@ -9,9 +10,11 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 
 @SpringBootTest
+@Import(TestContainersConfig::class)
 class PlantServiceTest {
 
     @Autowired

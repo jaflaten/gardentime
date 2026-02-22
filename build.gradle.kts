@@ -1,8 +1,8 @@
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	kotlin("plugin.jpa") version "2.2.21"
-	id("org.springframework.boot") version "3.4.1"
+	kotlin("jvm") version "2.3.10"
+	kotlin("plugin.spring") version "2.3.10"
+	kotlin("plugin.jpa") version "2.3.10"
+	id("org.springframework.boot") version "3.4.2"
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -19,8 +19,6 @@ repositories {
 	mavenCentral()
 }
 
-extra["netflixDgsVersion"] = "10.0.1"
-
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -28,31 +26,24 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-cache")
 	implementation("com.github.ben-manes.caffeine:caffeine")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework:spring-jdbc")
-	implementation("io.jsonwebtoken:jjwt-api:0.12.3")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+	implementation("io.jsonwebtoken:jjwt-api:0.12.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 	runtimeOnly("org.postgresql:postgresql")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	implementation("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-	testImplementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.wiremock:wiremock-standalone:3.3.1")
+	testImplementation("org.wiremock:wiremock-standalone:3.13.2")
+	testImplementation("org.testcontainers:junit-jupiter:1.20.3")
+	testImplementation("org.testcontainers:postgresql:1.20.3")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:${property("netflixDgsVersion")}")
-	}
 }
 
 kotlin {

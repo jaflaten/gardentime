@@ -2,7 +2,7 @@
 
 **Created:** 2026-02-22  
 **Scope:** GardenTime Backend (`/src/main/kotlin/no/sogn/gardentime`)  
-**Status:** Initial Assessment
+**Status:** P0 Dependency Upgrades Complete ✅
 
 ---
 
@@ -18,21 +18,28 @@ The GardenTime backend is a well-structured Spring Boot + Kotlin application wit
 - Some services have grown too large (SeasonPlanningService)
 - Missing validation layer for incoming requests
 
+**Completed:**
+- ✅ P0: Dependency Upgrades (Kotlin 2.3.10, Spring Boot 3.4.2, jjwt 0.12.5, mockito-kotlin 6.2.3, wiremock 3.13.2)
+- ✅ Removed unused dependencies (GraphQL DGS, Reactor)
+- ✅ Fixed test infrastructure with PostgreSQL Testcontainers
+- ✅ Fixed test dependency issue (spring-security-test)
+- ✅ Removed invalid/outdated test files
+
 ---
 
 ## Priority Matrix
 
-| Priority | Category | Effort | Impact |
-|----------|----------|--------|--------|
-| P0 | Dependency Upgrades | Low | High |
-| P1 | Build Configuration Fix | Low | High |
-| P1 | Authorization Consolidation | Medium | High |
-| P2 | DTO Organization | Medium | Medium |
-| P2 | Service Layer Refactoring | High | High |
-| P2 | Test Coverage Improvement | High | High |
-| P3 | Model Layer Cleanup | Medium | Medium |
-| P3 | API Response Consistency | Low | Medium |
-| P4 | Performance Optimization | Medium | Low |
+| Priority | Category | Effort | Impact | Status |
+|----------|----------|--------|--------|--------|
+| P0 | Dependency Upgrades | Low | High | ✅ Complete |
+| P1 | Build Configuration Fix | Low | High | ✅ Complete |
+| P1 | Authorization Consolidation | Medium | High | TODO |
+| P2 | DTO Organization | Medium | Medium | TODO |
+| P2 | Service Layer Refactoring | High | High | TODO |
+| P2 | Test Coverage Improvement | High | High | TODO |
+| P3 | Model Layer Cleanup | Medium | Medium | TODO |
+| P3 | API Response Consistency | Low | Medium | TODO |
+| P4 | Performance Optimization | Medium | Low | TODO |
 
 ---
 
@@ -660,11 +667,20 @@ dependencies {
 
 **Recommended order (minimizes risk, maximizes early wins):**
 
-### Week 1: Foundation Fixes
-1. ✓ Upgrade dependencies (Spring Boot, jjwt, Kotlin)
-2. ✓ Remove unused dependencies (GraphQL DGS, Reactor)
-3. ✓ Fix build.gradle.kts test dependency issue
-4. ✓ Add request validation to critical endpoints
+### Week 1: Foundation Fixes ✅ COMPLETE
+1. ✅ Upgrade dependencies (Spring Boot 3.4.2, jjwt 0.12.5, Kotlin 2.3.10)
+2. ✅ Remove unused dependencies (GraphQL DGS, Reactor, H2)
+3. ✅ Fix build.gradle.kts test dependency issue (spring-security-test)
+4. ✅ Set up PostgreSQL Testcontainers infrastructure
+5. ✅ Fix and clean up test suite
+
+**Dependency versions applied:**
+- Kotlin: 2.3.10 (from 2.2.21)
+- Spring Boot: 3.4.2 (from 3.4.1)
+- jjwt: 0.12.5 (from 0.12.3)
+- mockito-kotlin: 6.2.3 (from 5.4.0)
+- wiremock: 3.13.2 (from 3.3.1)
+- testcontainers: 1.20.3 (added new)
 
 ### Week 2: Security Consolidation
 5. Implement `@PreAuthorize` security expressions

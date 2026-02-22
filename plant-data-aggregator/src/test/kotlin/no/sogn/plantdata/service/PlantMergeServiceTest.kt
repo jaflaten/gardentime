@@ -54,7 +54,7 @@ class PlantMergeServiceTest {
         )
         val perenual = PerenualSpeciesDetail(
             id = 200L,
-            scientificName = "Sample plantus",
+            scientificNames = listOf("Sample plantus"),
             commonName = "Sample",
             otherNames = listOf("Alias"),
             family = "FamilyB",
