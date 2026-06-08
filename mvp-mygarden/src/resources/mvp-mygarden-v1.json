@@ -1,0 +1,1067 @@
+{
+  "version": 1,
+  "exportedAt": "2026-06-08T21:14:23.880Z",
+  "boxes": [
+    {
+      "id": "7TCoGE5rsnULYRXyc9NjX",
+      "name": "box 8",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 9,
+        "y": 1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "pcex0l4yJXeTBSZwx4R_L",
+      "name": "box 23",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 11,
+        "y": 9,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "3JPV98FzEHzmb_doaIogB",
+      "name": "box 7",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "Cnoh9YIgLDEjYMJLx80Ih",
+      "name": "box 15",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "K1Bay_X7lGZGB4C9OqgRD",
+      "name": "box 11",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 9,
+        "y": 3,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "3LrhW2v-LUEB6a2B6lPS-",
+      "name": "box 22",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": -3,
+        "y": 18,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "DhdWKGI2WR8vhSBECOZkw",
+      "name": "box 17",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 3,
+        "y": 1,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "c4FFi2i8td-Wawg4o7c-q",
+      "name": "box 10",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 3,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "T3avgz9432N_00Ub5Vzzj",
+      "name": "box 18",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 3,
+        "y": 5,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "tNeyS9gyfk-X8k3sWda0a",
+      "name": "box 9",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 14,
+        "y": 3,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "qq-wx6QDqq1YXpkccELgW",
+      "name": "box 6",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 14,
+        "y": -1,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "mHPcL0rhCvbkhQ3HxE3Zc",
+      "name": "box 16",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 1,
+        "y": 5,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "eRiPK1xWEL1lOU0GYBuL9",
+      "name": "box 26",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 1,
+        "y": 18,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "8WXmMuF2neyfquk4zvExf",
+      "name": "box 2",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 9,
+        "y": -4,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "0N71ry57Q_VKbj1dRkoiN",
+      "name": "Box 1",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": -4,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "kLFhFoEbhCtbI6xy-qZgL",
+      "name": "box 25",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 18,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "xajdX1g9IoIjEw7ejGmq2",
+      "name": "box 3",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 14,
+        "y": -4,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "6Wido7tfQR73_4vdN9tzh",
+      "name": "box 14",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 9,
+        "y": 5,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "8j06fx1NFRPJh9d7c2Tbz",
+      "name": "box 13",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 5,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "KzeVjhQ-tMIPPqaRGXdhv",
+      "name": "box 4",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": -1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "Xq3iViwWWiN1OtS8_-WWR",
+      "name": "box 39",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 21,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "w6jani93LUtGtykkwuv7k",
+      "name": "box 28",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 14,
+        "y": 14,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "k96MfarruPIV80ETPXQRT",
+      "name": "box 34",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 36,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "OA2aCb-vtxqcmS0Qijfnd",
+      "name": "box 27",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 18,
+        "y": 14,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "I1lMiFs6DWa3NBLs8sAQP",
+      "name": "box 41",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 29,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "RCXVeXd8KBfIrrrRtNEr_",
+      "name": "box 24",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 8,
+        "y": 10,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "Fc1j22JAlsBiYXvieqrrV",
+      "name": "box 20",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 5,
+        "y": 11,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "6rzvT7Y0apgXFJicTdPdX",
+      "name": "box 21",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 2,
+        "y": 12,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "M3e45mTi3zDothAirncz9",
+      "name": "box 12",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": -1,
+        "y": 13,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "gZPCXDqErU_3QLMldEZye",
+      "name": "box 19",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": -4,
+        "y": 14,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "7a_AorKhRCouna3gmYkrF",
+      "name": "box 40",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 25,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "ATsYNX6Rd-GrZrfeGqwfZ",
+      "name": "box 35",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 40,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "9E8dN-w0YO3vZUWUSZLNL",
+      "name": "box 36",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 9,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "xdBKrh8uHXawc0tkiiuTw",
+      "name": "box 37",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 13,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "aOdMP8Z5kZesoqP3pS7-7",
+      "name": "box 30",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 17,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "_aePDhlgAt9B57zm40K4N",
+      "name": "box 32",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 25,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "NKdahdsNKbFyYEQwIaE8v",
+      "name": "box 38",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 17,
+        "w": 2,
+        "h": 4
+      }
+    },
+    {
+      "id": "oFyzJUsKWsOXz3ihjI-sW",
+      "name": "box 33",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 32,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "XXN6zf89MMd6YLZxB9fjM",
+      "name": "box 31",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 21,
+        "y": 7,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "7rpCoaFWTcR8lSgx2NT7C",
+      "name": "Bucket 1",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BUCKET",
+      "layout": {
+        "x": 14,
+        "y": 8,
+        "w": 3,
+        "h": 2
+      }
+    },
+    {
+      "id": "Ni8dAdc_hLZqDwfHiB580",
+      "name": "box 5",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 9,
+        "y": -1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "VQe0VGh5Kv9im3gf6TZL3",
+      "name": "box 29",
+      "createdAt": "2026-06-08T07:15:57.774Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 22,
+        "y": 14,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "xXcmq58BoUWx_FqL5xYQE",
+      "name": "langkasse 1",
+      "createdAt": "2026-06-08T18:38:50.473Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 32,
+        "y": 5,
+        "w": 12,
+        "h": 2
+      }
+    },
+    {
+      "id": "I3q8aImzAmduznGGzhBPi",
+      "name": "langkasse 2",
+      "createdAt": "2026-06-08T18:39:40.177Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 44,
+        "y": -5,
+        "w": 2,
+        "h": 12
+      }
+    },
+    {
+      "id": "Y8WUe4rzW8WUkkoSD0zWd",
+      "name": "langkasse 3",
+      "createdAt": "2026-06-08T18:39:46.753Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 32,
+        "y": -7,
+        "w": 14,
+        "h": 2
+      }
+    },
+    {
+      "id": "ebyrAqM4HF-zxuXH0DUSn",
+      "name": "drivhus 1",
+      "createdAt": "2026-06-08T18:41:47.009Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 32,
+        "y": 3,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "dQYj-p93rqlF2XN5yfyCu",
+      "name": "drivhus 2",
+      "createdAt": "2026-06-08T18:41:51.209Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 36,
+        "y": 3,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "RRHxTmKPU9KbRqW2kLFxm",
+      "name": "drivhus 3",
+      "createdAt": "2026-06-08T18:41:56.960Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 40,
+        "y": 3,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "k81OAEDILvxD7--vma_Uq",
+      "name": "drivhus 4",
+      "createdAt": "2026-06-08T18:42:01.736Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": 0,
+        "w": 2,
+        "h": 3
+      }
+    },
+    {
+      "id": "sd6HXXdplsWHOvhdkEhIK",
+      "name": "drivhus 5",
+      "createdAt": "2026-06-08T18:42:08.510Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 42,
+        "y": -3,
+        "w": 2,
+        "h": 3
+      }
+    },
+    {
+      "id": "I5WiEcOS_KJk-hPDegrf1",
+      "name": "drivhus 6",
+      "createdAt": "2026-06-08T18:42:50.026Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 38,
+        "y": -1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "7rwIL4WNNkuLgu09EyYJ5",
+      "name": "drivhus 7",
+      "createdAt": "2026-06-08T18:42:58.517Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 34,
+        "y": -1,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "xdgPvV3-Xbehs9ePikOu-",
+      "name": "drivhus 8",
+      "createdAt": "2026-06-08T18:43:20.992Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 40,
+        "y": -5,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "XD0XBHe50epanewuxDngp",
+      "name": "drivhus 9",
+      "createdAt": "2026-06-08T18:43:25.751Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 36,
+        "y": -5,
+        "w": 4,
+        "h": 2
+      }
+    },
+    {
+      "id": "crOnKHbUvVbPtO_NbSy9W",
+      "name": "drivhus 10",
+      "createdAt": "2026-06-08T18:43:31.050Z",
+      "zoneType": "BOX",
+      "layout": {
+        "x": 32,
+        "y": -5,
+        "w": 4,
+        "h": 2
+      }
+    }
+  ],
+  "plantings": [
+    {
+      "boxId": "gZPCXDqErU_3QLMldEZye",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-01",
+      "status": "active",
+      "id": "fjLFXmI25B19jVEUfn3_X",
+      "year": 2026
+    },
+    {
+      "boxId": "M3e45mTi3zDothAirncz9",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-01",
+      "status": "harvested",
+      "id": "HktXS0jA0v9p4HTjW2iL0",
+      "year": 2026,
+      "harvestDate": "2026-06-08"
+    },
+    {
+      "boxId": "6rzvT7Y0apgXFJicTdPdX",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-01",
+      "status": "active",
+      "id": "RJcZb_n-p4R1d9-J6Gxrh",
+      "year": 2026
+    },
+    {
+      "boxId": "Fc1j22JAlsBiYXvieqrrV",
+      "plantKey": "",
+      "customName": "rødbeter",
+      "plantedDate": "2026-06-01",
+      "status": "harvested",
+      "id": "-nt0tdNdJ5it-jXQ5lkHZ",
+      "year": 2026,
+      "harvestDate": "2026-06-08"
+    },
+    {
+      "boxId": "RCXVeXd8KBfIrrrRtNEr_",
+      "plantKey": "",
+      "customName": "Rødbeter",
+      "plantedDate": "2026-06-01",
+      "status": "harvested",
+      "id": "2PDJs89nEzE4uYzyKbRzF",
+      "year": 2026,
+      "harvestDate": "2026-06-08"
+    },
+    {
+      "boxId": "M3e45mTi3zDothAirncz9",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "S0uBhDGFxakfUm7UEDSCb",
+      "year": 2026
+    },
+    {
+      "boxId": "w6jani93LUtGtykkwuv7k",
+      "plantKey": "",
+      "customName": "Pak choi",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "Oy3H9JbMddyHHcWqe-dkV",
+      "year": 2026
+    },
+    {
+      "boxId": "VQe0VGh5Kv9im3gf6TZL3",
+      "plantKey": "",
+      "customName": "pak choi",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "ZTzHF90cv8BnZKV3fz4SM",
+      "year": 2026
+    },
+    {
+      "boxId": "Fc1j22JAlsBiYXvieqrrV",
+      "plantKey": "rødbeter",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "fXFo002jM6fnECRE3SdaL",
+      "year": 2026
+    },
+    {
+      "boxId": "RCXVeXd8KBfIrrrRtNEr_",
+      "plantKey": "rødbeter",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "p54Yv_5ASI_z2S7MM8yEm",
+      "year": 2026
+    },
+    {
+      "boxId": "pcex0l4yJXeTBSZwx4R_L",
+      "plantKey": "rødbeter",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "s0rQ30reYtv7i206zCGr2",
+      "year": 2026
+    },
+    {
+      "boxId": "tNeyS9gyfk-X8k3sWda0a",
+      "plantKey": "rødbeter",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "S1lRYlANZ6Ah4TpqvImlw",
+      "year": 2026
+    },
+    {
+      "boxId": "tNeyS9gyfk-X8k3sWda0a",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "4KH7XL8ohmDTxJiop7jub",
+      "year": 2026
+    },
+    {
+      "boxId": "qq-wx6QDqq1YXpkccELgW",
+      "plantKey": "gulrot",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "icBsgkdCQzlz_YCBQi5u3",
+      "year": 2026
+    },
+    {
+      "boxId": "qq-wx6QDqq1YXpkccELgW",
+      "plantKey": "rødbeter",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "fHP9e-Tlndtw7T1oSLQsK",
+      "year": 2026
+    },
+    {
+      "boxId": "xdBKrh8uHXawc0tkiiuTw",
+      "plantKey": "squash",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "dNF_QHJ6O5JVuCoYcAQyA",
+      "year": 2026
+    },
+    {
+      "boxId": "NKdahdsNKbFyYEQwIaE8v",
+      "plantKey": "squash",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "VjW9sbeAoAuyDU1-rEvfj",
+      "year": 2026
+    },
+    {
+      "boxId": "ATsYNX6Rd-GrZrfeGqwfZ",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "tQyi0kOu_-qzjupWO7Yfn",
+      "year": 2026
+    },
+    {
+      "boxId": "k96MfarruPIV80ETPXQRT",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "rBpwxMphePDSvZ5eVkI1O",
+      "year": 2026
+    },
+    {
+      "boxId": "oFyzJUsKWsOXz3ihjI-sW",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "6xVeR4dDZ83LbNqTUDCq1",
+      "year": 2026
+    },
+    {
+      "boxId": "9E8dN-w0YO3vZUWUSZLNL",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "F99poeNTR7Gb3oNM0EsZ9",
+      "year": 2026
+    },
+    {
+      "boxId": "_aePDhlgAt9B57zm40K4N",
+      "plantKey": "gressløk",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "GrPCVAk2horS1MFCDBtXo",
+      "year": 2026
+    },
+    {
+      "boxId": "I1lMiFs6DWa3NBLs8sAQP",
+      "plantKey": "potet",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "1Zwj4V1234vj2PtRMMivi",
+      "year": 2026
+    },
+    {
+      "boxId": "7a_AorKhRCouna3gmYkrF",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "cZgOimGpSNorrClXwoCd6",
+      "year": 2026
+    },
+    {
+      "boxId": "Xq3iViwWWiN1OtS8_-WWR",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "4Xy7TCbIrvvIN7wAZ938O",
+      "year": 2026
+    },
+    {
+      "boxId": "3LrhW2v-LUEB6a2B6lPS-",
+      "plantKey": "purre",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "kOjkmnEeZwWUwsz8tusOH",
+      "year": 2026
+    },
+    {
+      "boxId": "kLFhFoEbhCtbI6xy-qZgL",
+      "plantKey": "spinat",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "MfWIai34RCCnvthHVpoOr",
+      "year": 2026
+    },
+    {
+      "boxId": "eRiPK1xWEL1lOU0GYBuL9",
+      "plantKey": "purre",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "eKiFLtCl8NyNyzJeEHttd",
+      "year": 2026
+    },
+    {
+      "boxId": "OA2aCb-vtxqcmS0Qijfnd",
+      "plantKey": "blomkål",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "24uXTu_qiYcdsBF_g9DPI",
+      "year": 2026
+    },
+    {
+      "boxId": "XXN6zf89MMd6YLZxB9fjM",
+      "plantKey": "salat",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "hdIhHOnkCUmK1uKLBIR96",
+      "year": 2026
+    },
+    {
+      "boxId": "aOdMP8Z5kZesoqP3pS7-7",
+      "plantKey": "salat",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "h8na16_YvbRH9qPXXXdiy",
+      "year": 2026
+    },
+    {
+      "boxId": "7rpCoaFWTcR8lSgx2NT7C",
+      "plantKey": "blomster",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "xgei1lh1i0gw3oZRTBEcU",
+      "year": 2026
+    },
+    {
+      "boxId": "mHPcL0rhCvbkhQ3HxE3Zc",
+      "plantKey": "squash",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "PAXXRFlyTH0IuApgDui3U",
+      "year": 2026
+    },
+    {
+      "boxId": "DhdWKGI2WR8vhSBECOZkw",
+      "plantKey": "potet",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "Y3zX1qnl71KiG9tHGmuMA",
+      "year": 2026
+    },
+    {
+      "boxId": "T3avgz9432N_00Ub5Vzzj",
+      "plantKey": "potet",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "c2Bv6k5xioZQFl22SvsdZ",
+      "year": 2026
+    },
+    {
+      "boxId": "Cnoh9YIgLDEjYMJLx80Ih",
+      "plantKey": "løk",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "HOVjToV_SLcrfLXsWTBeB",
+      "year": 2026
+    },
+    {
+      "boxId": "8j06fx1NFRPJh9d7c2Tbz",
+      "plantKey": "løk",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "MaF4N_I_LaJClBCvAnivX",
+      "year": 2026
+    },
+    {
+      "boxId": "c4FFi2i8td-Wawg4o7c-q",
+      "plantKey": "løk",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "GNQLI91pYM7rh3E_HluSB",
+      "year": 2026
+    },
+    {
+      "boxId": "3JPV98FzEHzmb_doaIogB",
+      "plantKey": "persillerot",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "dS-zBkkFlVqwF7D7nMGgd",
+      "year": 2026
+    },
+    {
+      "boxId": "3JPV98FzEHzmb_doaIogB",
+      "plantKey": "reddik",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "1JAxiSPw9q7RLvA71yJxw",
+      "year": 2026
+    },
+    {
+      "boxId": "KzeVjhQ-tMIPPqaRGXdhv",
+      "plantKey": "åkerbønner",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "y4AhRP_HF41D0wLqIUJbC",
+      "year": 2026
+    },
+    {
+      "boxId": "Ni8dAdc_hLZqDwfHiB580",
+      "plantKey": "blomster",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "Ayw_1X5_R_8SKAkJJbmKj",
+      "year": 2026
+    },
+    {
+      "boxId": "0N71ry57Q_VKbj1dRkoiN",
+      "plantKey": "åkerbønner",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "KA6wZp9P8uOarYgKfUeWN",
+      "year": 2026
+    },
+    {
+      "boxId": "6Wido7tfQR73_4vdN9tzh",
+      "plantKey": "brokkoli",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "4CfLHiu4iFImGGPLLxwVF",
+      "year": 2026
+    },
+    {
+      "boxId": "K1Bay_X7lGZGB4C9OqgRD",
+      "plantKey": "brokkoli",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "EKBltA5XWPYFot6JXQfUZ",
+      "year": 2026
+    },
+    {
+      "boxId": "7TCoGE5rsnULYRXyc9NjX",
+      "plantKey": "knutekål",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "3WiMGJLXB5ES55gjGhxI8",
+      "year": 2026
+    },
+    {
+      "boxId": "xXcmq58BoUWx_FqL5xYQE",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "k80Ob7Yxk-ykX9jrGbQ9M",
+      "year": 2026
+    },
+    {
+      "boxId": "Y8WUe4rzW8WUkkoSD0zWd",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "Z64t0v3gyA-P4o-h5raEA",
+      "year": 2026
+    },
+    {
+      "boxId": "I3q8aImzAmduznGGzhBPi",
+      "plantKey": "jordbær",
+      "plantedDate": "2026-06-08",
+      "status": "active",
+      "id": "K9sFbprqZKq7eMDwm1-jm",
+      "year": 2026
+    }
+  ]
+}
