@@ -36,6 +36,14 @@ h3 {
   min-height: 100vh;
 }
 
+.tap-target {
+  min-height: 44px;
+}
+
+.input-touch {
+  min-height: 44px;
+}
+
 .tile {
   background: var(--surface);
   border: 1px solid var(--border);

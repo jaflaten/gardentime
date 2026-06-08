@@ -8,7 +8,7 @@ export function LanguageToggle() {
     <button
       type="button"
       onClick={togglePlantLanguage}
-      className="rounded-lg border px-3 py-2 text-sm font-medium"
+      className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
       style={{ borderColor: "var(--border)", color: "var(--text)", backgroundColor: "var(--surface)" }}
       title="Bytt språk for plantenavn"
     >

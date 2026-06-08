@@ -36,17 +36,17 @@ export function BoxDetail() {
 
   if (!box) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4">
+      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
         <button
           type="button"
           onClick={() => navigate("/", { replace: true })}
-          className="w-fit rounded-lg px-3 py-2 text-sm font-medium"
+          className="tap-target w-fit rounded-lg px-3 py-2 text-sm font-medium"
           style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
         >
           ← Tilbake
         </button>
-        <section className="rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-          <h1 className="text-xl font-semibold">Kasse ikke funnet</h1>
+        <section className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+          <h1 className="text-lg font-semibold sm:text-xl">Kasse ikke funnet</h1>
           <p style={{ color: "var(--text-muted)" }}>Denne kassen finnes ikke lenger.</p>
         </section>
       </main>
@@ -74,20 +74,20 @@ export function BoxDetail() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4">
-      <header className="rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+      <header className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="mb-3 flex items-center justify-between gap-2">
           <Link to="/" className="inline-block text-sm font-medium" style={{ color: "var(--green)" }}>
             ← Tilbake
           </Link>
           <LanguageToggle />
         </div>
-        <h1 className="text-2xl font-semibold">{box.name}</h1>
+        <h1 className="text-xl font-semibold sm:text-2xl">{box.name}</h1>
         {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
       </header>
 
-      <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-xl font-semibold">Nå</h2>
+      <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">Nå</h2>
         {activePlantings.length === 0 ? (
           <p style={{ color: "var(--text-muted)" }}>Ingen aktive planter.</p>
         ) : (
@@ -107,7 +107,7 @@ export function BoxDetail() {
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="rounded-lg px-4 py-2 text-sm font-medium"
+            className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
             style={{ backgroundColor: "var(--green)", color: "white" }}
           >
             + Legg til plante
@@ -126,7 +126,7 @@ export function BoxDetail() {
                 type="date"
                 value={plantedDate}
                 onChange={(event) => setPlantedDate(event.target.value)}
-                className="w-full rounded-lg border px-3 py-2"
+                className="input-touch w-full rounded-lg border px-3 py-2"
                 style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
               />
             </div>
@@ -136,14 +136,14 @@ export function BoxDetail() {
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
                 rows={3}
-                className="w-full rounded-lg border px-3 py-2"
+                className="input-touch w-full rounded-lg border px-3 py-2"
                 style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
               />
             </div>
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="rounded-lg px-4 py-2 text-sm font-medium"
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
                 style={{ backgroundColor: "var(--green)", color: "white" }}
               >
                 Lagre
@@ -151,7 +151,7 @@ export function BoxDetail() {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="rounded-lg px-4 py-2 text-sm font-medium"
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
                 style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
               >
                 Avbryt
@@ -161,8 +161,8 @@ export function BoxDetail() {
         )}
       </section>
 
-      <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-xl font-semibold">Historikk</h2>
+      <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">Historikk</h2>
         {historyPlantings.length === 0 ? (
           <p style={{ color: "var(--text-muted)" }}>Ingen historikk ennå.</p>
         ) : (
@@ -171,7 +171,7 @@ export function BoxDetail() {
             .sort((a, b) => b - a)
             .map((year) => (
               <div key={year} className="space-y-2">
-                <h3 className="text-lg font-semibold">{year}</h3>
+                <h3 className="text-base font-semibold sm:text-lg">{year}</h3>
                 <ul className="space-y-2">
                   {historyByYear[year].map((planting) => (
                     <PlantingRow key={planting.id} planting={planting} onDelete={(plantingId) => deletePlanting(plantingId)} />

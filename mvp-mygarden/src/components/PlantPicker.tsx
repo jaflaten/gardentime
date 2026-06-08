@@ -34,7 +34,7 @@ export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNa
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Søk etter plante..."
-          className="w-full rounded-lg border px-3 py-2"
+          className="input-touch w-full rounded-lg border px-3 py-2"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         />
       </div>
@@ -84,7 +84,7 @@ export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNa
             }
           }}
           placeholder="F.eks. Ringblomst"
-          className="w-full rounded-lg border px-3 py-2"
+          className="input-touch w-full rounded-lg border px-3 py-2"
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         />
       </div>

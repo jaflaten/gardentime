@@ -1,8 +1,24 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent, type TouchEvent } from "react";
 import { Link } from "react-router-dom";
-import { GardenGrid } from "../components/GardenGrid";
+import { GardenGrid, GRID_TOTAL_COLS, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { useGardenStore } from "../store/useGardenStore";
+
+interface PinchState {
+  startDistance: number;
+  startZoom: number;
+}
+
+function clampZoom(value: number) {
+  return Math.min(MAX_MAP_ZOOM, Math.max(MIN_MAP_ZOOM, Number(value.toFixed(2))));
+}
+
+function touchDistance(event: TouchEvent<HTMLElement>) {
+  const [touchA, touchB] = [event.touches[0], event.touches[1]];
+  const dx = touchA.clientX - touchB.clientX;
+  const dy = touchA.clientY - touchB.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
 export function GardenMap() {
   const [editMode, setEditMode] = useState(false);
@@ -11,6 +27,7 @@ export function GardenMap() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const addBox = useGardenStore((state) => state.addBox);
+  const pinchStateRef = useRef<PinchState | null>(null);
 
   const onCreateBox = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,36 +40,53 @@ export function GardenMap() {
     setShowCreateForm(false);
   };
 
+  const zoomOut = () => setZoom((prev) => clampZoom(prev - 0.05));
+  const zoomIn = () => setZoom((prev) => clampZoom(prev + 0.05));
+  const zoomReset = () => setZoom(0.9);
+  const zoomFit = () => {
+    const availableWidth = Math.max(260, window.innerWidth - 32);
+    const fitZoom = availableWidth / (GRID_TOTAL_COLS * MAP_BASE_COL_WIDTH);
+    setZoom(clampZoom(fitZoom));
+  };
+
+  const onMapTouchStart = (event: TouchEvent<HTMLElement>) => {
+    if (event.touches.length !== 2) {
+      return;
+    }
+    pinchStateRef.current = {
+      startDistance: touchDistance(event),
+      startZoom: zoom,
+    };
+  };
+
+  const onMapTouchMove = (event: TouchEvent<HTMLElement>) => {
+    if (event.touches.length !== 2 || !pinchStateRef.current) {
+      return;
+    }
+    event.preventDefault();
+    const currentDistance = touchDistance(event);
+    const scale = currentDistance / pinchStateRef.current.startDistance;
+    setZoom(clampZoom(pinchStateRef.current.startZoom * scale));
+  };
+
+  const onMapTouchEnd = () => {
+    if (pinchStateRef.current) {
+      pinchStateRef.current = null;
+    }
+  };
+
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-4 p-4">
-      <header className="flex items-center justify-between gap-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h1 className="text-2xl font-semibold">🌱 Hagen vår</h1>
-        <div className="flex items-center gap-2">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+      <header
+        className="sticky top-0 z-20 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-sm sm:p-4"
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+      >
+        <h1 className="text-xl font-semibold sm:text-2xl">🌱 Hagen vår</h1>
+        <div className="flex flex-wrap items-center gap-2">
           <LanguageToggle />
-          <div className="flex items-center gap-1 rounded-lg border px-2 py-1 text-sm" style={{ borderColor: "var(--border)" }}>
-            <button
-              type="button"
-              onClick={() => setZoom((prev) => Math.max(0.65, Number((prev - 0.05).toFixed(2))))}
-              className="rounded px-2 py-1"
-              style={{ backgroundColor: "var(--gray-light)" }}
-              aria-label="Zoom ut"
-            >
-              −
-            </button>
-            <span className="min-w-12 text-center">{Math.round(zoom * 100)}%</span>
-            <button
-              type="button"
-              onClick={() => setZoom((prev) => Math.min(1, Number((prev + 0.05).toFixed(2))))}
-              className="rounded px-2 py-1"
-              style={{ backgroundColor: "var(--gray-light)" }}
-              aria-label="Zoom inn"
-            >
-              +
-            </button>
-          </div>
           <Link
             to="/settings"
-            className="rounded-lg border px-3 py-2 text-sm font-medium"
+            className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
             style={{ borderColor: "var(--border)", color: "var(--text)" }}
           >
             ⚙ Innstillinger
@@ -63,7 +97,7 @@ export function GardenMap() {
               setEditMode((prev) => !prev);
               setShowCreateForm(false);
             }}
-            className="rounded-lg px-3 py-2 text-sm font-medium"
+            className="tap-target rounded-lg px-3 py-2 text-sm font-medium"
             style={{
               backgroundColor: editMode ? "var(--green-light)" : "var(--gray-light)",
               color: editMode ? "var(--green)" : "var(--text)",
@@ -74,17 +108,65 @@ export function GardenMap() {
         </div>
       </header>
 
-      <section className={`rounded-xl border p-3 ${editMode ? "edit-mode" : ""}`} style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <GardenGrid editMode={editMode} zoom={zoom} />
+      <section className="rounded-xl border p-2 sm:p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={zoomOut}
+            className="tap-target rounded-lg px-3 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+          >
+            − Zoom ut
+          </button>
+          <button
+            type="button"
+            onClick={zoomReset}
+            className="tap-target rounded-lg px-3 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+          >
+            100%
+          </button>
+          <button
+            type="button"
+            onClick={zoomIn}
+            className="tap-target rounded-lg px-3 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+          >
+            + Zoom inn
+          </button>
+          <button
+            type="button"
+            onClick={zoomFit}
+            className="tap-target rounded-lg px-3 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--green-light)", color: "var(--green)" }}
+          >
+            Tilpass
+          </button>
+          <span className="text-sm" style={{ color: "var(--text-muted)" }}>
+            {Math.round(zoom * 100)}%
+          </span>
+        </div>
+        <p className="mb-2 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
+          Tips: Klyp med to fingre på kartet for å zoome.
+        </p>
+        <div
+          className={editMode ? "edit-mode" : ""}
+          onTouchStart={onMapTouchStart}
+          onTouchMove={onMapTouchMove}
+          onTouchEnd={onMapTouchEnd}
+          onTouchCancel={onMapTouchEnd}
+        >
+          <GardenGrid editMode={editMode} zoom={zoom} />
+        </div>
       </section>
 
       {editMode && (
-        <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
           {!showCreateForm ? (
             <button
               type="button"
               onClick={() => setShowCreateForm(true)}
-              className="w-full rounded-lg px-4 py-2 text-sm font-medium"
+              className="tap-target w-full rounded-lg px-4 py-2 text-sm font-medium"
               style={{ backgroundColor: "var(--green)", color: "white" }}
             >
               + Ny kasse
@@ -97,7 +179,7 @@ export function GardenMap() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   required
-                  className="w-full rounded-lg border px-3 py-2"
+                  className="input-touch w-full rounded-lg border px-3 py-2"
                   style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
                 />
               </div>
@@ -107,14 +189,14 @@ export function GardenMap() {
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                   rows={2}
-                  className="w-full rounded-lg border px-3 py-2"
+                  className="input-touch w-full rounded-lg border px-3 py-2"
                   style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   type="submit"
-                  className="rounded-lg px-4 py-2 text-sm font-medium"
+                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
                   style={{ backgroundColor: "var(--green)", color: "white" }}
                 >
                   Lagre
@@ -122,7 +204,7 @@ export function GardenMap() {
                 <button
                   type="button"
                   onClick={() => setShowCreateForm(false)}
-                  className="rounded-lg px-4 py-2 text-sm font-medium"
+                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
                   style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
                 >
                   Avbryt

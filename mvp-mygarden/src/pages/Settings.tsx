@@ -134,19 +134,19 @@ export function Settings() {
   const bundledBackupLastUpdated = formatBackupTimestamp((bundledGardenBackup as BackupPayload).exportedAt);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4">
-      <header className="rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+      <header className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="flex items-center justify-between gap-2">
           <Link to="/" className="text-sm font-medium" style={{ color: "var(--green)" }}>
             ← Tilbake
           </Link>
           <LanguageToggle />
         </div>
-        <h1 className="mt-2 text-2xl font-semibold">Innstillinger</h1>
+        <h1 className="mt-2 text-xl font-semibold sm:text-2xl">Innstillinger</h1>
       </header>
 
-      <section className="space-y-2 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-xl font-semibold">Importer fra DinoGarden</h2>
+      <section className="space-y-2 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">Importer fra DinoGarden</h2>
         <p style={{ color: "var(--text-muted)" }}>Last opp en DinoGarden JSON-eksport for å importere kasser med oppsett.</p>
         <input
           type="file"
@@ -157,17 +157,17 @@ export function Settings() {
               handleLegacyImport(file);
             }
           }}
-          className="w-full rounded-lg border p-2 text-sm"
+          className="input-touch w-full rounded-lg border p-2 text-sm"
           style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
         />
       </section>
 
-      <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-xl font-semibold">MyGarden backup</h2>
+      <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">MyGarden backup</h2>
         <button
           type="button"
           onClick={exportData}
-          className="rounded-lg px-4 py-2 text-sm font-medium"
+          className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
           style={{ backgroundColor: "var(--green)", color: "white" }}
         >
           Eksporter data
@@ -185,7 +185,7 @@ export function Settings() {
               }
               event.currentTarget.value = "";
             }}
-            className="w-full rounded-lg border p-2 text-sm"
+            className="input-touch w-full rounded-lg border p-2 text-sm"
             style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
           />
         </div>
@@ -200,7 +200,7 @@ export function Settings() {
             onClick={() => {
               importBundledBackup();
             }}
-            className="rounded-lg px-4 py-2 text-sm font-medium"
+            className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
             style={{ backgroundColor: "var(--green)", color: "white" }}
           >
             Importer standard MyGarden-oppsett

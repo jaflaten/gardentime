@@ -8,7 +8,10 @@ const EXTRA_LEFT_COLS = 4;
 const EXTRA_RIGHT_COLS = 8;
 const EXTRA_TOP_ROWS = 14;
 const EXTRA_BOTTOM_ROWS = 12;
-const GRID_COLS = LEGACY_GRID_COLS + EXTRA_LEFT_COLS + EXTRA_RIGHT_COLS;
+export const GRID_TOTAL_COLS = LEGACY_GRID_COLS + EXTRA_LEFT_COLS + EXTRA_RIGHT_COLS;
+export const MAP_BASE_COL_WIDTH = 44;
+export const MIN_MAP_ZOOM = 0.2;
+export const MAX_MAP_ZOOM = 1.2;
 const BOTTOM_SPACER_KEY = "__bottom_spacer__";
 
 interface GardenGridProps {
@@ -21,10 +24,10 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
   const navigate = useNavigate();
   const { width, containerRef, mounted } = useContainerWidth();
   const debugGrid = new URLSearchParams(window.location.search).has("debugGrid");
-  const colWidth = Math.max(24, Math.round(44 * zoom));
-  const rowHeight = Math.max(20, Math.round(32 * zoom));
-  const margin = Math.max(4, Math.round(8 * zoom));
-  const gridWidth = GRID_COLS * colWidth;
+  const colWidth = Math.max(8, Math.round(MAP_BASE_COL_WIDTH * zoom));
+  const rowHeight = Math.max(6, Math.round(32 * zoom));
+  const margin = Math.max(1, Math.round(8 * zoom));
+  const gridWidth = GRID_TOTAL_COLS * colWidth;
   const layout: Layout = boxes.map((box) => ({
     i: box.id,
     x: box.layout.x + EXTRA_LEFT_COLS,
@@ -37,7 +40,7 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
     ...layout,
     {
       i: BOTTOM_SPACER_KEY,
-      x: GRID_COLS - 1,
+      x: GRID_TOTAL_COLS - 1,
       y: maxBottomY,
       w: 1,
       h: EXTRA_BOTTOM_ROWS,
@@ -71,7 +74,7 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
             className="layout"
             width={Math.max(width, gridWidth)}
             layout={layoutWithSpacer}
-            gridConfig={{ cols: GRID_COLS, rowHeight, margin: [margin, margin] }}
+            gridConfig={{ cols: GRID_TOTAL_COLS, rowHeight, margin: [margin, margin] }}
             dragConfig={{ enabled: editMode }}
             resizeConfig={{ enabled: editMode, handles: ["se"] }}
             compactor={getCompactor(null, false, true)}
