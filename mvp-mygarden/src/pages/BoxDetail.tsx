@@ -1,0 +1,186 @@
+import { useMemo, useState, type FormEvent } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { LanguageToggle } from "../components/LanguageToggle";
+import { PlantPicker } from "../components/PlantPicker";
+import { PlantingRow } from "../components/PlantingRow";
+import { useGardenStore } from "../store/useGardenStore";
+import type { Planting } from "../types";
+
+function byNewestFirst(a: Planting, b: Planting) {
+  return b.plantedDate.localeCompare(a.plantedDate);
+}
+
+export function BoxDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [showForm, setShowForm] = useState(false);
+  const [plantKey, setPlantKey] = useState("");
+  const [customName, setCustomName] = useState("");
+  const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [notes, setNotes] = useState("");
+
+  const { boxes, plantings, addPlanting, markHarvested, deletePlanting } = useGardenStore();
+  const box = boxes.find((entry) => entry.id === id);
+
+  const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
+  const activePlantings = boxPlantings.filter((planting) => planting.status === "active").sort(byNewestFirst);
+  const historyPlantings = boxPlantings.filter((planting) => planting.status !== "active").sort(byNewestFirst);
+
+  const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
+    if (!acc[planting.year]) {
+      acc[planting.year] = [];
+    }
+    acc[planting.year].push(planting);
+    return acc;
+  }, {});
+
+  if (!box) {
+    return (
+      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4">
+        <button
+          type="button"
+          onClick={() => navigate("/", { replace: true })}
+          className="w-fit rounded-lg px-3 py-2 text-sm font-medium"
+          style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+        >
+          ← Tilbake
+        </button>
+        <section className="rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+          <h1 className="text-xl font-semibold">Kasse ikke funnet</h1>
+          <p style={{ color: "var(--text-muted)" }}>Denne kassen finnes ikke lenger.</p>
+        </section>
+      </main>
+    );
+  }
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!plantKey && !customName.trim()) {
+      return;
+    }
+    addPlanting({
+      boxId: box.id,
+      plantKey,
+      customName: customName.trim() || undefined,
+      plantedDate,
+      notes: notes.trim() || undefined,
+      status: "active",
+    });
+    setShowForm(false);
+    setPlantKey("");
+    setCustomName("");
+    setPlantedDate(new Date().toISOString().split("T")[0]);
+    setNotes("");
+  };
+
+  return (
+    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-4 p-4">
+      <header className="rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <Link to="/" className="inline-block text-sm font-medium" style={{ color: "var(--green)" }}>
+            ← Tilbake
+          </Link>
+          <LanguageToggle />
+        </div>
+        <h1 className="text-2xl font-semibold">{box.name}</h1>
+        {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
+      </header>
+
+      <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-xl font-semibold">Nå</h2>
+        {activePlantings.length === 0 ? (
+          <p style={{ color: "var(--text-muted)" }}>Ingen aktive planter.</p>
+        ) : (
+          <ul className="space-y-2">
+            {activePlantings.map((planting) => (
+              <PlantingRow
+                key={planting.id}
+                planting={planting}
+                onHarvest={(plantingId) => markHarvested(plantingId)}
+                onDelete={(plantingId) => deletePlanting(plantingId)}
+              />
+            ))}
+          </ul>
+        )}
+
+        {!showForm ? (
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            className="rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--green)", color: "white" }}
+          >
+            + Legg til plante
+          </button>
+        ) : (
+          <form className="space-y-3 rounded-lg border p-3" onSubmit={onSubmit} style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
+            <PlantPicker
+              plantKey={plantKey}
+              customName={customName}
+              onPlantKeyChange={setPlantKey}
+              onCustomNameChange={setCustomName}
+            />
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Plantet dato</label>
+              <input
+                type="date"
+                value={plantedDate}
+                onChange={(event) => setPlantedDate(event.target.value)}
+                className="w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Notater (valgfritt)</label>
+              <textarea
+                value={notes}
+                onChange={(event) => setNotes(event.target.value)}
+                rows={3}
+                className="w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--green)", color: "white" }}
+              >
+                Lagre
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+              >
+                Avbryt
+              </button>
+            </div>
+          </form>
+        )}
+      </section>
+
+      <section className="space-y-3 rounded-xl border p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-xl font-semibold">Historikk</h2>
+        {historyPlantings.length === 0 ? (
+          <p style={{ color: "var(--text-muted)" }}>Ingen historikk ennå.</p>
+        ) : (
+          Object.keys(historyByYear)
+            .map(Number)
+            .sort((a, b) => b - a)
+            .map((year) => (
+              <div key={year} className="space-y-2">
+                <h3 className="text-lg font-semibold">{year}</h3>
+                <ul className="space-y-2">
+                  {historyByYear[year].map((planting) => (
+                    <PlantingRow key={planting.id} planting={planting} onDelete={(plantingId) => deletePlanting(plantingId)} />
+                  ))}
+                </ul>
+              </div>
+            ))
+        )}
+      </section>
+    </main>
+  );
+}

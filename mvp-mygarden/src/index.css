@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f7f5f0;
+  --surface: #ffffff;
+  --border: #e0d9cc;
+  --text: #2c2a26;
+  --text-muted: #7a7060;
+  --green: #3d6b4f;
+  --green-light: #edf4ef;
+  --amber: #c47c2b;
+  --amber-light: #f9efe3;
+  --red: #b84444;
+  --red-light: #f9e8e8;
+  --gray-light: #efede8;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(44, 42, 38, 0.08);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.tile-active {
+  background: var(--green-light);
+  border-color: var(--green);
+}
+
+.tile-empty {
+  border-style: dashed;
+}
+
+.edit-mode {
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border-radius: 12px;
+}
+
+.react-grid-item {
+  touch-action: none;
+}
+
+.layout,
+.layout * {
+  -webkit-user-select: none;
+  user-select: none;
+}
