@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { importLegacyExport } from "../lib/importLegacy";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
-import bundledGardenBackup from "../resources/mvp-mygarden-v1.json";
+import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import type { Box, Planting } from "../types";
 
 interface BackupPayload {
