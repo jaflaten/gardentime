@@ -6,7 +6,7 @@ import { StatusBadge } from "./StatusBadge";
 interface PlantingRowProps {
   planting: Planting;
   onHarvest?: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 function formatDate(date: string) {
@@ -43,14 +43,16 @@ export function PlantingRow({ planting, onHarvest, onDelete }: PlantingRowProps)
             Høst
           </button>
         )}
-        <button
-          type="button"
-          onClick={() => onDelete(planting.id)}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium"
-          style={{ backgroundColor: "var(--red-light)", color: "var(--red)" }}
-        >
-          Slett
-        </button>
+        {onDelete && (
+          <button
+            type="button"
+            onClick={() => onDelete(planting.id)}
+            className="rounded-lg px-3 py-1.5 text-sm font-medium"
+            style={{ backgroundColor: "var(--red-light)", color: "var(--red)" }}
+          >
+            Slett
+          </button>
+        )}
       </div>
     </li>
   );

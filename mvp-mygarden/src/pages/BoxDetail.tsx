@@ -6,6 +6,10 @@ import { PlantingRow } from "../components/PlantingRow";
 import { useGardenStore } from "../store/useGardenStore";
 import type { Planting } from "../types";
 
+function useViewMode(): boolean {
+  return useMemo(() => new URLSearchParams(window.location.search).has("view"), []);
+}
+
 function byNewestFirst(a: Planting, b: Planting) {
   return b.plantedDate.localeCompare(a.plantedDate);
 }
@@ -13,6 +17,7 @@ function byNewestFirst(a: Planting, b: Planting) {
 export function BoxDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const viewMode = useViewMode();
   const [showForm, setShowForm] = useState(false);
   const [plantKey, setPlantKey] = useState("");
   const [customName, setCustomName] = useState("");
@@ -39,7 +44,7 @@ export function BoxDetail() {
       <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
         <button
           type="button"
-          onClick={() => navigate("/", { replace: true })}
+          onClick={() => navigate({ pathname: "/", search: window.location.search }, { replace: true })}
           className="tap-target w-fit rounded-lg px-3 py-2 text-sm font-medium"
           style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
         >
@@ -77,7 +82,7 @@ export function BoxDetail() {
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
       <header className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="mb-3 flex items-center justify-between gap-2">
-          <Link to="/" className="inline-block text-sm font-medium" style={{ color: "var(--green)" }}>
+          <Link to={{ pathname: "/", search: window.location.search }} className="inline-block text-sm font-medium" style={{ color: "var(--green)" }}>
             ← Tilbake
           </Link>
           <LanguageToggle />
@@ -96,14 +101,14 @@ export function BoxDetail() {
               <PlantingRow
                 key={planting.id}
                 planting={planting}
-                onHarvest={(plantingId) => markHarvested(plantingId)}
-                onDelete={(plantingId) => deletePlanting(plantingId)}
+                onHarvest={viewMode ? undefined : (plantingId) => markHarvested(plantingId)}
+                onDelete={viewMode ? undefined : (plantingId) => deletePlanting(plantingId)}
               />
             ))}
           </ul>
         )}
 
-        {!showForm ? (
+        {viewMode ? null : !showForm ? (
           <button
             type="button"
             onClick={() => setShowForm(true)}
@@ -174,7 +179,11 @@ export function BoxDetail() {
                 <h3 className="text-base font-semibold sm:text-lg">{year}</h3>
                 <ul className="space-y-2">
                   {historyByYear[year].map((planting) => (
-                    <PlantingRow key={planting.id} planting={planting} onDelete={(plantingId) => deletePlanting(plantingId)} />
+                    <PlantingRow
+                      key={planting.id}
+                      planting={planting}
+                      onDelete={viewMode ? undefined : (plantingId) => deletePlanting(plantingId)}
+                    />
                   ))}
                 </ul>
               </div>

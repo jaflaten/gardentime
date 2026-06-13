@@ -1,14 +1,11 @@
 import ReactGridLayout, { getCompactor, type Layout, type LayoutItem, useContainerWidth } from "react-grid-layout";
 import { useNavigate } from "react-router-dom";
-import { LEGACY_GRID_COLS } from "../lib/importLegacy";
 import { useGardenStore } from "../store/useGardenStore";
+import { useUiStore } from "../store/useUiStore";
 import { BoxTile } from "./BoxTile";
 
-const EXTRA_LEFT_COLS = 4;
-const EXTRA_RIGHT_COLS = 8;
-const EXTRA_TOP_ROWS = 14;
-const EXTRA_BOTTOM_ROWS = 12;
-export const GRID_TOTAL_COLS = LEGACY_GRID_COLS + EXTRA_LEFT_COLS + EXTRA_RIGHT_COLS;
+export const EXTRA_LEFT_COLS = 4;
+export const EXTRA_TOP_ROWS = 14;
 export const MAP_BASE_COL_WIDTH = 44;
 export const MIN_MAP_ZOOM = 0.2;
 export const MAX_MAP_ZOOM = 1.2;
@@ -21,13 +18,14 @@ interface GardenGridProps {
 
 export function GardenGrid({ editMode, zoom }: GardenGridProps) {
   const { boxes, plantings, saveGridLayout } = useGardenStore();
+  const gridSize = useUiStore((state) => state.gridSize);
   const navigate = useNavigate();
   const { width, containerRef, mounted } = useContainerWidth();
   const debugGrid = new URLSearchParams(window.location.search).has("debugGrid");
   const colWidth = Math.max(8, Math.round(MAP_BASE_COL_WIDTH * zoom));
   const rowHeight = Math.max(6, Math.round(32 * zoom));
   const margin = Math.max(1, Math.round(8 * zoom));
-  const gridWidth = GRID_TOTAL_COLS * colWidth;
+  const gridWidth = gridSize.cols * colWidth;
   const layout: Layout = boxes.map((box) => ({
     i: box.id,
     x: box.layout.x + EXTRA_LEFT_COLS,
@@ -36,14 +34,15 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
     h: box.layout.h,
   }));
   const maxBottomY = layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
+  const spacerY = Math.max(maxBottomY, gridSize.rows - 1);
   const layoutWithSpacer: Layout = [
     ...layout,
     {
       i: BOTTOM_SPACER_KEY,
-      x: GRID_TOTAL_COLS - 1,
-      y: maxBottomY,
+      x: gridSize.cols - 1,
+      y: spacerY,
       w: 1,
-      h: EXTRA_BOTTOM_ROWS,
+      h: 1,
       static: true,
     },
   ];
@@ -70,11 +69,11 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
       <div ref={containerRef} style={{ width: `${gridWidth}px` }}>
         {mounted && (
           <ReactGridLayout
-            key={editMode ? "edit-mode-grid" : "view-mode-grid"}
+            key={`${editMode ? "edit" : "view"}-${gridSize.cols}x${gridSize.rows}`}
             className="layout"
             width={Math.max(width, gridWidth)}
             layout={layoutWithSpacer}
-            gridConfig={{ cols: GRID_TOTAL_COLS, rowHeight, margin: [margin, margin] }}
+            gridConfig={{ cols: gridSize.cols, rowHeight, margin: [margin, margin] }}
             dragConfig={{ enabled: editMode }}
             resizeConfig={{ enabled: editMode, handles: ["se"] }}
             compactor={getCompactor(null, false, true)}
@@ -111,7 +110,7 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
                     editMode={editMode}
                     onClick={() => {
                       if (!editMode) {
-                        navigate(`/box/${box.id}`);
+                        navigate({ pathname: `/box/${box.id}`, search: window.location.search });
                       }
                     }}
                   />
