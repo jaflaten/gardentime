@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type TouchEvent } from "react";
 import { Link } from "react-router-dom";
 import { ConfirmModal } from "../components/ConfirmModal";
+import { FloatingUndo } from "../components/FloatingUndo";
 import { GardenGrid, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
@@ -79,8 +80,6 @@ export function GardenMap() {
 
   const boxes = useGardenStore((state) => state.boxes);
   const addBox = useGardenStore((state) => state.addBox);
-  const previousBoxes = useGardenStore((state) => state.previousBoxes);
-  const undoLastLayout = useGardenStore((state) => state.undoLastLayout);
   const reloadFromStorage = useGardenStore((state) => state.reloadFromStorage);
   const gridSize = useUiStore((state) => state.gridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
@@ -372,18 +371,6 @@ export function GardenMap() {
             Rutenett: {gridSize.cols} × {gridSize.rows}
           </span>
         </div>
-        {editMode && previousBoxes && (
-          <div className="mb-2">
-            <button
-              type="button"
-              onClick={undoLastLayout}
-              className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
-              style={{ borderColor: "var(--amber)", color: "var(--amber)", backgroundColor: "var(--amber-light)" }}
-            >
-              ↶ Angre siste flytting
-            </button>
-          </div>
-        )}
         <p className="mb-2 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
           Tips: Klyp med to fingre på kartet for å zoome.
         </p>
@@ -397,6 +384,8 @@ export function GardenMap() {
           <GardenGrid editMode={editMode} zoom={zoom} />
         </div>
       </section>
+
+      <FloatingUndo editMode={editMode && !viewMode} />
 
       {editMode && !viewMode && (
         <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>

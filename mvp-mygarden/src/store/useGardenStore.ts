@@ -14,6 +14,7 @@ interface GardenStore {
   updateBoxLayout: (id: string, layout: Box["layout"]) => void;
   saveGridLayout: (layout: Array<{ i: string; x: number; y: number; w: number; h: number }>) => void;
   undoLastLayout: () => void;
+  clearUndo: () => void;
   deleteBox: (id: string) => void;
   addPlanting: (p: Omit<Planting, "id" | "year">) => void;
   updatePlanting: (id: string, patch: Partial<Planting>) => void;
@@ -94,6 +95,13 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
     }
     const lastSavedAt = saveBoxes(previous);
     set({ boxes: previous, lastSavedAt, previousBoxes: null });
+  },
+
+  clearUndo: () => {
+    if (get().previousBoxes === null) {
+      return;
+    }
+    set({ previousBoxes: null });
   },
 
   deleteBox: (id) => {
