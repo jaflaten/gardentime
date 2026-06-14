@@ -20,25 +20,95 @@
 
 ---
 
-## Phase D — Calendar + season awareness
+## Phase D — Location-aware calendar (Norway-first)
 
-**Goal:** surface *"what to sow now?"* so gardeners stop missing planting windows.
+**Goal:** surface *"hva kan jeg så nå?"* with dates that actually match the user's location, so gardeners stop missing planting windows. Calendar intelligence is the product identity — not a paid feature.
 
-**Scope:**
-- Extend `PlantInfo` with `sowIndoorWindow` / `sowOutdoorWindow` / `harvestWindow` (month ranges, e.g. `"3-4"` for March–April).
-- Tag the bundled 32 plants with sensible Norwegian-climate defaults.
-- Custom plants get the same optional fields in `CustomPlantForm`.
-- New dismissable **"Hva passer å så nå?"** card on the garden map. Filters bundled + custom plants by current month against their sowing windows.
-- Plant variety tracking: optional `variety?: string` on `Planting` (Sungold / Roma / Beefsteak). Surface in the picker and on history rows.
+**Market focus.** Build Norway-first; data model multi-region (NO/SE/DK) from day one. Intra-Norway variance (Stavanger ↔ Tromsø: ~3 months of growing-season difference, ~6 hardiness zones) is far larger than Norway-vs-Sweden variance in the populated zones. Solving Norway → SE/DK later is a data-tagging exercise, not a refactor.
 
-**Open question — geolocation / hardiness zone.** Without it, calendar advice is generic ("plant carrots in April") rather than zoned ("plant carrots April–May at your latitude"). Options:
-- Free-text "by/region" in Settings.
-- Browser geolocation API (with consent) → lookup Norwegian hardiness zone.
-- Skip zoning for v1; ship national-average windows; add zoning later if testers ask.
+**Why calendar is free, not paid.** It's the differentiator that makes the app worth installing. International tools (Gardenize, GrowVeg) can't match Norwegian frost-date accuracy; paywalling it leaves the free tier undifferentiated and starves the conversion funnel. Sync has visible per-user benefit *and* real per-user cost — that's the natural paywall. **Free = all intelligence. Paid = scale + sync.** This supersedes the placeholder split in Phase H below.
 
-**Recommendation:** ship national defaults first. Add a single `Hvilken sone er du i?` select in Settings only if real users ask for it.
+### D1 — Location + frost-relative data model (foundation)
 
-**Out of scope for D:** actually telling the user *what* to plant (that's E).
+**Ship this first.** D2 and D3 should be re-planned only after D1 is in real users' hands. The hard part — and the highest-risk piece — is the build pipeline; the UI on top is thin.
+
+**Data shipped with the app (precomputed at build time, no runtime API calls):**
+- `postnummer.json` (~4 500 entries) — `{ postnummer, kommune, fylke, centroidLat, centroidLon, centroidElevationM, stationId }`
+- `frost-normals.json` — `{ key, lastFrostDoy, firstFrostDoy, gdd5 }` keyed by station or seNorge 1km grid cell (decided at pipeline time — prefer the seNorge gridded source since it terrain-follows and handles elevation natively)
+- `stations.json` — `{ id, name, lat, lon, elevationM }` for the trust line in UI (*"vi bruker Sogndal–Selsenghaugen, 287 moh"*)
+
+**Plant data model — frost-relative, not month-absolute:**
+```ts
+type SowRule =
+  | { type: 'indoor', weeksBeforeLastFrost: [number, number] }
+  | { type: 'outdoor', weeksAfterLastFrost: [number, number], minSoilTempC?: number }
+  | { type: 'transplant', weeksAfterLastFrost: [number, number] }
+
+type HarvestRule =
+  | { weeksFromSowing: [number, number] }
+  | { weeksBeforeFirstFrost: number }
+
+type PlantInfo = {
+  // ...existing fields
+  sowRules?: SowRule[]
+  harvestRule?: HarvestRule
+}
+```
+Frost-relative rules are portable: the same `sowOutdoor: { weeksAfterLastFrost: [0, 2] }` for tomato works in Bergen, Oslo, and (later) Copenhagen. Only the per-location frost dates change. Tag the bundled 32 plants. `CustomPlantForm` gets the same optional fields.
+
+**Settings UI (`📍 Hagens plassering`):**
+- Postnummer (4 digits) — strongly nudged on first run, optional
+- Høyde over havet (m) — auto-defaulted from postnummer centroid, editable
+- Frost-justering (±dager) — optional local micro-adjustment for known frost pockets
+- Trust line below: *"Vi bruker [stasjon], [N] moh. Anslått siste vårfrost: [dato]. Første høstfrost: [dato]."*
+
+**UX states for missing/default data:**
+- **No postnummer:** yellow banner top of garden map — *"Vi viser et grovt landsestimat. Legg inn postnummer for datoer som faktisk passer hagen din."* Fallback to national-median dates (≈ mid-May / mid-Sept).
+- **Postnummer, default elevation:** green inline confirmation.
+- **Postnummer + custom elevation:** green confirmation that names the elevation explicitly.
+
+**Attribution:** *"Klimadata fra Meteorologisk institutt, lisensiert under CC BY 3.0 NO."* In About page **and** bottom of the location settings panel (visible where the data is used).
+
+**Open question — elevation within one postnummer.** Postal centroid misses microclimate. Sogndal `6857` covers fjord-level fruit-growing zones *and* 300+ m hillside gardens that are ~2°C colder with ~3–4 weeks shorter growing season. Two-pronged fix:
+- Manual elevation override in Settings (covers the user's own case today).
+- seNorge 1km gridded data terrain-follows, so re-sampling at the user's `(lat, lon, elevation)` is more accurate than lapse-rate correction from the centroid.
+
+Address-level lookup (yr.no-style locale name → lat/lon/elevation) is a future enhancement, not D1.
+
+**Explicitly out of scope for D1:**
+- Calendar UI ("Hva passer å så nå?" card) → D2
+- Variety tracking → D3
+- Day-length adjustment for high latitudes → deferred, revisit if Tromsø-area testers ask
+- GPS auto-detect → deferred
+- Address-level granularity (yr.no-style) → deferred
+- Sweden/Denmark UI → deferred (data model already multi-region)
+
+### D2 — "Hva passer å så nå?" card
+
+**Re-plan after D1 ships and gets real use.** Current sketch:
+- New dismissable card on the garden map.
+- Filters bundled + custom plants against today + user's location.
+- Groups by action: *Så inne* / *Så ute* / *Plant ut* / *Høst snart*.
+- Each row links to add-planting prefilled with that plant.
+
+Things that may shift based on D1 feedback: whether national-fallback users see this card at all (vs. a "legg inn postnummer" prompt), how aggressive the time windows are (NLR vs. Hageselskapet define them differently), whether the trust line repeats per card.
+
+### D3 — Variety tracking (independent)
+
+Cheap, ship anytime — can land before, during, or after D1/D2:
+- Optional `variety?: string` on `Planting` (Sungold / Roma / Beefsteak).
+- Surface in PlantPicker and on history rows.
+- No dependency on D1 or D2.
+
+### Sources
+
+- [Frost API (frost.met.no)](https://frost.met.no/) — REST API for per-station MET data, free with client credentials, returns `"license": "CC BY 3.0 NO"` directly in every response
+- [seNorge_2018 gridded datasets (Lussana et al., 2019)](https://essd.copernicus.org/articles/11/1531/2019/) — 1 km gridded daily Tmin/Tmax/Tmean over Norway, 1957→present; the right source for elevation-aware frost-date derivation
+- [MET report 05/2021 — Free Norwegian standard climate normals 1991–2020](https://www.met.no/kss/_/attachment/download/5a8e178e-48b0-4b5a-8410-8628804299f8:3ac4fec6cf3fb7919aefe42db2b63ad8e8b9e6a6/METreport%2005_2021_New_Norwegian_standard_climate_normals_1991_2020-signert.pdf) — what MET publishes as normals
+- [MET report 9/2025 — Frost i vekstsesongen](https://www.met.no/publikasjoner/met-report/_/attachment/inline/6a85d48d-c7d0-4014-9c17-64842d1392df:692b728eab7afabde90b851ecff442cd2879bc05/MET%20rapport%209_2025%20-%20Frost%20i%20vekstsesong,%20KiN%20bakgrunnsrapport.pdf) — MET's 2025 analysis of growing-season frost, useful for definitions
+- [frostr R package](https://cran.r-project.org/web/packages/frostr/frostr.pdf) — third-party client showing Frost API element model in practice
+- [Norsk Klimaservicesenter (seklima)](https://seklima.met.no/) — interactive frontend over the same data, useful for cross-checks
+- Bring/Posten open postnummer dataset — source for `postnummer.json`
 
 ---
 
@@ -125,6 +195,7 @@
 - Co-editing requires conflict resolution (CRDT or last-write-wins). Out of scope until paid demand is real.
 - Pricing model: monthly, annual, or one-time? Norwegian market expectations differ.
 
+Note from user: I had an idea that could perhaps add some interesting graphs and visuals at some points to see how the garden is doing, what we have planted, status of boxes etc. Perhaps we could make some interesting visuals, even the calendar features might have interesting data that we could visualize. We need to discuss and plan this further. 
 ---
 
 ## Phases NOT planned (yet)
@@ -140,14 +211,18 @@ Explicitly deferred:
 
 ## What to ship next (recommendation)
 
-**Phase D (calendar + season awareness) is the highest-leverage next step.** It:
+**Phase D1 (location + frost-relative data model) is the highest-leverage next step.** It:
 
-- Builds on Phase A's `family` data.
-- Gives users actionable *"what to sow now"* without us having to define rotation rules.
-- Naturally extends `PlantInfo` with one more layer of metadata.
-- Doesn't depend on Phase H (geolocation can be deferred — national defaults are fine for v1).
+- Establishes the *"this app knows my conditions"* moment that defines the product against international competitors.
+- Builds on Phase A's `family` data and extends `PlantInfo` with one more (portable, frost-relative) metadata layer.
+- Ships the only piece D2 truly depends on; D2 then becomes a thin UI on top.
+- Does not depend on Phase H (offline lookup tables, no backend required).
 
-After D ships and gets real use, **Phase F (harvest tracking)** is a cheap follow-on (~1 day) that fills in the loop.
+The build-pipeline step (postnummer + seNorge → frost normals) is the riskiest part. Ship that first, then layer D2's *"Hva passer å så nå?"* card on top once real users confirm the dates feel right.
+
+**D3 (variety tracking) is independent** and can ship before, during, or after D1/D2. ~1 day of work; land it whenever it fits.
+
+After D1+D2 ship and get real use, **Phase F (harvest tracking)** is a cheap follow-on (~1 day) that closes the loop.
 
 **Phase E and Phase H are the big bets** — they shape the product story (E) and the business story (H). Hold both until user feedback gives concrete demand signals:
 
