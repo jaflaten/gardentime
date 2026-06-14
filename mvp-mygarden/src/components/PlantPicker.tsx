@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
-import { findPlant, getPlantName, plantList } from "../lib/plants";
+import { getPlantName, useMergedPlantList, usePlantLookup } from "../lib/plants";
+import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { PlantInfo } from "../types";
+import { CustomPlantForm } from "./CustomPlantForm";
 
 interface PlantPickerProps {
   plantKey: string;
@@ -15,8 +17,12 @@ const RECENT_LIMIT = 5;
 
 export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNameChange }: PlantPickerProps) {
   const [query, setQuery] = useState("");
+  const [showNewPlantForm, setShowNewPlantForm] = useState(false);
   const plantLanguage = useUiStore((state) => state.plantLanguage);
   const plantings = useGardenStore((state) => state.plantings);
+  const mergedPlants = useMergedPlantList();
+  const findPlant = usePlantLookup();
+  const addCustomPlant = useCustomPlantsStore((state) => state.addPlant);
 
   const recentPlants = useMemo<PlantInfo[]>(() => {
     const seen = new Set<string>();
@@ -35,20 +41,19 @@ export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNa
         ordered.push(plant);
       });
     return ordered.slice(0, RECENT_LIMIT);
-  }, [plantings]);
+  }, [findPlant, plantings]);
 
-  const filtered = useMemo(
-    () =>
-      plantList
-        .filter(
-          (plant) =>
-            plant.name_pl.toLowerCase().includes(query.toLowerCase()) ||
-            plant.name_no.toLowerCase().includes(query.toLowerCase()) ||
-            plant.name_en.toLowerCase().includes(query.toLowerCase()),
-        )
-        .slice(0, 8),
-    [query],
-  );
+  const filtered = useMemo(() => {
+    const lowered = query.toLowerCase();
+    return mergedPlants
+      .filter(
+        (plant) =>
+          plant.name_pl.toLowerCase().includes(lowered) ||
+          plant.name_no.toLowerCase().includes(lowered) ||
+          plant.name_en.toLowerCase().includes(lowered),
+      )
+      .slice(0, 8);
+  }, [query, mergedPlants]);
 
   const renderPlantButton = (plant: PlantInfo) => {
     const selected = plantKey === plant.key;
@@ -71,7 +76,7 @@ export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNa
           {plant.emoji} {getPlantName(plant, plantLanguage)}
         </span>
         <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-          {plant.name_en}
+          {plant.name_en !== plant.name_no ? plant.name_en : ""}
         </span>
       </button>
     );
@@ -128,6 +133,30 @@ export function PlantPicker({ plantKey, customName, onPlantKeyChange, onCustomNa
           style={{ borderColor: "var(--border)", background: "var(--surface)" }}
         />
       </div>
+
+      {!showNewPlantForm ? (
+        <button
+          type="button"
+          onClick={() => setShowNewPlantForm(true)}
+          className="tap-target w-full rounded-lg border px-3 py-2 text-sm font-medium"
+          style={{ borderColor: "var(--green)", color: "var(--green)", backgroundColor: "var(--surface)" }}
+        >
+          + Lagre som ny plante
+        </button>
+      ) : (
+        <CustomPlantForm
+          initial={{ name_no: customName.trim() || query.trim() || undefined }}
+          submitLabel="Legg til i plantelisten"
+          onSubmit={(input) => {
+            const created = addCustomPlant(input);
+            onPlantKeyChange(created.key);
+            onCustomNameChange("");
+            setQuery("");
+            setShowNewPlantForm(false);
+          }}
+          onCancel={() => setShowNewPlantForm(false)}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type { PlantFamily } from "../lib/families";
-import { findPlant } from "../lib/plants";
+import { usePlantLookup } from "../lib/plants";
 import { useGardenStore } from "../store/useGardenStore";
 import type { Box } from "../types";
 import { FamilyChip } from "./FamilyChip";
@@ -46,6 +46,7 @@ interface QuickAddFormProps {
 function QuickAddForm({ box, onClose }: QuickAddFormProps) {
   const plantings = useGardenStore((state) => state.plantings);
   const addPlanting = useGardenStore((state) => state.addPlanting);
+  const findPlant = usePlantLookup();
 
   const [plantKey, setPlantKey] = useState("");
   const [customName, setCustomName] = useState("");
@@ -63,7 +64,7 @@ function QuickAddForm({ box, onClose }: QuickAddFormProps) {
         }
       });
     return Array.from(families);
-  }, [box.id, plantings, previousYear]);
+  }, [box.id, findPlant, plantings, previousYear]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

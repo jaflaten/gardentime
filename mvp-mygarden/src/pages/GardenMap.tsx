@@ -8,11 +8,13 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
 import type { BedType, SunExposure } from "../lib/boxMeta";
+import { isCustomPlantLike } from "../lib/customPlants";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
+import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
-import type { Box, Planting } from "../types";
+import type { Box, Planting, PlantInfo } from "../types";
 
 interface PinchState {
   startDistance: number;
@@ -23,11 +25,13 @@ interface PendingImport {
   source: string;
   boxes: Box[];
   plantings: Planting[];
+  customPlants: PlantInfo[];
 }
 
 interface BackupPayload {
   boxes: unknown[];
   plantings: unknown[];
+  customPlants?: unknown[];
 }
 
 function clampZoom(value: number) {
@@ -85,6 +89,7 @@ export function GardenMap() {
   const boxes = useGardenStore((state) => state.boxes);
   const addBox = useGardenStore((state) => state.addBox);
   const reloadFromStorage = useGardenStore((state) => state.reloadFromStorage);
+  const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
   const gridSize = useUiStore((state) => state.gridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
 
@@ -153,7 +158,12 @@ export function GardenMap() {
     if (!Array.isArray(parsed.boxes) || !Array.isArray(parsed.plantings)) {
       return;
     }
-    setPendingImport({ source: "innebygd standardoppsett", boxes: parsed.boxes as Box[], plantings: parsed.plantings as Planting[] });
+    setPendingImport({
+      source: "innebygd standardoppsett",
+      boxes: parsed.boxes as Box[],
+      plantings: parsed.plantings as Planting[],
+      customPlants: [],
+    });
   };
 
   const onBackupFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +180,15 @@ export function GardenMap() {
           alert("Ugyldig backup-fil.");
           return;
         }
-        setPendingImport({ source: "MyGarden backup-fil", boxes: parsed.boxes as Box[], plantings: parsed.plantings as Planting[] });
+        const importedCustomPlants = Array.isArray(parsed.customPlants)
+          ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
+          : [];
+        setPendingImport({
+          source: "MyGarden backup-fil",
+          boxes: parsed.boxes as Box[],
+          plantings: parsed.plantings as Planting[],
+          customPlants: importedCustomPlants,
+        });
       } catch {
         alert("Kunne ikke lese filen.");
       }
@@ -184,6 +202,7 @@ export function GardenMap() {
     }
     saveBoxes(pendingImport.boxes);
     savePlantings(pendingImport.plantings);
+    replaceCustomPlants(pendingImport.customPlants);
     const footprint = gridFootprint(pendingImport.boxes);
     ensureGridFits(footprint.cols, footprint.rows);
     reloadFromStorage();
@@ -194,10 +213,11 @@ export function GardenMap() {
   const importBody: ReactNode = pendingImport ? (
     <div className="space-y-2">
       <p>
-        Importer <strong>{pendingImport.boxes.length}</strong> kasser og{" "}
-        <strong>{pendingImport.plantings.length}</strong> plantinger fra {pendingImport.source}?
+        Importer <strong>{pendingImport.boxes.length}</strong> kasser,{" "}
+        <strong>{pendingImport.plantings.length}</strong> plantinger og{" "}
+        <strong>{pendingImport.customPlants.length}</strong> egne planter fra {pendingImport.source}?
       </p>
-      <p style={{ color: "var(--text-muted)" }}>Dette erstatter eksisterende kasser og plantinger.</p>
+      <p style={{ color: "var(--text-muted)" }}>Dette erstatter eksisterende data.</p>
     </div>
   ) : null;
 

@@ -1,4 +1,4 @@
-import { findPlant, getPlantName } from "../lib/plants";
+import { getPlantName, usePlantLookup } from "../lib/plants";
 import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
 import { FamilyChip } from "./FamilyChip";
@@ -16,6 +16,7 @@ function formatDate(date: string) {
 
 export function PlantingRow({ planting, onHarvest, onDelete }: PlantingRowProps) {
   const plantLanguage = useUiStore((state) => state.plantLanguage);
+  const findPlant = usePlantLookup();
   const plant = findPlant(planting.plantKey);
   const displayName = planting.customName ?? (plant ? getPlantName(plant, plantLanguage) : planting.plantKey);
   const emoji = plant?.emoji ?? "🌱";

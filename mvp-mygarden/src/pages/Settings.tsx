@@ -1,10 +1,15 @@
 import { useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../components/ConfirmModal";
+import { CustomPlantForm } from "../components/CustomPlantForm";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { EXTRA_LEFT_COLS, EXTRA_TOP_ROWS } from "../components/GardenGrid";
+import { CATEGORY_LABELS } from "../lib/categories";
+import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
+import { FAMILY_INFO } from "../lib/families";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
+import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import {
   DEFAULT_GRID_SIZE,
@@ -14,19 +19,21 @@ import {
   GRID_ROWS_MIN,
   useUiStore,
 } from "../store/useUiStore";
-import type { Box, Planting } from "../types";
+import type { Box, Planting, PlantInfo } from "../types";
 
 interface BackupPayload {
   version?: unknown;
   exportedAt?: unknown;
   boxes: unknown[];
   plantings: unknown[];
+  customPlants?: unknown[];
 }
 
 interface PendingImport {
   source: string;
   boxes: Box[];
   plantings: Planting[];
+  customPlants: PlantInfo[];
 }
 
 function formatBackupTimestamp(value: unknown) {
@@ -77,10 +84,11 @@ function isPlantingLike(value: unknown): value is Planting {
 
 function exportData() {
   const data = {
-    version: 1,
+    version: 2,
     exportedAt: new Date().toISOString(),
     boxes: loadBoxes(),
     plantings: loadPlantings(),
+    customPlants: loadCustomPlants(),
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -118,12 +126,21 @@ export function Settings() {
   const setGridSize = useUiStore((state) => state.setGridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
 
+  const customPlants = useCustomPlantsStore((state) => state.plants);
+  const addCustomPlant = useCustomPlantsStore((state) => state.addPlant);
+  const updateCustomPlant = useCustomPlantsStore((state) => state.updatePlant);
+  const deleteCustomPlant = useCustomPlantsStore((state) => state.deletePlant);
+  const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
+  const language = useUiStore((state) => state.plantLanguage);
+
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [gridCols, setGridCols] = useState(gridSize.cols);
   const [gridRows, setGridRows] = useState(gridSize.rows);
   const [gridError, setGridError] = useState<string | null>(null);
   const [gridStatus, setGridStatus] = useState<string | null>(null);
+  const [showNewCustomPlant, setShowNewCustomPlant] = useState(false);
+  const [editingCustomPlantKey, setEditingCustomPlantKey] = useState<string | null>(null);
 
   const bundledBackupLastUpdated = useMemo(
     () => formatBackupTimestamp((bundledGardenBackup as BackupPayload).exportedAt),
@@ -148,7 +165,15 @@ export function Settings() {
           alert("Backup-filen mangler nødvendige felter.");
           return;
         }
-        setPendingImport({ source: "MyGarden backup-fil", boxes: parsed.boxes, plantings: parsed.plantings });
+        const importedCustomPlants = Array.isArray(parsed.customPlants)
+          ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
+          : [];
+        setPendingImport({
+          source: "MyGarden backup-fil",
+          boxes: parsed.boxes,
+          plantings: parsed.plantings,
+          customPlants: importedCustomPlants,
+        });
       } catch {
         alert("Kunne ikke lese backup-filen. Kontroller at den er gyldig JSON.");
       }
@@ -166,7 +191,12 @@ export function Settings() {
       alert("Innebygd standardoppsett mangler nødvendige felter.");
       return;
     }
-    setPendingImport({ source: "innebygd standardoppsett", boxes: parsed.boxes, plantings: parsed.plantings });
+    setPendingImport({
+      source: "innebygd standardoppsett",
+      boxes: parsed.boxes,
+      plantings: parsed.plantings,
+      customPlants: [],
+    });
   };
 
   const confirmImport = () => {
@@ -175,6 +205,7 @@ export function Settings() {
     }
     saveBoxes(pendingImport.boxes);
     savePlantings(pendingImport.plantings);
+    replaceCustomPlants(pendingImport.customPlants);
     const footprint = gridFootprint(pendingImport.boxes);
     ensureGridFits(footprint.cols, footprint.rows);
     reloadFromStorage();
@@ -228,10 +259,11 @@ export function Settings() {
   const importBody: ReactNode = pendingImport ? (
     <div className="space-y-2">
       <p>
-        Importer <strong>{pendingImport.boxes.length}</strong> kasser og{" "}
-        <strong>{pendingImport.plantings.length}</strong> plantinger fra {pendingImport.source}?
+        Importer <strong>{pendingImport.boxes.length}</strong> kasser,{" "}
+        <strong>{pendingImport.plantings.length}</strong> plantinger og{" "}
+        <strong>{pendingImport.customPlants.length}</strong> egne planter fra {pendingImport.source}?
       </p>
-      <p style={{ color: "var(--text-muted)" }}>Dette erstatter eksisterende kasser og plantinger.</p>
+      <p style={{ color: "var(--text-muted)" }}>Dette erstatter eksisterende data.</p>
     </div>
   ) : null;
 
@@ -349,6 +381,99 @@ export function Settings() {
             Importer standard MyGarden-oppsett
           </button>
         </div>
+      </section>
+
+      <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">Egne planter</h2>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          Planter du har lagt til selv. Vises sammen med de innebygde i plantevelgeren.
+        </p>
+        {customPlants.length === 0 ? (
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            Ingen egne planter ennå.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {customPlants.map((plant) => {
+              const familyInfo = FAMILY_INFO[plant.family];
+              const familyLabel = language === "pl" ? familyInfo.name_pl : familyInfo.name_no;
+              const categoryInfo = CATEGORY_LABELS[plant.category];
+              const categoryLabel = language === "pl" ? categoryInfo.name_pl : categoryInfo.name_no;
+              const isEditing = editingCustomPlantKey === plant.key;
+              return (
+                <li
+                  key={plant.key}
+                  className="space-y-2 rounded-lg border p-3"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}
+                >
+                  {isEditing ? (
+                    <CustomPlantForm
+                      initial={plant}
+                      onSubmit={(input) => {
+                        updateCustomPlant(plant.key, input);
+                        setEditingCustomPlantKey(null);
+                      }}
+                      onCancel={() => setEditingCustomPlantKey(null)}
+                    />
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium">
+                          {plant.emoji} {plant.name_no}
+                        </span>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditingCustomPlantKey(plant.key)}
+                            className="rounded-lg border px-3 py-1.5 text-sm font-medium"
+                            style={{ borderColor: "var(--border)", color: "var(--text)", backgroundColor: "var(--surface)" }}
+                          >
+                            Rediger
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm(`Slett "${plant.name_no}" fra plantelisten?`)) {
+                                deleteCustomPlant(plant.key);
+                              }
+                            }}
+                            className="rounded-lg px-3 py-1.5 text-sm font-medium"
+                            style={{ backgroundColor: "var(--red-light)", color: "var(--red)" }}
+                          >
+                            Slett
+                          </button>
+                        </div>
+                      </div>
+                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                        {categoryInfo.emoji} {categoryLabel} · {familyInfo.emoji} {familyLabel}
+                      </p>
+                    </>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {showNewCustomPlant ? (
+          <CustomPlantForm
+            onSubmit={(input) => {
+              addCustomPlant(input);
+              setShowNewCustomPlant(false);
+            }}
+            onCancel={() => setShowNewCustomPlant(false)}
+            submitLabel="Legg til plante"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowNewCustomPlant(true)}
+            className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--green)", color: "white" }}
+          >
+            + Ny egen plante
+          </button>
+        )}
       </section>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--red)", backgroundColor: "var(--red-light)" }}>

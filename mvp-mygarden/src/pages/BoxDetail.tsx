@@ -12,7 +12,7 @@ import {
   type SunExposure,
 } from "../lib/boxMeta";
 import type { PlantFamily } from "../lib/families";
-import { findPlant } from "../lib/plants";
+import { usePlantLookup } from "../lib/plants";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
@@ -42,6 +42,7 @@ export function BoxDetail() {
   const language = useUiStore((state) => state.plantLanguage);
 
   const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
+  const findPlant = usePlantLookup();
   const box = boxes.find((entry) => entry.id === id);
 
   const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
@@ -61,7 +62,7 @@ export function BoxDetail() {
         }
       });
     return Array.from(families);
-  }, [boxPlantings, previousYear]);
+  }, [boxPlantings, findPlant, previousYear]);
 
   const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
     if (!acc[planting.year]) {

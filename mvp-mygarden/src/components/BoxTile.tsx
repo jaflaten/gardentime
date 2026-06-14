@@ -1,5 +1,5 @@
 import { useRef, type PointerEvent } from "react";
-import { findPlant, getPlantName } from "../lib/plants";
+import { getPlantName, usePlantLookup } from "../lib/plants";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting } from "../types";
 
@@ -16,6 +16,7 @@ const LONG_PRESS_MOVE_TOLERANCE_PX = 10;
 
 export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }: BoxTileProps) {
   const plantLanguage = useUiStore((state) => state.plantLanguage);
+  const findPlant = usePlantLookup();
   const hasActive = activePlantings.length > 0;
   const visiblePlants = activePlantings.slice(0, 3).map((planting) => {
     const plant = findPlant(planting.plantKey);

@@ -4,7 +4,7 @@ const BOXES_KEY = "gt_boxes";
 const PLANTINGS_KEY = "gt_plantings";
 const LAST_SAVED_KEY = "gt_lastSavedAt";
 
-function touchLastSaved(): string {
+export function touchLastSaved(): string {
   const stamp = new Date().toISOString();
   localStorage.setItem(LAST_SAVED_KEY, stamp);
   return stamp;
