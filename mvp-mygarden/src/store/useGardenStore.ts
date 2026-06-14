@@ -1,15 +1,22 @@
 import { nanoid } from "nanoid";
 import { create } from "zustand";
-import { LEGACY_GRID_COLS } from "../lib/importLegacy";
 import { loadBoxes, loadLastSaved, loadPlantings, resetGarden as resetGardenStorage, saveBoxes, savePlantings } from "../lib/storage";
 import type { Box, Planting } from "../types";
+
+const NEW_BOX_WRAP_COLS = 12;
+
+interface AddBoxOptions {
+  description?: string;
+  sunExposure?: Box["sunExposure"];
+  bedType?: Box["bedType"];
+}
 
 interface GardenStore {
   boxes: Box[];
   plantings: Planting[];
   lastSavedAt: string | null;
   previousBoxes: Box[] | null;
-  addBox: (name: string, description?: string) => void;
+  addBox: (name: string, options?: AddBoxOptions) => void;
   updateBox: (id: string, patch: Partial<Box>) => void;
   updateBoxLayout: (id: string, layout: Box["layout"]) => void;
   saveGridLayout: (layout: Array<{ i: string; x: number; y: number; w: number; h: number }>) => void;
@@ -34,16 +41,18 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
   lastSavedAt: loadLastSaved(),
   previousBoxes: null,
 
-  addBox: (name, description) => {
+  addBox: (name, options) => {
     const existing = get().boxes.length;
     const box: Box = {
       id: nanoid(),
       name,
-      description,
+      description: options?.description,
+      sunExposure: options?.sunExposure,
+      bedType: options?.bedType,
       createdAt: new Date().toISOString(),
       zoneType: "BOX",
       layout: {
-        x: (existing * 2) % LEGACY_GRID_COLS,
+        x: (existing * 2) % NEW_BOX_WRAP_COLS,
         y: findNextY(get().boxes),
         w: 2,
         h: 2,

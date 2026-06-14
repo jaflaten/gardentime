@@ -1,9 +1,20 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { BoxMetaFields } from "../components/BoxMetaFields";
+import { FamilyChip } from "../components/FamilyChip";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PlantPicker } from "../components/PlantPicker";
 import { PlantingRow } from "../components/PlantingRow";
+import {
+  BED_TYPE_LABELS,
+  SUN_EXPOSURE_LABELS,
+  type BedType,
+  type SunExposure,
+} from "../lib/boxMeta";
+import type { PlantFamily } from "../lib/families";
+import { findPlant } from "../lib/plants";
 import { useGardenStore } from "../store/useGardenStore";
+import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
 
 function useViewMode(): boolean {
@@ -23,13 +34,34 @@ export function BoxDetail() {
   const [customName, setCustomName] = useState("");
   const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
+  const [editingBox, setEditingBox] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editSun, setEditSun] = useState<SunExposure | "">("");
+  const [editBedType, setEditBedType] = useState<BedType | "">("");
+  const language = useUiStore((state) => state.plantLanguage);
 
-  const { boxes, plantings, addPlanting, markHarvested, deletePlanting } = useGardenStore();
+  const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
   const box = boxes.find((entry) => entry.id === id);
 
   const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
   const activePlantings = boxPlantings.filter((planting) => planting.status === "active").sort(byNewestFirst);
   const historyPlantings = boxPlantings.filter((planting) => planting.status !== "active").sort(byNewestFirst);
+
+  const targetYear = new Date(plantedDate).getFullYear();
+  const previousYear = targetYear - 1;
+  const previousSeasonFamilies = useMemo<PlantFamily[]>(() => {
+    const families = new Set<PlantFamily>();
+    boxPlantings
+      .filter((planting) => planting.year === previousYear)
+      .forEach((planting) => {
+        const plant = findPlant(planting.plantKey);
+        if (plant) {
+          families.add(plant.family);
+        }
+      });
+    return Array.from(families);
+  }, [boxPlantings, previousYear]);
 
   const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
     if (!acc[planting.year]) {
@@ -80,15 +112,118 @@ export function BoxDetail() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
-      <header className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <div className="mb-3 flex items-center justify-between gap-2">
+      <header className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <div className="flex items-center justify-between gap-2">
           <Link to={{ pathname: "/", search: window.location.search }} className="inline-block text-sm font-medium" style={{ color: "var(--green)" }}>
             ← Tilbake
           </Link>
           <LanguageToggle />
         </div>
-        <h1 className="text-xl font-semibold sm:text-2xl">{box.name}</h1>
-        {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
+        {!editingBox ? (
+          <>
+            <h1 className="text-xl font-semibold sm:text-2xl">{box.name}</h1>
+            {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
+            {(box.sunExposure || box.bedType) && (
+              <div className="flex flex-wrap gap-1.5">
+                {box.sunExposure && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+                    style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+                  >
+                    {SUN_EXPOSURE_LABELS[box.sunExposure].emoji}{" "}
+                    {language === "pl" ? SUN_EXPOSURE_LABELS[box.sunExposure].name_pl : SUN_EXPOSURE_LABELS[box.sunExposure].name_no}
+                  </span>
+                )}
+                {box.bedType && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+                    style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+                  >
+                    {BED_TYPE_LABELS[box.bedType].emoji}{" "}
+                    {language === "pl" ? BED_TYPE_LABELS[box.bedType].name_pl : BED_TYPE_LABELS[box.bedType].name_no}
+                  </span>
+                )}
+              </div>
+            )}
+            {!viewMode && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditName(box.name);
+                  setEditDescription(box.description ?? "");
+                  setEditSun(box.sunExposure ?? "");
+                  setEditBedType(box.bedType ?? "");
+                  setEditingBox(true);
+                }}
+                className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
+                style={{ borderColor: "var(--border)", color: "var(--text)", backgroundColor: "var(--surface)" }}
+              >
+                Rediger kasse
+              </button>
+            )}
+          </>
+        ) : (
+          <form
+            className="space-y-3"
+            onSubmit={(event) => {
+              event.preventDefault();
+              if (!editName.trim()) {
+                return;
+              }
+              updateBox(box.id, {
+                name: editName.trim(),
+                description: editDescription.trim() || undefined,
+                sunExposure: editSun || undefined,
+                bedType: editBedType || undefined,
+              });
+              setEditingBox(false);
+            }}
+          >
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Navn</label>
+              <input
+                value={editName}
+                onChange={(event) => setEditName(event.target.value)}
+                required
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Beskrivelse (valgfritt)</label>
+              <textarea
+                value={editDescription}
+                onChange={(event) => setEditDescription(event.target.value)}
+                rows={2}
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <BoxMetaFields
+              sunExposure={editSun}
+              bedType={editBedType}
+              onSunExposureChange={setEditSun}
+              onBedTypeChange={setEditBedType}
+            />
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--green)", color: "white" }}
+              >
+                Lagre
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditingBox(false)}
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+              >
+                Avbryt
+              </button>
+            </div>
+          </form>
+        )}
       </header>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
@@ -125,6 +260,18 @@ export function BoxDetail() {
               onPlantKeyChange={setPlantKey}
               onCustomNameChange={setCustomName}
             />
+            {previousSeasonFamilies.length > 0 && (
+              <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+                <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+                  Forrige sesong ({previousYear}) i denne kassen:
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {previousSeasonFamilies.map((family) => (
+                    <FamilyChip key={family} family={family} />
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="space-y-2">
               <label className="block text-sm font-medium">Plantet dato</label>
               <input

@@ -14,9 +14,10 @@ const BOTTOM_SPACER_KEY = "__bottom_spacer__";
 interface GardenGridProps {
   editMode: boolean;
   zoom: number;
+  onLongPressBox?: (boxId: string) => void;
 }
 
-export function GardenGrid({ editMode, zoom }: GardenGridProps) {
+export function GardenGrid({ editMode, zoom, onLongPressBox }: GardenGridProps) {
   const { boxes, plantings, saveGridLayout } = useGardenStore();
   const gridSize = useUiStore((state) => state.gridSize);
   const navigate = useNavigate();
@@ -113,6 +114,7 @@ export function GardenGrid({ editMode, zoom }: GardenGridProps) {
                         navigate({ pathname: `/box/${box.id}`, search: window.location.search });
                       }
                     }}
+                    onLongPress={onLongPressBox ? () => onLongPressBox(box.id) : undefined}
                   />
                 </div>
               );

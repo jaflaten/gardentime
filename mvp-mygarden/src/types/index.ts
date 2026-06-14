@@ -1,9 +1,14 @@
+import type { BedType, SunExposure } from "../lib/boxMeta";
+import type { PlantFamily } from "../lib/families";
+
 export interface Box {
   id: string;
   name: string;
   description?: string;
   createdAt: string;
   zoneType?: "BOX" | "BUCKET" | string;
+  sunExposure?: SunExposure;
+  bedType?: BedType;
   layout: {
     x: number;
     y: number;
@@ -31,4 +36,5 @@ export interface PlantInfo {
   name_en: string;
   emoji: string;
   category: "vegetable" | "herb" | "fruit" | "flower";
+  family: PlantFamily;
 }

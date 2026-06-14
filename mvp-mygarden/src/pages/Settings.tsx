@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { EXTRA_LEFT_COLS, EXTRA_TOP_ROWS } from "../components/GardenGrid";
-import { importLegacyExport } from "../lib/importLegacy";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import { useGardenStore } from "../store/useGardenStore";
@@ -130,24 +129,6 @@ export function Settings() {
     () => formatBackupTimestamp((bundledGardenBackup as BackupPayload).exportedAt),
     [],
   );
-
-  const handleLegacyImport = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      try {
-        const boxes = importLegacyExport(loadEvent.target?.result as string);
-        setPendingImport({ source: "DinoGarden-eksport", boxes, plantings: [] });
-      } catch {
-        alert("Kunne ikke lese filen. Er det en gyldig DinoGarden-eksport?");
-      }
-    };
-    reader.readAsText(file);
-  };
 
   const handleBackupImport = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -330,18 +311,6 @@ export function Settings() {
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
           Nåværende rutenett: {gridSize.cols} × {gridSize.rows}.
         </p>
-      </section>
-
-      <section className="space-y-2 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-lg font-semibold sm:text-xl">Importer fra DinoGarden</h2>
-        <p style={{ color: "var(--text-muted)" }}>Last opp en DinoGarden JSON-eksport for å importere kasser med oppsett.</p>
-        <input
-          type="file"
-          accept=".json"
-          onChange={handleLegacyImport}
-          className="input-touch w-full rounded-lg border p-2 text-sm"
-          style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-        />
       </section>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>

@@ -1,11 +1,13 @@
 import { useMemo, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type TouchEvent } from "react";
 import { Link } from "react-router-dom";
+import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { FloatingUndo } from "../components/FloatingUndo";
 import { GardenGrid, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
-import { importLegacyExport } from "../lib/importLegacy";
+import { QuickAddSheet } from "../components/QuickAddSheet";
+import type { BedType, SunExposure } from "../lib/boxMeta";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import { useGardenStore } from "../store/useGardenStore";
@@ -72,10 +74,12 @@ export function GardenMap() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [sunExposure, setSunExposure] = useState<SunExposure | "">("");
+  const [bedType, setBedType] = useState<BedType | "">("");
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+  const [quickAddBoxId, setQuickAddBoxId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const legacyFileInputRef = useRef<HTMLInputElement>(null);
   const pinchStateRef = useRef<PinchState | null>(null);
 
   const boxes = useGardenStore((state) => state.boxes);
@@ -91,9 +95,15 @@ export function GardenMap() {
     if (!name.trim()) {
       return;
     }
-    addBox(name.trim(), description.trim() || undefined);
+    addBox(name.trim(), {
+      description: description.trim() || undefined,
+      sunExposure: sunExposure || undefined,
+      bedType: bedType || undefined,
+    });
     setName("");
     setDescription("");
+    setSunExposure("");
+    setBedType("");
     setShowCreateForm(false);
   };
 
@@ -168,24 +178,6 @@ export function GardenMap() {
     reader.readAsText(file);
   };
 
-  const onLegacyFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) {
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (loadEvent) => {
-      try {
-        const importedBoxes = importLegacyExport(loadEvent.target?.result as string);
-        setPendingImport({ source: "DinoGarden-eksport", boxes: importedBoxes, plantings: [] });
-      } catch {
-        alert("Kunne ikke lese DinoGarden-eksporten.");
-      }
-    };
-    reader.readAsText(file);
-  };
-
   const confirmImport = () => {
     if (!pendingImport) {
       return;
@@ -255,20 +247,8 @@ export function GardenMap() {
                 Last opp en MyGarden backup-fil.
               </span>
             </button>
-            <button
-              type="button"
-              onClick={() => legacyFileInputRef.current?.click()}
-              className="tap-target rounded-lg border p-4 text-left text-sm font-medium"
-              style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)", color: "var(--text)" }}
-            >
-              <span className="block text-base font-semibold">Importer fra DinoGarden</span>
-              <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
-                Last opp en DinoGarden JSON-eksport.
-              </span>
-            </button>
           </div>
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={onBackupFile} />
-          <input ref={legacyFileInputRef} type="file" accept=".json" className="hidden" onChange={onLegacyFile} />
           <div className="pt-1 text-sm">
             <Link to="/settings" style={{ color: "var(--green)" }}>
               ⚙ Innstillinger
@@ -372,7 +352,7 @@ export function GardenMap() {
           </span>
         </div>
         <p className="mb-2 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
-          Tips: Klyp med to fingre på kartet for å zoome.
+          Tips: Klyp med to fingre for å zoome. Trykk på + på en kasse for hurtig-legg til.
         </p>
         <div
           className={editMode ? "edit-mode" : ""}
@@ -381,11 +361,17 @@ export function GardenMap() {
           onTouchEnd={onMapTouchEnd}
           onTouchCancel={onMapTouchEnd}
         >
-          <GardenGrid editMode={editMode} zoom={zoom} />
+          <GardenGrid
+            editMode={editMode}
+            zoom={zoom}
+            onLongPressBox={editMode || viewMode ? undefined : (boxId) => setQuickAddBoxId(boxId)}
+          />
         </div>
       </section>
 
       <FloatingUndo editMode={editMode && !viewMode} />
+
+      <QuickAddSheet box={boxes.find((box) => box.id === quickAddBoxId) ?? null} onClose={() => setQuickAddBoxId(null)} />
 
       {editMode && !viewMode && (
         <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
@@ -420,6 +406,12 @@ export function GardenMap() {
                   style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
                 />
               </div>
+              <BoxMetaFields
+                sunExposure={sunExposure}
+                bedType={bedType}
+                onSunExposureChange={setSunExposure}
+                onBedTypeChange={setBedType}
+              />
               <div className="flex gap-2">
                 <button
                   type="submit"

@@ -1,6 +1,7 @@
 import { findPlant, getPlantName } from "../lib/plants";
 import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
+import { FamilyChip } from "./FamilyChip";
 import { StatusBadge } from "./StatusBadge";
 
 interface PlantingRowProps {
@@ -21,9 +22,10 @@ export function PlantingRow({ planting, onHarvest, onDelete }: PlantingRowProps)
 
   return (
     <li className="space-y-2 rounded-xl border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span className="text-lg">{emoji}</span>
         <span className="font-medium">{displayName}</span>
+        {plant && <FamilyChip family={plant.family} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
