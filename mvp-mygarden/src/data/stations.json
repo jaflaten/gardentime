@@ -1,0 +1,926 @@
+[
+  {
+    "id": "SN10380",
+    "name": "Røros",
+    "lon": 11.3487,
+    "lat": 62.5781,
+    "elevationM": 625
+  },
+  {
+    "id": "SN11500",
+    "name": "Apelsvoll",
+    "lon": 10.8695,
+    "lat": 60.7002,
+    "elevationM": 264
+  },
+  {
+    "id": "SN12320",
+    "name": "Hamar − Stavsberg",
+    "lon": 11.0697,
+    "lat": 60.818,
+    "elevationM": 221
+  },
+  {
+    "id": "SN12550",
+    "name": "Kise på Hedmark",
+    "lon": 10.8055,
+    "lat": 60.7733,
+    "elevationM": 128
+  },
+  {
+    "id": "SN12680",
+    "name": "Sæterengen",
+    "lon": 10.4762,
+    "lat": 61.0917,
+    "elevationM": 240
+  },
+  {
+    "id": "SN13160",
+    "name": "Kvitfjell",
+    "lon": 10.12662056,
+    "lat": 61.46474255,
+    "elevationM": 1030
+  },
+  {
+    "id": "SN13420",
+    "name": "Venabu",
+    "lon": 10.1082,
+    "lat": 61.6513,
+    "elevationM": 930
+  },
+  {
+    "id": "SN16610",
+    "name": "Fokstugu",
+    "lon": 9.2862,
+    "lat": 62.1133,
+    "elevationM": 973
+  },
+  {
+    "id": "SN17000",
+    "name": "Strømtangen",
+    "lon": 10.82829919,
+    "lat": 59.15154567,
+    "elevationM": 10
+  },
+  {
+    "id": "SN17150",
+    "name": "Rygge",
+    "lon": 10.798,
+    "lat": 59.3742,
+    "elevationM": 40
+  },
+  {
+    "id": "SN17850",
+    "name": "Ås",
+    "lon": 10.7818,
+    "lat": 59.6605,
+    "elevationM": 92
+  },
+  {
+    "id": "SN180",
+    "name": "Trysil Mosanden",
+    "lon": 12.2758327,
+    "lat": 61.2955653,
+    "elevationM": 360
+  },
+  {
+    "id": "SN18700",
+    "name": "Oslo (Blindern)",
+    "lon": 10.72,
+    "lat": 59.9423,
+    "elevationM": 94
+  },
+  {
+    "id": "SN18950",
+    "name": "Tryvannshøgda",
+    "lon": 10.6692319,
+    "lat": 59.9847986,
+    "elevationM": 514
+  },
+  {
+    "id": "SN19710",
+    "name": "Asker - Sem",
+    "lon": 10.4358,
+    "lat": 59.8558,
+    "elevationM": 163
+  },
+  {
+    "id": "SN21680",
+    "name": "Vest-Torpa",
+    "lon": 10.0358,
+    "lat": 60.9345,
+    "elevationM": 542
+  },
+  {
+    "id": "SN23160",
+    "name": "Åbjørsbråten",
+    "lon": 9.2893,
+    "lat": 60.918,
+    "elevationM": 639
+  },
+  {
+    "id": "SN23420",
+    "name": "Fagernes",
+    "lon": 9.224,
+    "lat": 60.9785,
+    "elevationM": 358
+  },
+  {
+    "id": "SN23500",
+    "name": "Løken i Volbu",
+    "lon": 9.063,
+    "lat": 61.122,
+    "elevationM": 521
+  },
+  {
+    "id": "SN25830",
+    "name": "Finse",
+    "lon": 7.527,
+    "lat": 60.5938,
+    "elevationM": 1210
+  },
+  {
+    "id": "SN26990",
+    "name": "Galleberg",
+    "lon": 10.2150378,
+    "lat": 59.6193334,
+    "elevationM": 60
+  },
+  {
+    "id": "SN27450",
+    "name": "Melsom",
+    "lon": 10.345751,
+    "lat": 59.229738,
+    "elevationM": 26
+  },
+  {
+    "id": "SN27500",
+    "name": "Færder fyr",
+    "lon": 10.5242,
+    "lat": 59.0272,
+    "elevationM": 6
+  },
+  {
+    "id": "SN30650",
+    "name": "Notodden lh",
+    "lon": 9.2111,
+    "lat": 59.5666,
+    "elevationM": 20
+  },
+  {
+    "id": "SN31620",
+    "name": "Møsstrand",
+    "lon": 8.1785,
+    "lat": 59.8397,
+    "elevationM": 977
+  },
+  {
+    "id": "SN3190",
+    "name": "Sarpsborg",
+    "lon": 11.1127995,
+    "lat": 59.2850933,
+    "elevationM": 57
+  },
+  {
+    "id": "SN33890",
+    "name": "Vågsli",
+    "lon": 7.3653533,
+    "lat": 59.7663671,
+    "elevationM": 821
+  },
+  {
+    "id": "SN34130",
+    "name": "Jomfruland",
+    "lon": 9.5745,
+    "lat": 58.8565,
+    "elevationM": 3
+  },
+  {
+    "id": "SN35860",
+    "name": "Lyngør fyr",
+    "lon": 9.1478,
+    "lat": 58.6362,
+    "elevationM": 4
+  },
+  {
+    "id": "SN36200",
+    "name": "Torungen fyr",
+    "lon": 8.7893,
+    "lat": 58.3988,
+    "elevationM": 12
+  },
+  {
+    "id": "SN36560",
+    "name": "Nelaug",
+    "lon": 8.6338445,
+    "lat": 58.6554085,
+    "elevationM": 142
+  },
+  {
+    "id": "SN37230",
+    "name": "Tveitsund",
+    "lon": 8.5185863,
+    "lat": 59.0255581,
+    "elevationM": 252
+  },
+  {
+    "id": "SN38140",
+    "name": "Landvik",
+    "lon": 8.5225,
+    "lat": 58.34,
+    "elevationM": 6
+  },
+  {
+    "id": "SN39040",
+    "name": "Kjevik",
+    "lon": 8.0767,
+    "lat": 58.2,
+    "elevationM": 12
+  },
+  {
+    "id": "SN39100",
+    "name": "Oksøy fyr",
+    "lon": 8.0532,
+    "lat": 58.0732,
+    "elevationM": 9
+  },
+  {
+    "id": "SN40880",
+    "name": "Hovden",
+    "lon": 7.3896454,
+    "lat": 59.5765946,
+    "elevationM": 841
+  },
+  {
+    "id": "SN41670",
+    "name": "Konsmo",
+    "lon": 7.3807,
+    "lat": 58.267,
+    "elevationM": 263
+  },
+  {
+    "id": "SN41770",
+    "name": "Lindesnes fyr",
+    "lon": 7.048,
+    "lat": 57.9815,
+    "elevationM": 16
+  },
+  {
+    "id": "SN42160",
+    "name": "Lista fyr",
+    "lon": 6.5675,
+    "lat": 58.109,
+    "elevationM": 14
+  },
+  {
+    "id": "SN44080",
+    "name": "Obrestad fyr",
+    "lon": 5.5545609,
+    "lat": 58.6585044,
+    "elevationM": 24
+  },
+  {
+    "id": "SN44300",
+    "name": "Særheim",
+    "lon": 5.6508,
+    "lat": 58.7605,
+    "elevationM": 87
+  },
+  {
+    "id": "SN44560",
+    "name": "Sola",
+    "lon": 5.637,
+    "lat": 58.8843,
+    "elevationM": 7
+  },
+  {
+    "id": "SN46510",
+    "name": "E134 Midtlæger",
+    "lon": 6.9825,
+    "lat": 59.8402,
+    "elevationM": 1079
+  },
+  {
+    "id": "SN46610",
+    "name": "Sauda",
+    "lon": 6.3499,
+    "lat": 59.6479,
+    "elevationM": 5
+  },
+  {
+    "id": "SN47260",
+    "name": "Haugesund LH",
+    "lon": 5.2115,
+    "lat": 59.3445,
+    "elevationM": 24
+  },
+  {
+    "id": "SN47300",
+    "name": "Utsira",
+    "lon": 4.8723,
+    "lat": 59.3065,
+    "elevationM": 55
+  },
+  {
+    "id": "SN4780",
+    "name": "Gardermoen",
+    "lon": 11.0802,
+    "lat": 60.2065,
+    "elevationM": 202
+  },
+  {
+    "id": "SN48120",
+    "name": "Stord LH",
+    "lon": 5.3407,
+    "lat": 59.7933,
+    "elevationM": 49
+  },
+  {
+    "id": "SN48330",
+    "name": "Slåtterøy fyr",
+    "lon": 5.0668,
+    "lat": 59.907,
+    "elevationM": 25
+  },
+  {
+    "id": "SN49800",
+    "name": "Fet i Eidfjord",
+    "lon": 7.2803489,
+    "lat": 60.4080734,
+    "elevationM": 735
+  },
+  {
+    "id": "SN50500",
+    "name": "Flesland",
+    "lon": 5.2265,
+    "lat": 60.2892,
+    "elevationM": 48
+  },
+  {
+    "id": "SN50540",
+    "name": "Bergen",
+    "lon": 5.3327,
+    "lat": 60.383,
+    "elevationM": 12
+  },
+  {
+    "id": "SN52860",
+    "name": "Takle",
+    "lon": 5.3813,
+    "lat": 61.0272,
+    "elevationM": 38
+  },
+  {
+    "id": "SN53101",
+    "name": "Vangsnes",
+    "lon": 6.6452,
+    "lat": 61.1724,
+    "elevationM": 49
+  },
+  {
+    "id": "SN55290",
+    "name": "Sognefjellhytta",
+    "lon": 7.9957,
+    "lat": 61.5648,
+    "elevationM": 1413
+  },
+  {
+    "id": "SN55700",
+    "name": "Sogndal LH",
+    "lon": 7.1413,
+    "lat": 61.158,
+    "elevationM": 497
+  },
+  {
+    "id": "SN56420",
+    "name": "Fureneset",
+    "lon": 5.0443,
+    "lat": 61.2928,
+    "elevationM": 7
+  },
+  {
+    "id": "SN57000",
+    "name": "Førde LH",
+    "lon": 5.76,
+    "lat": 61.391,
+    "elevationM": 321
+  },
+  {
+    "id": "SN57420",
+    "name": "Førde",
+    "lon": 5.9212,
+    "lat": 61.4647,
+    "elevationM": 64
+  },
+  {
+    "id": "SN57710",
+    "name": "Florø LH",
+    "lon": 5.0278,
+    "lat": 61.5832,
+    "elevationM": 9
+  },
+  {
+    "id": "SN57770",
+    "name": "Ytterøyane fyr",
+    "lon": 4.6817,
+    "lat": 61.5717,
+    "elevationM": 26
+  },
+  {
+    "id": "SN58070",
+    "name": "Sandane",
+    "lon": 6.1835,
+    "lat": 61.7873,
+    "elevationM": 51
+  },
+  {
+    "id": "SN58100",
+    "name": "Sandane LH",
+    "lon": 6.1043,
+    "lat": 61.8293,
+    "elevationM": 60
+  },
+  {
+    "id": "SN58900",
+    "name": "Stryn",
+    "lon": 6.5581719,
+    "lat": 61.9153282,
+    "elevationM": 208
+  },
+  {
+    "id": "SN59110",
+    "name": "Kråkenes",
+    "lon": 4.9865,
+    "lat": 62.034,
+    "elevationM": 72
+  },
+  {
+    "id": "SN59610",
+    "name": "Fiskåbygd",
+    "lon": 5.5817,
+    "lat": 62.103,
+    "elevationM": 41
+  },
+  {
+    "id": "SN59680",
+    "name": "Ørsta-Volda LH",
+    "lon": 6.078056927162791,
+    "lat": 62.180413205637954,
+    "elevationM": 74
+  },
+  {
+    "id": "SN59800",
+    "name": "Svinøy fyr",
+    "lon": 5.268,
+    "lat": 62.3293,
+    "elevationM": 38
+  },
+  {
+    "id": "SN60500",
+    "name": "Tafjord",
+    "lon": 7.4218,
+    "lat": 62.2305,
+    "elevationM": 11
+  },
+  {
+    "id": "SN60990",
+    "name": "Vigra",
+    "lon": 6.115,
+    "lat": 62.5617,
+    "elevationM": 22
+  },
+  {
+    "id": "SN62270",
+    "name": "Molde LH",
+    "lon": 7.2617,
+    "lat": 62.7443,
+    "elevationM": 3
+  },
+  {
+    "id": "SN62480",
+    "name": "Ona",
+    "lon": 6.5378,
+    "lat": 62.8585,
+    "elevationM": 20
+  },
+  {
+    "id": "SN63420",
+    "name": "Sunndalsøra",
+    "lon": 8.5473,
+    "lat": 62.6785,
+    "elevationM": 6
+  },
+  {
+    "id": "SN64330",
+    "name": "Kristiansund LH",
+    "lon": 7.8158,
+    "lat": 63.1093,
+    "elevationM": 62
+  },
+  {
+    "id": "SN65940",
+    "name": "Sula",
+    "lon": 8.4543,
+    "lat": 63.8429,
+    "elevationM": 5
+  },
+  {
+    "id": "SN68860",
+    "name": "Trondheim − Voll",
+    "lon": 10.4538,
+    "lat": 63.4107,
+    "elevationM": 127
+  },
+  {
+    "id": "SN69100",
+    "name": "Værnes",
+    "lon": 10.9305,
+    "lat": 63.4597,
+    "elevationM": 12
+  },
+  {
+    "id": "SN69150",
+    "name": "Kvithamar",
+    "lon": 10.8796051,
+    "lat": 63.488132,
+    "elevationM": 27
+  },
+  {
+    "id": "SN700",
+    "name": "Drevsjø",
+    "lon": 12.0462,
+    "lat": 61.887,
+    "elevationM": 672
+  },
+  {
+    "id": "SN70150",
+    "name": "Verdal (Reppe)",
+    "lon": 11.6752,
+    "lat": 63.782,
+    "elevationM": 81
+  },
+  {
+    "id": "SN70850",
+    "name": "Snåsa - Kjevlia",
+    "lon": 12.4692,
+    "lat": 64.1587,
+    "elevationM": 195
+  },
+  {
+    "id": "SN71000",
+    "name": "Steinkjer",
+    "lon": 11.4493,
+    "lat": 64.0217,
+    "elevationM": 6
+  },
+  {
+    "id": "SN71550",
+    "name": "Ørland",
+    "lon": 9.6104,
+    "lat": 63.7044,
+    "elevationM": 10
+  },
+  {
+    "id": "SN71850",
+    "name": "Halten fyr",
+    "lon": 9.4052,
+    "lat": 64.1727,
+    "elevationM": 16
+  },
+  {
+    "id": "SN71990",
+    "name": "Buholmråsa fyr",
+    "lon": 10.455,
+    "lat": 64.4013,
+    "elevationM": 18
+  },
+  {
+    "id": "SN72580",
+    "name": "Namsos LH",
+    "lon": 11.5705,
+    "lat": 64.4708,
+    "elevationM": 2
+  },
+  {
+    "id": "SN73500",
+    "name": "Nordli",
+    "lon": 13.718,
+    "lat": 64.4458,
+    "elevationM": 433
+  },
+  {
+    "id": "SN75220",
+    "name": "Rørvik",
+    "lon": 11.1408,
+    "lat": 64.835,
+    "elevationM": 4
+  },
+  {
+    "id": "SN75410",
+    "name": "Nordøyan fyr",
+    "lon": 10.5493,
+    "lat": 64.7977,
+    "elevationM": 33
+  },
+  {
+    "id": "SN75550",
+    "name": "Sklinna fyr",
+    "lon": 10.9965,
+    "lat": 65.2023,
+    "elevationM": 23
+  },
+  {
+    "id": "SN76330",
+    "name": "Brønnøysund",
+    "lon": 12.21959,
+    "lat": 65.46072,
+    "elevationM": 9
+  },
+  {
+    "id": "SN76450",
+    "name": "Vega",
+    "lon": 11.8562,
+    "lat": 65.7017,
+    "elevationM": 4
+  },
+  {
+    "id": "SN76530",
+    "name": "Tjøtta",
+    "lon": 12.4255,
+    "lat": 65.8295,
+    "elevationM": 21
+  },
+  {
+    "id": "SN76750",
+    "name": "Sandnessjøen",
+    "lon": 12.4785,
+    "lat": 65.9635,
+    "elevationM": 17
+  },
+  {
+    "id": "SN76900",
+    "name": "MIKE",
+    "lon": 2.0,
+    "lat": 66.0,
+    "elevationM": 2
+  },
+  {
+    "id": "SN76925",
+    "name": "Draugen",
+    "lon": 7.77915,
+    "lat": 64.352,
+    "elevationM": 55
+  },
+  {
+    "id": "SN77230",
+    "name": "Mosjøen LH",
+    "lon": 13.218,
+    "lat": 65.7842,
+    "elevationM": 72
+  },
+  {
+    "id": "SN79600",
+    "name": "Mo i Rana LH",
+    "lon": 14.3015,
+    "lat": 66.3643,
+    "elevationM": 70
+  },
+  {
+    "id": "SN80610",
+    "name": "Myken",
+    "lon": 12.486,
+    "lat": 66.7628,
+    "elevationM": 17
+  },
+  {
+    "id": "SN80700",
+    "name": "Glomfjord",
+    "lon": 13.9793,
+    "lat": 66.8102,
+    "elevationM": 39
+  },
+  {
+    "id": "SN82290",
+    "name": "Bodø",
+    "lon": 14.3826294,
+    "lat": 67.2726458,
+    "elevationM": 16
+  },
+  {
+    "id": "SN84970",
+    "name": "Evenes LH",
+    "lon": 16.6833,
+    "lat": 68.4912,
+    "elevationM": 26
+  },
+  {
+    "id": "SN85380",
+    "name": "Skrova fyr",
+    "lon": 14.6485,
+    "lat": 68.1535,
+    "elevationM": 14
+  },
+  {
+    "id": "SN85450",
+    "name": "Svolvær LH",
+    "lon": 14.6654748,
+    "lat": 68.2415652,
+    "elevationM": 9
+  },
+  {
+    "id": "SN85560",
+    "name": "Leknes LH",
+    "lon": 13.61214,
+    "lat": 68.1557873,
+    "elevationM": 26
+  },
+  {
+    "id": "SN85890",
+    "name": "Røst",
+    "lon": 12.1038,
+    "lat": 67.5267,
+    "elevationM": 4
+  },
+  {
+    "id": "SN86500",
+    "name": "Sortland",
+    "lon": 15.4157,
+    "lat": 68.7033,
+    "elevationM": 3
+  },
+  {
+    "id": "SN86600",
+    "name": "Stokmarknes LH",
+    "lon": 15.0289351,
+    "lat": 68.5801001,
+    "elevationM": 3
+  },
+  {
+    "id": "SN88690",
+    "name": "Hekkingen fyr",
+    "lon": 17.83117,
+    "lat": 69.6005,
+    "elevationM": 33
+  },
+  {
+    "id": "SN89350",
+    "name": "Bardufoss",
+    "lon": 18.5437,
+    "lat": 69.0577,
+    "elevationM": 76
+  },
+  {
+    "id": "SN90400",
+    "name": "Tromsø (Holt)",
+    "lon": 18.9095,
+    "lat": 69.6538,
+    "elevationM": 20
+  },
+  {
+    "id": "SN90450",
+    "name": "Tromsø (Vervarslinga)",
+    "lon": 18.9368,
+    "lat": 69.6537,
+    "elevationM": 100
+  },
+  {
+    "id": "SN90490",
+    "name": "Tromsø LH",
+    "lon": 18.9133,
+    "lat": 69.6767,
+    "elevationM": 8
+  },
+  {
+    "id": "SN90800",
+    "name": "Torsvåg fyr",
+    "lon": 19.4997,
+    "lat": 70.2452,
+    "elevationM": 21
+  },
+  {
+    "id": "SN91740",
+    "name": "Sørkjosen",
+    "lon": 20.9524,
+    "lat": 69.7902,
+    "elevationM": 6
+  },
+  {
+    "id": "SN92350",
+    "name": "Nordstraum",
+    "lon": 21.8958,
+    "lat": 69.8362,
+    "elevationM": 20
+  },
+  {
+    "id": "SN92750",
+    "name": "Hasvik LH",
+    "lon": 22.1457,
+    "lat": 70.4865,
+    "elevationM": 6
+  },
+  {
+    "id": "SN93140",
+    "name": "Alta LH",
+    "lon": 23.3582,
+    "lat": 69.9775,
+    "elevationM": 3
+  },
+  {
+    "id": "SN93700",
+    "name": "Guovdageaidnu",
+    "lon": 23.0349,
+    "lat": 68.9964,
+    "elevationM": 307
+  },
+  {
+    "id": "SN93900",
+    "name": "Šihččajávri",
+    "lon": 23.5395347,
+    "lat": 68.7559654,
+    "elevationM": 382
+  },
+  {
+    "id": "SN94280",
+    "name": "Hammerfest",
+    "lon": 23.6772,
+    "lat": 70.6807,
+    "elevationM": 81
+  },
+  {
+    "id": "SN94500",
+    "name": "Fruholmen fyr",
+    "lon": 23.9837577,
+    "lat": 71.094447,
+    "elevationM": 13
+  },
+  {
+    "id": "SN94680",
+    "name": "Honningsvåg",
+    "lon": 25.9782,
+    "lat": 71.0105,
+    "elevationM": 14
+  },
+  {
+    "id": "SN95350",
+    "name": "Banak",
+    "lon": 24.9793,
+    "lat": 70.06,
+    "elevationM": 5
+  },
+  {
+    "id": "SN96310",
+    "name": "Mehamn LH",
+    "lon": 27.8298,
+    "lat": 71.033,
+    "elevationM": 13
+  },
+  {
+    "id": "SN96400",
+    "name": "Slettnes fyr",
+    "lon": 28.217,
+    "lat": 71.0888,
+    "elevationM": 8
+  },
+  {
+    "id": "SN97350",
+    "name": "Čoavddatmohkki",
+    "lon": 24.4315,
+    "lat": 69.3696,
+    "elevationM": 286
+  },
+  {
+    "id": "SN98090",
+    "name": "Berlevåg",
+    "lon": 29.0423967,
+    "lat": 70.8731483,
+    "elevationM": 13
+  },
+  {
+    "id": "SN98400",
+    "name": "Makkaur fyr",
+    "lon": 30.07,
+    "lat": 70.7057,
+    "elevationM": 9
+  },
+  {
+    "id": "SN98550",
+    "name": "Vardø radio",
+    "lon": 31.0962,
+    "lat": 70.3707,
+    "elevationM": 10
+  },
+  {
+    "id": "SN98790",
+    "name": "Vadsø LH",
+    "lon": 29.8352,
+    "lat": 70.0653,
+    "elevationM": 39
+  },
+  {
+    "id": "SN99370",
+    "name": "Kirkenes lufthavn",
+    "lon": 29.9057,
+    "lat": 69.7287,
+    "elevationM": 89
+  }
+]

@@ -1,0 +1,794 @@
+[
+  {
+    "key": "SN10380",
+    "lastFrostDoy": 186,
+    "firstFrostDoy": 230,
+    "gdd5": 726
+  },
+  {
+    "key": "SN11500",
+    "lastFrostDoy": 125,
+    "firstFrostDoy": 279,
+    "gdd5": 1293
+  },
+  {
+    "key": "SN12320",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 278,
+    "gdd5": 1382
+  },
+  {
+    "key": "SN12550",
+    "lastFrostDoy": 127,
+    "firstFrostDoy": 275,
+    "gdd5": 1316
+  },
+  {
+    "key": "SN12680",
+    "lastFrostDoy": 134,
+    "firstFrostDoy": 272,
+    "gdd5": 1228
+  },
+  {
+    "key": "SN13160",
+    "lastFrostDoy": 156,
+    "firstFrostDoy": 261,
+    "gdd5": 515
+  },
+  {
+    "key": "SN13420",
+    "lastFrostDoy": 166,
+    "firstFrostDoy": 248,
+    "gdd5": 556
+  },
+  {
+    "key": "SN16610",
+    "lastFrostDoy": 174,
+    "firstFrostDoy": 239,
+    "gdd5": 518
+  },
+  {
+    "key": "SN17000",
+    "lastFrostDoy": 97,
+    "firstFrostDoy": 308,
+    "gdd5": 1762
+  },
+  {
+    "key": "SN17150",
+    "lastFrostDoy": 121,
+    "firstFrostDoy": 280,
+    "gdd5": 1547
+  },
+  {
+    "key": "SN17850",
+    "lastFrostDoy": 125,
+    "firstFrostDoy": 269,
+    "gdd5": 1476
+  },
+  {
+    "key": "SN180",
+    "lastFrostDoy": 166,
+    "firstFrostDoy": 251,
+    "gdd5": 1026
+  },
+  {
+    "key": "SN18700",
+    "lastFrostDoy": 113,
+    "firstFrostDoy": 287,
+    "gdd5": 1608
+  },
+  {
+    "key": "SN18950",
+    "lastFrostDoy": 128,
+    "firstFrostDoy": 286,
+    "gdd5": 1046
+  },
+  {
+    "key": "SN19710",
+    "lastFrostDoy": 119,
+    "firstFrostDoy": 290,
+    "gdd5": 1457
+  },
+  {
+    "key": "SN21680",
+    "lastFrostDoy": 157,
+    "firstFrostDoy": 250,
+    "gdd5": 872
+  },
+  {
+    "key": "SN23160",
+    "lastFrostDoy": 163,
+    "firstFrostDoy": 250,
+    "gdd5": 798
+  },
+  {
+    "key": "SN23420",
+    "lastFrostDoy": 137,
+    "firstFrostDoy": 272,
+    "gdd5": 1122
+  },
+  {
+    "key": "SN23500",
+    "lastFrostDoy": 151,
+    "firstFrostDoy": 262,
+    "gdd5": 921
+  },
+  {
+    "key": "SN25830",
+    "lastFrostDoy": 177,
+    "firstFrostDoy": 256,
+    "gdd5": 264
+  },
+  {
+    "key": "SN26990",
+    "lastFrostDoy": 128,
+    "firstFrostDoy": 282,
+    "gdd5": 1528
+  },
+  {
+    "key": "SN27450",
+    "lastFrostDoy": 121,
+    "firstFrostDoy": 284,
+    "gdd5": 1596
+  },
+  {
+    "key": "SN27500",
+    "lastFrostDoy": 86,
+    "firstFrostDoy": 324,
+    "gdd5": 1789
+  },
+  {
+    "key": "SN30650",
+    "lastFrostDoy": 135,
+    "firstFrostDoy": 270,
+    "gdd5": 1496
+  },
+  {
+    "key": "SN31620",
+    "lastFrostDoy": 155,
+    "firstFrostDoy": 262,
+    "gdd5": 556
+  },
+  {
+    "key": "SN3190",
+    "lastFrostDoy": 112,
+    "firstFrostDoy": 288,
+    "gdd5": 1635
+  },
+  {
+    "key": "SN33890",
+    "lastFrostDoy": 178,
+    "firstFrostDoy": 248,
+    "gdd5": 627
+  },
+  {
+    "key": "SN34130",
+    "lastFrostDoy": 94,
+    "firstFrostDoy": 319,
+    "gdd5": 1739
+  },
+  {
+    "key": "SN35860",
+    "lastFrostDoy": 98,
+    "firstFrostDoy": 313,
+    "gdd5": 1745
+  },
+  {
+    "key": "SN36200",
+    "lastFrostDoy": 99,
+    "firstFrostDoy": 318,
+    "gdd5": 1698
+  },
+  {
+    "key": "SN36560",
+    "lastFrostDoy": 126,
+    "firstFrostDoy": 286,
+    "gdd5": 1423
+  },
+  {
+    "key": "SN37230",
+    "lastFrostDoy": 136,
+    "firstFrostDoy": 280,
+    "gdd5": 1343
+  },
+  {
+    "key": "SN38140",
+    "lastFrostDoy": 122,
+    "firstFrostDoy": 291,
+    "gdd5": 1633
+  },
+  {
+    "key": "SN39040",
+    "lastFrostDoy": 122,
+    "firstFrostDoy": 285,
+    "gdd5": 1597
+  },
+  {
+    "key": "SN39100",
+    "lastFrostDoy": 98,
+    "firstFrostDoy": 324,
+    "gdd5": 1685
+  },
+  {
+    "key": "SN40880",
+    "lastFrostDoy": 197,
+    "firstFrostDoy": 228,
+    "gdd5": 595
+  },
+  {
+    "key": "SN41670",
+    "lastFrostDoy": 130,
+    "firstFrostDoy": 282,
+    "gdd5": 1135
+  },
+  {
+    "key": "SN41770",
+    "lastFrostDoy": 88,
+    "firstFrostDoy": 324,
+    "gdd5": 1632
+  },
+  {
+    "key": "SN42160",
+    "lastFrostDoy": 106,
+    "firstFrostDoy": 308,
+    "gdd5": 1587
+  },
+  {
+    "key": "SN44080",
+    "lastFrostDoy": 106,
+    "firstFrostDoy": 308,
+    "gdd5": 1485
+  },
+  {
+    "key": "SN44300",
+    "lastFrostDoy": 100,
+    "firstFrostDoy": 321,
+    "gdd5": 1471
+  },
+  {
+    "key": "SN44560",
+    "lastFrostDoy": 110,
+    "firstFrostDoy": 302,
+    "gdd5": 1502
+  },
+  {
+    "key": "SN46510",
+    "lastFrostDoy": 162,
+    "firstFrostDoy": 266,
+    "gdd5": 429
+  },
+  {
+    "key": "SN46610",
+    "lastFrostDoy": 115,
+    "firstFrostDoy": 288,
+    "gdd5": 1444
+  },
+  {
+    "key": "SN47260",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 301,
+    "gdd5": 1566
+  },
+  {
+    "key": "SN47300",
+    "lastFrostDoy": 88,
+    "firstFrostDoy": 335,
+    "gdd5": 1489
+  },
+  {
+    "key": "SN4780",
+    "lastFrostDoy": 132,
+    "firstFrostDoy": 273,
+    "gdd5": 1312
+  },
+  {
+    "key": "SN48120",
+    "lastFrostDoy": 106,
+    "firstFrostDoy": 323,
+    "gdd5": 1533
+  },
+  {
+    "key": "SN48330",
+    "lastFrostDoy": 86,
+    "firstFrostDoy": 335,
+    "gdd5": 1516
+  },
+  {
+    "key": "SN49800",
+    "lastFrostDoy": 162,
+    "firstFrostDoy": 266,
+    "gdd5": 725
+  },
+  {
+    "key": "SN50500",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 304,
+    "gdd5": 1339
+  },
+  {
+    "key": "SN50540",
+    "lastFrostDoy": 104,
+    "firstFrostDoy": 306,
+    "gdd5": 1603
+  },
+  {
+    "key": "SN52860",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 306,
+    "gdd5": 1380
+  },
+  {
+    "key": "SN53101",
+    "lastFrostDoy": 92,
+    "firstFrostDoy": 311,
+    "gdd5": 1468
+  },
+  {
+    "key": "SN55290",
+    "lastFrostDoy": 183,
+    "firstFrostDoy": 238,
+    "gdd5": 218
+  },
+  {
+    "key": "SN55700",
+    "lastFrostDoy": 137,
+    "firstFrostDoy": 277,
+    "gdd5": 946
+  },
+  {
+    "key": "SN56420",
+    "lastFrostDoy": 120,
+    "firstFrostDoy": 300,
+    "gdd5": 1431
+  },
+  {
+    "key": "SN57000",
+    "lastFrostDoy": 132,
+    "firstFrostDoy": 290,
+    "gdd5": 1066
+  },
+  {
+    "key": "SN57420",
+    "lastFrostDoy": 137,
+    "firstFrostDoy": 279,
+    "gdd5": 1202
+  },
+  {
+    "key": "SN57710",
+    "lastFrostDoy": 104,
+    "firstFrostDoy": 318,
+    "gdd5": 1472
+  },
+  {
+    "key": "SN57770",
+    "lastFrostDoy": 89,
+    "firstFrostDoy": 340,
+    "gdd5": 1386
+  },
+  {
+    "key": "SN58070",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 286,
+    "gdd5": 1400
+  },
+  {
+    "key": "SN58100",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 295,
+    "gdd5": 1418
+  },
+  {
+    "key": "SN58900",
+    "lastFrostDoy": 137,
+    "firstFrostDoy": 282,
+    "gdd5": 1171
+  },
+  {
+    "key": "SN59110",
+    "lastFrostDoy": 97,
+    "firstFrostDoy": 322,
+    "gdd5": 1379
+  },
+  {
+    "key": "SN59610",
+    "lastFrostDoy": 126,
+    "firstFrostDoy": 288,
+    "gdd5": 1288
+  },
+  {
+    "key": "SN59680",
+    "lastFrostDoy": 134,
+    "firstFrostDoy": 276,
+    "gdd5": 1308
+  },
+  {
+    "key": "SN59800",
+    "lastFrostDoy": 94,
+    "firstFrostDoy": 326,
+    "gdd5": 1338
+  },
+  {
+    "key": "SN60500",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 290,
+    "gdd5": 1498
+  },
+  {
+    "key": "SN60990",
+    "lastFrostDoy": 108,
+    "firstFrostDoy": 322,
+    "gdd5": 1346
+  },
+  {
+    "key": "SN62270",
+    "lastFrostDoy": 120,
+    "firstFrostDoy": 293,
+    "gdd5": 1383
+  },
+  {
+    "key": "SN62480",
+    "lastFrostDoy": 92,
+    "firstFrostDoy": 324,
+    "gdd5": 1299
+  },
+  {
+    "key": "SN63420",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 293,
+    "gdd5": 1538
+  },
+  {
+    "key": "SN64330",
+    "lastFrostDoy": 111,
+    "firstFrostDoy": 309,
+    "gdd5": 1340
+  },
+  {
+    "key": "SN65940",
+    "lastFrostDoy": 95,
+    "firstFrostDoy": 323,
+    "gdd5": 1205
+  },
+  {
+    "key": "SN68860",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 277,
+    "gdd5": 1224
+  },
+  {
+    "key": "SN69100",
+    "lastFrostDoy": 126,
+    "firstFrostDoy": 280,
+    "gdd5": 1278
+  },
+  {
+    "key": "SN69150",
+    "lastFrostDoy": 129,
+    "firstFrostDoy": 277,
+    "gdd5": 1304
+  },
+  {
+    "key": "SN700",
+    "lastFrostDoy": 189,
+    "firstFrostDoy": 228,
+    "gdd5": 693
+  },
+  {
+    "key": "SN70150",
+    "lastFrostDoy": 134,
+    "firstFrostDoy": 273,
+    "gdd5": 1165
+  },
+  {
+    "key": "SN70850",
+    "lastFrostDoy": 162,
+    "firstFrostDoy": 246,
+    "gdd5": 997
+  },
+  {
+    "key": "SN71000",
+    "lastFrostDoy": 139,
+    "firstFrostDoy": 273,
+    "gdd5": 1178
+  },
+  {
+    "key": "SN71550",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 292,
+    "gdd5": 1186
+  },
+  {
+    "key": "SN71850",
+    "lastFrostDoy": 96,
+    "firstFrostDoy": 320,
+    "gdd5": 1152
+  },
+  {
+    "key": "SN71990",
+    "lastFrostDoy": 98,
+    "firstFrostDoy": 309,
+    "gdd5": 1247
+  },
+  {
+    "key": "SN72580",
+    "lastFrostDoy": 136,
+    "firstFrostDoy": 280,
+    "gdd5": 1179
+  },
+  {
+    "key": "SN73500",
+    "lastFrostDoy": 152,
+    "firstFrostDoy": 259,
+    "gdd5": 743
+  },
+  {
+    "key": "SN75220",
+    "lastFrostDoy": 144,
+    "firstFrostDoy": 276,
+    "gdd5": 1167
+  },
+  {
+    "key": "SN75410",
+    "lastFrostDoy": 100,
+    "firstFrostDoy": 321,
+    "gdd5": 1162
+  },
+  {
+    "key": "SN75550",
+    "lastFrostDoy": 98,
+    "firstFrostDoy": 315,
+    "gdd5": 1084
+  },
+  {
+    "key": "SN76330",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 297,
+    "gdd5": 1259
+  },
+  {
+    "key": "SN76450",
+    "lastFrostDoy": 125,
+    "firstFrostDoy": 288,
+    "gdd5": 1091
+  },
+  {
+    "key": "SN76530",
+    "lastFrostDoy": 118,
+    "firstFrostDoy": 297,
+    "gdd5": 1175
+  },
+  {
+    "key": "SN76750",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 299,
+    "gdd5": 1271
+  },
+  {
+    "key": "SN76900",
+    "lastFrostDoy": 99,
+    "firstFrostDoy": 333,
+    "gdd5": 711
+  },
+  {
+    "key": "SN76925",
+    "lastFrostDoy": 87,
+    "firstFrostDoy": 334,
+    "gdd5": 1204
+  },
+  {
+    "key": "SN77230",
+    "lastFrostDoy": 143,
+    "firstFrostDoy": 268,
+    "gdd5": 1016
+  },
+  {
+    "key": "SN79600",
+    "lastFrostDoy": 151,
+    "firstFrostDoy": 264,
+    "gdd5": 995
+  },
+  {
+    "key": "SN80610",
+    "lastFrostDoy": 106,
+    "firstFrostDoy": 311,
+    "gdd5": 1020
+  },
+  {
+    "key": "SN80700",
+    "lastFrostDoy": 131,
+    "firstFrostDoy": 292,
+    "gdd5": 1052
+  },
+  {
+    "key": "SN82290",
+    "lastFrostDoy": 125,
+    "firstFrostDoy": 290,
+    "gdd5": 1009
+  },
+  {
+    "key": "SN84970",
+    "lastFrostDoy": 135,
+    "firstFrostDoy": 267,
+    "gdd5": 911
+  },
+  {
+    "key": "SN85380",
+    "lastFrostDoy": 115,
+    "firstFrostDoy": 302,
+    "gdd5": 1019
+  },
+  {
+    "key": "SN85450",
+    "lastFrostDoy": 124,
+    "firstFrostDoy": 297,
+    "gdd5": 1001
+  },
+  {
+    "key": "SN85560",
+    "lastFrostDoy": 134,
+    "firstFrostDoy": 277,
+    "gdd5": 919
+  },
+  {
+    "key": "SN85890",
+    "lastFrostDoy": 114,
+    "firstFrostDoy": 307,
+    "gdd5": 905
+  },
+  {
+    "key": "SN86500",
+    "lastFrostDoy": 131,
+    "firstFrostDoy": 287,
+    "gdd5": 850
+  },
+  {
+    "key": "SN86600",
+    "lastFrostDoy": 135,
+    "firstFrostDoy": 282,
+    "gdd5": 898
+  },
+  {
+    "key": "SN88690",
+    "lastFrostDoy": 125,
+    "firstFrostDoy": 293,
+    "gdd5": 801
+  },
+  {
+    "key": "SN89350",
+    "lastFrostDoy": 142,
+    "firstFrostDoy": 252,
+    "gdd5": 818
+  },
+  {
+    "key": "SN90400",
+    "lastFrostDoy": 130,
+    "firstFrostDoy": 280,
+    "gdd5": 796
+  },
+  {
+    "key": "SN90450",
+    "lastFrostDoy": 136,
+    "firstFrostDoy": 276,
+    "gdd5": 740
+  },
+  {
+    "key": "SN90490",
+    "lastFrostDoy": 135,
+    "firstFrostDoy": 272,
+    "gdd5": 703
+  },
+  {
+    "key": "SN90800",
+    "lastFrostDoy": 132,
+    "firstFrostDoy": 295,
+    "gdd5": 733
+  },
+  {
+    "key": "SN91740",
+    "lastFrostDoy": 130,
+    "firstFrostDoy": 261,
+    "gdd5": 819
+  },
+  {
+    "key": "SN92350",
+    "lastFrostDoy": 132,
+    "firstFrostDoy": 283,
+    "gdd5": 745
+  },
+  {
+    "key": "SN92750",
+    "lastFrostDoy": 128,
+    "firstFrostDoy": 280,
+    "gdd5": 733
+  },
+  {
+    "key": "SN93140",
+    "lastFrostDoy": 138,
+    "firstFrostDoy": 272,
+    "gdd5": 871
+  },
+  {
+    "key": "SN93700",
+    "lastFrostDoy": 152,
+    "firstFrostDoy": 234,
+    "gdd5": 718
+  },
+  {
+    "key": "SN93900",
+    "lastFrostDoy": 162,
+    "firstFrostDoy": 232,
+    "gdd5": 613
+  },
+  {
+    "key": "SN94280",
+    "lastFrostDoy": 140,
+    "firstFrostDoy": 278,
+    "gdd5": 617
+  },
+  {
+    "key": "SN94500",
+    "lastFrostDoy": 134,
+    "firstFrostDoy": 292,
+    "gdd5": 499
+  },
+  {
+    "key": "SN94680",
+    "lastFrostDoy": 136,
+    "firstFrostDoy": 289,
+    "gdd5": 546
+  },
+  {
+    "key": "SN95350",
+    "lastFrostDoy": 144,
+    "firstFrostDoy": 253,
+    "gdd5": 725
+  },
+  {
+    "key": "SN96310",
+    "lastFrostDoy": 139,
+    "firstFrostDoy": 273,
+    "gdd5": 573
+  },
+  {
+    "key": "SN96400",
+    "lastFrostDoy": 137,
+    "firstFrostDoy": 283,
+    "gdd5": 468
+  },
+  {
+    "key": "SN97350",
+    "lastFrostDoy": 166,
+    "firstFrostDoy": 226,
+    "gdd5": 608
+  },
+  {
+    "key": "SN98090",
+    "lastFrostDoy": 140,
+    "firstFrostDoy": 276,
+    "gdd5": 522
+  },
+  {
+    "key": "SN98400",
+    "lastFrostDoy": 139,
+    "firstFrostDoy": 284,
+    "gdd5": 509
+  },
+  {
+    "key": "SN98550",
+    "lastFrostDoy": 138,
+    "firstFrostDoy": 289,
+    "gdd5": 486
+  },
+  {
+    "key": "SN98790",
+    "lastFrostDoy": 141,
+    "firstFrostDoy": 255,
+    "gdd5": 530
+  },
+  {
+    "key": "SN99370",
+    "lastFrostDoy": 142,
+    "firstFrostDoy": 264,
+    "gdd5": 605
+  }
+]

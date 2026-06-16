@@ -1,5 +1,7 @@
 # MyGarden — Next Phases Planned
 
+> **Working rule:** This doc is the source of truth for what's planned and what's shipped. After completing any task in scope of these phases, update the relevant section *before* ending the session — move done items into **Shipped**, mark decisions as locked, record the actual numbers/paths that replaced any placeholders. Don't leave the doc lagging behind the code.
+
 ## Status
 
 **Shipped:**
@@ -10,6 +12,7 @@
 - Phase B — NYLIG BRUKT pinned in PlantPicker, long-press quick-add gesture, always-visible "+" badge on every tile, bottom-sheet QuickAdd
 - Phase C — user-extensible plant DB (custom plants persisted in `gt_custom_plants`, merged into picker + lookup, Egne planter section in Settings, Export/Import round-trips them with `version: 2`)
 - Cleanup — DinoGarden import surfaces removed (Settings + onboarding), legacy importer module deleted
+- Phase D1 (data layer) — `climate-data/` Python pipeline (Frost API + geonames) → real 1991-2020 frost normals for 132 NO climate-reference stations + 5132 postnumre matched to nearest viable station. Shipped to `mvp-mygarden/src/data/{stations,frost-normals,postnummer}.json`. Frost threshold locked: **Tmin ≤ 0°C at 2 m, median over 1991-2020**.
 
 **Guiding principles (still hold):**
 
@@ -30,12 +33,14 @@
 
 ### D1 — Location + frost-relative data model (foundation)
 
-**Ship this first.** D2 and D3 should be re-planned only after D1 is in real users' hands. The hard part — and the highest-risk piece — is the build pipeline; the UI on top is thin.
+**Status (as of 2026-06-16):** Data layer shipped. App-side (settings UI, `PlantInfo` schema extension, plant tagging) is what's left. D2 and D3 should still be re-planned only after the app-side D1 lands in real users' hands.
 
-**Data shipped with the app (precomputed at build time, no runtime API calls):**
-- `postnummer.json` (~4 500 entries) — `{ postnummer, kommune, fylke, centroidLat, centroidLon, centroidElevationM, stationId }`
-- `frost-normals.json` — `{ key, lastFrostDoy, firstFrostDoy, gdd5 }` keyed by station or seNorge 1km grid cell (decided at pipeline time — prefer the seNorge gridded source since it terrain-follows and handles elevation natively)
-- `stations.json` — `{ id, name, lat, lon, elevationM }` for the trust line in UI (*"vi bruker Sogndal–Selsenghaugen, 287 moh"*)
+**Data shipped with the app** (committed JSON, no runtime API calls):
+- `postnummer.json` (5 132 entries) — `{ postnummer, kommune, fylke, centroidLat, centroidLon, centroidElevationM, stationId }`. Source: geonames Norway (CC BY 4.0). `centroidElevationM` defaults to **150 m** (user-overridable in app settings); per-postnummer elevation via Kartverket DEM is a future enhancement.
+- `frost-normals.json` (132 entries) — `{ key, lastFrostDoy, firstFrostDoy, gdd5 }`. Derived from MET Frost API daily Tmin + Tmean over 1991-2020. **Threshold locked: Tmin ≤ 0°C at 2 m, median across 30 years.**
+- `stations.json` (132 entries) — `{ id, name, lat, lon, elevationM }`. For the trust line in UI (*"vi bruker Sogndal LH, 497 moh"*).
+
+Pipeline lives in `climate-data/` (Python 3.11+, stdlib only, MET credentials in `climate-data/.env`). Decision recorded: we use **Frost API per-station** rather than seNorge 1km gridded — simpler, no NetCDF dependency, accurate enough as long as the app applies lapse-rate correction (see Sogndal note below). seNorge remains the better long-term source if station coverage proves too sparse.
 
 **Plant data model — frost-relative, not month-absolute:**
 ```ts
@@ -69,11 +74,11 @@ Frost-relative rules are portable: the same `sowOutdoor: { weeksAfterLastFrost: 
 
 **Attribution:** *"Klimadata fra Meteorologisk institutt, lisensiert under CC BY 3.0 NO."* In About page **and** bottom of the location settings panel (visible where the data is used).
 
-**Open question — elevation within one postnummer.** Postal centroid misses microclimate. Sogndal `6857` covers fjord-level fruit-growing zones *and* 300+ m hillside gardens that are ~2°C colder with ~3–4 weeks shorter growing season. Two-pronged fix:
-- Manual elevation override in Settings (covers the user's own case today).
-- seNorge 1km gridded data terrain-follows, so re-sampling at the user's `(lat, lon, elevation)` is more accurate than lapse-rate correction from the centroid.
+**Elevation gap — confirmed and addressed in the app layer.** Sogndal `6857` is the canonical case: postnummer centroid sits near the fjord, but the nearest station with 30 years of viable data is **Sogndal LH (the airport at 497 m)** — the lower-elevation Sogndal–Selsenghaugen station didn't pass the data-completeness threshold. Pipeline result for 6857: `stationId = SN55700`, station elevation 497 m, last frost ≈ 16 May, first frost ≈ 3 Oct. A real Sogndal-town user (~5 m) will see ~3-4 weeks earlier spring frost than that.
 
-Address-level lookup (yr.no-style locale name → lat/lon/elevation) is a future enhancement, not D1.
+**The fix lives in the app code, not the data.** When the calendar computes user-facing frost dates, it must apply lapse-rate correction: `~0.65°C per 100 m elevation difference` × `~10 days per °C` between `station.elevationM` and `user.elevationM`. The pipeline already exposes both elevations; the calendar math does the shift. Users can further nudge with the `Frost-justering ±dager` field for known frost pockets.
+
+Address-level lookup (yr.no-style locale name → lat/lon/elevation) and seNorge 1km re-sampling are future enhancements, not D1.
 
 **Explicitly out of scope for D1:**
 - Calendar UI ("Hva passer å så nå?" card) → D2
@@ -211,14 +216,15 @@ Explicitly deferred:
 
 ## What to ship next (recommendation)
 
-**Phase D1 (location + frost-relative data model) is the highest-leverage next step.** It:
+**Phase D1's data layer is shipped.** The remaining D1 work is in `mvp-mygarden/` (React/TS), reading the static JSON assets already in `src/data/`:
 
-- Establishes the *"this app knows my conditions"* moment that defines the product against international competitors.
-- Builds on Phase A's `family` data and extends `PlantInfo` with one more (portable, frost-relative) metadata layer.
-- Ships the only piece D2 truly depends on; D2 then becomes a thin UI on top.
-- Does not depend on Phase H (offline lookup tables, no backend required).
+1. **Settings UI** (`📍 Hagens plassering`) — postnummer + elevation + frost-justering inputs, trust line showing the resolved station and computed frost dates.
+2. **`PlantInfo` schema extension** — add `sowRules?` and `harvestRule?` per the type definitions above, tag the bundled 32 plants, surface the same optional fields on `CustomPlantForm`.
+3. **Location store + frost-date computation** — load postnummer → station → frost normals, apply lapse-rate correction from station elevation to user elevation + frost-justering offset.
 
-The build-pipeline step (postnummer + seNorge → frost normals) is the riskiest part. Ship that first, then layer D2's *"Hva passer å så nå?"* card on top once real users confirm the dates feel right.
+Steps 1 and 2 are independent; either can land first. Step 3 is the consumer of both.
+
+The build-pipeline step (Frost API → frost normals) was the riskiest part — that's done. Layer D2's *"Hva passer å så nå?"* card on top once the app-side D1 ships and real users confirm the dates feel right.
 
 **D3 (variety tracking) is independent** and can ship before, during, or after D1/D2. ~1 day of work; land it whenever it fits.
 
