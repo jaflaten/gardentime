@@ -7,3 +7,4 @@ build/
 data/raw/
 data/out/
 .DS_Store
+.env
