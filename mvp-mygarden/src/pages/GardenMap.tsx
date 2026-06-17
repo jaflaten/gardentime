@@ -8,8 +8,10 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
 import { SowNowCard } from "../components/SowNowCard";
+import { rankBoxesForPlant, type BoxFitTier } from "../lib/boxRanking";
 import type { BedType, SunExposure } from "../lib/boxMeta";
 import { isCustomPlantLike } from "../lib/customPlants";
+import { getPlantName, usePlantLookup } from "../lib/plants";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import demoGardenBackup from "../resources/demo-garden.json";
@@ -108,6 +110,7 @@ export function GardenMap() {
   const [description, setDescription] = useState("");
   const [sunExposure, setSunExposure] = useState<SunExposure | "">("");
   const [bedType, setBedType] = useState<BedType | "">("");
+  const [depthCm, setDepthCm] = useState<number | "">("");
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [quickAddBoxId, setQuickAddBoxId] = useState<string | null>(null);
@@ -117,8 +120,10 @@ export function GardenMap() {
   const pinchStateRef = useRef<PinchState | null>(null);
 
   const boxes = useGardenStore((state) => state.boxes);
+  const plantings = useGardenStore((state) => state.plantings);
   const addBox = useGardenStore((state) => state.addBox);
   const reloadFromStorage = useGardenStore((state) => state.reloadFromStorage);
+  const findPlant = usePlantLookup();
   const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
   const gridSize = useUiStore((state) => state.gridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
@@ -137,11 +142,13 @@ export function GardenMap() {
       description: description.trim() || undefined,
       sunExposure: sunExposure || undefined,
       bedType: bedType || undefined,
+      depthCm: depthCm === "" ? undefined : depthCm,
     });
     setName("");
     setDescription("");
     setSunExposure("");
     setBedType("");
+    setDepthCm("");
     setShowCreateForm(false);
   };
 
@@ -484,6 +491,9 @@ export function GardenMap() {
       {sowPickPlantKey && !quickAddBoxId && (
         <SowBoxPicker
           boxes={boxes}
+          plant={findPlant(sowPickPlantKey)}
+          plantings={plantings}
+          findPlant={findPlant}
           onCancel={() => setSowPickPlantKey(null)}
           onPick={(boxId) => {
             setQuickAddBoxId(boxId);
@@ -529,8 +539,10 @@ export function GardenMap() {
               <BoxMetaFields
                 sunExposure={sunExposure}
                 bedType={bedType}
+                depthCm={depthCm}
                 onSunExposureChange={setSunExposure}
                 onBedTypeChange={setBedType}
+                onDepthCmChange={setDepthCm}
               />
               <div className="flex gap-2">
                 <button
@@ -558,15 +570,41 @@ export function GardenMap() {
   );
 }
 
+const SOW_TIER_META: Record<BoxFitTier, { label: string; border: string; background: string }> = {
+  good: { label: "Anbefalt", border: "var(--green)", background: "var(--green-light)" },
+  ok: { label: "OK", border: "var(--border)", background: "var(--bg)" },
+  avoid: { label: "Frarådes", border: "var(--red)", background: "var(--red-light)" },
+};
+
 function SowBoxPicker({
   boxes,
+  plant,
+  plantings,
+  findPlant,
   onCancel,
   onPick,
 }: {
   boxes: Box[];
+  plant: PlantInfo | undefined;
+  plantings: Planting[];
+  findPlant: (key: string) => PlantInfo | undefined;
   onCancel: () => void;
   onPick: (boxId: string) => void;
 }) {
+  const plantLanguage = useUiStore((state) => state.plantLanguage);
+
+  const groups = useMemo(() => {
+    if (!plant) {
+      return null;
+    }
+    const ranked = rankBoxesForPlant(plant, boxes, plantings, findPlant, new Date().getFullYear(), plantLanguage);
+    return (["good", "ok", "avoid"] as BoxFitTier[])
+      .map((tier) => ({ tier, fits: ranked.filter((fit) => fit.tier === tier) }))
+      .filter((group) => group.fits.length > 0);
+  }, [plant, boxes, plantings, findPlant, plantLanguage]);
+
+  const plantName = plant ? getPlantName(plant, plantLanguage) : null;
+
   return (
     <div
       role="dialog"
@@ -577,11 +615,13 @@ function SowBoxPicker({
       <div
         role="document"
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[70vh] w-full max-w-md flex-col rounded-t-2xl border shadow-lg sm:rounded-2xl"
+        className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl border shadow-lg sm:rounded-2xl"
         style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
       >
         <div className="flex items-center justify-between gap-2 border-b p-3" style={{ borderColor: "var(--border)" }}>
-          <h2 className="text-base font-semibold sm:text-lg">Velg kasse</h2>
+          <h2 className="text-base font-semibold sm:text-lg">
+            {plantName ? `Hvor vil du så ${plantName}?` : "Velg kasse"}
+          </h2>
           <button
             type="button"
             onClick={onCancel}
@@ -597,20 +637,37 @@ function SowBoxPicker({
             Ingen kasser ennå. Lag en kasse først.
           </p>
         ) : (
-          <ul className="grid grid-cols-2 gap-2 overflow-y-auto p-3">
-            {boxes.map((box) => (
-              <li key={box.id}>
-                <button
-                  type="button"
-                  onClick={() => onPick(box.id)}
-                  className="tap-target w-full rounded-lg border px-3 py-2 text-left text-sm font-medium"
-                  style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text)" }}
-                >
-                  {box.name}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div className="space-y-3 overflow-y-auto p-3">
+            {groups?.map((group) => {
+              const meta = SOW_TIER_META[group.tier];
+              return (
+                <div key={group.tier} className="space-y-1.5">
+                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+                    {meta.label}
+                  </p>
+                  <ul className="space-y-1.5">
+                    {group.fits.map((fit) => (
+                      <li key={fit.box.id}>
+                        <button
+                          type="button"
+                          onClick={() => onPick(fit.box.id)}
+                          className="tap-target w-full rounded-lg border px-3 py-2 text-left"
+                          style={{ borderColor: meta.border, backgroundColor: meta.background, color: "var(--text)" }}
+                        >
+                          <span className="block text-sm font-medium">{fit.box.name}</span>
+                          {fit.reasons.length > 0 && (
+                            <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+                              {fit.reasons.join(" · ")}
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

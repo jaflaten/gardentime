@@ -11,15 +11,25 @@ import { useUiStore } from "../store/useUiStore";
 interface BoxMetaFieldsProps {
   sunExposure: SunExposure | "";
   bedType: BedType | "";
+  depthCm: number | "";
   onSunExposureChange: (value: SunExposure | "") => void;
   onBedTypeChange: (value: BedType | "") => void;
+  onDepthCmChange: (value: number | "") => void;
 }
 
-export function BoxMetaFields({ sunExposure, bedType, onSunExposureChange, onBedTypeChange }: BoxMetaFieldsProps) {
+export function BoxMetaFields({
+  sunExposure,
+  bedType,
+  depthCm,
+  onSunExposureChange,
+  onBedTypeChange,
+  onDepthCmChange,
+}: BoxMetaFieldsProps) {
   const language = useUiStore((state) => state.plantLanguage);
   const unsetLabel = language === "pl" ? "— nie wybrano —" : "— ikke valgt —";
 
   return (
+    <div className="space-y-3">
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <label className="space-y-1 text-sm">
         <span className="block font-medium">Sol</span>
@@ -58,6 +68,27 @@ export function BoxMetaFields({ sunExposure, bedType, onSunExposureChange, onBed
             );
           })}
         </select>
+      </label>
+    </div>
+      <label className="space-y-1 text-sm">
+        <span className="block font-medium">Dybde (cm)</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={200}
+          value={depthCm}
+          onChange={(event) => {
+            const raw = event.target.value;
+            onDepthCmChange(raw === "" ? "" : Math.max(0, Math.min(200, Math.round(Number(raw)))));
+          }}
+          placeholder="f.eks. 40"
+          className="input-touch w-full rounded-lg border px-3 py-2"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+        />
+        <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+          Anslag i cm. En pallekarm er typisk ~20 cm — to i stabel ≈ 40 cm. La stå tom for planter i bakken.
+        </span>
       </label>
     </div>
   );

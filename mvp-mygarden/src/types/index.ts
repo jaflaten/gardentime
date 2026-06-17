@@ -1,4 +1,4 @@
-import type { BedType, SunExposure } from "../lib/boxMeta";
+import type { BedType, SunExposure, SunNeed } from "../lib/boxMeta";
 import type { PlantFamily } from "../lib/families";
 
 export interface Box {
@@ -9,6 +9,8 @@ export interface Box {
   zoneType?: "BOX" | "BUCKET" | string;
   sunExposure?: SunExposure;
   bedType?: BedType;
+  /** Soil depth in cm. Drives the depth-fit check in box ranking; missing = unknown/unlimited (e.g. in-ground). */
+  depthCm?: number;
   layout: {
     x: number;
     y: number;
@@ -49,4 +51,11 @@ export interface PlantInfo {
   family: PlantFamily;
   sowRules?: SowRule[];
   harvestRule?: HarvestRule;
+  // Box-ranking metadata (Increment B). All optional; missing = no constraint / no penalty.
+  /** Minimum sunlight the plant needs. `full` plants are discouraged in shaded boxes. */
+  sunNeed?: SunNeed;
+  /** Bed types the plant does best in (e.g. heat-lovers prefer greenhouse/tunnel). A box outside this list is a soft mismatch. */
+  prefersBedType?: BedType[];
+  /** Minimum soil depth in cm the plant needs (root veg). A shallower box is discouraged. */
+  minDepthCm?: number;
 }

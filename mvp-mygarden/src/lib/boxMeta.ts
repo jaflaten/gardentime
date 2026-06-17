@@ -2,6 +2,8 @@ import type { PlantLanguage } from "../store/useUiStore";
 
 export type SunExposure = "sun" | "partial" | "shade";
 export type BedType = "open" | "raised" | "container" | "greenhouse" | "tunnel";
+// What a plant needs (PlantInfo.sunNeed), compared against a box's SunExposure during ranking.
+export type SunNeed = "full" | "partial" | "shade";
 
 interface MetaLabel {
   name_no: string;

@@ -44,6 +44,7 @@ export function BoxDetail() {
   const [editDescription, setEditDescription] = useState("");
   const [editSun, setEditSun] = useState<SunExposure | "">("");
   const [editBedType, setEditBedType] = useState<BedType | "">("");
+  const [editDepth, setEditDepth] = useState<number | "">("");
   const language = useUiStore((state) => state.plantLanguage);
 
   const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
@@ -153,8 +154,16 @@ export function BoxDetail() {
           <>
             <h1 className="text-xl font-semibold sm:text-2xl">{box.name}</h1>
             {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
-            {(box.sunExposure || box.bedType) && (
+            {(box.sunExposure || box.bedType || box.depthCm) && (
               <div className="flex flex-wrap gap-1.5">
+                {box.depthCm != null && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+                    style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+                  >
+                    📏 {box.depthCm} cm
+                  </span>
+                )}
                 {box.sunExposure && (
                   <span
                     className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
@@ -183,6 +192,7 @@ export function BoxDetail() {
                   setEditDescription(box.description ?? "");
                   setEditSun(box.sunExposure ?? "");
                   setEditBedType(box.bedType ?? "");
+                  setEditDepth(box.depthCm ?? "");
                   setEditingBox(true);
                 }}
                 className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
@@ -205,6 +215,7 @@ export function BoxDetail() {
                 description: editDescription.trim() || undefined,
                 sunExposure: editSun || undefined,
                 bedType: editBedType || undefined,
+                depthCm: editDepth === "" ? undefined : editDepth,
               });
               setEditingBox(false);
             }}
@@ -232,8 +243,10 @@ export function BoxDetail() {
             <BoxMetaFields
               sunExposure={editSun}
               bedType={editBedType}
+              depthCm={editDepth}
               onSunExposureChange={setEditSun}
               onBedTypeChange={setEditBedType}
+              onDepthCmChange={setEditDepth}
             />
             <div className="flex gap-2">
               <button

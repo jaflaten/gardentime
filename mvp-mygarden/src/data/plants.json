@@ -28,7 +28,14 @@
         12,
         14
       ]
-    }
+    },
+    "sunNeed": "full",
+    "prefersBedType": [
+      "greenhouse",
+      "tunnel",
+      "raised"
+    ],
+    "minDepthCm": 25
   },
   {
     "key": "tomat_stor",
@@ -59,7 +66,14 @@
         14,
         16
       ]
-    }
+    },
+    "sunNeed": "full",
+    "prefersBedType": [
+      "greenhouse",
+      "tunnel",
+      "raised"
+    ],
+    "minDepthCm": 30
   },
   {
     "key": "gulrot",
@@ -84,7 +98,9 @@
         12,
         14
       ]
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "salat",
@@ -108,7 +124,8 @@
         6,
         8
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "basilikum",
@@ -139,7 +156,13 @@
         8,
         10
       ]
-    }
+    },
+    "sunNeed": "full",
+    "prefersBedType": [
+      "greenhouse",
+      "container",
+      "raised"
+    ]
   },
   {
     "key": "agurk",
@@ -170,7 +193,14 @@
         8,
         10
       ]
-    }
+    },
+    "sunNeed": "full",
+    "prefersBedType": [
+      "greenhouse",
+      "tunnel",
+      "raised"
+    ],
+    "minDepthCm": 25
   },
   {
     "key": "jordbær",
@@ -188,7 +218,8 @@
           4
         ]
       }
-    ]
+    ],
+    "sunNeed": "full"
   },
   {
     "key": "paprika",
@@ -220,7 +251,14 @@
         18,
         22
       ]
-    }
+    },
+    "sunNeed": "full",
+    "prefersBedType": [
+      "greenhouse",
+      "tunnel",
+      "raised"
+    ],
+    "minDepthCm": 25
   },
   {
     "key": "persille",
@@ -252,7 +290,8 @@
         10,
         12
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "gresskar",
@@ -281,7 +320,9 @@
     ],
     "harvestRule": {
       "weeksBeforeFirstFrost": 2
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "erter",
@@ -305,7 +346,8 @@
         10,
         12
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "bønner",
@@ -330,7 +372,8 @@
         8,
         10
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "spinat",
@@ -354,7 +397,8 @@
         6,
         8
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "timian",
@@ -385,7 +429,8 @@
         12,
         14
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "rosmarin",
@@ -410,7 +455,8 @@
           4
         ]
       }
-    ]
+    ],
+    "sunNeed": "full"
   },
   {
     "key": "gressløk",
@@ -441,7 +487,8 @@
         10,
         12
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "squash",
@@ -473,7 +520,9 @@
         7,
         9
       ]
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "mais",
@@ -502,7 +551,9 @@
     ],
     "harvestRule": {
       "weeksBeforeFirstFrost": 2
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "purre",
@@ -530,7 +581,9 @@
     ],
     "harvestRule": {
       "weeksBeforeFirstFrost": 2
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 25
   },
   {
     "key": "løk",
@@ -561,7 +614,8 @@
         18,
         22
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "rødbeter",
@@ -585,7 +639,9 @@
         10,
         12
       ]
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 25
   },
   {
     "key": "pak_choi",
@@ -617,7 +673,8 @@
         6,
         8
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "solsikke",
@@ -649,7 +706,8 @@
         11,
         14
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "potet",
@@ -673,7 +731,9 @@
         14,
         18
       ]
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "blomkål",
@@ -704,7 +764,9 @@
         10,
         14
       ]
-    }
+    },
+    "sunNeed": "partial",
+    "minDepthCm": 25
   },
   {
     "key": "brokkoli",
@@ -735,7 +797,9 @@
         10,
         12
       ]
-    }
+    },
+    "sunNeed": "partial",
+    "minDepthCm": 25
   },
   {
     "key": "blomster",
@@ -768,7 +832,8 @@
         4,
         6
       ]
-    }
+    },
+    "sunNeed": "partial"
   },
   {
     "key": "persillerot",
@@ -793,7 +858,9 @@
         20,
         24
       ]
-    }
+    },
+    "sunNeed": "full",
+    "minDepthCm": 30
   },
   {
     "key": "åkerbønner",
@@ -818,7 +885,8 @@
         12,
         14
       ]
-    }
+    },
+    "sunNeed": "full"
   },
   {
     "key": "kålrot",
@@ -850,7 +918,9 @@
         14,
         18
       ]
-    }
+    },
+    "sunNeed": "partial",
+    "minDepthCm": 30
   },
   {
     "key": "knutekål",
@@ -881,6 +951,7 @@
         8,
         10
       ]
-    }
+    },
+    "sunNeed": "partial"
   }
 ]

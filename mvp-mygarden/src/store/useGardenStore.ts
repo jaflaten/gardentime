@@ -13,6 +13,7 @@ interface AddBoxOptions {
   description?: string;
   sunExposure?: Box["sunExposure"];
   bedType?: Box["bedType"];
+  depthCm?: Box["depthCm"];
 }
 
 interface GardenStore {
@@ -53,6 +54,7 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
       description: options?.description,
       sunExposure: options?.sunExposure,
       bedType: options?.bedType,
+      depthCm: options?.depthCm,
       createdAt: new Date().toISOString(),
       zoneType: "BOX",
       layout: {
