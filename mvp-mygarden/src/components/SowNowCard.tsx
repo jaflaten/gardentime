@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
+import { todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore, type PlantLanguage } from "../store/useUiStore";
-import type { HarvestRule, PlantInfo, Planting, SowRule } from "../types";
+import type { HarvestRule, PlantInfo, Planting } from "../types";
 
 const SESSION_DISMISS_KEY = "gt_sownow_dismissed_at";
 
@@ -24,26 +25,6 @@ interface Grouped {
 interface SowNowCardProps {
   /** Called when the user taps "+ Legg til" on a row — wires to GardenMap's sow-mode flow. */
   onPickPlant?: (plantKey: string) => void;
-}
-
-function daysBetween(fromDoy: number, toDoy: number): number {
-  // Signed difference. Positive = `toDoy` is after `fromDoy` within the same year.
-  return toDoy - fromDoy;
-}
-
-function weeksFromLastFrost(todayDoy: number, lastFrostDoy: number): number {
-  return daysBetween(lastFrostDoy, todayDoy) / 7;
-}
-
-function withinIndoorWindow(rule: Extract<SowRule, { type: "indoor" }>, weeksFromLF: number): boolean {
-  // weeksBeforeLastFrost is positive; we're within window if -max <= weeksFromLF <= -min
-  // i.e. today is between (LF - max weeks) and (LF - min weeks)
-  const [min, max] = rule.weeksBeforeLastFrost;
-  return weeksFromLF >= -max && weeksFromLF <= -min;
-}
-
-function withinAfterLFWindow(weeks: [number, number], weeksFromLF: number): boolean {
-  return weeksFromLF >= weeks[0] && weeksFromLF <= weeks[1];
 }
 
 function harvestSoonForPlanting(
@@ -71,13 +52,6 @@ function harvestSoonForPlanting(
     return { matches: true, helper: `Sådd for ${weeksSinceSowing} uker siden` };
   }
   return { matches: false, helper: "" };
-}
-
-function todayDoy(): number {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
 function dismissedThisSession(): boolean {

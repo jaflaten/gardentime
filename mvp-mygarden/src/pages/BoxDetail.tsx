@@ -13,7 +13,10 @@ import {
   type SunExposure,
 } from "../lib/boxMeta";
 import type { PlantFamily } from "../lib/families";
-import { usePlantLookup } from "../lib/plants";
+import { boxContextNotes, rankPlantsForBox, type BoxFitTier } from "../lib/boxRanking";
+import { getPlantName, useMergedPlantList, usePlantLookup } from "../lib/plants";
+import { isSowableNow } from "../lib/sowWindow";
+import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { boxRotationHistory, familyConflictYears } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
@@ -26,6 +29,12 @@ function useViewMode(): boolean {
 function byNewestFirst(a: Planting, b: Planting) {
   return b.plantedDate.localeCompare(a.plantedDate);
 }
+
+const FIT_TIER_META: Record<BoxFitTier, { label: string; border: string; background: string }> = {
+  good: { label: "Anbefalt", border: "var(--green)", background: "var(--green-light)" },
+  ok: { label: "OK", border: "var(--border)", background: "var(--bg)" },
+  avoid: { label: "Frarådes", border: "var(--red)", background: "var(--red-light)" },
+};
 
 export function BoxDetail() {
   const { id } = useParams();
@@ -49,6 +58,9 @@ export function BoxDetail() {
 
   const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
   const findPlant = usePlantLookup();
+  const allPlants = useMergedPlantList();
+  const location = useResolvedLocation();
+  const [showFitPanel, setShowFitPanel] = useState(false);
   const box = boxes.find((entry) => entry.id === id);
 
   const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
@@ -78,6 +90,23 @@ export function BoxDetail() {
     const history = boxRotationHistory(plantings, id ?? "", (p) => findPlant(p.plantKey)?.family, targetYear);
     return familyConflictYears(history, selectedFamily);
   }, [findPlant, id, plantings, selectedFamily, targetYear]);
+
+  const contextNotes = useMemo(
+    () => (box ? boxContextNotes(box, allPlants, plantings, findPlant, new Date().getFullYear(), language) : []),
+    [box, allPlants, plantings, findPlant, language],
+  );
+
+  // Active "Hva passer her nå?" panel: plants sowable today (when a location is set), ranked for THIS box.
+  const fitGroups = useMemo(() => {
+    if (!box) {
+      return [];
+    }
+    const candidates = location ? allPlants.filter((plant) => isSowableNow(plant, location.lastFrostDoy)) : allPlants;
+    const ranked = rankPlantsForBox(box, candidates, plantings, findPlant, new Date().getFullYear(), language);
+    return (["good", "ok", "avoid"] as BoxFitTier[])
+      .map((tier) => ({ tier, fits: ranked.filter((fit) => fit.tier === tier) }))
+      .filter((group) => group.fits.length > 0);
+  }, [box, allPlants, location, plantings, findPlant, language]);
 
   const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
     if (!acc[planting.year]) {
@@ -114,6 +143,18 @@ export function BoxDetail() {
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
     setShowPickerError(false);
+    setShowForm(true);
+  };
+
+  // Open the add-plant form pre-filled with a specific plant (from the "Hva passer her nå?" panel).
+  const openAddFormWith = (plantKeyToAdd: string) => {
+    setPlantKey(plantKeyToAdd);
+    setCustomName("");
+    setVariety("");
+    setPlantedDate(new Date().toISOString().split("T")[0]);
+    setNotes("");
+    setShowPickerError(false);
+    setShowFitPanel(false);
     setShowForm(true);
   };
 
@@ -269,6 +310,20 @@ export function BoxDetail() {
         )}
       </header>
 
+      {contextNotes.length > 0 && (
+        <section
+          className="space-y-1 rounded-xl border p-3 text-sm sm:p-4"
+          style={{ borderColor: "var(--amber)", backgroundColor: "var(--amber-light)", color: "var(--text)" }}
+        >
+          {contextNotes.map((note) => (
+            <p key={note} className="flex items-start gap-2">
+              <span aria-hidden="true">💡</span>
+              <span>{note}</span>
+            </p>
+          ))}
+        </section>
+      )}
+
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <h2 className="text-lg font-semibold sm:text-xl">Nå</h2>
         {activePlantings.length === 0 ? (
@@ -287,14 +342,69 @@ export function BoxDetail() {
         )}
 
         {viewMode ? null : !showForm ? (
-          <button
-            type="button"
-            onClick={openAddForm}
-            className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
-            style={{ backgroundColor: "var(--green)", color: "white" }}
-          >
-            + Legg til plante
-          </button>
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={openAddForm}
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--green)", color: "white" }}
+              >
+                + Legg til plante
+              </button>
+              {fitGroups.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowFitPanel((open) => !open)}
+                  aria-expanded={showFitPanel}
+                  className="tap-target rounded-lg border px-4 py-2 text-sm font-medium"
+                  style={{ borderColor: "var(--green)", color: "var(--green)", backgroundColor: "var(--surface)" }}
+                >
+                  🔍 Hva passer her nå?
+                </button>
+              )}
+            </div>
+            {showFitPanel && (
+              <div className="space-y-3 rounded-lg border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
+                {!location && (
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    Uten postnummer viser vi alle planter rangert etter kassen. Legg inn plassering for å filtrere på sesong.
+                  </p>
+                )}
+                {fitGroups.map((group) => {
+                  const meta = FIT_TIER_META[group.tier];
+                  return (
+                    <div key={group.tier} className="space-y-1.5">
+                      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+                        {meta.label}
+                      </p>
+                      <ul className="space-y-1.5">
+                        {group.fits.map((fit) => (
+                          <li key={fit.plant.key}>
+                            <button
+                              type="button"
+                              onClick={() => openAddFormWith(fit.plant.key)}
+                              className="tap-target w-full rounded-lg border px-3 py-2 text-left"
+                              style={{ borderColor: meta.border, backgroundColor: meta.background, color: "var(--text)" }}
+                            >
+                              <span className="block text-sm font-medium">
+                                {fit.plant.emoji} {getPlantName(fit.plant, language)}
+                              </span>
+                              {fit.reasons.length > 0 && (
+                                <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+                                  {fit.reasons.join(" · ")}
+                                </span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         ) : (
           <form className="space-y-3 rounded-lg border p-3" onSubmit={onSubmit} style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
             <PlantPicker
