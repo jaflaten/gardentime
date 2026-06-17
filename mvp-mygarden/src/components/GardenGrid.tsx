@@ -6,7 +6,12 @@ import { BoxTile } from "./BoxTile";
 
 export const EXTRA_LEFT_COLS = 4;
 export const EXTRA_TOP_ROWS = 14;
-export const MAP_BASE_COL_WIDTH = 44;
+export const MAP_BASE_COL_WIDTH = 48;
+// Base pixels per grid row. Tuned so a 2-row-tall box (the smallest common box) still has
+// room for its name plus two plant rows without the text spilling past the border.
+export const MAP_BASE_ROW_HEIGHT = 40;
+// Smallest box a user can resize to — below this the name/plant text can't render legibly.
+export const MIN_BOX_UNITS = 2;
 export const MIN_MAP_ZOOM = 0.2;
 export const MAX_MAP_ZOOM = 1.2;
 const BOTTOM_SPACER_KEY = "__bottom_spacer__";
@@ -24,7 +29,7 @@ export function GardenGrid({ editMode, zoom, onLongPressBox }: GardenGridProps) 
   const { width, containerRef, mounted } = useContainerWidth();
   const debugGrid = new URLSearchParams(window.location.search).has("debugGrid");
   const colWidth = Math.max(8, Math.round(MAP_BASE_COL_WIDTH * zoom));
-  const rowHeight = Math.max(6, Math.round(32 * zoom));
+  const rowHeight = Math.max(6, Math.round(MAP_BASE_ROW_HEIGHT * zoom));
   const margin = Math.max(1, Math.round(8 * zoom));
   const gridWidth = gridSize.cols * colWidth;
   const layout: Layout = boxes.map((box) => ({
@@ -33,6 +38,8 @@ export function GardenGrid({ editMode, zoom, onLongPressBox }: GardenGridProps) 
     y: Math.max(-EXTRA_TOP_ROWS, box.layout.y) + EXTRA_TOP_ROWS,
     w: box.layout.w,
     h: box.layout.h,
+    minW: MIN_BOX_UNITS,
+    minH: MIN_BOX_UNITS,
   }));
   const maxBottomY = layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);
   const spacerY = Math.max(maxBottomY, gridSize.rows - 1);

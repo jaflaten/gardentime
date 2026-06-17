@@ -18,7 +18,10 @@ export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }
   const plantLanguage = useUiStore((state) => state.plantLanguage);
   const findPlant = usePlantLookup();
   const hasActive = activePlantings.length > 0;
-  const visiblePlants = activePlantings.slice(0, 3).map((planting) => {
+  // Show fewer plant rows in short boxes so content never spills past the border:
+  // a 2-row box fits the name + 2 plants; taller boxes can show up to 3 before "+N til".
+  const maxVisible = box.layout.h >= 3 ? 3 : 2;
+  const visiblePlants = activePlantings.slice(0, maxVisible).map((planting) => {
     const plant = findPlant(planting.plantKey);
     return {
       emoji: plant?.emoji ?? "🌱",
@@ -99,9 +102,11 @@ export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }
       style={{ backgroundColor: hasActive ? "var(--green-light)" : "var(--surface)" }}
     >
       <div className="mb-1 flex items-center justify-between gap-1">
-        <p className="text-xs font-semibold leading-tight sm:text-sm">{box.name}</p>
+        <p className="min-w-0 flex-1 truncate text-xs font-semibold leading-tight sm:text-sm" title={box.name}>
+          {box.name}
+        </p>
         {editMode ? (
-          <span className="text-lg leading-none" style={{ color: "var(--text-muted)" }}>
+          <span className="shrink-0 text-lg leading-none" style={{ color: "var(--text-muted)" }}>
             ⠿
           </span>
         ) : onLongPress ? (
@@ -118,7 +123,7 @@ export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }
                 event.stopPropagation();
               }
             }}
-            className="flex h-6 w-6 items-center justify-center rounded-full border text-sm font-semibold leading-none"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-sm font-semibold leading-none"
             style={{ backgroundColor: "var(--surface)", borderColor: "var(--green)", color: "var(--green)" }}
           >
             +

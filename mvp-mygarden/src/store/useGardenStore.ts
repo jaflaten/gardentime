@@ -4,6 +4,10 @@ import { loadBoxes, loadLastSaved, loadPlantings, resetGarden as resetGardenStor
 import type { Box, Planting } from "../types";
 
 const NEW_BOX_WRAP_COLS = 12;
+// Default footprint for a freshly created box. Sized to comfortably hold the name plus a
+// couple of plant rows without text spilling — matches the scale of the bundled garden.
+const NEW_BOX_W = 4;
+const NEW_BOX_H = 3;
 
 interface AddBoxOptions {
   description?: string;
@@ -52,10 +56,10 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
       createdAt: new Date().toISOString(),
       zoneType: "BOX",
       layout: {
-        x: (existing * 2) % NEW_BOX_WRAP_COLS,
+        x: (existing * NEW_BOX_W) % NEW_BOX_WRAP_COLS,
         y: findNextY(get().boxes),
-        w: 2,
-        h: 2,
+        w: NEW_BOX_W,
+        h: NEW_BOX_H,
       },
     };
     const boxes = [...get().boxes, box];

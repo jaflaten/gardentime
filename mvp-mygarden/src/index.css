@@ -49,6 +49,7 @@ h3 {
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 4px 14px rgba(44, 42, 38, 0.08);
+  overflow: hidden;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
