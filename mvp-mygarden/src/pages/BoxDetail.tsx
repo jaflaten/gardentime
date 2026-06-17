@@ -97,15 +97,19 @@ export function BoxDetail() {
   );
 
   // Active "Hva passer her nå?" panel: plants sowable today (when a location is set), ranked for THIS box.
-  const fitGroups = useMemo(() => {
+  // Off-season (or no location) it falls back to ranking all plants, so the button is always available.
+  const { fitGroups, seasonScoped } = useMemo(() => {
     if (!box) {
-      return [];
+      return { fitGroups: [], seasonScoped: false };
     }
-    const candidates = location ? allPlants.filter((plant) => isSowableNow(plant, location.lastFrostDoy)) : allPlants;
+    const sowable = location ? allPlants.filter((plant) => isSowableNow(plant, location.lastFrostDoy)) : [];
+    const scoped = sowable.length > 0;
+    const candidates = scoped ? sowable : allPlants;
     const ranked = rankPlantsForBox(box, candidates, plantings, findPlant, new Date().getFullYear(), language);
-    return (["good", "ok", "avoid"] as BoxFitTier[])
+    const groups = (["good", "ok", "avoid"] as BoxFitTier[])
       .map((tier) => ({ tier, fits: ranked.filter((fit) => fit.tier === tier) }))
       .filter((group) => group.fits.length > 0);
+    return { fitGroups: groups, seasonScoped: scoped };
   }, [box, allPlants, location, plantings, findPlant, language]);
 
   const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
@@ -366,11 +370,15 @@ export function BoxDetail() {
             </div>
             {showFitPanel && (
               <div className="space-y-3 rounded-lg border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
-                {!location && (
+                {!location ? (
                   <p className="text-xs" style={{ color: "var(--text-muted)" }}>
                     Uten postnummer viser vi alle planter rangert etter kassen. Legg inn plassering for å filtrere på sesong.
                   </p>
-                )}
+                ) : !seasonScoped ? (
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    Ingen planter er i så-vinduet akkurat nå — viser alle, rangert for kassen.
+                  </p>
+                ) : null}
                 {fitGroups.map((group) => {
                   const meta = FIT_TIER_META[group.tier];
                   return (

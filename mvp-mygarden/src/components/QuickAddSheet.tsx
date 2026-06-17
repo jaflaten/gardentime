@@ -68,16 +68,11 @@ function QuickAddForm({ box, onClose, initialPlantKey }: QuickAddFormProps) {
     [box.id, plantings],
   );
 
-  // initialPlantKey (from the D2 card) means the user explicitly chose a plant to sow → always add new, no edit prompt.
-  // Otherwise: 1 active → edit it, 0 active → add new, 2+ active → force an explicit pick.
+  // The "+" affordance means "add", so default to adding a new planting. Editing the existing
+  // one stays one tap away via the "Rediger eksisterende" toggle (1 active) or the picker list (2+).
+  // initialPlantKey (from the D2 card) is always add-new — the user explicitly chose a plant.
   const [target, setTarget] = useState<Target>(() => {
-    if (initialPlantKey) {
-      return "new";
-    }
-    if (activePlantings.length === 1) {
-      return activePlantings[0].id;
-    }
-    if (activePlantings.length === 0) {
+    if (initialPlantKey || activePlantings.length <= 1) {
       return "new";
     }
     return null;
