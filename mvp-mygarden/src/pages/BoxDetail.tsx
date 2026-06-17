@@ -61,6 +61,7 @@ export function BoxDetail() {
   const allPlants = useMergedPlantList();
   const location = useResolvedLocation();
   const [showFitPanel, setShowFitPanel] = useState(false);
+  const [showAvoid, setShowAvoid] = useState(false);
   const box = boxes.find((entry) => entry.id === id);
 
   const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
@@ -381,11 +382,30 @@ export function BoxDetail() {
                 ) : null}
                 {fitGroups.map((group) => {
                   const meta = FIT_TIER_META[group.tier];
+                  // Frarådes is often the longest group (every too-deep/wrong-sun plant), so collapse it.
+                  const collapsible = group.tier === "avoid";
+                  const open = !collapsible || showAvoid;
                   return (
                     <div key={group.tier} className="space-y-1.5">
-                      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
-                        {meta.label}
-                      </p>
+                      {collapsible ? (
+                        <button
+                          type="button"
+                          onClick={() => setShowAvoid((value) => !value)}
+                          aria-expanded={showAvoid}
+                          className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wide"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          <span>
+                            {meta.label} ({group.fits.length})
+                          </span>
+                          <span aria-hidden="true">{showAvoid ? "▲" : "▼"}</span>
+                        </button>
+                      ) : (
+                        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
+                          {meta.label}
+                        </p>
+                      )}
+                      {open && (
                       <ul className="space-y-1.5">
                         {group.fits.map((fit) => (
                           <li key={fit.plant.key}>
@@ -407,6 +427,7 @@ export function BoxDetail() {
                           </li>
                         ))}
                       </ul>
+                      )}
                     </div>
                   );
                 })}

@@ -363,6 +363,18 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Depends on:** Phase F for yield-based charts; D ships one form already.
 - **Effort:** ~½ day per chart. Pick high-value ones; don't ship a dashboard for the sake of having one.
 
+#### K. Forkultivering — indoor seedling tracking — *(new; user-raised 2026-06-17)*
+
+- **Goal:** In Norway you rarely direct-sow the heat-lovers — you **pre-cultivate indoors** (forkultivering) weeks before last frost, then plant out. Today the app only models *plantings in a box*; an indoor seed tray isn't a box, so there's nowhere to record "startet 6 tomater inne 1. mars" before they go out.
+- **What already exists (the timing half — shipped):** D2's SowNowCard **"Så inne"** group already tells you *when* to start each plant indoors (`sowRules` `indoor.weeksBeforeLastFrost`), and **"Plant ut"** tells you when to transplant. So the *calendar hints* are there. **This increment adds the *tracking*** — the missing entity + the two actions around it.
+- **Data model (the careful part):** let a `Planting` exist **without a box** while it's indoors. Cleanest seam: make `boxId` nullable + add `stage?: 'indoors' | 'planted'` (default `'planted'`, so existing data is unchanged), plus a `transplantedDate?`. A **"Plant ut"** action assigns the seedling to a box (set `boxId`, record `transplantedDate`, keep the original indoor sow date for days-to-harvest). This is the **first feature that makes `boxId` optional** — do it deliberately so the Phase H sync mapping (plantings FK to box) tolerates null/indoor rows.
+- **UI surfaces:**
+  - A small **"Forkultivering / Inne"** area (a virtual tray, *not* on the garden grid) listing indoor seedlings with sow date + a **"Plant ut"** button.
+  - The SowNowCard **"Så inne"** row "+ Legg til" creates an *indoor* seedling (no box prompt) rather than routing through the box picker.
+  - **"Plant ut" reuses Increment B's ranked SowBoxPicker** to choose the best box — nice synergy (the seedling already knows its plant, so the picker ranks boxes for it).
+- **Depends on:** B (box picker for the plant-out step). Orthogonal to C/D.
+- **Effort:** ~1–1.5 days (the nullable-`boxId` migration + "Plant ut" verb are the work; UI is small).
+
 ### Suggested sequencing — cohorts, not a long single sprint
 
 **Cohort 1 — quick wins on existing data (1–2 weeks total):**
