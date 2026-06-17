@@ -15,6 +15,9 @@
 - Phase D1 (data layer) — `climate-data/` Python pipeline (Frost API + geonames) → real 1991-2020 frost normals for 132 NO climate-reference stations + 5132 postnumre matched to nearest viable station. Shipped to `mvp-mygarden/src/data/{stations,frost-normals,postnummer}.json`. Frost threshold locked: **Tmin ≤ 0°C at 2 m, median over 1991-2020**.
 - Phase D3 — variety tracking. `Planting.variety?: string` (`src/types/index.ts`), "Sort (valgfritt)" input in both QuickAddSheet and the BoxDetail add-planting form, surfaced as a "Sort: …" line on `PlantingRow` and inline " · variety" on `BoxTile` (with full-name tooltip). Optional field, no migration. Export/Import round-trips automatically — `isPlantingLike` validator does not gate optional fields.
 - Phase D1 app-side (all 3 steps) — `📍 Hagens plassering` Settings section (postnummer + elevation + frost-justering inputs, kommune/fylke preview, "Bruk postnummer-default" shortcut, trust line, MET attribution), no-postnummer yellow banner on garden map, `useLocationStore` (`gt_location` localStorage), `src/lib/location.ts` resolver with **0.065 days/m lapse-rate correction** + frost-justering offset, `useResolvedLocation` React hook (`src/lib/useResolvedLocation.ts`), `PlantInfo` extended with `sowRules?`/`harvestRule?` (`src/types/index.ts`), `CustomPlantForm` collapsible "Avansert: så- og høstetider" group, **tagging on 31 of 32 bundled plants** (only generic "blomster" skipped) sourced from NLR + Hageselskapet + Felleskjøpet + Plantepleien via research agent. Sogndal 6857 @ 5 m verified end-to-end: resolves to Sogndal LH 497 m, last frost shifted to **15. apr** (−32 d), first frost to **5. nov** — matches D1 doc prediction.
+- Phase D3.1 — edit/extend existing planting from QuickAdd (`src/components/QuickAddSheet.tsx`). Opening QuickAdd on a box with an active planting now **edits in place** (reuses `updatePlanting`) instead of inserting a duplicate dated today. Three cases: **0 active** → add new (unchanged); **1 active** → opens in edit mode pre-filled (header "Rediger planting i …"), with a "Legg til en til" toggle to opt into a second planting (and "‹ Rediger eksisterende i stedet" to switch back); **2+ active** → a selection list at the top of the sheet (plant name + variety + Plantet date), no default, form hidden until the user picks one or "+ Legg til ny planting". `initialPlantKey` (D2 card) always forces add-new — explicit plant choice means a new sowing. `plantedDate` is pre-filled with the existing date (not today) so harvest tracking isn't silently reset; `status` stays `active`-only (no auto-revive of harvested/failed). Refactored the sheet into `QuickAddForm` (selection/mode state) + a keyed `PlantingEditor` (form fields reset on target switch via `key`, no `useEffect`). No store change — `updatePlanting`/`addPlanting` already existed.
+- Dev tooling — **Testhage** (seed fixture). `src/resources/demo-garden.json` (11 boxes, 19 plantings, 1 custom plant `custom_demo01` Jordskokk, seeded location **6857 @ 300 m**) loaded by a new dashed-amber **"🧪 Testhage"** button on the onboarding landing page, beside "Standardoppsett". Reuses the existing `setPendingImport → ConfirmModal → confirmImport` import seam — no new store action; `PendingImport`/`BackupPayload` extended with an optional `location` applied via `useLocationStore` after the garden write (real backups leave it undefined). Dev-only `warnUnknownDemoPlantKeys()` console-warns any fixture `plantKey` missing from `plants.json`/customPlants. Each box is engineered to exercise a feature (Solanaceae 2024+2025+2026-failed → red multi-year rotation warning; harvested gulrot → amber same-season; shallow container; shaded bed; clean baseline; active+variety; free-text planting; custom-plant pick). Boxes already carry `depthCm` (forward-seed for Increment B). **Verified end-to-end in browser** (Chrome DevTools MCP): import count, location applied (banner gone), custom plant + variety render, both rotation severities + dismiss fire on the engineered boxes. Visible/un-gated per user request (test phase); flipping it behind `import.meta.env.DEV || ?demo=1` later is one line.
+- Hagekalender Increment G (rotation warnings) — soft, non-blocking amber chip at the moment of decision when the picked plant's family was grown in the same box within the last **2 years** (`ROTATION_LOOKBACK_YEARS`). New shared primitive `src/lib/rotation.ts` (`boxRotationHistory` → `Map<family, years[]>`, `familyConflictYears`, `formatYearList`) — the rotation derivation B's smart box picker will reuse, so the "same family N years running" rule lives in one place. New `src/components/RotationWarning.tsx` (returns null when no conflict). Wired into both add-surfaces: `QuickAddSheet` (`PlantingEditor`) and `BoxDetail`'s "Legg til plante" form, rendered below the picker, above the neutral Phase A "Forrige sesong" chips (which stay — context vs. warning are complementary). **Same-season repeat covered:** a current-year planting counts once it's been *cleared* (harvested/removed/failed), so carrot → Høst → replant carrot warns; a *still-active* current-year planting is skipped (companion/duplicate, not rotation — also stops an edited planting warning against itself). **Two severities:** same-season repeat = gentle amber nudge; prior-year conflict = stronger red "Vekstskifte anbefales" treatment. Both **dismissible** via ✕ (soft info, never blocks); dismiss resets when the picked plant changes. Skips `other` family (too generic). No schema change; derives from existing `family` + planting history.
 - Phase D2 — *"Hva passer å så nå?"* card (`src/components/SowNowCard.tsx`) shown above the garden grid when location is set and any plant matches today's DOY window. Groups: **Så inne** (`indoor.weeksBeforeLastFrost`), **Så ute** (`outdoor.weeksAfterLastFrost`, with optional jord-temp note), **Plant ut** (`transplant.weeksAfterLastFrost`), **Høst snart** (active plantings whose `harvestRule` matches). Per-session dismiss via `sessionStorage`. Row "+ Legg til" opens a small `SowBoxPicker` modal listing all boxes → pick → `QuickAddSheet` opens with the plant pre-selected via new `initialPlantKey` prop. Verified end-to-end with simulated late-frost setting on Sogndal: 11 outdoor sows + 6 transplants surfaced from the tagged plant set; box-picker → QuickAddSheet → green-highlighted plant in picker confirmed.
 
 **Guiding principles (still hold):**
@@ -143,9 +146,11 @@ Steps 1+2 are independent; step 3 (tagging) is parallel work. D2 is the consumer
 - Per-variety metadata (own row in plant DB with its own emoji / days-to-harvest) — overkill; the string is the MVP.
 - Edit-existing-planting flow — captured as **D3.1** below; was originally deferred because no edit surface existed, but real use of D3 made it the obvious next step.
 
-### D3.1 — Edit/extend existing planting from QuickAdd (follow-on, planned)
+### D3.1 — Edit/extend existing planting from QuickAdd — ✅ SHIPPED 2026-06-17
 
-**Status (as of 2026-06-16):** Planned. Driven by user feedback after D3 shipped — opening QuickAdd on a box that already has a planting and entering a variety should *update* that planting, not create a duplicate dated today. Today's pre-fill (QuickAddSheet defaults the picker to the box's most recent active plant) is a stopgap that still creates a new row on save.
+**Status (as of 2026-06-17):** Shipped. All three cases (0 / 1 / 2+ active plantings) handled in `src/components/QuickAddSheet.tsx`. The sheet now edits in place via `updatePlanting` instead of always inserting a new row. `plantedDate` preserved, `status` left untouched, `initialPlantKey` forces add-new. See the Shipped log entry for the full behavior breakdown. The implementation matched the plan below; the only structural deviation was splitting the form into `QuickAddForm` (selection + mode) and a keyed `PlantingEditor` so field state resets without a `useEffect`. `notes` was *not* added to the form — QuickAdd has never had a notes input, so edit mode covers plantKey/customName/variety/plantedDate only.
+
+**Original plan (driven by user feedback after D3 shipped):** opening QuickAdd on a box that already has a planting and entering a variety should *update* that planting, not create a duplicate dated today. The old pre-fill (QuickAddSheet defaulted the picker to the box's most recent active plant) was a stopgap that still created a new row on save.
 
 **Goal:** when QuickAdd opens on a box with an existing active planting, the default action is to edit/extend that planting (add/change `variety`, update `notes`, etc.) instead of inserting a new row. The original `plantedDate` is preserved — that's the whole reason for treating it as an edit.
 
@@ -293,14 +298,20 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Depends on:** none (orthogonal to other increments).
 - **Effort:** 1–2 days (mostly tagging + cross-referencing).
 
-#### G. Rotation warnings (per-action chips) — *(absorbs Phase E's rotation scope)*
+#### G. Rotation warnings (per-action chips) — ✅ SHIPPED 2026-06-17 — *(absorbs Phase E's rotation scope)*
 
 - **Goal:** Soft warning *at the moment of decision* when the user is about to repeat a family in the same box. 4-year cycle is the gardening ideal; warn at 2 years.
 - **New metadata:** none — derives from existing `family` + planting history.
-- **UI:** Inline warning chip in `QuickAdd` ("⚠ Solanaceae her i 2024 og 2025"); same chip on rows in B's box picker. Dismissable, never blocking.
+- **What landed:** `src/lib/rotation.ts` (shared rotation primitive — `boxRotationHistory`, `familyConflictYears`, `formatYearList`, `ROTATION_LOOKBACK_YEARS = 2`); `src/components/RotationWarning.tsx` (null-when-no-conflict amber chip); wired into `QuickAddSheet` (`PlantingEditor`) **and** `BoxDetail`'s add-plant form, below the picker. Fires only on the *selected* plant's family; skips `other`. The neutral Phase A "Forrige sesong" chip panel stays alongside it (context vs. warning).
+- **Current-season rule (refined after testing):** a current-year planting counts toward rotation once **cleared** (harvested/removed/failed) — so harvest a carrot then replant carrot in the same bed → warning. A *still-active* current-year planting is skipped: it's a companion/duplicate, not a rotation conflict, and skipping it also prevents an edited planting from warning against itself.
+- **Two severities + dismiss (`RotationWarning` derives severity from the conflict years):**
+  - **Same-season only** (conflict is just this year, e.g. harvested→replant): gentle **amber** nudge — *"Du dyrket allerede [familie] her tidligere i år…"*.
+  - **Prior-year** (family grew here in a previous season): stronger **red** treatment with a bold lead — *"**Vekstskifte anbefales.** Du hadde [familie] her i 2024 og 2025 — plant en annen familie i år…"*. This is the real cross-year rotation case, so it reads as more important.
+  - Both are **dismissible** via an ✕ (we never block — soft info per the philosophy). Dismiss state lives in the add-form and resets when the picked plant changes, so switching plants re-evaluates.
+- **Reuse seam for B:** the box-ranking picker should read `boxRotationHistory(...)` for its family-rotation input rather than re-deriving — that's why the primitive lives in its own lib.
 - **Pairs with Increment C's passive context banner** — G fires *as you act* (you've picked a plant; we warn before you confirm), C surfaces *when you arrive* (you opened a box; here's its rotation/depth/sun context in one or two sentences). Both shipping is the point — the chip catches the action, the banner sets context.
 - **Depends on:** none.
-- **Effort:** ~½ day.
+- **Effort:** ~½ day. (Actual: built shared primitive + component + both surfaces in one pass.)
 
 #### H. Reminders / notifications (opt-in)
 
@@ -330,8 +341,8 @@ Today-card with grouped recommendations. See the D2 section above.
 
 **Cohort 1 — quick wins on existing data (1–2 weeks total):**
 
-- **G** (rotation warnings) — half day, uses what we already have.
-- **B** (smart box picker) — biggest user value from existing data; one new pair of metadata fields.
+- ~~**G** (rotation warnings)~~ ✅ Shipped 2026-06-17. Built the shared `src/lib/rotation.ts` primitive B reuses.
+- **B** (smart box picker) — **next.** Biggest user value from existing data; adds `depthCm` on Box + `sunNeed`/`prefersBedType`/`minDepthCm` on PlantInfo (+ tagging). Family-rotation ranking input reads `boxRotationHistory` from G's lib — don't re-derive.
 - **C** (reverse lookup) — builds on B's metadata.
 
 **Cohort 2 — small schema extensions, get real-user feedback (2–3 weeks):**
@@ -470,8 +481,8 @@ Explicitly deferred:
 
 **Order of operations from here:**
 
-1. **D3.1 — edit/extend existing planting from QuickAdd.** Same-day user feedback flagged the "add duplicate vs. edit existing" choice as the obvious next polish. Small, well-scoped; see the D3.1 section.
-2. **Hagekalender Cohort 1** (smart box picker + reverse lookup + rotation warnings). See the Hagekalender roadmap section. ~1–2 weeks. Each lands independently; ship them one at a time and look for friction before moving on.
+1. ~~**D3.1 — edit/extend existing planting from QuickAdd.**~~ ✅ Shipped 2026-06-17. See the D3.1 section. The natural follow-on is a per-row "Rediger" button on `PlantingRow` (for harvested/historical rows), which reuses the same `updatePlanting` seam.
+2. **Hagekalender Cohort 1** — **G (rotation warnings) shipped 2026-06-17**; next is **B (smart box picker)**, then **C (reverse lookup)**. See the Hagekalender roadmap section. Each lands independently; ship them one at a time and look for friction before moving on. B reuses G's `src/lib/rotation.ts` primitive for its family-rotation ranking input.
 3. **Real-user feedback loop on D2** — get the card in a real Norwegian gardener's hand across a couple of weeks before locking sowRule values. Pair with a targeted NLR/Hageselskapet cross-check on the plants the user actually grows.
 4. **Phase F (harvest tracking)** — unlocks Cohort 3 of the roadmap (multi-year intelligence). ~1 day to ship.
 
@@ -503,3 +514,90 @@ The data layer is already shaped for sync. Three localStorage namespaces map cle
 `useGardenStore` and `useCustomPlantsStore` are the seams. Swap `src/lib/storage.ts` for `src/lib/supabase.ts` and the rest of the app doesn't notice.
 
 **Don't break this seam.** If a future phase couples the store directly to localStorage outside `storage.ts`, it makes H harder. Keep persistence centralized.
+
+---
+
+## Dev tooling — Test garden (seed fixture) — ✅ SHIPPED 2026-06-17
+
+> **Idea (user, 2026-06-17):** a one-click "test garden" loaded from a button on the front page — a ready-made fixture with ~10 boxes, each carrying multi-year planting history and planter metadata, so we can develop and exercise features (rotation warnings, the coming smart box picker, calendar) against realistic data without hand-building a garden every time.
+
+**Shipped as planned, with three deviations from the design below (all per user direction):**
+1. **Fixture is a JSON file** (`src/resources/demo-garden.json`), statically imported like `mvp-mygarden-v2.json` — not the `src/data/demoGarden.ts` + dynamic-import split sketched below. Simpler and matches the existing "Standardoppsett" pattern the user asked to mirror.
+2. **Un-gated** — the "🧪 Testhage" button is always visible on the landing page (test phase). The `isDemoEnabled()` gating below is *not* wired; it's a one-line follow-up before public launch.
+3. **`depthCm` included now** — the fixture already carries box depths (forward-seed) even though `Box.depthCm` doesn't exist until Increment B. It's inert extra JSON until B reads it.
+   The dev drift-guard shipped as `warnUnknownDemoPlantKeys()` inside `startDemo()` (console.warn), as planned. Verified end-to-end in-browser. The rest of this section is retained as the design record / B's reference.
+
+**Why it's worth building now.** Every Cohort 1 feature (G shipped, B + C next) is only testable with *history*: rotation warnings need prior-year families, the smart box picker needs sun/bed/depth + history to rank, the reverse-lookup banner needs constraints to surface. Today we hand-create that each time we test. A seed fixture makes every one of these reproducible and demo-able in one tap.
+
+### Key insight: reuse the import seam — there is no new write path
+
+The codebase **already** has the exact bulk-write path this needs. `GardenMap.tsx` ships an onboarding "Standardoppsett" option that loads a bundled garden (`src/resources/mvp-mygarden-v2.json`) through:
+
+```
+startBundled() → setPendingImport({ boxes, plantings, customPlants }) → <ConfirmModal> → confirmImport()
+confirmImport(): saveBoxes() + savePlantings() + replaceCustomPlants() + ensureGridFits(gridFootprint) + reloadFromStorage()
+```
+
+The test garden is **just another `PendingImport`** fed through this same flow. **No new store action, no new persistence code** — that keeps the Phase H sync seam intact (everything still goes through `storage.ts` + `reloadFromStorage`). The only extension needed is to carry optional **location** through the payload (see below), because the calendar features are half the reason to seed.
+
+### Test garden ≠ "Standardoppsett"
+
+They are different artifacts with different audiences — don't conflate them:
+- **Standardoppsett** (`mvp-mygarden-v2.json`) — a tidy, realistic *starter* garden shown to **every** new user. No deliberately-broken rotations.
+- **Testhage** (new) — a **gated dev fixture** whose histories are engineered to trip every code path (rotation conflicts, harvested→replant, shallow/shaded boxes, custom plant, free-text planting, seeded location). **Never shown to real users.**
+
+### Entry points & gating
+
+- `isDemoEnabled()` = `import.meta.env.DEV || new URLSearchParams(location.search).has("demo")`. Dev builds always; deployed builds only with `?demo=1` (so a tester on the PWA can opt in).
+- **Onboarding (primary, the "front page"):** a third gated button beside "Tom hage" / "Standardoppsett" → `startDemo()` builds the `PendingImport` from the fixture and reuses the existing confirm modal. This is the smallest change and the user's literal ask.
+- **Settings (secondary):** a gated "Last inn testhage" in a `🧪 Utvikler` section, so the fixture can be reloaded **mid-session** without first clearing to the empty-state onboarding. Reuses the same loader behind a confirm (Settings already imports `ConfirmModal` for reset).
+
+### Files
+
+- **`src/data/demoGarden.ts`** — pure, data-only fixture. Exports `DEMO_GARDEN: { boxes: Box[]; plantings: Planting[]; customPlants: PlantInfo[]; location: { postnummer; elevationM; frostJusteringDays } }`. Stable hardcoded ids (`demo-box-01`, `demo-pl-01`) and hardcoded `createdAt` strings — **no `Date.now()` / `nanoid()` / `Math.random()`** so reloads are deterministic and demo data is recognizable (ids prefixed `demo-`). Each `Planting` carries an explicit `year` matching its `plantedDate` (the raw `savePlantings` write does not recompute it).
+- **`src/lib/demoGarden.ts`** — `isDemoEnabled()`, a dev-only `validateDemoGarden()` (below), and a thin `buildDemoImport()` returning the `PendingImport`-shaped payload. **Dynamically imported** (`await import("../data/demoGarden")`) from the button handlers so the ~10 KB fixture stays out of the main bundle for real users (the prod chunk is already ~1.2 MB).
+- **`GardenMap.tsx`** — extend the `PendingImport` interface (and `confirmImport`) with an optional `location`; when present, apply it via `useLocationStore` setters (`setPostnummer` → `setElevation` → `setFrostJustering`) right after the garden write. Real backup imports leave it `undefined` → no-op, so this is forward-compatible (backups could carry location later).
+
+### Fixture content (~11 boxes — each earns its place)
+
+Histories use **2024 + 2025** (prior seasons, inside the 2-year `ROTATION_LOOKBACK_YEARS` window from 2026) and **2026** (active / cleared current season). Vary `w`×`h` so B's size-vs-plant ranking is testable. All `plantKey`s are real `plants.json` keys.
+
+| # | Box (name) | sun / bed / depth | History | Exercises |
+|---|---|---|---|---|
+| 1 | Drivhus 1 | sun / greenhouse / 30 | 2024 `tomat_cherry`, 2025 `paprika`, **2026 `tomat_stor` failed** | G **red** multi-year ("2024, 2025 og 2026") incl. cleared-failed counting; B greenhouse match; Frarådes for Solanaceae |
+| 2 | Pallekarm Sør | sun / raised / 40 | 2024 `salat`, 2025 `bønner`, **2026 `gulrot` harvested** (variety "Nantes") | G **amber** same-season (harvest→replant `gulrot`); harvest flow; variety display |
+| 3 | Pallekarm Nord | partial / raised / 40 | 2025 `potet` | G **red** single prior year (severity wording) |
+| 4 | Grunt krukke | sun / container / **20** | 2025 `salat`; 2026 active `basilikum` | B shallow-depth discourages root veg; small-plant-good-fit; active herb |
+| 5 | Skyggebed | **shade** / open / — | 2025 `spinat` | B sun-mismatch (tomato discouraged, leaf OK) |
+| 6 | Åpen seng A | sun / open / — | *(empty, clean)* | B "empty + no conflict" → Anbefalt baseline |
+| 7 | Åpen seng B | sun / open / — | 2024 `mais`, 2025 `squash`; 2026 active `erter` | active planting; varied families; no current conflict |
+| 8 | Tunnel 1 | sun / tunnel / — | 2026 active `agurk` (variety "Marketmore", sown ~20 May) | tunnel bed; SowNow "Høst snart" grouping; variety |
+| 9 | Bøtte krydder | sun / container / 25 | 2025 `gressløk`; 2026 active `timian` | container; herb |
+| 10 | Eksperimentkasse | sun / open / — | 2025 free-text planting `customName:"Ukjent staude"`, no `plantKey` | `familyOf` undefined path (rotation skip); `customName` rendering |
+| 11 | Egne-planter-kasse | sun / open / — | 2025 `salat` (asteraceae) | pick the **seeded custom plant** (asteraceae) → custom-plant lookup + custom family participating in rotation → fires G |
+
+- **Seeded custom plant** (in `DEMO_GARDEN.customPlants`): one entry, e.g. `Jordskokk` (family `asteraceae`, with `sowRules`/`harvestRule`), so the picker's "Egne planter" section is populated and box 11 demonstrates a custom plant flowing through merge → lookup → rotation.
+- **Seeded location:** postnummer **6857 @ 5 m** (the doc's canonical Sogndal LH case — late corrected frost ≈ 15 Apr/5 Nov), so the SowNow card, frost dates, and harvest rules all light up immediately and match the documented end-to-end verification.
+
+### Correctness guards (no test runner exists — `tsc -b && vite build` only)
+
+- **Drift guard:** `validateDemoGarden()` builds `new Set([...plants.json keys, ...DEMO_GARDEN.customPlants keys])` and `console.warn`s any `planting.plantKey` that is non-empty and unresolved. Call it inside `startDemo()` under `import.meta.env.DEV`. (A real unit test would be better — but adding a test runner is its own task; note it, don't block on it.)
+- **No nondeterminism** in the fixture (see Files) — required because there's no journal/seed reset and we want reload idempotency.
+- **Years must match dates** — explicit `year` on every planting; the raw write trusts it.
+
+### Out of scope / cautions
+
+- Not a substitute for a future Supabase seed — local-only dev aid.
+- Keep the fixture in sync with `plants.json`: a renamed bundled key silently breaks a planting (caught only by the dev `console.warn`).
+- The button overwrites the current garden — always behind the confirm modal, always gated.
+
+**Effort:** ~½–¾ day. Fixture (~½ day, it's the bulk) + onboarding button + `PendingImport.location` extension + Settings dev button + drift guard. Reusing `confirmImport` is what keeps it small.
+
+### Build order (when we pick this up)
+
+1. `src/data/demoGarden.ts` fixture + `src/lib/demoGarden.ts` (`isDemoEnabled`, `buildDemoImport`, `validateDemoGarden`).
+2. Extend `PendingImport` + `confirmImport` with optional `location`; wire the gated onboarding button.
+3. Gated Settings `🧪 Utvikler` reload button.
+4. Eyeball each box against its "Exercises" column; fix any fixture/feature mismatch.
+
+> **Note:** boxes carry `depthCm` in the table above, but that field doesn't exist on `Box` yet — it arrives with **Increment B**. Until then, seed only `sunExposure` + `bedType`; add the `depthCm` values to the fixture in the same PR that introduces the field, so the shallow-box scenarios become live exactly when B can read them.

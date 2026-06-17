@@ -12,6 +12,8 @@ import type { BedType, SunExposure } from "../lib/boxMeta";
 import { isCustomPlantLike } from "../lib/customPlants";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
+import demoGardenBackup from "../resources/demo-garden.json";
+import plantsData from "../data/plants.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useLocationStore } from "../store/useLocationStore";
@@ -23,17 +25,41 @@ interface PinchState {
   startZoom: number;
 }
 
+interface DemoLocation {
+  postnummer: string;
+  elevationM: number;
+  frostJusteringDays: number;
+}
+
 interface PendingImport {
   source: string;
   boxes: Box[];
   plantings: Planting[];
   customPlants: PlantInfo[];
+  // Only the demo fixture carries a location; real backup imports leave it undefined (no-op).
+  location?: DemoLocation;
 }
 
 interface BackupPayload {
   boxes: unknown[];
   plantings: unknown[];
   customPlants?: unknown[];
+  location?: DemoLocation;
+}
+
+// Dev-only guard: the demo fixture's plantKeys must resolve against the bundled plant DB
+// (or its own seeded custom plants). A renamed plants.json key would silently break a planting.
+function warnUnknownDemoPlantKeys(plantings: Planting[], customPlants: PlantInfo[]) {
+  const known = new Set<string>([
+    ...(plantsData as Array<{ key: string }>).map((plant) => plant.key),
+    ...customPlants.map((plant) => plant.key),
+  ]);
+  const missing = Array.from(
+    new Set(plantings.map((planting) => planting.plantKey).filter((key) => key && !known.has(key))),
+  );
+  if (missing.length > 0) {
+    console.warn("[demo-garden] ukjente plantKeys (mangler i plants.json/customPlants):", missing);
+  }
 }
 
 function clampZoom(value: number) {
@@ -96,6 +122,9 @@ export function GardenMap() {
   const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
   const gridSize = useUiStore((state) => state.gridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
+  const setPostnummer = useLocationStore((state) => state.setPostnummer);
+  const setElevation = useLocationStore((state) => state.setElevation);
+  const setFrostJustering = useLocationStore((state) => state.setFrostJustering);
 
   const showOnboarding = !viewMode && boxes.length === 0 && !onboardingDismissed;
 
@@ -170,6 +199,26 @@ export function GardenMap() {
     });
   };
 
+  const startDemo = () => {
+    const parsed = demoGardenBackup as BackupPayload;
+    if (!Array.isArray(parsed.boxes) || !Array.isArray(parsed.plantings)) {
+      return;
+    }
+    const customPlants = Array.isArray(parsed.customPlants)
+      ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
+      : [];
+    if (import.meta.env.DEV) {
+      warnUnknownDemoPlantKeys(parsed.plantings as Planting[], customPlants);
+    }
+    setPendingImport({
+      source: "testhage",
+      boxes: parsed.boxes as Box[],
+      plantings: parsed.plantings as Planting[],
+      customPlants,
+      location: parsed.location,
+    });
+  };
+
   const onBackupFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -210,6 +259,13 @@ export function GardenMap() {
     const footprint = gridFootprint(pendingImport.boxes);
     ensureGridFits(footprint.cols, footprint.rows);
     reloadFromStorage();
+    if (pendingImport.location) {
+      // setPostnummer resets elevation to the postnummer centroid, so apply the explicit
+      // elevation (and frost-justering) after it to keep the fixture's intended values.
+      setPostnummer(pendingImport.location.postnummer);
+      setElevation(pendingImport.location.elevationM);
+      setFrostJustering(pendingImport.location.frostJusteringDays);
+    }
     setPendingImport(null);
     setOnboardingDismissed(true);
   };
@@ -269,6 +325,17 @@ export function GardenMap() {
               <span className="block text-base font-semibold">Importer JSON-fil</span>
               <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
                 Last opp en MyGarden backup-fil.
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={startDemo}
+              className="tap-target rounded-lg border border-dashed p-4 text-left text-sm font-medium"
+              style={{ borderColor: "var(--amber)", backgroundColor: "var(--amber-light)", color: "var(--text)" }}
+            >
+              <span className="block text-base font-semibold">🧪 Testhage</span>
+              <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+                Demohage med flerårig historikk + plassering (Sogndal 6857) for testing.
               </span>
             </button>
           </div>

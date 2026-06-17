@@ -1,0 +1,169 @@
+{
+  "label": "MyGarden testhage — engineered fixture for exercising rotation/calendar/box features. Not a real-user starter.",
+  "version": 2,
+  "location": {
+    "postnummer": "6857",
+    "elevationM": 300,
+    "frostJusteringDays": 0
+  },
+  "customPlants": [
+    {
+      "key": "custom_demo01",
+      "name_no": "Jordskokk",
+      "name_pl": "Słonecznik bulwiasty",
+      "name_en": "Jerusalem artichoke",
+      "emoji": "🌻",
+      "category": "vegetable",
+      "family": "asteraceae",
+      "sowRules": [{ "type": "transplant", "weeksAfterLastFrost": [0, 3] }],
+      "harvestRule": { "weeksBeforeFirstFrost": 2 }
+    }
+  ],
+  "boxes": [
+    {
+      "id": "demo-box-01",
+      "name": "Drivhus 1",
+      "description": "Solanaceae to år på rad + feilet i år",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "greenhouse",
+      "depthCm": 30,
+      "layout": { "x": 0, "y": 0, "w": 3, "h": 2 }
+    },
+    {
+      "id": "demo-box-02",
+      "name": "Pallekarm Sør",
+      "description": "Gulrot høstet i år",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "raised",
+      "depthCm": 40,
+      "layout": { "x": 0, "y": 3, "w": 2, "h": 2 }
+    },
+    {
+      "id": "demo-box-03",
+      "name": "Pallekarm Nord",
+      "description": "Potet i fjor",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "partial",
+      "bedType": "raised",
+      "depthCm": 40,
+      "layout": { "x": 3, "y": 3, "w": 2, "h": 2 }
+    },
+    {
+      "id": "demo-box-04",
+      "name": "Grunt krukke",
+      "description": "Kun 20 cm dyp",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "container",
+      "depthCm": 20,
+      "layout": { "x": 0, "y": 6, "w": 1, "h": 1 }
+    },
+    {
+      "id": "demo-box-05",
+      "name": "Skyggebed",
+      "description": "Skygge — kun løvgrønnsaker",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "shade",
+      "bedType": "open",
+      "layout": { "x": 4, "y": 6, "w": 3, "h": 2 }
+    },
+    {
+      "id": "demo-box-06",
+      "name": "Åpen seng A",
+      "description": "Tom og ren — referanse",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "open",
+      "layout": { "x": 8, "y": 0, "w": 4, "h": 3 }
+    },
+    {
+      "id": "demo-box-07",
+      "name": "Åpen seng B",
+      "description": "Aktiv erter, blandet historikk",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "open",
+      "layout": { "x": 8, "y": 4, "w": 4, "h": 3 }
+    },
+    {
+      "id": "demo-box-08",
+      "name": "Tunnel 1",
+      "description": "Aktiv agurk med sort",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "tunnel",
+      "layout": { "x": 4, "y": 0, "w": 3, "h": 2 }
+    },
+    {
+      "id": "demo-box-09",
+      "name": "Bøtte krydder",
+      "description": "Aktiv timian",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "container",
+      "depthCm": 25,
+      "layout": { "x": 2, "y": 6, "w": 1, "h": 1 }
+    },
+    {
+      "id": "demo-box-10",
+      "name": "Eksperimentkasse",
+      "description": "Fritekst-planting (ukjent familie)",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "open",
+      "layout": { "x": 0, "y": 9, "w": 2, "h": 2 }
+    },
+    {
+      "id": "demo-box-11",
+      "name": "Egne-planter-kasse",
+      "description": "Egen plante + salat i fjor",
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "zoneType": "BOX",
+      "sunExposure": "sun",
+      "bedType": "open",
+      "layout": { "x": 3, "y": 9, "w": 2, "h": 2 }
+    }
+  ],
+  "plantings": [
+    { "id": "demo-pl-0101", "boxId": "demo-box-01", "plantKey": "tomat_cherry", "plantedDate": "2024-05-15", "harvestDate": "2024-09-01", "status": "harvested", "year": 2024 },
+    { "id": "demo-pl-0102", "boxId": "demo-box-01", "plantKey": "paprika", "plantedDate": "2025-05-20", "harvestDate": "2025-09-10", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-0103", "boxId": "demo-box-01", "plantKey": "tomat_stor", "plantedDate": "2026-05-18", "status": "failed", "notes": "Angrepet av sykdom", "year": 2026 },
+
+    { "id": "demo-pl-0201", "boxId": "demo-box-02", "plantKey": "salat", "plantedDate": "2024-04-20", "harvestDate": "2024-06-15", "status": "harvested", "year": 2024 },
+    { "id": "demo-pl-0202", "boxId": "demo-box-02", "plantKey": "bønner", "plantedDate": "2025-05-25", "harvestDate": "2025-08-20", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-0203", "boxId": "demo-box-02", "plantKey": "gulrot", "variety": "Nantes", "plantedDate": "2026-04-15", "harvestDate": "2026-06-10", "status": "harvested", "year": 2026 },
+
+    { "id": "demo-pl-0301", "boxId": "demo-box-03", "plantKey": "potet", "plantedDate": "2025-05-01", "harvestDate": "2025-09-15", "status": "harvested", "year": 2025 },
+
+    { "id": "demo-pl-0401", "boxId": "demo-box-04", "plantKey": "salat", "plantedDate": "2025-04-25", "harvestDate": "2025-06-20", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-0402", "boxId": "demo-box-04", "plantKey": "basilikum", "plantedDate": "2026-05-10", "status": "active", "year": 2026 },
+
+    { "id": "demo-pl-0501", "boxId": "demo-box-05", "plantKey": "spinat", "plantedDate": "2025-04-15", "harvestDate": "2025-06-10", "status": "harvested", "year": 2025 },
+
+    { "id": "demo-pl-0701", "boxId": "demo-box-07", "plantKey": "mais", "plantedDate": "2024-05-20", "harvestDate": "2024-09-25", "status": "harvested", "year": 2024 },
+    { "id": "demo-pl-0702", "boxId": "demo-box-07", "plantKey": "squash", "plantedDate": "2025-05-28", "harvestDate": "2025-09-05", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-0703", "boxId": "demo-box-07", "plantKey": "erter", "plantedDate": "2026-05-05", "status": "active", "year": 2026 },
+
+    { "id": "demo-pl-0801", "boxId": "demo-box-08", "plantKey": "agurk", "variety": "Marketmore", "plantedDate": "2026-05-20", "status": "active", "year": 2026 },
+
+    { "id": "demo-pl-0901", "boxId": "demo-box-09", "plantKey": "gressløk", "plantedDate": "2025-05-10", "harvestDate": "2025-08-01", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-0902", "boxId": "demo-box-09", "plantKey": "timian", "plantedDate": "2026-05-12", "status": "active", "year": 2026 },
+
+    { "id": "demo-pl-1001", "boxId": "demo-box-10", "plantKey": "", "customName": "Ukjent staude", "plantedDate": "2025-06-01", "harvestDate": "2025-09-01", "status": "harvested", "year": 2025 },
+
+    { "id": "demo-pl-1101", "boxId": "demo-box-11", "plantKey": "salat", "plantedDate": "2025-04-30", "harvestDate": "2025-06-25", "status": "harvested", "year": 2025 },
+    { "id": "demo-pl-1102", "boxId": "demo-box-11", "plantKey": "custom_demo01", "plantedDate": "2026-05-15", "status": "active", "year": 2026 }
+  ]
+}

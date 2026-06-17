@@ -5,6 +5,7 @@ import { FamilyChip } from "../components/FamilyChip";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PlantPicker } from "../components/PlantPicker";
 import { PlantingRow } from "../components/PlantingRow";
+import { RotationWarning } from "../components/RotationWarning";
 import {
   BED_TYPE_LABELS,
   SUN_EXPOSURE_LABELS,
@@ -13,6 +14,7 @@ import {
 } from "../lib/boxMeta";
 import type { PlantFamily } from "../lib/families";
 import { usePlantLookup } from "../lib/plants";
+import { boxRotationHistory, familyConflictYears } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
@@ -36,6 +38,7 @@ export function BoxDetail() {
   const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
   const [showPickerError, setShowPickerError] = useState(false);
+  const [rotationDismissed, setRotationDismissed] = useState(false);
   const [editingBox, setEditingBox] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -65,6 +68,15 @@ export function BoxDetail() {
       });
     return Array.from(families);
   }, [boxPlantings, findPlant, previousYear]);
+
+  const selectedFamily = plantKey ? findPlant(plantKey)?.family : undefined;
+  const rotationConflictYears = useMemo(() => {
+    if (!selectedFamily) {
+      return [];
+    }
+    const history = boxRotationHistory(plantings, id ?? "", (p) => findPlant(p.plantKey)?.family, targetYear);
+    return familyConflictYears(history, selectedFamily);
+  }, [findPlant, id, plantings, selectedFamily, targetYear]);
 
   const historyByYear = historyPlantings.reduce<Record<number, Planting[]>>((acc, planting) => {
     if (!acc[planting.year]) {
@@ -278,6 +290,7 @@ export function BoxDetail() {
               onPlantKeyChange={(key) => {
                 setPlantKey(key);
                 setShowPickerError(false);
+                setRotationDismissed(false);
               }}
               onCustomNameChange={(name) => {
                 setCustomName(name);
@@ -290,6 +303,14 @@ export function BoxDetail() {
               <p className="text-sm" style={{ color: "var(--red)" }}>
                 Velg en plante eller skriv et eget plantenavn først.
               </p>
+            )}
+            {selectedFamily && !rotationDismissed && (
+              <RotationWarning
+                family={selectedFamily}
+                years={rotationConflictYears}
+                currentYear={targetYear}
+                onDismiss={() => setRotationDismissed(true)}
+              />
             )}
             {previousSeasonFamilies.length > 0 && (
               <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
