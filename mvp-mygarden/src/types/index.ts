@@ -22,12 +22,22 @@ export interface Planting {
   boxId: string;
   plantKey: string;
   customName?: string;
+  variety?: string;
   plantedDate: string;
   harvestDate?: string;
   notes?: string;
   status: "active" | "harvested" | "removed" | "failed";
   year: number;
 }
+
+export type SowRule =
+  | { type: "indoor"; weeksBeforeLastFrost: [number, number] }
+  | { type: "outdoor"; weeksAfterLastFrost: [number, number]; minSoilTempC?: number }
+  | { type: "transplant"; weeksAfterLastFrost: [number, number] };
+
+export type HarvestRule =
+  | { weeksFromSowing: [number, number] }
+  | { weeksBeforeFirstFrost: number };
 
 export interface PlantInfo {
   key: string;
@@ -37,4 +47,6 @@ export interface PlantInfo {
   emoji: string;
   category: "vegetable" | "herb" | "fruit" | "flower";
   family: PlantFamily;
+  sowRules?: SowRule[];
+  harvestRule?: HarvestRule;
 }

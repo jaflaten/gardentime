@@ -29,6 +29,12 @@ export function PlantingRow({ planting, onHarvest, onDelete }: PlantingRowProps)
         {plant && <FamilyChip family={plant.family} />}
       </div>
 
+      {planting.variety && (
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          Sort: {planting.variety}
+        </p>
+      )}
+
       <div className="flex flex-wrap items-center gap-2 text-sm" style={{ color: "var(--text-muted)" }}>
         <span>Plantet: {formatDate(planting.plantedDate)}</span>
         <StatusBadge status={planting.status} />

@@ -32,8 +32,10 @@ export function BoxDetail() {
   const [showForm, setShowForm] = useState(false);
   const [plantKey, setPlantKey] = useState("");
   const [customName, setCustomName] = useState("");
+  const [variety, setVariety] = useState("");
   const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
+  const [showPickerError, setShowPickerError] = useState(false);
   const [editingBox, setEditingBox] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -91,15 +93,28 @@ export function BoxDetail() {
     );
   }
 
+  const openAddForm = () => {
+    const mostRecentActive = activePlantings[0];
+    setPlantKey(mostRecentActive?.plantKey ?? "");
+    setCustomName(mostRecentActive && !mostRecentActive.plantKey ? (mostRecentActive.customName ?? "") : "");
+    setVariety("");
+    setPlantedDate(new Date().toISOString().split("T")[0]);
+    setNotes("");
+    setShowPickerError(false);
+    setShowForm(true);
+  };
+
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!plantKey && !customName.trim()) {
+      setShowPickerError(true);
       return;
     }
     addPlanting({
       boxId: box.id,
       plantKey,
       customName: customName.trim() || undefined,
+      variety: variety.trim() || undefined,
       plantedDate,
       notes: notes.trim() || undefined,
       status: "active",
@@ -107,8 +122,10 @@ export function BoxDetail() {
     setShowForm(false);
     setPlantKey("");
     setCustomName("");
+    setVariety("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
+    setShowPickerError(false);
   };
 
   return (
@@ -247,7 +264,7 @@ export function BoxDetail() {
         {viewMode ? null : !showForm ? (
           <button
             type="button"
-            onClick={() => setShowForm(true)}
+            onClick={openAddForm}
             className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
             style={{ backgroundColor: "var(--green)", color: "white" }}
           >
@@ -258,9 +275,22 @@ export function BoxDetail() {
             <PlantPicker
               plantKey={plantKey}
               customName={customName}
-              onPlantKeyChange={setPlantKey}
-              onCustomNameChange={setCustomName}
+              onPlantKeyChange={(key) => {
+                setPlantKey(key);
+                setShowPickerError(false);
+              }}
+              onCustomNameChange={(name) => {
+                setCustomName(name);
+                if (name.trim()) {
+                  setShowPickerError(false);
+                }
+              }}
             />
+            {showPickerError && (
+              <p className="text-sm" style={{ color: "var(--red)" }}>
+                Velg en plante eller skriv et eget plantenavn først.
+              </p>
+            )}
             {previousSeasonFamilies.length > 0 && (
               <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
                 <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
@@ -273,6 +303,17 @@ export function BoxDetail() {
                 </div>
               </div>
             )}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Sort (valgfritt)</label>
+              <input
+                type="text"
+                value={variety}
+                onChange={(event) => setVariety(event.target.value)}
+                placeholder="f.eks. Sungold"
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium">Plantet dato</label>
               <input

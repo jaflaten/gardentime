@@ -1,34 +1,886 @@
 [
-  { "key": "tomat_cherry", "name_no": "Cherrytomater", "name_pl": "Pomidory koktajlowe", "name_en": "Cherry tomato", "emoji": "🍅", "category": "vegetable", "family": "solanaceae" },
-  { "key": "tomat_stor", "name_no": "Stortomat", "name_pl": "Pomidor wielkoowocowy", "name_en": "Beefsteak tomato", "emoji": "🍅", "category": "vegetable", "family": "solanaceae" },
-  { "key": "gulrot", "name_no": "Gulrot", "name_pl": "Marchew", "name_en": "Carrot", "emoji": "🥕", "category": "vegetable", "family": "apiaceae" },
-  { "key": "salat", "name_no": "Salat", "name_pl": "Sałata", "name_en": "Lettuce", "emoji": "🥬", "category": "vegetable", "family": "asteraceae" },
-  { "key": "basilikum", "name_no": "Basilikum", "name_pl": "Bazylia", "name_en": "Basil", "emoji": "🌿", "category": "herb", "family": "lamiaceae" },
-  { "key": "agurk", "name_no": "Agurk", "name_pl": "Ogórek", "name_en": "Cucumber", "emoji": "🥒", "category": "vegetable", "family": "cucurbitaceae" },
-  { "key": "jordbær", "name_no": "Jordbær", "name_pl": "Truskawka", "name_en": "Strawberry", "emoji": "🍓", "category": "fruit", "family": "rosaceae" },
-  { "key": "paprika", "name_no": "Paprika", "name_pl": "Papryka", "name_en": "Bell pepper", "emoji": "🫑", "category": "vegetable", "family": "solanaceae" },
-  { "key": "persille", "name_no": "Persille", "name_pl": "Pietruszka", "name_en": "Parsley", "emoji": "🌱", "category": "herb", "family": "apiaceae" },
-  { "key": "gresskar", "name_no": "Gresskar", "name_pl": "Dynia", "name_en": "Pumpkin", "emoji": "🎃", "category": "vegetable", "family": "cucurbitaceae" },
-  { "key": "erter", "name_no": "Erter", "name_pl": "Groch", "name_en": "Peas", "emoji": "🫛", "category": "vegetable", "family": "fabaceae" },
-  { "key": "bønner", "name_no": "Bønner", "name_pl": "Fasola", "name_en": "Beans", "emoji": "🫘", "category": "vegetable", "family": "fabaceae" },
-  { "key": "spinat", "name_no": "Spinat", "name_pl": "Szpinak", "name_en": "Spinach", "emoji": "🍃", "category": "vegetable", "family": "amaranthaceae" },
-  { "key": "timian", "name_no": "Timian", "name_pl": "Tymianek", "name_en": "Thyme", "emoji": "🌿", "category": "herb", "family": "lamiaceae" },
-  { "key": "rosmarin", "name_no": "Rosmarin", "name_pl": "Rozmaryn", "name_en": "Rosemary", "emoji": "🌿", "category": "herb", "family": "lamiaceae" },
-  { "key": "gressløk", "name_no": "Gressløk", "name_pl": "Szczypiorek", "name_en": "Chives", "emoji": "🌱", "category": "herb", "family": "amaryllidaceae" },
-  { "key": "squash", "name_no": "Squash", "name_pl": "Cukinia", "name_en": "Zucchini", "emoji": "🥒", "category": "vegetable", "family": "cucurbitaceae" },
-  { "key": "mais", "name_no": "Mais", "name_pl": "Kukurydza", "name_en": "Corn", "emoji": "🌽", "category": "vegetable", "family": "poaceae" },
-  { "key": "purre", "name_no": "Purre", "name_pl": "Por", "name_en": "Leek", "emoji": "🌱", "category": "vegetable", "family": "amaryllidaceae" },
-  { "key": "løk", "name_no": "Løk", "name_pl": "Cebula", "name_en": "Onion", "emoji": "🧅", "category": "vegetable", "family": "amaryllidaceae" },
-  { "key": "rødbeter", "name_no": "Rødbeter", "name_pl": "Burak", "name_en": "Beetroot", "emoji": "🫜", "category": "vegetable", "family": "amaranthaceae" },
-  { "key": "pak_choi", "name_no": "Pak choi", "name_pl": "Pak choi", "name_en": "Pak choi", "emoji": "🥬", "category": "vegetable", "family": "brassicaceae" },
-  { "key": "solsikke", "name_no": "Solsikke", "name_pl": "Słonecznik", "name_en": "Sunflower", "emoji": "🌻", "category": "flower", "family": "asteraceae" },
-  { "key": "potet", "name_no": "Potet", "name_pl": "Ziemniak", "name_en": "Potato", "emoji": "🥔", "category": "vegetable", "family": "solanaceae" },
-  { "key": "blomkål", "name_no": "Blomkål", "name_pl": "Kalafior", "name_en": "Cauliflower", "emoji": "🥦", "category": "vegetable", "family": "brassicaceae" },
-  { "key": "brokkoli", "name_no": "Brokkoli", "name_pl": "Brokuł", "name_en": "Broccoli", "emoji": "🥦", "category": "vegetable", "family": "brassicaceae" },
-  { "key": "blomster", "name_no": "Blomster", "name_pl": "Kwiaty", "name_en": "Flowers", "emoji": "🌸", "category": "flower", "family": "other" },
-  { "key": "reddik", "name_no": "Reddik", "name_pl": "Rzodkiewka", "name_en": "Radish", "emoji": "🫜", "category": "vegetable", "family": "brassicaceae" },
-  { "key": "persillerot", "name_no": "Persillerot", "name_pl": "Pietruszka korzeniowa", "name_en": "Parsley root", "emoji": "🥕", "category": "vegetable", "family": "apiaceae" },
-  { "key": "åkerbønner", "name_no": "Åkerbønner", "name_pl": "Bób", "name_en": "Fava beans", "emoji": "🫘", "category": "vegetable", "family": "fabaceae" },
-  { "key": "kålrot", "name_no": "Kålrot", "name_pl": "Brukiew", "name_en": "Rutabaga", "emoji": "🥔", "category": "vegetable", "family": "brassicaceae" },
-  { "key": "knutekål", "name_no": "Knutekål", "name_pl": "Kalarepa", "name_en": "Kohlrabi", "emoji": "🥬", "category": "vegetable", "family": "brassicaceae" }
+  {
+    "key": "tomat_cherry",
+    "name_no": "Cherrytomater",
+    "name_pl": "Pomidory koktajlowe",
+    "name_en": "Cherry tomato",
+    "emoji": "🍅",
+    "category": "vegetable",
+    "family": "solanaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        12,
+        14
+      ]
+    }
+  },
+  {
+    "key": "tomat_stor",
+    "name_no": "Stortomat",
+    "name_pl": "Pomidor wielkoowocowy",
+    "name_en": "Beefsteak tomato",
+    "emoji": "🍅",
+    "category": "vegetable",
+    "family": "solanaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          7,
+          9
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        14,
+        16
+      ]
+    }
+  },
+  {
+    "key": "gulrot",
+    "name_no": "Gulrot",
+    "name_pl": "Marchew",
+    "name_en": "Carrot",
+    "emoji": "🥕",
+    "category": "vegetable",
+    "family": "apiaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        12,
+        14
+      ]
+    }
+  },
+  {
+    "key": "salat",
+    "name_no": "Salat",
+    "name_pl": "Sałata",
+    "name_en": "Lettuce",
+    "emoji": "🥬",
+    "category": "vegetable",
+    "family": "asteraceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -2,
+          4
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        6,
+        8
+      ]
+    }
+  },
+  {
+    "key": "basilikum",
+    "name_no": "Basilikum",
+    "name_pl": "Bazylia",
+    "name_en": "Basil",
+    "emoji": "🌿",
+    "category": "herb",
+    "family": "lamiaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        8,
+        10
+      ]
+    }
+  },
+  {
+    "key": "agurk",
+    "name_no": "Agurk",
+    "name_pl": "Ogórek",
+    "name_en": "Cucumber",
+    "emoji": "🥒",
+    "category": "vegetable",
+    "family": "cucurbitaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          4,
+          5
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        8,
+        10
+      ]
+    }
+  },
+  {
+    "key": "jordbær",
+    "name_no": "Jordbær",
+    "name_pl": "Truskawka",
+    "name_en": "Strawberry",
+    "emoji": "🍓",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "key": "paprika",
+    "name_no": "Paprika",
+    "name_pl": "Papryka",
+    "name_en": "Bell pepper",
+    "emoji": "🫑",
+    "category": "vegetable",
+    "family": "solanaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          12,
+          16
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          2,
+          4
+        ],
+        "minSoilTempC": 15
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        18,
+        22
+      ]
+    }
+  },
+  {
+    "key": "persille",
+    "name_no": "Persille",
+    "name_pl": "Pietruszka",
+    "name_en": "Parsley",
+    "emoji": "🌱",
+    "category": "herb",
+    "family": "apiaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          3
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "key": "gresskar",
+    "name_no": "Gresskar",
+    "name_pl": "Dynia",
+    "name_en": "Pumpkin",
+    "emoji": "🎃",
+    "category": "vegetable",
+    "family": "cucurbitaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          2,
+          3
+        ],
+        "minSoilTempC": 13
+      }
+    ],
+    "harvestRule": {
+      "weeksBeforeFirstFrost": 2
+    }
+  },
+  {
+    "key": "erter",
+    "name_no": "Erter",
+    "name_pl": "Groch",
+    "name_en": "Peas",
+    "emoji": "🫛",
+    "category": "vegetable",
+    "family": "fabaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -3,
+          0
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "key": "bønner",
+    "name_no": "Bønner",
+    "name_pl": "Fasola",
+    "name_en": "Beans",
+    "emoji": "🫘",
+    "category": "vegetable",
+    "family": "fabaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ],
+        "minSoilTempC": 12
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        8,
+        10
+      ]
+    }
+  },
+  {
+    "key": "spinat",
+    "name_no": "Spinat",
+    "name_pl": "Szpinak",
+    "name_en": "Spinach",
+    "emoji": "🍃",
+    "category": "vegetable",
+    "family": "amaranthaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -3,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        6,
+        8
+      ]
+    }
+  },
+  {
+    "key": "timian",
+    "name_no": "Timian",
+    "name_pl": "Tymianek",
+    "name_en": "Thyme",
+    "emoji": "🌿",
+    "category": "herb",
+    "family": "lamiaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        12,
+        14
+      ]
+    }
+  },
+  {
+    "key": "rosmarin",
+    "name_no": "Rosmarin",
+    "name_pl": "Rozmaryn",
+    "name_en": "Rosemary",
+    "emoji": "🌿",
+    "category": "herb",
+    "family": "lamiaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          8,
+          10
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          2,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "key": "gressløk",
+    "name_no": "Gressløk",
+    "name_pl": "Szczypiorek",
+    "name_en": "Chives",
+    "emoji": "🌱",
+    "category": "herb",
+    "family": "amaryllidaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "key": "squash",
+    "name_no": "Squash",
+    "name_pl": "Cukinia",
+    "name_en": "Zucchini",
+    "emoji": "🥒",
+    "category": "vegetable",
+    "family": "cucurbitaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ],
+        "minSoilTempC": 13
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        7,
+        9
+      ]
+    }
+  },
+  {
+    "key": "mais",
+    "name_no": "Mais",
+    "name_pl": "Kukurydza",
+    "name_en": "Corn",
+    "emoji": "🌽",
+    "category": "vegetable",
+    "family": "poaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ],
+        "minSoilTempC": 12
+      }
+    ],
+    "harvestRule": {
+      "weeksBeforeFirstFrost": 2
+    }
+  },
+  {
+    "key": "purre",
+    "name_no": "Purre",
+    "name_pl": "Por",
+    "name_en": "Leek",
+    "emoji": "🌱",
+    "category": "vegetable",
+    "family": "amaryllidaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          8,
+          10
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksBeforeFirstFrost": 2
+    }
+  },
+  {
+    "key": "løk",
+    "name_no": "Løk",
+    "name_pl": "Cebula",
+    "name_en": "Onion",
+    "emoji": "🧅",
+    "category": "vegetable",
+    "family": "amaryllidaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          8,
+          10
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -2,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        18,
+        22
+      ]
+    }
+  },
+  {
+    "key": "rødbeter",
+    "name_no": "Rødbeter",
+    "name_pl": "Burak",
+    "name_en": "Beetroot",
+    "emoji": "🫜",
+    "category": "vegetable",
+    "family": "amaranthaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "key": "pak_choi",
+    "name_no": "Pak choi",
+    "name_pl": "Pak choi",
+    "name_en": "Pak choi",
+    "emoji": "🥬",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ],
+        "minSoilTempC": 8
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        6,
+        8
+      ]
+    }
+  },
+  {
+    "key": "solsikke",
+    "name_no": "Solsikke",
+    "name_pl": "Słonecznik",
+    "name_en": "Sunflower",
+    "emoji": "🌻",
+    "category": "flower",
+    "family": "asteraceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          1,
+          3
+        ],
+        "minSoilTempC": 10
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        11,
+        14
+      ]
+    }
+  },
+  {
+    "key": "potet",
+    "name_no": "Potet",
+    "name_pl": "Ziemniak",
+    "name_en": "Potato",
+    "emoji": "🥔",
+    "category": "vegetable",
+    "family": "solanaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          3
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        14,
+        18
+      ]
+    }
+  },
+  {
+    "key": "blomkål",
+    "name_no": "Blomkål",
+    "name_pl": "Kalafior",
+    "name_en": "Cauliflower",
+    "emoji": "🥦",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        14
+      ]
+    }
+  },
+  {
+    "key": "brokkoli",
+    "name_no": "Brokkoli",
+    "name_pl": "Brokuł",
+    "name_en": "Broccoli",
+    "emoji": "🥦",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        10,
+        12
+      ]
+    }
+  },
+  {
+    "key": "blomster",
+    "name_no": "Blomster",
+    "name_pl": "Kwiaty",
+    "name_en": "Flowers",
+    "emoji": "🌸",
+    "category": "flower",
+    "family": "other"
+  },
+  {
+    "key": "reddik",
+    "name_no": "Reddik",
+    "name_pl": "Rzodkiewka",
+    "name_en": "Radish",
+    "emoji": "🫜",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -2,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        4,
+        6
+      ]
+    }
+  },
+  {
+    "key": "persillerot",
+    "name_no": "Persillerot",
+    "name_pl": "Pietruszka korzeniowa",
+    "name_en": "Parsley root",
+    "emoji": "🥕",
+    "category": "vegetable",
+    "family": "apiaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -2,
+          2
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        20,
+        24
+      ]
+    }
+  },
+  {
+    "key": "åkerbønner",
+    "name_no": "Åkerbønner",
+    "name_pl": "Bób",
+    "name_en": "Fava beans",
+    "emoji": "🫘",
+    "category": "vegetable",
+    "family": "fabaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          -4,
+          0
+        ],
+        "minSoilTempC": 5
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        12,
+        14
+      ]
+    }
+  },
+  {
+    "key": "kålrot",
+    "name_no": "Kålrot",
+    "name_pl": "Brukiew",
+    "name_en": "Rutabaga",
+    "emoji": "🥔",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          3
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        14,
+        18
+      ]
+    }
+  },
+  {
+    "key": "knutekål",
+    "name_no": "Knutekål",
+    "name_pl": "Kalarepa",
+    "name_en": "Kohlrabi",
+    "emoji": "🥬",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        8,
+        10
+      ]
+    }
+  }
 ]

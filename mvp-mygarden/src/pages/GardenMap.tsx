@@ -7,12 +7,14 @@ import { GardenGrid, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../c
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
+import { SowNowCard } from "../components/SowNowCard";
 import type { BedType, SunExposure } from "../lib/boxMeta";
 import { isCustomPlantLike } from "../lib/customPlants";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
+import { useLocationStore } from "../store/useLocationStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting, PlantInfo } from "../types";
 
@@ -83,6 +85,8 @@ export function GardenMap() {
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [quickAddBoxId, setQuickAddBoxId] = useState<string | null>(null);
+  const [quickAddInitialPlantKey, setQuickAddInitialPlantKey] = useState<string | undefined>(undefined);
+  const [sowPickPlantKey, setSowPickPlantKey] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pinchStateRef = useRef<PinchState | null>(null);
 
@@ -330,6 +334,16 @@ export function GardenMap() {
         </div>
       </header>
 
+      <NoLocationBanner viewMode={viewMode} />
+
+      {!viewMode && (
+        <SowNowCard
+          onPickPlant={(plantKey) => {
+            setSowPickPlantKey(plantKey);
+          }}
+        />
+      )}
+
       <section className="rounded-xl border p-2 sm:p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <button
@@ -391,7 +405,26 @@ export function GardenMap() {
 
       <FloatingUndo editMode={editMode && !viewMode} />
 
-      <QuickAddSheet box={boxes.find((box) => box.id === quickAddBoxId) ?? null} onClose={() => setQuickAddBoxId(null)} />
+      <QuickAddSheet
+        box={boxes.find((box) => box.id === quickAddBoxId) ?? null}
+        initialPlantKey={quickAddInitialPlantKey}
+        onClose={() => {
+          setQuickAddBoxId(null);
+          setQuickAddInitialPlantKey(undefined);
+        }}
+      />
+
+      {sowPickPlantKey && !quickAddBoxId && (
+        <SowBoxPicker
+          boxes={boxes}
+          onCancel={() => setSowPickPlantKey(null)}
+          onPick={(boxId) => {
+            setQuickAddBoxId(boxId);
+            setQuickAddInitialPlantKey(sowPickPlantKey);
+            setSowPickPlantKey(null);
+          }}
+        />
+      )}
 
       {editMode && !viewMode && (
         <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
@@ -455,5 +488,89 @@ export function GardenMap() {
       )}
 
     </main>
+  );
+}
+
+function SowBoxPicker({
+  boxes,
+  onCancel,
+  onPick,
+}: {
+  boxes: Box[];
+  onCancel: () => void;
+  onPick: (boxId: string) => void;
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4"
+      onClick={onCancel}
+    >
+      <div
+        role="document"
+        onClick={(event) => event.stopPropagation()}
+        className="flex max-h-[70vh] w-full max-w-md flex-col rounded-t-2xl border shadow-lg sm:rounded-2xl"
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+      >
+        <div className="flex items-center justify-between gap-2 border-b p-3" style={{ borderColor: "var(--border)" }}>
+          <h2 className="text-base font-semibold sm:text-lg">Velg kasse</h2>
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label="Lukk"
+            className="tap-target rounded-full px-3 text-lg"
+            style={{ color: "var(--text-muted)" }}
+          >
+            ✕
+          </button>
+        </div>
+        {boxes.length === 0 ? (
+          <p className="p-3 text-sm" style={{ color: "var(--text-muted)" }}>
+            Ingen kasser ennå. Lag en kasse først.
+          </p>
+        ) : (
+          <ul className="grid grid-cols-2 gap-2 overflow-y-auto p-3">
+            {boxes.map((box) => (
+              <li key={box.id}>
+                <button
+                  type="button"
+                  onClick={() => onPick(box.id)}
+                  className="tap-target w-full rounded-lg border px-3 py-2 text-left text-sm font-medium"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text)" }}
+                >
+                  {box.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NoLocationBanner({ viewMode }: { viewMode: boolean }) {
+  const postnummer = useLocationStore((state) => state.postnummer);
+  if (postnummer || viewMode) {
+    return null;
+  }
+  return (
+    <div
+      className="rounded-xl border p-3 text-sm sm:p-4"
+      style={{
+        borderColor: "var(--amber)",
+        backgroundColor: "var(--amber-light)",
+        color: "var(--text)",
+      }}
+    >
+      <p>
+        Vi viser et grovt landsestimat.{" "}
+        <Link to="/settings" className="underline" style={{ color: "var(--amber)" }}>
+          Legg inn postnummer
+        </Link>{" "}
+        for datoer som faktisk passer hagen din.
+      </p>
+    </div>
   );
 }

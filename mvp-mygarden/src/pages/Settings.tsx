@@ -7,10 +7,12 @@ import { EXTRA_LEFT_COLS, EXTRA_TOP_ROWS } from "../components/GardenGrid";
 import { CATEGORY_LABELS } from "../lib/categories";
 import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
 import { FAMILY_INFO } from "../lib/families";
+import { findPostnummer, formatDoy, isValidPostnummer, resolveLocation } from "../lib/location";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
+import { useLocationStore } from "../store/useLocationStore";
 import {
   DEFAULT_GRID_SIZE,
   GRID_COLS_MAX,
@@ -133,6 +135,14 @@ export function Settings() {
   const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
   const language = useUiStore((state) => state.plantLanguage);
 
+  const locationPostnummer = useLocationStore((state) => state.postnummer);
+  const locationElevationM = useLocationStore((state) => state.elevationM);
+  const locationFrostJustering = useLocationStore((state) => state.frostJusteringDays);
+  const setLocationPostnummer = useLocationStore((state) => state.setPostnummer);
+  const setLocationElevation = useLocationStore((state) => state.setElevation);
+  const setLocationFrostJustering = useLocationStore((state) => state.setFrostJustering);
+  const clearLocation = useLocationStore((state) => state.clearLocation);
+
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [gridCols, setGridCols] = useState(gridSize.cols);
@@ -141,6 +151,69 @@ export function Settings() {
   const [gridStatus, setGridStatus] = useState<string | null>(null);
   const [showNewCustomPlant, setShowNewCustomPlant] = useState(false);
   const [editingCustomPlantKey, setEditingCustomPlantKey] = useState<string | null>(null);
+
+  const [postnummerInput, setPostnummerInput] = useState(locationPostnummer ?? "");
+  const [elevationInput, setElevationInput] = useState<string>(
+    locationElevationM != null ? String(locationElevationM) : "",
+  );
+  const [frostJusteringInput, setFrostJusteringInput] = useState<string>(String(locationFrostJustering ?? 0));
+  const [locationStatus, setLocationStatus] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  const resolvedLocation = useMemo(() => {
+    if (!locationPostnummer) {
+      return null;
+    }
+    return resolveLocation({
+      postnummer: locationPostnummer,
+      userElevationM: locationElevationM ?? undefined,
+      frostJusteringDays: locationFrostJustering,
+    });
+  }, [locationPostnummer, locationElevationM, locationFrostJustering]);
+
+  const previewedPostnummer = useMemo(() => {
+    const trimmed = postnummerInput.trim();
+    return isValidPostnummer(trimmed) ? findPostnummer(trimmed) ?? null : null;
+  }, [postnummerInput]);
+
+  const handleSaveLocation = () => {
+    const trimmed = postnummerInput.trim();
+    setLocationStatus(null);
+    if (!trimmed) {
+      // Allow clearing — empty postnummer wipes location.
+      clearLocation();
+      setElevationInput("");
+      setFrostJusteringInput("0");
+      setLocationError(null);
+      setLocationStatus("Plassering nullstilt.");
+      return;
+    }
+    if (!isValidPostnummer(trimmed)) {
+      setLocationError("Postnummer må være 4 sifre.");
+      return;
+    }
+    if (!findPostnummer(trimmed)) {
+      setLocationError(`Fant ikke postnummer ${trimmed}. Sjekk skrivemåten.`);
+      return;
+    }
+    setLocationError(null);
+    setLocationPostnummer(trimmed);
+    const parsedElevation = elevationInput.trim() === "" ? null : Number(elevationInput);
+    if (parsedElevation !== null) {
+      setLocationElevation(parsedElevation);
+      setElevationInput(String(Math.max(0, Math.round(parsedElevation))));
+    }
+    const parsedJustering = frostJusteringInput.trim() === "" ? 0 : Number(frostJusteringInput);
+    setLocationFrostJustering(parsedJustering);
+    setFrostJusteringInput(String(Math.max(-60, Math.min(60, Math.round(parsedJustering)))));
+    setLocationStatus("Plassering lagret.");
+  };
+
+  const handleUsePostnummerElevation = () => {
+    if (previewedPostnummer) {
+      setElevationInput(String(previewedPostnummer.centroidElevationM));
+    }
+  };
 
   const bundledBackupLastUpdated = useMemo(
     () => formatBackupTimestamp((bundledGardenBackup as BackupPayload).exportedAt),
@@ -278,6 +351,150 @@ export function Settings() {
         </div>
         <h1 className="mt-2 text-xl font-semibold sm:text-2xl">Innstillinger</h1>
       </header>
+
+      <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+        <h2 className="text-lg font-semibold sm:text-xl">📍 Hagens plassering</h2>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          Brukes til å beregne lokale frost-datoer. Alt er valgfritt — uten plassering bruker vi grove landsestimat.
+        </p>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="space-y-1 text-sm">
+            <span className="block font-medium">Postnummer</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              maxLength={4}
+              value={postnummerInput}
+              onChange={(event) => {
+                setPostnummerInput(event.target.value.replace(/\D/g, ""));
+                setLocationError(null);
+                setLocationStatus(null);
+              }}
+              placeholder="f.eks. 6857"
+              className="input-touch w-full rounded-lg border px-3 py-2"
+              style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+            />
+            {previewedPostnummer && (
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                {previewedPostnummer.kommune}, {previewedPostnummer.fylke}
+              </p>
+            )}
+          </label>
+
+          <label className="space-y-1 text-sm">
+            <span className="block font-medium">Høyde over havet (m)</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              value={elevationInput}
+              onChange={(event) => {
+                setElevationInput(event.target.value);
+                setLocationStatus(null);
+              }}
+              placeholder={previewedPostnummer ? String(previewedPostnummer.centroidElevationM) : "f.eks. 150"}
+              className="input-touch w-full rounded-lg border px-3 py-2"
+              style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+            />
+            {previewedPostnummer && (
+              <button
+                type="button"
+                onClick={handleUsePostnummerElevation}
+                className="text-xs underline"
+                style={{ color: "var(--green)" }}
+              >
+                Bruk postnummer-default ({previewedPostnummer.centroidElevationM} m)
+              </button>
+            )}
+          </label>
+        </div>
+
+        <label className="space-y-1 text-sm">
+          <span className="block font-medium">Frost-justering (±dager)</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={-60}
+            max={60}
+            value={frostJusteringInput}
+            onChange={(event) => {
+              setFrostJusteringInput(event.target.value);
+              setLocationStatus(null);
+            }}
+            className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-xs"
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+          />
+          <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+            Positiv = senere vårfrost / tidligere høstfrost (frostlomme). Negativ = mildere mikroklima.
+          </span>
+        </label>
+
+        {locationError && (
+          <p className="text-sm font-medium" style={{ color: "var(--red)" }}>
+            {locationError}
+          </p>
+        )}
+        {locationStatus && (
+          <p className="text-sm font-medium" style={{ color: "var(--green)" }}>
+            {locationStatus}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleSaveLocation}
+            className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+            style={{ backgroundColor: "var(--green)", color: "white" }}
+          >
+            Lagre plassering
+          </button>
+          {locationPostnummer && (
+            <button
+              type="button"
+              onClick={() => {
+                clearLocation();
+                setPostnummerInput("");
+                setElevationInput("");
+                setFrostJusteringInput("0");
+                setLocationError(null);
+                setLocationStatus("Plassering nullstilt.");
+              }}
+              className="tap-target rounded-lg border px-4 py-2 text-sm font-medium"
+              style={{ borderColor: "var(--border)", color: "var(--text)", backgroundColor: "var(--surface)" }}
+            >
+              Nullstill plassering
+            </button>
+          )}
+        </div>
+
+        {resolvedLocation && (
+          <div
+            className="space-y-1 rounded-lg border p-2.5 text-sm"
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}
+          >
+            <p>
+              Vi bruker <strong>{resolvedLocation.station.name}</strong>, {resolvedLocation.station.elevationM} moh.
+            </p>
+            <p>
+              Anslått siste vårfrost: <strong>{formatDoy(resolvedLocation.lastFrostDoy)}</strong>. Første høstfrost:{" "}
+              <strong>{formatDoy(resolvedLocation.firstFrostDoy)}</strong>.
+            </p>
+            {Math.abs(resolvedLocation.elevationShiftDays) >= 1 && (
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                Justert {resolvedLocation.elevationShiftDays > 0 ? "+" : ""}
+                {Math.round(resolvedLocation.elevationShiftDays)} dager for høyde-forskjell ({resolvedLocation.userElevationM} m vs. stasjonens{" "}
+                {resolvedLocation.station.elevationM} m).
+              </p>
+            )}
+          </div>
+        )}
+
+        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+          Klimadata fra Meteorologisk institutt, lisensiert under CC BY 3.0 NO.
+        </p>
+      </section>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <h2 className="text-lg font-semibold sm:text-xl">Rutenettstørrelse</h2>

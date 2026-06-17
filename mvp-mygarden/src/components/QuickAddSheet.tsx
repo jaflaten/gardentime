@@ -9,9 +9,10 @@ import { PlantPicker } from "./PlantPicker";
 interface QuickAddSheetProps {
   box: Box | null;
   onClose: () => void;
+  initialPlantKey?: string;
 }
 
-export function QuickAddSheet({ box, onClose }: QuickAddSheetProps) {
+export function QuickAddSheet({ box, onClose, initialPlantKey }: QuickAddSheetProps) {
   useEffect(() => {
     if (!box) {
       return;
@@ -34,23 +35,37 @@ export function QuickAddSheet({ box, onClose }: QuickAddSheetProps) {
     return null;
   }
 
-  // key={box.id} resets form state when switching boxes without a useEffect.
-  return <QuickAddForm key={box.id} box={box} onClose={onClose} />;
+  // key={box.id+initialPlantKey} resets form state when switching boxes or preset plant without a useEffect.
+  return <QuickAddForm key={`${box.id}-${initialPlantKey ?? ""}`} box={box} onClose={onClose} initialPlantKey={initialPlantKey} />;
 }
 
 interface QuickAddFormProps {
   box: Box;
   onClose: () => void;
+  initialPlantKey?: string;
 }
 
-function QuickAddForm({ box, onClose }: QuickAddFormProps) {
+function QuickAddForm({ box, onClose, initialPlantKey }: QuickAddFormProps) {
   const plantings = useGardenStore((state) => state.plantings);
   const addPlanting = useGardenStore((state) => state.addPlanting);
   const findPlant = usePlantLookup();
 
-  const [plantKey, setPlantKey] = useState("");
-  const [customName, setCustomName] = useState("");
+  const mostRecentActive = useMemo(
+    () =>
+      plantings
+        .filter((planting) => planting.boxId === box.id && planting.status === "active")
+        .sort((a, b) => b.plantedDate.localeCompare(a.plantedDate))[0],
+    [box.id, plantings],
+  );
+
+  // initialPlantKey (from D2 card) takes precedence; otherwise default to the box's most recent active planting.
+  const [plantKey, setPlantKey] = useState(() => initialPlantKey ?? mostRecentActive?.plantKey ?? "");
+  const [customName, setCustomName] = useState(() =>
+    !initialPlantKey && mostRecentActive && !mostRecentActive.plantKey ? (mostRecentActive.customName ?? "") : "",
+  );
+  const [variety, setVariety] = useState("");
   const [plantedDate, setPlantedDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [showPickerError, setShowPickerError] = useState(false);
 
   const previousYear = useMemo(() => new Date(plantedDate).getFullYear() - 1, [plantedDate]);
   const previousSeasonFamilies = useMemo<PlantFamily[]>(() => {
@@ -69,12 +84,14 @@ function QuickAddForm({ box, onClose }: QuickAddFormProps) {
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!plantKey && !customName.trim()) {
+      setShowPickerError(true);
       return;
     }
     addPlanting({
       boxId: box.id,
       plantKey,
       customName: customName.trim() || undefined,
+      variety: variety.trim() || undefined,
       plantedDate,
       status: "active",
     });
@@ -114,9 +131,23 @@ function QuickAddForm({ box, onClose }: QuickAddFormProps) {
           <PlantPicker
             plantKey={plantKey}
             customName={customName}
-            onPlantKeyChange={setPlantKey}
-            onCustomNameChange={setCustomName}
+            onPlantKeyChange={(key) => {
+              setPlantKey(key);
+              setShowPickerError(false);
+            }}
+            onCustomNameChange={(name) => {
+              setCustomName(name);
+              if (name.trim()) {
+                setShowPickerError(false);
+              }
+            }}
           />
+
+          {showPickerError && (
+            <p className="text-sm" style={{ color: "var(--red)" }}>
+              Velg en plante eller skriv et eget plantenavn først.
+            </p>
+          )}
 
           {previousSeasonFamilies.length > 0 && (
             <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
@@ -130,6 +161,18 @@ function QuickAddForm({ box, onClose }: QuickAddFormProps) {
               </div>
             </div>
           )}
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Sort (valgfritt)</label>
+            <input
+              type="text"
+              value={variety}
+              onChange={(event) => setVariety(event.target.value)}
+              placeholder="f.eks. Sungold"
+              className="input-touch w-full rounded-lg border px-3 py-2"
+              style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium">Plantet dato</label>

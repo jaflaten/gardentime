@@ -23,6 +23,7 @@ export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }
     return {
       emoji: plant?.emoji ?? "🌱",
       name: planting.customName ?? (plant ? getPlantName(plant, plantLanguage) : planting.plantKey),
+      variety: planting.variety,
     };
   });
   const extraCount = activePlantings.length - visiblePlants.length;
@@ -128,8 +129,15 @@ export function BoxTile({ box, activePlantings, editMode, onClick, onLongPress }
       {hasActive ? (
         <div className="space-y-1">
           {visiblePlants.map((plant) => (
-            <p key={`${box.id}-${plant.name}`} className="truncate text-xs sm:text-sm">
+            <p
+              key={`${box.id}-${plant.name}`}
+              className="truncate text-xs sm:text-sm"
+              title={plant.variety ? `${plant.name} (${plant.variety})` : undefined}
+            >
               {plant.emoji} {plant.name}
+              {plant.variety && (
+                <span style={{ color: "var(--text-muted)" }}> · {plant.variety}</span>
+              )}
             </p>
           ))}
           {extraCount > 0 && <p className="text-xs font-medium">+{extraCount} til</p>}
