@@ -18,7 +18,7 @@ import { boxContextNotes, rankPlantsForBox, type BoxFitTier } from "../lib/boxRa
 import { getPlantName, useMergedPlantList, usePlantLookup } from "../lib/plants";
 import { isSowableNow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
-import { boxRotationHistory, familyConflictYears } from "../lib/rotation";
+import { boxRotationHistory, familyConflictYears, plantingFamilyResolver } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Planting } from "../types";
@@ -93,7 +93,7 @@ export function BoxDetail() {
     if (!selectedFamily) {
       return [];
     }
-    const history = boxRotationHistory(plantings, id ?? "", (p) => findPlant(p.plantKey)?.family, targetYear);
+    const history = boxRotationHistory(plantings, id ?? "", plantingFamilyResolver(findPlant), targetYear);
     return familyConflictYears(history, selectedFamily);
   }, [findPlant, id, plantings, selectedFamily, targetYear]);
 

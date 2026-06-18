@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import type { PlantFamily } from "../lib/families";
 import { getPlantName, usePlantLookup } from "../lib/plants";
-import { boxRotationHistory, familyConflictYears } from "../lib/rotation";
+import { boxRotationHistory, familyConflictYears, plantingFamilyResolver } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting } from "../types";
@@ -212,7 +212,7 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
     if (!family) {
       return [];
     }
-    const history = boxRotationHistory(plantings, box.id, (p) => findPlant(p.plantKey)?.family, targetYear);
+    const history = boxRotationHistory(plantings, box.id, plantingFamilyResolver(findPlant), targetYear);
     return familyConflictYears(history, family);
   }, [box.id, findPlant, plantKey, plantings, targetYear]);
   const selectedFamily = plantKey ? findPlant(plantKey)?.family : undefined;

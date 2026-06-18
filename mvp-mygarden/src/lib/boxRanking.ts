@@ -2,7 +2,7 @@ import { getBedTypeLabel, getSunLabel } from "./boxMeta";
 import { companionHints } from "./companions";
 import { getFamilyName } from "./families";
 import { getPlantName } from "./plants";
-import { boxRotationHistory, familyConflictYears, formatYearList } from "./rotation";
+import { boxRotationHistory, familyConflictYears, formatYearList, plantingFamilyResolver } from "./rotation";
 import type { PlantLanguage } from "../store/useUiStore";
 import type { Box, Planting, PlantInfo } from "../types";
 
@@ -92,8 +92,8 @@ function evaluateFit(
   const cautions: string[] = [];
   const positives: string[] = [];
 
-  // Family rotation — same family grown here within the lookback window.
-  const history = boxRotationHistory(plantings, box.id, (p) => findPlant(p.plantKey)?.family, referenceYear);
+  // Family rotation — same family grown here within the lookback window (perennials excluded).
+  const history = boxRotationHistory(plantings, box.id, plantingFamilyResolver(findPlant), referenceYear);
   const conflictYears = familyConflictYears(history, plant.family);
   if (conflictYears.length > 0) {
     blockers.push(`${getFamilyName(plant.family, language)} her i ${formatYearList(conflictYears)}`);
@@ -179,8 +179,8 @@ export function boxContextNotes(
 ): string[] {
   const notes: string[] = [];
 
-  // Rotation — every family grown here within the lookback window.
-  const history = boxRotationHistory(plantings, box.id, (p) => findPlant(p.plantKey)?.family, referenceYear);
+  // Rotation — every family grown here within the lookback window (perennials excluded).
+  const history = boxRotationHistory(plantings, box.id, plantingFamilyResolver(findPlant), referenceYear);
   for (const [family, years] of history.byFamily) {
     notes.push(`Du hadde ${getFamilyName(family, language)} her i ${formatYearList(years)} — vurder en annen familie i år.`);
   }

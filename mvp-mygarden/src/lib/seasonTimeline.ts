@@ -9,8 +9,12 @@ const MS_PER_DAY = 86_400_000;
 export interface TimelineItem {
   planting: Planting;
   plant: PlantInfo | undefined;
-  /** Day-of-year the planting was sown/planted, clamped into the visible range. */
-  plantedDoy: number;
+  /**
+   * Day-of-year the planting was sown/planted, clamped into the visible range — or `null` when it
+   * was planted in a previous season (e.g. an established perennial), since its sow date doesn't
+   * belong on this year's axis. The harvest band still renders for such plantings.
+   */
+  plantedDoy: number | null;
   /** Estimated harvest window [startDoy, endDoy], or null when the plant has no harvest rule. */
   harvestWindow: [number, number] | null;
 }
@@ -38,6 +42,12 @@ export function doyToDate(doy: number, year: number): Date {
   return date;
 }
 
+/** Convert an absolute "MM-DD" calendar marker into a day-of-year within `year`. */
+export function mmddToDoy(mmdd: string, year: number): number {
+  const [month, day] = mmdd.split("-").map(Number);
+  return dateToDoy(new Date(year, month - 1, day));
+}
+
 /** First day-of-year of the month containing `doy`. */
 function monthStartDoy(doy: number, year: number): number {
   const date = doyToDate(doy, year);
@@ -52,13 +62,22 @@ function monthEndDoy(doy: number, year: number): number {
 
 function harvestWindow(
   rule: HarvestRule | undefined,
-  plantedDoy: number,
+  plantedDoy: number | null,
   firstFrostDoy: number,
+  year: number,
 ): [number, number] | null {
   if (!rule) {
     return null;
   }
+  if ("seasonal" in rule) {
+    // Absolute calendar window, repeats yearly (perennials) — independent of the sow date.
+    return [mmddToDoy(rule.seasonal[0], year), mmddToDoy(rule.seasonal[1], year)];
+  }
   if ("weeksFromSowing" in rule) {
+    // Sow-relative — needs a sow date on this year's axis. A planting from a prior season has none.
+    if (plantedDoy === null) {
+      return null;
+    }
     const [min, max] = rule.weeksFromSowing;
     return [plantedDoy + min * 7, plantedDoy + max * 7];
   }
@@ -89,10 +108,18 @@ export function buildSeasonTimeline(
 
   const raw = active.map((planting) => {
     const plant = planting.plantKey ? findPlant(planting.plantKey) : undefined;
-    const plantedDoy = dateToDoy(new Date(`${planting.plantedDate}T00:00:00`));
-    const win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy);
-    startDoy = Math.min(startDoy, plantedDoy);
+    // Only place the sow dot on the axis when the planting was sown this season. An established
+    // perennial (or stale prior-year planting) has a sow date that doesn't belong on this year's axis.
+    const plantedThisYear = Number(planting.plantedDate.slice(0, 4)) === year;
+    const plantedDoy = plantedThisYear
+      ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
+      : null;
+    const win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year);
+    if (plantedDoy !== null) {
+      startDoy = Math.min(startDoy, plantedDoy);
+    }
     if (win) {
+      startDoy = Math.min(startDoy, win[0]);
       endDoy = Math.max(endDoy, win[1]);
     }
     return { planting, plant, plantedDoy, win };
@@ -106,7 +133,7 @@ export function buildSeasonTimeline(
   const items: TimelineItem[] = raw.map(({ planting, plant, plantedDoy, win }) => ({
     planting,
     plant,
-    plantedDoy: clamp(plantedDoy),
+    plantedDoy: plantedDoy === null ? null : clamp(plantedDoy),
     harvestWindow: win ? [clamp(win[0]), clamp(win[1])] : null,
   }));
 

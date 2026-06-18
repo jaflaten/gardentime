@@ -87,7 +87,7 @@
     {
       "id": "demo-box-07",
       "name": "Åpen seng B",
-      "description": "Aktiv erter, blandet historikk",
+      "description": "Aktiv erter + flerårig jordbær fra i fjor, blandet historikk",
       "createdAt": "2024-01-15T10:00:00.000Z",
       "zoneType": "BOX",
       "sunExposure": "sun",
@@ -157,6 +157,7 @@
     { "id": "demo-pl-0701", "boxId": "demo-box-07", "plantKey": "mais", "plantedDate": "2024-05-20", "harvestDate": "2024-09-25", "status": "harvested", "year": 2024 },
     { "id": "demo-pl-0702", "boxId": "demo-box-07", "plantKey": "squash", "plantedDate": "2025-05-28", "harvestDate": "2025-09-05", "status": "harvested", "year": 2025 },
     { "id": "demo-pl-0703", "boxId": "demo-box-07", "plantKey": "erter", "plantedDate": "2026-05-05", "status": "active", "year": 2026 },
+    { "id": "demo-pl-0704", "boxId": "demo-box-07", "plantKey": "jordbær", "variety": "Korona", "plantedDate": "2025-06-01", "status": "active", "year": 2025 },
 
     { "id": "demo-pl-0801", "boxId": "demo-box-08", "plantKey": "agurk", "variety": "Marketmore", "plantedDate": "2026-05-20", "status": "active", "year": 2026 },
 

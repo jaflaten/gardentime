@@ -113,6 +113,9 @@ export function SeasonTimeline() {
                           <span style={{ color: "var(--text-muted)" }}> · {item.planting.variety}</span>
                         )}
                         {box && <span style={{ color: "var(--text-muted)" }}> · {box}</span>}
+                        {item.plant?.perennial && (
+                          <span style={{ color: "var(--text-muted)" }}> · flerårig</span>
+                        )}
                       </p>
                       <div
                         className="relative h-5 rounded"
@@ -139,12 +142,14 @@ export function SeasonTimeline() {
                             }}
                           />
                         )}
-                        {/* planted marker */}
-                        <span
-                          className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                          title="Plantet"
-                          style={{ left: `${pct(item.plantedDoy)}%`, backgroundColor: "var(--green)" }}
-                        />
+                        {/* planted marker — omitted for plantings sown in a previous season (perennials) */}
+                        {item.plantedDoy !== null && (
+                          <span
+                            className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                            title="Plantet"
+                            style={{ left: `${pct(item.plantedDoy)}%`, backgroundColor: "var(--green)" }}
+                          />
+                        )}
                         {/* today line */}
                         {todayInRange && (
                           <span

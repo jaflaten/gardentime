@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
+import { mmddToDoy } from "../lib/seasonTimeline";
 import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
@@ -13,6 +14,8 @@ interface GroupedRow {
   helper: string;
   /** Optional planting id for "Høst snart" rows so they can later link to the right history entry. */
   plantingId?: string;
+  /** How many active plantings this row represents (>1 shows a "×N" badge). Used by "Høst snart". */
+  count?: number;
 }
 
 interface Grouped {
@@ -35,6 +38,16 @@ function harvestSoonForPlanting(
   firstFrostDoy: number,
 ): { matches: boolean; helper: string } {
   if (!rule) {
+    return { matches: false, helper: "" };
+  }
+  if ("seasonal" in rule) {
+    // Absolute calendar window (perennials) — matches whenever today falls within it, any year.
+    const year = new Date().getFullYear();
+    const start = mmddToDoy(rule.seasonal[0], year);
+    const end = mmddToDoy(rule.seasonal[1], year);
+    if (todayDoy >= start && todayDoy <= end) {
+      return { matches: true, helper: "Høstesesong nå" };
+    }
     return { matches: false, helper: "" };
   }
   if ("weeksBeforeFirstFrost" in rule) {
@@ -134,15 +147,23 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
       }
     }
 
-    // "Høst snart" — active plantings whose harvestRule matches today.
+    // "Høst snart" — active plantings whose harvestRule matches today, collapsed to one row per
+    // plant with a count so a garden with ten jordbær beds shows "Jordbær ×10", not ten lines.
     const harvestSoon: GroupedRow[] = [];
+    const harvestByKey = new Map<string, GroupedRow>();
     for (const planting of plantings) {
       if (planting.status !== "active") continue;
       const plant = plants.find((p) => p.key === planting.plantKey);
       if (!plant?.harvestRule) continue;
       const check = harvestSoonForPlanting(planting, plant.harvestRule, doy, location.firstFrostDoy);
-      if (check.matches) {
-        harvestSoon.push({ plant, helper: check.helper, plantingId: planting.id });
+      if (!check.matches) continue;
+      const existing = harvestByKey.get(plant.key);
+      if (existing) {
+        existing.count = (existing.count ?? 1) + 1;
+      } else {
+        const row: GroupedRow = { plant, helper: check.helper, plantingId: planting.id, count: 1 };
+        harvestByKey.set(plant.key, row);
+        harvestSoon.push(row);
       }
     }
 
@@ -219,6 +240,9 @@ function SowGroup({ title, rows, language, onPickPlant }: SowGroupProps) {
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">
                 {row.plant.emoji} {getPlantName(row.plant, language)}
+                {row.count != null && row.count > 1 && (
+                  <span style={{ color: "var(--text-muted)" }}> ×{row.count}</span>
+                )}
               </p>
               <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
                 {row.helper}

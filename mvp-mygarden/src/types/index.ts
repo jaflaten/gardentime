@@ -39,7 +39,10 @@ export type SowRule =
 
 export type HarvestRule =
   | { weeksFromSowing: [number, number] }
-  | { weeksBeforeFirstFrost: number };
+  | { weeksBeforeFirstFrost: number }
+  // Absolute calendar harvest window that repeats every year, e.g. ["06-15", "07-31"] for
+  // strawberries (mid-June→July). Used for perennials whose harvest is seasonal, not sow-relative.
+  | { seasonal: [string, string] };
 
 export interface PlantInfo {
   key: string;
@@ -65,4 +68,10 @@ export interface PlantInfo {
   companionsBad?: string[];
   /** Succession interval in weeks (Increment E): re-sow every N weeks for a continuous harvest (salat, reddik). */
   successionWeeks?: number;
+  /**
+   * Perennial — stays in the bed across seasons and re-fruits each year (jordbær, rabarbra, urter).
+   * Its harvest window should be a `{ seasonal }` rule (absolute, repeats yearly) rather than sow-relative,
+   * and the season timeline draws that band every year regardless of which year it was planted.
+   */
+  perennial?: boolean;
 }

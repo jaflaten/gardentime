@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { FloatingUndo } from "../components/FloatingUndo";
-import { GardenGrid, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
+import { GardenGrid, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
@@ -106,6 +106,7 @@ export function GardenMap() {
   const viewMode = useViewMode();
   const [editMode, setEditMode] = useState(false);
   const [zoom, setZoom] = useState(0.9);
+  const [fitNonce, setFitNonce] = useState(0);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -156,11 +157,9 @@ export function GardenMap() {
   const zoomOut = () => setZoom((prev) => clampZoom(prev - 0.05));
   const zoomIn = () => setZoom((prev) => clampZoom(prev + 0.05));
   const zoomReset = () => setZoom(0.9);
-  const zoomFit = () => {
-    const availableWidth = Math.max(260, window.innerWidth - 32);
-    const fitZoom = availableWidth / (gridSize.cols * MAP_BASE_COL_WIDTH);
-    setZoom(clampZoom(fitZoom));
-  };
+  // "Tilpass" fits the whole grid into the actual viewport (both axes). GardenGrid owns the
+  // viewport element, so we bump a nonce and let it compute the fit from its real client box.
+  const zoomFit = () => setFitNonce((nonce) => nonce + 1);
 
   const onMapTouchStart = (event: TouchEvent<HTMLElement>) => {
     if (event.touches.length !== 2) {
@@ -368,7 +367,7 @@ export function GardenMap() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-3 p-3 sm:gap-4 sm:p-4 xl:max-w-[1400px] 2xl:max-w-[1800px]">
       <header
         className="sticky top-0 z-20 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-sm sm:p-4"
         style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
@@ -420,6 +419,69 @@ export function GardenMap() {
       )}
 
       {!viewMode && <SeasonTimeline />}
+
+      {editMode && !viewMode && (
+        <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
+          {!showCreateForm ? (
+            <button
+              type="button"
+              onClick={() => setShowCreateForm(true)}
+              className="tap-target w-full rounded-lg px-4 py-2 text-sm font-medium"
+              style={{ backgroundColor: "var(--green)", color: "white" }}
+            >
+              + Ny kasse
+            </button>
+          ) : (
+            <form className="max-w-xl space-y-3" onSubmit={onCreateBox}>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium">Navn</label>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  required
+                  className="input-touch w-full rounded-lg border px-3 py-2"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium">Beskrivelse (valgfritt)</label>
+                <textarea
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  rows={2}
+                  className="input-touch w-full rounded-lg border px-3 py-2"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+                />
+              </div>
+              <BoxMetaFields
+                sunExposure={sunExposure}
+                bedType={bedType}
+                depthCm={depthCm}
+                onSunExposureChange={setSunExposure}
+                onBedTypeChange={setBedType}
+                onDepthCmChange={setDepthCm}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                  style={{ backgroundColor: "var(--green)", color: "white" }}
+                >
+                  Lagre
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(false)}
+                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                  style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+                >
+                  Avbryt
+                </button>
+              </div>
+            </form>
+          )}
+        </section>
+      )}
 
       <section className="rounded-xl border p-2 sm:p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -475,6 +537,8 @@ export function GardenMap() {
           <GardenGrid
             editMode={editMode}
             zoom={zoom}
+            onZoomChange={(next) => setZoom(clampZoom(next))}
+            fitNonce={fitNonce}
             onLongPressBox={editMode || viewMode ? undefined : (boxId) => setQuickAddBoxId(boxId)}
           />
         </div>
@@ -504,69 +568,6 @@ export function GardenMap() {
             setSowPickPlantKey(null);
           }}
         />
-      )}
-
-      {editMode && !viewMode && (
-        <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-          {!showCreateForm ? (
-            <button
-              type="button"
-              onClick={() => setShowCreateForm(true)}
-              className="tap-target w-full rounded-lg px-4 py-2 text-sm font-medium"
-              style={{ backgroundColor: "var(--green)", color: "white" }}
-            >
-              + Ny kasse
-            </button>
-          ) : (
-            <form className="space-y-3" onSubmit={onCreateBox}>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">Navn</label>
-                <input
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  required
-                  className="input-touch w-full rounded-lg border px-3 py-2"
-                  style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium">Beskrivelse (valgfritt)</label>
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  rows={2}
-                  className="input-touch w-full rounded-lg border px-3 py-2"
-                  style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-                />
-              </div>
-              <BoxMetaFields
-                sunExposure={sunExposure}
-                bedType={bedType}
-                depthCm={depthCm}
-                onSunExposureChange={setSunExposure}
-                onBedTypeChange={setBedType}
-                onDepthCmChange={setDepthCm}
-              />
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
-                  style={{ backgroundColor: "var(--green)", color: "white" }}
-                >
-                  Lagre
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowCreateForm(false)}
-                  className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
-                  style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
-                >
-                  Avbryt
-                </button>
-              </div>
-            </form>
-          )}
-        </section>
       )}
 
     </main>
