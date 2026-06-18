@@ -5,6 +5,7 @@ import { boxRotationHistory, familyConflictYears } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting } from "../types";
+import { CompanionHints } from "./CompanionHints";
 import { FamilyChip } from "./FamilyChip";
 import { PlantPicker } from "./PlantPicker";
 import { RotationWarning } from "./RotationWarning";
@@ -215,6 +216,15 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
     return familyConflictYears(history, family);
   }, [box.id, findPlant, plantKey, plantings, targetYear]);
   const selectedFamily = plantKey ? findPlant(plantKey)?.family : undefined;
+  // Other active plantings in this box — the companions the picked plant would sit beside.
+  const neighbourKeys = useMemo(
+    () =>
+      plantings
+        .filter((p) => p.boxId === box.id && p.status === "active" && p.id !== planting?.id)
+        .map((p) => p.plantKey)
+        .filter(Boolean),
+    [plantings, box.id, planting?.id],
+  );
   const previousSeasonFamilies = useMemo<PlantFamily[]>(() => {
     const families = new Set<PlantFamily>();
     plantings
@@ -281,6 +291,8 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
           onDismiss={() => setRotationDismissed(true)}
         />
       )}
+
+      <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} />
 
       {previousSeasonFamilies.length > 0 && (
         <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>

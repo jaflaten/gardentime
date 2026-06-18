@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BoxMetaFields } from "../components/BoxMetaFields";
+import { CompanionHints } from "../components/CompanionHints";
 import { FamilyChip } from "../components/FamilyChip";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PlantPicker } from "../components/PlantPicker";
@@ -84,6 +85,10 @@ export function BoxDetail() {
   }, [boxPlantings, findPlant, previousYear]);
 
   const selectedFamily = plantKey ? findPlant(plantKey)?.family : undefined;
+  const neighbourKeys = useMemo(
+    () => activePlantings.map((planting) => planting.plantKey).filter(Boolean),
+    [activePlantings],
+  );
   const rotationConflictYears = useMemo(() => {
     if (!selectedFamily) {
       return [];
@@ -464,6 +469,7 @@ export function BoxDetail() {
                 onDismiss={() => setRotationDismissed(true)}
               />
             )}
+            <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} />
             {previousSeasonFamilies.length > 0 && (
               <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
                 <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>

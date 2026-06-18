@@ -58,4 +58,11 @@ export interface PlantInfo {
   prefersBedType?: BedType[];
   /** Minimum soil depth in cm the plant needs (root veg). A shallower box is discouraged. */
   minDepthCm?: number;
+  // Companion planting (Increment F). Lists hold OTHER plant keys; missing = no known pairing.
+  /** Plants this one grows well beside — surfaced as a green hint when added near them. */
+  companionsGood?: string[];
+  /** Plants this one does poorly beside — surfaced as a soft amber caution. */
+  companionsBad?: string[];
+  /** Succession interval in weeks (Increment E): re-sow every N weeks for a continuous harvest (salat, reddik). */
+  successionWeeks?: number;
 }

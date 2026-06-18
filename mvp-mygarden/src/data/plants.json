@@ -35,7 +35,20 @@
       "tunnel",
       "raised"
     ],
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "basilikum",
+      "gulrot",
+      "løk",
+      "persille"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "knutekål",
+      "mais",
+      "pak_choi",
+      "potet"
+    ]
   },
   {
     "key": "tomat_stor",
@@ -73,7 +86,20 @@
       "tunnel",
       "raised"
     ],
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "basilikum",
+      "gulrot",
+      "løk",
+      "persille"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "knutekål",
+      "mais",
+      "pak_choi",
+      "potet"
+    ]
   },
   {
     "key": "gulrot",
@@ -100,7 +126,18 @@
       ]
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "erter",
+      "løk",
+      "purre",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "companionsBad": [
+      "persillerot"
+    ],
+    "successionWeeks": 4
   },
   {
     "key": "salat",
@@ -125,7 +162,12 @@
         8
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "agurk",
+      "reddik"
+    ],
+    "successionWeeks": 3
   },
   {
     "key": "basilikum",
@@ -162,6 +204,11 @@
       "greenhouse",
       "container",
       "raised"
+    ],
+    "companionsGood": [
+      "paprika",
+      "tomat_cherry",
+      "tomat_stor"
     ]
   },
   {
@@ -200,7 +247,18 @@
       "tunnel",
       "raised"
     ],
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "bønner",
+      "gresskar",
+      "mais",
+      "salat",
+      "squash",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "potet"
+    ]
   },
   {
     "key": "jordbær",
@@ -219,7 +277,17 @@
         ]
       }
     ],
-    "sunNeed": "full"
+    "sunNeed": "full",
+    "companionsGood": [
+      "spinat"
+    ],
+    "companionsBad": [
+      "brokkoli",
+      "knutekål",
+      "pak_choi",
+      "tomat_cherry",
+      "tomat_stor"
+    ]
   },
   {
     "key": "paprika",
@@ -258,7 +326,11 @@
       "tunnel",
       "raised"
     ],
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "basilikum",
+      "persillerot"
+    ]
   },
   {
     "key": "persille",
@@ -291,7 +363,11 @@
         12
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "tomat_cherry",
+      "tomat_stor"
+    ]
   },
   {
     "key": "gresskar",
@@ -322,7 +398,16 @@
       "weeksBeforeFirstFrost": 2
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "agurk",
+      "bønner",
+      "mais",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "potet"
+    ]
   },
   {
     "key": "erter",
@@ -347,7 +432,19 @@
         12
       ]
     },
-    "sunNeed": "full"
+    "sunNeed": "full",
+    "companionsGood": [
+      "bønner",
+      "gulrot",
+      "kålrot",
+      "persillerot",
+      "reddik",
+      "spinat",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "løk"
+    ]
   },
   {
     "key": "bønner",
@@ -373,7 +470,20 @@
         10
       ]
     },
-    "sunNeed": "full"
+    "sunNeed": "full",
+    "companionsGood": [
+      "agurk",
+      "erter",
+      "gresskar",
+      "mais",
+      "persillerot",
+      "potet",
+      "reddik",
+      "squash"
+    ],
+    "companionsBad": [
+      "løk"
+    ]
   },
   {
     "key": "spinat",
@@ -398,7 +508,14 @@
         8
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "blomkål",
+      "erter",
+      "jordbær",
+      "reddik"
+    ],
+    "successionWeeks": 3
   },
   {
     "key": "timian",
@@ -522,7 +639,16 @@
       ]
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "agurk",
+      "bønner",
+      "mais",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "potet"
+    ]
   },
   {
     "key": "mais",
@@ -553,7 +679,18 @@
       "weeksBeforeFirstFrost": 2
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "agurk",
+      "bønner",
+      "gresskar",
+      "squash",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "tomat_cherry",
+      "tomat_stor"
+    ]
   },
   {
     "key": "purre",
@@ -583,7 +720,10 @@
       "weeksBeforeFirstFrost": 2
     },
     "sunNeed": "full",
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "gulrot"
+    ]
   },
   {
     "key": "løk",
@@ -615,7 +755,18 @@
         22
       ]
     },
-    "sunNeed": "full"
+    "sunNeed": "full",
+    "companionsGood": [
+      "gulrot",
+      "knutekål",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "companionsBad": [
+      "bønner",
+      "erter",
+      "åkerbønner"
+    ]
   },
   {
     "key": "rødbeter",
@@ -641,7 +792,11 @@
       ]
     },
     "sunNeed": "full",
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "knutekål",
+      "pak_choi"
+    ]
   },
   {
     "key": "pak_choi",
@@ -674,7 +829,17 @@
         8
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "knutekål",
+      "rødbeter"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "successionWeeks": 3
   },
   {
     "key": "solsikke",
@@ -733,7 +898,19 @@
       ]
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "bønner",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "agurk",
+      "gresskar",
+      "kålrot",
+      "squash",
+      "tomat_cherry",
+      "tomat_stor"
+    ]
   },
   {
     "key": "blomkål",
@@ -766,7 +943,10 @@
       ]
     },
     "sunNeed": "partial",
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsGood": [
+      "spinat"
+    ]
   },
   {
     "key": "brokkoli",
@@ -799,7 +979,10 @@
       ]
     },
     "sunNeed": "partial",
-    "minDepthCm": 25
+    "minDepthCm": 25,
+    "companionsBad": [
+      "jordbær"
+    ]
   },
   {
     "key": "blomster",
@@ -833,7 +1016,16 @@
         6
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "bønner",
+      "erter",
+      "persillerot",
+      "salat",
+      "spinat",
+      "åkerbønner"
+    ],
+    "successionWeeks": 2
   },
   {
     "key": "persillerot",
@@ -860,7 +1052,17 @@
       ]
     },
     "sunNeed": "full",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "bønner",
+      "erter",
+      "paprika",
+      "reddik",
+      "åkerbønner"
+    ],
+    "companionsBad": [
+      "gulrot"
+    ]
   },
   {
     "key": "åkerbønner",
@@ -886,7 +1088,20 @@
         14
       ]
     },
-    "sunNeed": "full"
+    "sunNeed": "full",
+    "companionsGood": [
+      "agurk",
+      "erter",
+      "gresskar",
+      "mais",
+      "persillerot",
+      "potet",
+      "reddik",
+      "squash"
+    ],
+    "companionsBad": [
+      "løk"
+    ]
   },
   {
     "key": "kålrot",
@@ -920,7 +1135,13 @@
       ]
     },
     "sunNeed": "partial",
-    "minDepthCm": 30
+    "minDepthCm": 30,
+    "companionsGood": [
+      "erter"
+    ],
+    "companionsBad": [
+      "potet"
+    ]
   },
   {
     "key": "knutekål",
@@ -952,6 +1173,16 @@
         10
       ]
     },
-    "sunNeed": "partial"
+    "sunNeed": "partial",
+    "companionsGood": [
+      "løk",
+      "pak_choi",
+      "rødbeter"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "tomat_cherry",
+      "tomat_stor"
+    ]
   }
 ]

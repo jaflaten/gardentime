@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
-import { todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
+import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore, type PlantLanguage } from "../store/useUiStore";
@@ -19,6 +19,7 @@ interface Grouped {
   indoor: GroupedRow[];
   outdoor: GroupedRow[];
   transplant: GroupedRow[];
+  succession: GroupedRow[];
   harvestSoon: GroupedRow[];
 }
 
@@ -58,6 +59,12 @@ function dismissedThisSession(): boolean {
   return Boolean(sessionStorage.getItem(SESSION_DISMISS_KEY));
 }
 
+/** Whole weeks between a planting's sow date and now. Module-scoped so the hook body stays pure. */
+function weeksSinceSowing(plantedDate: string): number {
+  const sown = new Date(`${plantedDate}T00:00:00`);
+  return Math.floor((new Date().getTime() - sown.getTime()) / (7 * 24 * 60 * 60 * 1000));
+}
+
 export function SowNowCard({ onPickPlant }: SowNowCardProps) {
   const location = useResolvedLocation();
   const plants = useMergedPlantList();
@@ -67,7 +74,7 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
 
   const grouped = useMemo<Grouped>(() => {
     if (!location) {
-      return { indoor: [], outdoor: [], transplant: [], harvestSoon: [] };
+      return { indoor: [], outdoor: [], transplant: [], succession: [], harvestSoon: [] };
     }
     const doy = todayDoy();
     const wks = weeksFromLastFrost(doy, location.lastFrostDoy);
@@ -101,6 +108,32 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
       }
     }
 
+    // "Suksesjon" — crops that reward staggered sowing (salat, reddik). Once the most recent
+    // active batch of such a crop is at least its successionWeeks old, nudge a fresh sowing.
+    // Keyed on the latest batch so sowing a new portion clears the nudge for another interval,
+    // and gated on the crop still being sowable today so we don't suggest re-sowing out of season.
+    const succession: GroupedRow[] = [];
+    const latestActiveByKey = new Map<string, Planting>();
+    for (const planting of plantings) {
+      if (planting.status !== "active" || !planting.plantKey) continue;
+      const prev = latestActiveByKey.get(planting.plantKey);
+      if (!prev || planting.plantedDate > prev.plantedDate) {
+        latestActiveByKey.set(planting.plantKey, planting);
+      }
+    }
+    for (const [key, planting] of latestActiveByKey) {
+      const plant = plants.find((p) => p.key === key);
+      if (!plant?.successionWeeks || !isSowableNow(plant, location.lastFrostDoy, doy)) continue;
+      const weeksSince = weeksSinceSowing(planting.plantedDate);
+      if (weeksSince >= plant.successionWeeks) {
+        succession.push({
+          plant,
+          helper: `Sist sådd for ${weeksSince} uker siden — så en ny pott for jevn høst`,
+          plantingId: planting.id,
+        });
+      }
+    }
+
     // "Høst snart" — active plantings whose harvestRule matches today.
     const harvestSoon: GroupedRow[] = [];
     for (const planting of plantings) {
@@ -113,14 +146,19 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
       }
     }
 
-    return { indoor, outdoor, transplant, harvestSoon };
+    return { indoor, outdoor, transplant, succession, harvestSoon };
   }, [location, plants, plantings]);
 
   if (!location || dismissed) {
     return null;
   }
 
-  const total = grouped.indoor.length + grouped.outdoor.length + grouped.transplant.length + grouped.harvestSoon.length;
+  const total =
+    grouped.indoor.length +
+    grouped.outdoor.length +
+    grouped.transplant.length +
+    grouped.succession.length +
+    grouped.harvestSoon.length;
   if (total === 0) {
     return null;
   }
@@ -151,6 +189,7 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
       <SowGroup title="Så inne" rows={grouped.indoor} language={language} onPickPlant={onPickPlant} />
       <SowGroup title="Så ute" rows={grouped.outdoor} language={language} onPickPlant={onPickPlant} />
       <SowGroup title="Plant ut" rows={grouped.transplant} language={language} onPickPlant={onPickPlant} />
+      <SowGroup title="Suksesjon" rows={grouped.succession} language={language} onPickPlant={onPickPlant} />
       <SowGroup title="Høst snart" rows={grouped.harvestSoon} language={language} onPickPlant={onPickPlant} />
     </section>
   );

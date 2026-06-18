@@ -5,6 +5,7 @@
 ## Status
 
 **Shipped:**
+- Hagekalender **Cohort 2 (F + E + D)** — companion hints, succession nudges, and the season timeline. **F:** `companionsGood`/`companionsBad` on 27/32 plants (derived from in-repo companionship data), `src/lib/companions.ts` + `CompanionHints.tsx` below the picker in QuickAdd + BoxDetail, and companion signals folded into B's box ranking. **E:** `successionWeeks` on 5 crops + a **Suksesjon** group in `SowNowCard` (nudges a re-sow once the latest in-season batch is `successionWeeks` old). **D:** **📅 Sesongoversikt** — a collapsible per-active-planting timeline (`SeasonTimeline.tsx` + pure `src/lib/seasonTimeline.ts`) showing planted dot + harvest window + today line across a month axis anchored to frost dates; caught & fixed a spring-DST off-by-one in the day-of-year math. All three verified end-to-end in the browser against the Testhage. See the Hagekalender increment sections for full breakdowns + deferrals.
 - MVP v1 — garden grid, box CRUD, plantings, history, mobile pinch-zoom
 - MVP v2 (test-user readiness) — onboarding choice screen, reset garden, one-step layout undo, view-only share mode, "Sist lagret" badge, configurable grid size, import preview modal
 - Phase A — plant `family` metadata + "Forrige sesong" hint on add-planting + family chip on planting rows
@@ -300,7 +301,21 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Depends on:** B (the sun/bed metadata). The passive banner depends on nothing new and could ship even before B if helpful for testing.
 - **Effort:** ~½ day for the banner, ~½ day for the panel — can be split.
 
-#### D. Sesongoversikt — horizontal timeline view
+#### D. Sesongoversikt — horizontal timeline view — ✅ SHIPPED 2026-06-17
+
+**What landed.** A collapsible **📅 Sesongoversikt** section on `GardenMap` (below the SowNowCard, hidden in view-mode), off by default. One swim-lane per **active planting** across a month axis: a **planted** dot at the sow date and a lighter **forventet høst** segment computed from the plant's `harvestRule` (`weeksFromSowing` off the sow date, or `weeksBeforeFirstFrost` off the autumn frost). A green **"i dag"** line + label and month gridlines anchor the axis; a one-line caption names the frost dates; a legend explains the marks.
+- **No new metadata** — derives entirely from plantings + plant rules + the resolved frost dates.
+- **Pure math in `src/lib/seasonTimeline.ts`** (`buildSeasonTimeline`, `dateToDoy`/`doyToDate`, `monthTicks`, `doyToPercent`) so the windowing is testable without React. Component in `src/components/SeasonTimeline.tsx`. Axis spans ~8 weeks before last frost → first frost, expanded to include any planting/harvest that falls outside, snapped to whole months.
+- **DST bug caught in browser verification & fixed:** `dateToDoy` originally `floor`ed a millisecond diff that crosses Norway's spring DST transition, under-counting by a day after late March and producing a duplicate month tick. Now normalizes both endpoints to local midnight and rounds.
+- **Verified in browser** against the Testhage (Sogndal 6857): six active plantings render with correct planted dots, harvest windows, today line, and `mar…okt` axis.
+- **Deferred** (noted, not built): catalog-driven *planning* timeline ("when should I sow tomatoes?" for plants not yet in the garden), per-box swim-lanes, and tap-a-marker detail popovers. The personal-garden timeline is bounded by garden size and answers "what's next" without overwhelming; the catalog planner is the natural follow-on if a tester asks.
+
+**Harvest-window accuracy — known limitations (user-raised 2026-06-18). Three real gaps to address, not bugs in the timeline itself but in the underlying `harvestRule` model:**
+1. **The bar is an *uncertainty band*, not the picking season.** Its length is the `[min,max]` span of "weeks from sowing to *first* harvest", which is **2 weeks for most plants** (a handful are 3–4: paprika 18–22, potet 14–18, persillerot 20–24) — that's why the bars look uniform. The bar's *start* does vary per plant (salat ~6 wk → persillerot ~20 wk), so positions differ even when lengths don't. What it does **not** model is the real *harvest duration*: beans, courgette, salat, tomatoes are picked over many weeks. **Idea:** add an optional `harvestDurationWeeks?` (or make `weeksFromSowing` mean "harvest from→until") so continuous croppers draw a longer bar than one-shot roots. Small metadata add; meaningfully better visual.
+2. **The numbers are literature estimates, not measured.** All `sowRules`/`harvestRule` values came from a research-agent pass over NLR/Hageselskapet/Felleskjøpet/Plantepleien — conservative rules-of-thumb, never validated against this garden's microclimate or the actual varieties grown. Treat the bars as *indicative*. The real fix is **Phase F (harvest tracking)** feeding **Increment I (multi-year)**: once we log actual harvest dates, calibrate per-plant (and eventually per-variety/per-box) instead of trusting defaults. A targeted NLR/Hageselskapet cross-check on the plants the user actually grows is the cheap interim step.
+3. **Perennials are mis-modelled — they show no recurring window (and `jordbær` shows none at all).** The model is *sow-relative* (`weeksFromSowing` off `plantedDate`), which only works for annuals replanted each year. A strawberry planted June 2025 should show a harvest window **every summer**, but: (a) `jordbær` currently has **no `harvestRule`** so it draws nothing even when active, and (b) even with a rule, the window would compute off the 2025 sow date and fall outside the 2026 axis. **Idea:** a `perennial?: boolean` flag + a *seasonal* harvest window expressed as an absolute DOY range (e.g. jordbær ≈ mid-Jun→Jul, repeats yearly) rather than relative to sowing; the timeline then draws that fixed band each season for any active perennial regardless of plant-year. Also relevant to SowNowCard "Høst snart" and to rotation (perennials don't rotate). Worth pairing with Phase F.
+
+**Original plan:**
 
 - **Goal:** Show the season ahead at a glance. When should each task happen? When are things due?
 - **Derives from:** frost dates + active plantings + plant rules. No new metadata.
@@ -308,7 +323,12 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Depends on:** D2 (frost dates + rules already in place).
 - **Effort:** 2–3 days. Biggest UI lift in this roadmap.
 
-#### E. Successional sowing reminders
+#### E. Successional sowing reminders — ✅ SHIPPED 2026-06-17
+
+**What landed.** `SowNowCard` gained a **Suksesjon** group. New `successionWeeks?: number` on `PlantInfo`, tagged on **5 crops** (salat 3, spinat 3, pak_choi 3, reddik 2, gulrot 4). For each succession-tagged crop with an active planting, once the **most recent** active batch is at least `successionWeeks` old *and* the crop is still sowable today (reuses `isSowableNow`), the card nudges *"Sist sådd for N uker siden — så en ny pott for jevn høst"*. Keying on the latest batch means sowing a fresh portion clears the nudge for another interval; the season gate avoids out-of-season suggestions. Row "+ Legg til" routes through the same box-picker as the other groups. **Verified in browser** (Testhage, frost-justering bumped to put salat in-window): a 5-week-old active salat surfaces in Suksesjon.
+- Module-level `weeksSinceSowing` helper keeps the `useMemo` body pure (the `react-hooks/purity` rule rejects `Date.now()`/`new Date()` inside hooks).
+
+**Original plan:**
 
 - **Goal:** Salat, reddik, spinat reward sowing every 2–3 weeks. Surface that as the previous batch matures.
 - **New metadata:** `successionWeeks?: number` on `PlantInfo` (e.g. salat: 3, reddik: 2).
@@ -316,7 +336,20 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Depends on:** D2 (shipped).
 - **Effort:** ~½ day (mostly tagging).
 
-#### F. Companion hints — *(absorbs Phase E's companion scope)*
+#### F. Companion hints — ✅ SHIPPED 2026-06-17 — *(absorbs Phase E's companion scope)*
+
+**What landed.** Soft green/amber companion hints below the plant picker, plus companion-awareness in B's box ranking.
+- **Schema** (`src/types/index.ts`): `companionsGood?: string[]` + `companionsBad?: string[]` on `PlantInfo` (hold other plant keys). All optional.
+- **Data:** derived from the in-repo `plant-data-aggregator/.../companionship-extended2.json` (broadest coverage — includes squash/pumpkin/kale). A one-off script symmetrized the English-named relationships, dropped `neutral`, and mapped them onto our 32 keys → **27/32 tagged** (only timian/rosmarin/gressløk/solsikke/blomster lack source data; herbs aren't in the dataset). Brassica approximations: pak_choi/knutekål ← Cabbage/Kohlrabi/Kale, kålrot ← Turnip. No conflicts after symmetrizing.
+- **Logic** (`src/lib/companions.ts`): `companionHints(plant, neighbourKeys, findPlant)` — one hint per distinct neighbour, bad wins over good, checks both directions (robust to one-sided custom-plant tags), skips same-plant neighbours.
+- **Component** (`src/components/CompanionHints.tsx`): green *"Trives med X og Y i denne kassen."* / amber *"Dårlig naboskap med Z — de trives bedre hver for seg."* Returns null when no pairing. Wired below `RotationWarning` in **both** `QuickAddSheet` (`PlantingEditor`) and `BoxDetail`'s add-form, fed the box's other active plantings.
+- **B integration:** `evaluateFit` (`src/lib/boxRanking.ts`) now reads `companionHints` against each box's active plantings — a good companion is a **positive** ("🌿 Trives med …"), a bad one a **caution** — so the SowBoxPicker/"Hva passer her nå?" why-lines reflect companionship too.
+- **Verified in browser** (Testhage): adding cherrytomat to a box with basilikum+persille → green "Trives med Basilikum og Persille"; adding løk beside erter → amber "Dårlig naboskap med Erter".
+- **Deferred:** B-fields on `CustomPlantForm` (custom plants rank as no-companion for now, safe); the "good companion in a *neighbouring box*" cross-box hint (we only check within the same box) — see the proximity note below.
+
+**TODO (user, 2026-06-18) — proximity-aware companionship across nearby boxes.** Right now a companion hint only fires for plants in the **same box** (same soil). In reality, closely-spaced boxes — e.g. several pallekarmer side by side — share airspace, pests, pollinators and shading, so a bad/good neighbour *one box over* still matters even though the roots don't mix. We already have each box's `layout.{x,y,w,h}` (grid units), so we can compute box-to-box adjacency/distance and surface companion hints for plants in **neighbouring** boxes within some radius, with a distinct wording ("🌿 Trives med basilikum i nabokassen" vs. "…i denne kassen"). Open questions before building: what counts as "near" (touching? within N grid cells? a real-cm threshold once box footprint from B's TODO exists?), and whether to weight same-box pairings stronger than neighbour pairings. Reuses all of F's `companionHints` plumbing — the only new piece is the adjacency query over `layout`. Park until F's same-box hints have had real use, but it's the most-requested extension.
+
+**Original plan:**
 
 - **Goal:** Surface good/bad plant pairings when adding a plant near existing active ones.
 - **New metadata:** `companionsGood?: PlantKey[]`, `companionsBad?: PlantKey[]` on `PlantInfo`. Source: `plant-data-aggregator/plant-data-aggregator/docs/companionship/companionship.json` (already scraped and sitting in the repo).
@@ -385,9 +418,9 @@ Today-card with grouped recommendations. See the D2 section above.
 
 **Cohort 2 — small schema extensions, get real-user feedback (2–3 weeks):**
 
-- **F** (companions) — tagging-heavy but data source already in repo.
-- **E** (succession) — tiny metadata add.
-- **D** (sesongoversikt) — biggest UI lift, no new metadata; do this once Cohort 1 has settled in.
+- ~~**F** (companions)~~ ✅ Shipped 2026-06-17. `companionsGood`/`companionsBad` on 27/32 plants (derived from the in-repo `companionship-extended2.json`), `src/lib/companions.ts` + `CompanionHints.tsx`, wired into QuickAdd + BoxDetail add-forms and folded into B's box ranking.
+- ~~**E** (succession)~~ ✅ Shipped 2026-06-17. `successionWeeks` on 5 crops; new **Suksesjon** group in `SowNowCard`.
+- ~~**D** (sesongoversikt)~~ ✅ Shipped 2026-06-17. `SeasonTimeline.tsx` + `src/lib/seasonTimeline.ts`, collapsible section on `GardenMap`. **Cohort 2 complete.**
 
 **Cohort 3 — needs Phase F first:**
 
@@ -401,7 +434,7 @@ Today-card with grouped recommendations. See the D2 section above.
 
 ### Relationship to other phases (housekeeping)
 
-- **Phase E** (active rotation + companion suggestions) — its scope is absorbed into this roadmap as increments **F + G**. The Phase E section below still applies; treat it as the detail page for F + G. When we ship F + G, fold Phase E's section into the shipped log.
+- **Phase E** (active rotation + companion suggestions) — ✅ **fully absorbed and shipped** as increments **G** (rotation warnings, 2026-06-17) + **F** (companions, 2026-06-17). The Phase E section below is now historical — its rotation-warning and companion-pairing scope both landed; nutrient-flow hints (the "stretch" bullet) were not built and aren't currently planned.
 - **Phase F** (harvest tracking) — hard prerequisite for Increment **I** and yield-based parts of **J**. Ship F before Cohort 3.
 - **Phase G** (photos) — independent. Could feed into J as a visual diary tab eventually, but doesn't gate anything in this roadmap.
 - **Phase H** (accounts, sync, tiers) — all calendar increments stay free per the existing positioning. None of these gate behind paywall.
@@ -520,8 +553,8 @@ Explicitly deferred:
 **Order of operations from here:**
 
 1. ~~**D3.1 — edit/extend existing planting from QuickAdd.**~~ ✅ Shipped 2026-06-17. See the D3.1 section. The natural follow-on is a per-row "Rediger" button on `PlantingRow` (for harvested/historical rows), which reuses the same `updatePlanting` seam.
-2. **Hagekalender Cohort 1** — **G (rotation warnings) shipped 2026-06-17**; next is **B (smart box picker)**, then **C (reverse lookup)**. See the Hagekalender roadmap section. Each lands independently; ship them one at a time and look for friction before moving on. B reuses G's `src/lib/rotation.ts` primitive for its family-rotation ranking input.
-3. **Real-user feedback loop on D2** — get the card in a real Norwegian gardener's hand across a couple of weeks before locking sowRule values. Pair with a targeted NLR/Hageselskapet cross-check on the plants the user actually grows.
+2. ~~**Hagekalender Cohort 1** (G + B + C)~~ ✅ Shipped 2026-06-17. ~~**Cohort 2** (F + E + D)~~ ✅ Shipped 2026-06-17 — companion hints, succession nudges, Sesongoversikt timeline. See the Hagekalender roadmap section. **Cohort 3 needs Phase F (harvest tracking) first** — that's the next real piece of new product surface.
+3. **Real-user feedback loop on the calendar** — get the SowNowCard + box picker + timeline in a real Norwegian gardener's hand across a couple of weeks before locking sowRule/companion/succession values. Pair with a targeted NLR/Hageselskapet cross-check on the plants the user actually grows.
 4. **Phase F (harvest tracking)** — unlocks Cohort 3 of the roadmap (multi-year intelligence). ~1 day to ship.
 
 **Big bets — hold for signal before starting:**

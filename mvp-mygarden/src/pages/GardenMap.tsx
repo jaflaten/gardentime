@@ -7,6 +7,7 @@ import { GardenGrid, MAP_BASE_COL_WIDTH, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../c
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
+import { SeasonTimeline } from "../components/SeasonTimeline";
 import { SowNowCard } from "../components/SowNowCard";
 import { rankBoxesForPlant, type BoxFitTier } from "../lib/boxRanking";
 import type { BedType, SunExposure } from "../lib/boxMeta";
@@ -417,6 +418,8 @@ export function GardenMap() {
           }}
         />
       )}
+
+      {!viewMode && <SeasonTimeline />}
 
       <section className="rounded-xl border p-2 sm:p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
         <div className="mb-2 flex flex-wrap items-center gap-2">

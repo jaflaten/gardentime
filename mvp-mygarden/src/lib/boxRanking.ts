@@ -1,4 +1,5 @@
 import { getBedTypeLabel, getSunLabel } from "./boxMeta";
+import { companionHints } from "./companions";
 import { getFamilyName } from "./families";
 import { getPlantName } from "./plants";
 import { boxRotationHistory, familyConflictYears, formatYearList } from "./rotation";
@@ -126,8 +127,20 @@ function evaluateFit(
     }
   }
 
+  // Companion planting — how the plant pairs with what's already growing here (Increment F).
+  const activeInBox = plantings.filter((p) => p.boxId === box.id && p.status === "active");
+  const hints = companionHints(plant, activeInBox.map((p) => p.plantKey).filter(Boolean), findPlant);
+  const goodCompanions = hints.filter((h) => h.kind === "good").map((h) => getPlantName(h.plant, language));
+  const badCompanions = hints.filter((h) => h.kind === "bad").map((h) => getPlantName(h.plant, language));
+  if (goodCompanions.length > 0) {
+    positives.push(`🌿 Trives med ${joinNo(goodCompanions)}`);
+  }
+  if (badCompanions.length > 0) {
+    cautions.push(`Dårlig naboskap med ${joinNo(badCompanions)}`);
+  }
+
   // Occupancy.
-  const activeCount = plantings.filter((p) => p.boxId === box.id && p.status === "active").length;
+  const activeCount = activeInBox.length;
   if (activeCount > 0) {
     cautions.push(activeCount === 1 ? "1 plante her allerede" : `${activeCount} planter her allerede`);
   } else {
