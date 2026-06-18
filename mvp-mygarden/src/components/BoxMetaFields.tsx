@@ -12,18 +12,31 @@ interface BoxMetaFieldsProps {
   sunExposure: SunExposure | "";
   bedType: BedType | "";
   depthCm: number | "";
+  widthCm: number | "";
+  lengthCm: number | "";
   onSunExposureChange: (value: SunExposure | "") => void;
   onBedTypeChange: (value: BedType | "") => void;
   onDepthCmChange: (value: number | "") => void;
+  onWidthCmChange: (value: number | "") => void;
+  onLengthCmChange: (value: number | "") => void;
+}
+
+/** Clamp a raw cm input to a whole number in [0, max], or "" when blank. */
+function clampCm(raw: string, max: number): number | "" {
+  return raw === "" ? "" : Math.max(0, Math.min(max, Math.round(Number(raw))));
 }
 
 export function BoxMetaFields({
   sunExposure,
   bedType,
   depthCm,
+  widthCm,
+  lengthCm,
   onSunExposureChange,
   onBedTypeChange,
   onDepthCmChange,
+  onWidthCmChange,
+  onLengthCmChange,
 }: BoxMetaFieldsProps) {
   const language = useUiStore((state) => state.plantLanguage);
   const unsetLabel = language === "pl" ? "— nie wybrano —" : "— ikke valgt —";
@@ -78,10 +91,7 @@ export function BoxMetaFields({
           min={0}
           max={200}
           value={depthCm}
-          onChange={(event) => {
-            const raw = event.target.value;
-            onDepthCmChange(raw === "" ? "" : Math.max(0, Math.min(200, Math.round(Number(raw)))));
-          }}
+          onChange={(event) => onDepthCmChange(clampCm(event.target.value, 200))}
           placeholder="f.eks. 40"
           className="input-touch w-full rounded-lg border px-3 py-2"
           style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
@@ -90,6 +100,39 @@ export function BoxMetaFields({
           Anslag i cm. En pallekarm er typisk ~20 cm — to i stabel ≈ 40 cm. La stå tom for planter i bakken.
         </span>
       </label>
+      <div className="grid grid-cols-2 gap-3">
+        <label className="space-y-1 text-sm">
+          <span className="block font-medium">Bredde (cm)</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={2000}
+            value={widthCm}
+            onChange={(event) => onWidthCmChange(clampCm(event.target.value, 2000))}
+            placeholder="f.eks. 80"
+            className="input-touch w-full rounded-lg border px-3 py-2"
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+          />
+        </label>
+        <label className="space-y-1 text-sm">
+          <span className="block font-medium">Lengde (cm)</span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={2000}
+            value={lengthCm}
+            onChange={(event) => onLengthCmChange(clampCm(event.target.value, 2000))}
+            placeholder="f.eks. 120"
+            className="input-touch w-full rounded-lg border px-3 py-2"
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+          />
+        </label>
+      </div>
+      <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+        Valgfritt grunnflate-mål i cm (uavhengig av rutenettet). Brukes til en 📐-merkelapp.
+      </span>
     </div>
   );
 }

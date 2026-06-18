@@ -1,4 +1,4 @@
-import { getBedTypeLabel, getSunLabel } from "./boxMeta";
+import { getBedTypeLabel, getSunLabel, type BedType } from "./boxMeta";
 import { companionHints } from "./companions";
 import { getFamilyName } from "./families";
 import { getPlantName } from "./plants";
@@ -25,6 +25,9 @@ export interface PlantFit extends Fit {
 }
 
 const TIER_RANK: Record<BoxFitTier, number> = { good: 0, ok: 1, avoid: 2 };
+
+/** Beds with a roof — rain-sensitive plants are happy here. Everything else is rain-exposed. */
+const COVERED_BEDS = new Set<BedType>(["greenhouse", "tunnel"]);
 
 /**
  * Rank every box by how well it fits `plant` today (Increment B — the SowBoxPicker consumer).
@@ -125,6 +128,13 @@ function evaluateFit(
       const preferred = plant.prefersBedType.map((bed) => getBedTypeLabel(bed, language)).join("/");
       cautions.push(`Foretrekker ${preferred}`);
     }
+  }
+
+  // Rain sensitivity — a rain-shy plant in an uncovered bed (anything but greenhouse/tunnel) is a
+  // soft caution: it really wants a roof, not just a preferred bed type. Covered beds get nothing
+  // extra here (prefersBedType already rewards them).
+  if (plant.rainSensitive && box.bedType && !COVERED_BEDS.has(box.bedType)) {
+    cautions.push("Liker ikke regn — sett under tak");
   }
 
   // Companion planting — how the plant pairs with what's already growing here (Increment F).

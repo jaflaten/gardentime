@@ -13,6 +13,7 @@ import {
   type BedType,
   type SunExposure,
 } from "../lib/boxMeta";
+import { nearbyActivePlantKeys } from "../lib/boxAdjacency";
 import type { PlantFamily } from "../lib/families";
 import { boxContextNotes, rankPlantsForBox, type BoxFitTier } from "../lib/boxRanking";
 import { getPlantName, useMergedPlantList, usePlantLookup } from "../lib/plants";
@@ -55,6 +56,8 @@ export function BoxDetail() {
   const [editSun, setEditSun] = useState<SunExposure | "">("");
   const [editBedType, setEditBedType] = useState<BedType | "">("");
   const [editDepth, setEditDepth] = useState<number | "">("");
+  const [editWidth, setEditWidth] = useState<number | "">("");
+  const [editLength, setEditLength] = useState<number | "">("");
   const language = useUiStore((state) => state.plantLanguage);
 
   const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
@@ -88,6 +91,11 @@ export function BoxDetail() {
   const neighbourKeys = useMemo(
     () => activePlantings.map((planting) => planting.plantKey).filter(Boolean),
     [activePlantings],
+  );
+  // Active plants in neighbouring boxes — proximity companionship (shared airspace, not soil).
+  const nearbyKeys = useMemo(
+    () => (box ? nearbyActivePlantKeys(box, boxes, plantings, neighbourKeys) : []),
+    [box, boxes, plantings, neighbourKeys],
   );
   const rotationConflictYears = useMemo(() => {
     if (!selectedFamily) {
@@ -205,7 +213,7 @@ export function BoxDetail() {
           <>
             <h1 className="text-xl font-semibold sm:text-2xl">{box.name}</h1>
             {box.description && <p style={{ color: "var(--text-muted)" }}>{box.description}</p>}
-            {(box.sunExposure || box.bedType || box.depthCm) && (
+            {(box.sunExposure || box.bedType || box.depthCm || box.widthCm || box.lengthCm) && (
               <div className="flex flex-wrap gap-1.5">
                 {box.depthCm != null && (
                   <span
@@ -213,6 +221,14 @@ export function BoxDetail() {
                     style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
                   >
                     📏 {box.depthCm} cm
+                  </span>
+                )}
+                {(box.widthCm != null || box.lengthCm != null) && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+                    style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+                  >
+                    📐 {box.widthCm ?? "?"} × {box.lengthCm ?? "?"} cm
                   </span>
                 )}
                 {box.sunExposure && (
@@ -244,6 +260,8 @@ export function BoxDetail() {
                   setEditSun(box.sunExposure ?? "");
                   setEditBedType(box.bedType ?? "");
                   setEditDepth(box.depthCm ?? "");
+                  setEditWidth(box.widthCm ?? "");
+                  setEditLength(box.lengthCm ?? "");
                   setEditingBox(true);
                 }}
                 className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
@@ -267,6 +285,8 @@ export function BoxDetail() {
                 sunExposure: editSun || undefined,
                 bedType: editBedType || undefined,
                 depthCm: editDepth === "" ? undefined : editDepth,
+                widthCm: editWidth === "" ? undefined : editWidth,
+                lengthCm: editLength === "" ? undefined : editLength,
               });
               setEditingBox(false);
             }}
@@ -295,9 +315,13 @@ export function BoxDetail() {
               sunExposure={editSun}
               bedType={editBedType}
               depthCm={editDepth}
+              widthCm={editWidth}
+              lengthCm={editLength}
               onSunExposureChange={setEditSun}
               onBedTypeChange={setEditBedType}
               onDepthCmChange={setEditDepth}
+              onWidthCmChange={setEditWidth}
+              onLengthCmChange={setEditLength}
             />
             <div className="flex gap-2">
               <button
@@ -344,7 +368,7 @@ export function BoxDetail() {
               <PlantingRow
                 key={planting.id}
                 planting={planting}
-                onHarvest={viewMode ? undefined : (plantingId) => markHarvested(plantingId)}
+                onHarvest={viewMode ? undefined : (plantingId, harvestYield) => markHarvested(plantingId, { harvestYield })}
                 onDelete={viewMode ? undefined : (plantingId) => deletePlanting(plantingId)}
               />
             ))}
@@ -469,7 +493,7 @@ export function BoxDetail() {
                 onDismiss={() => setRotationDismissed(true)}
               />
             )}
-            <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} />
+            <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} nearbyKeys={nearbyKeys} />
             {previousSeasonFamilies.length > 0 && (
               <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
                 <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>

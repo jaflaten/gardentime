@@ -5,6 +5,8 @@
 ## Status
 
 **Shipped:**
+- **Three cheap follow-ups (2026-06-18).** (1) **Box footprint** — optional `widthCm`/`lengthCm` on `Box`, Bredde/Lengde inputs in `BoxMetaFields`, a **📐 w × l cm** chip on `BoxDetail`. (2) **Rain-sensitive** — `rainSensitive?` on `PlantInfo` (tomat_cherry/tomat_stor/paprika); a ☔ "sett under tak" note in the D2 card's *Plant ut* group + a "Liker ikke regn" caution in box ranking for uncovered beds (greenhouse/tunnel exempt). (3) **Proximity companions** — `src/lib/boxAdjacency.ts` (grid-gap adjacency, `NEIGHBOUR_GAP_UNITS = 2`); `CompanionHints` now also surfaces neighbour-box pairings as muted *"…i nabokassen"* hints (de-duped vs same-box), wired into QuickAdd + BoxDetail. All optional, no migration, round-trip Export/Import. Each verified end-to-end in browser. See the Increment B + F TODO sections.
+- **Phase F — harvest tracking.** `Planting.harvestYield?: string` (free text), an inline *"Avling (valgfritt)"* prompt revealed by the **Høst** button in `PlantingRow` (Bekreft/Avbryt; blank = nothing stored), `markHarvested(id, { harvestYield, date })`, and an *"Avling: …"* line on harvested rows. Round-trips Export/Import with no `version` bump; Testhage's harvested gulrot carries `"3 kg"`. Verified end-to-end in browser. **Unlocks Cohort 3** (multi-year intelligence I + yield dashboards J) — which now wait on a logged season, not on code. See the Phase F section.
 - Hagekalender **Cohort 2 (F + E + D)** — companion hints, succession nudges, and the season timeline. **F:** `companionsGood`/`companionsBad` on 27/32 plants (derived from in-repo companionship data), `src/lib/companions.ts` + `CompanionHints.tsx` below the picker in QuickAdd + BoxDetail, and companion signals folded into B's box ranking. **E:** `successionWeeks` on 5 crops + a **Suksesjon** group in `SowNowCard` (nudges a re-sow once the latest in-season batch is `successionWeeks` old). **D:** **📅 Sesongoversikt** — a collapsible per-active-planting timeline (`SeasonTimeline.tsx` + pure `src/lib/seasonTimeline.ts`) showing planted dot + harvest window + today line across a month axis anchored to frost dates; caught & fixed a spring-DST off-by-one in the day-of-year math. All three verified end-to-end in the browser against the Testhage. See the Hagekalender increment sections for full breakdowns + deferrals.
 - MVP v1 — garden grid, box CRUD, plantings, history, mobile pinch-zoom
 - MVP v2 (test-user readiness) — onboarding choice screen, reset garden, one-step layout undo, view-only share mode, "Sist lagret" badge, configurable grid size, import preview modal
@@ -254,9 +256,9 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Verified in browser** against the Testhage (frost-justering bumped to surface the card): for Gulrot — Anbefalt = Drivhus 1 ("Full sol · Dyp nok (30 cm) · Ledig"), Eksperiment, Åpen seng A; OK = Pallekarm Nord ("Litt lite sol"), + occupied boxes; Frarådes = Bøtte krydder/Grunt krukke ("Trenger 30 cm — kun 25/20 cm her"), Pallekarm Sør ("Skjermplantefamilien her i 2026"), Skyggebed ("Trenger sol — kassen er skygget"). Pick → QuickAdd flow intact.
 - **Deferred from the original plan**: plant-size-vs-box-size ranking (needs a plant-size field; the other 5 criteria carry the feature) and the B-fields on `CustomPlantForm` (custom plants rank as no-constraint for now — safe). Box `depthCm` was forward-seeded into the Testhage fixture earlier, so the depth scenarios were live immediately.
 
-**TODO (user, 2026-06-17) — optional box footprint (length × width).** The user likes seeing the box *depth* (📏 chip) and wants an *optional* footprint too — e.g. "120 × 80 cm" — shown as another chip on the tile / `BoxDetail`. Add `widthCm?` + `lengthCm?` on `Box` (or a single `{w,l}`), an optional input pair in `BoxMetaFields` next to Dybde, and a chip (e.g. "📐 120 × 80 cm"). All optional, no migration. **Bonus:** this is the missing input for **Increment B's deferred "plant size vs box size" ranking** ("don't waste a big bed on lettuce", or warn a sprawling squash into a tiny box) — once footprint exists, that criterion becomes implementable from real area. Independent of the grid `layout` w/h (which is abstract grid units, not real cm). ~½ day.
+**TODO (user, 2026-06-17) — optional box footprint (length × width). ✅ SHIPPED 2026-06-18.** `widthCm?` + `lengthCm?` on `Box` (`src/types/index.ts`), a **Bredde/Lengde** input pair in `BoxMetaFields` below Dybde (shared `clampCm` helper, 0–2000 cm), threaded through the create-box form (`addBox` options, `GardenMap.tsx`) and `BoxDetail` edit (`updateBox`), and a **📐 {w} × {l} cm** chip on `BoxDetail` beside the 📏 depth chip (renders if either dimension is set, `?` for the missing one). All optional, no migration, round-trips Export/Import (only `isBoxLike`-required fields are gated). Chip kept on `BoxDetail` only (mirrors depth — tiles stay dense). **Verified in browser** (Testhage, Åpen seng B): saved 80 × 120 → chip shows *"📐 80 × 120 cm"*. **Still the missing input for Increment B's deferred "plant size vs box size" ranking** — footprint now exists, so that criterion (don't waste a big bed on lettuce / warn a sprawling squash into a tiny box) is implementable from real area whenever we add a plant-size field. Independent of the grid `layout` w/h (abstract units, not cm).
 
-**Future idea (user, 2026-06-17) — rain-sensitive plants → "bør stå under tak".** Tomatoes and paprika dislike rain on their foliage (fungal disease, splitting), so they really want a greenhouse/tunnel or other cover — not just *prefer* it. Candidate: a `rainSensitive?: boolean` flag on `PlantInfo` (or fold into a richer `prefersBedType` story) that (a) adds a one-line note in the D2 card's **Plant ut** group ("liker ikke regn — sett under tak / i drivhus"), and (b) in box ranking, turns an open-bed placement for a rain-sensitive plant into a stronger caution with that *why*. Low effort once we decide the flag; it reuses B's plumbing. Parked until B's metadata has had real use.
+**Future idea (user, 2026-06-17) — rain-sensitive plants → "bør stå under tak". ✅ SHIPPED 2026-06-18.** `rainSensitive?: boolean` on `PlantInfo` (`src/types/index.ts`), tagged on **3 plants** (`tomat_cherry`, `tomat_stor`, `paprika`). Two surfaces: (a) the D2 card's **Plant ut** group shows an amber **"☔ Liker ikke regn — sett under tak (drivhus/tunnel)"** note (new optional `GroupedRow.note` in `SowNowCard.tsx`); (b) box ranking (`evaluateFit` in `boxRanking.ts`) adds a **"Liker ikke regn — sett under tak"** caution for a rain-sensitive plant in any uncovered bed — `COVERED_BEDS = {greenhouse, tunnel}` are exempt. Orthogonal to `prefersBedType`, so a pallekarm (a *preferred* bed) still gets the rain caution because it's roofless — which is exactly the signal the user wanted. **Verified in browser** (Testhage, frost-justering +35 to bring tomatoes into window): both tomatoes show the ☔ note in "Plant ut" while basilikum/agurk don't; the SowBoxPicker for Cherrytomater cautions every open/raised/container box and correctly omits Tunnel 1 + Drivhus 1.
 
 **Original plan:**
 
@@ -356,7 +358,7 @@ Today-card with grouped recommendations. See the D2 section above.
 - **Verified in browser** (Testhage): adding cherrytomat to a box with basilikum+persille → green "Trives med Basilikum og Persille"; adding løk beside erter → amber "Dårlig naboskap med Erter".
 - **Deferred:** B-fields on `CustomPlantForm` (custom plants rank as no-companion for now, safe); the "good companion in a *neighbouring box*" cross-box hint (we only check within the same box) — see the proximity note below.
 
-**TODO (user, 2026-06-18) — proximity-aware companionship across nearby boxes.** Right now a companion hint only fires for plants in the **same box** (same soil). In reality, closely-spaced boxes — e.g. several pallekarmer side by side — share airspace, pests, pollinators and shading, so a bad/good neighbour *one box over* still matters even though the roots don't mix. We already have each box's `layout.{x,y,w,h}` (grid units), so we can compute box-to-box adjacency/distance and surface companion hints for plants in **neighbouring** boxes within some radius, with a distinct wording ("🌿 Trives med basilikum i nabokassen" vs. "…i denne kassen"). Open questions before building: what counts as "near" (touching? within N grid cells? a real-cm threshold once box footprint from B's TODO exists?), and whether to weight same-box pairings stronger than neighbour pairings. Reuses all of F's `companionHints` plumbing — the only new piece is the adjacency query over `layout`. Park until F's same-box hints have had real use, but it's the most-requested extension.
+**TODO (user, 2026-06-18) — proximity-aware companionship across nearby boxes. ✅ SHIPPED 2026-06-18.** Companion hints now also fire for plants in **neighbouring** boxes, not just the same box. New `src/lib/boxAdjacency.ts`: `neighbouringBoxes(box, boxes, gap)` (rectangle-gap test over `layout.{x,y,w,h}`, gap measured in grid units on both axes) + `nearbyActivePlantKeys(...)` which collects neighbours' active plant keys **de-duped against the same-box keys** (same-box is the stronger, separately-rendered signal). `NEIGHBOUR_GAP_UNITS = 2` — captures both side-by-side (the demo spaces columns 1 unit apart) and stacked (rows 2 units apart) neighbours; tunable, and a future cm-footprint threshold (now that B's `widthCm`/`lengthCm` exist) could refine "near" into real distance. `CompanionHints` gained an optional `nearbyKeys` prop and renders the neighbour pairings in muted styling with distinct wording — **"Trives med X i nabokassen"** / **"Mindre heldig naboskap med Y i nabokassen"** — below the bold same-box hints. Wired into both add-surfaces (`QuickAddSheet` `PlantingEditor` + `BoxDetail`). **Box ranking left same-box only** (extending `evaluateFit` why-lines to neighbours would add noise; the hint surface is where proximity belongs). **Verified in browser** (Testhage): adding Cherrytomater to *Åpen seng B* (active erter + jordbær) shows same-box *"Dårlig naboskap med Jordbær"* **and** neighbour *"Trives med Basilikum og Persille i nabokassen"* (from the adjacent Grunt krukke), with no double-counting. **Still deferred:** weighting same-box stronger than neighbour in *ranking* (n/a — ranking stays same-box); B-fields on `CustomPlantForm`.
 
 **Original plan:**
 
@@ -433,9 +435,9 @@ Today-card with grouped recommendations. See the D2 section above.
 
 **Cohort 3 — needs Phase F first:**
 
-- **Phase F** (harvest tracking).
-- **I** (multi-year intelligence).
-- Yield-based parts of **J** (dashboards).
+- ~~**Phase F** (harvest tracking).~~ ✅ Shipped 2026-06-18. `harvestYield` on `Planting` + yield prompt on the Høst action. See the Phase F section.
+- **I** (multi-year intelligence) — now unblocked; **also needs ≥1 full season of logged harvests** before it can calibrate beyond the literature defaults.
+- Yield-based parts of **J** (dashboards) — now unblocked; ditto, wants real harvest data to chart.
 
 **Cohort 4 — opt-in, infra-heavy:**
 
@@ -565,16 +567,22 @@ Today-card with grouped recommendations. See the D2 section above.
 
 ---
 
-## Phase F — Harvest tracking
+## Phase F — Harvest tracking — ✅ SHIPPED 2026-06-18
 
 **Goal:** close the loop on which plantings actually paid off — input for next year's planning.
 
-**Scope:**
-- Optional `harvestYield?: string` on `Planting` (free text: "5 kg", "3 bøtter", "1 sekk").
-- On the Høst action, optionally prompt for yield.
-- History view (already grouped by year) could later show "best performers" per box.
+**What landed:**
+- `Planting.harvestYield?: string` (`src/types/index.ts`) — free-text yield ("5 kg", "3 bøtter", "1 sekk"). Optional, no migration.
+- **Yield prompt on the Høst action** (`src/components/PlantingRow.tsx`): clicking **Høst** now reveals an inline *"Avling (valgfritt)"* text field (placeholder *"f.eks. 5 kg, 3 bøtter"*) + **Bekreft høst** / **Avbryt**, instead of harvesting immediately. The field is optional — confirm with it blank and nothing is stored. Local `harvesting`/`yieldInput` state in the row; no extra surface.
+- **Store** (`src/store/useGardenStore.ts`): `markHarvested(id, opts?: { harvestYield?: string; date?: string })` — was `(id, date?)`. Trims the yield and stores `undefined` for blank so empty fields don't litter the data. `BoxDetail`'s `onHarvest` passes the yield through.
+- **Display:** harvested rows show a *"Avling: …"* line beside *"Høstet: …"* (`PlantingRow`, renders in both the Nå and Historikk sections).
+- **Export/Import:** round-trips untouched — `isPlantingLike` only gates required fields, no `version` bump.
+- **Testhage:** the harvested gulrot (`demo-pl-0203`, Pallekarm Sør) carries `"harvestYield": "3 kg"` so the display is live in the fixture.
+- **Verified end-to-end in browser** (Testhage, Tunnel 1): Høst → inline yield form → *"8 agurker"* → Bekreft → planting moves to Historikk 2026 as *Høstet* with *"Avling: 8 agurker"*.
 
 **Why now:** cheap addition, aligns with regenerative philosophy — track what works, drop what doesn't.
+
+**Unlocks (Cohort 3):** this is the prerequisite for **Increment I** (multi-year intelligence — calibrate sow/harvest dates against logged history) and the yield-based parts of **Increment J** (dashboards: yield-over-time, box-productivity ranking). The "best performers per box" history view named in the original scope is deferred into J. Per-variety/per-box calibration wants ≥1 full season of this data before it pays off.
 
 ---
 
@@ -657,14 +665,14 @@ Explicitly deferred:
 1. ~~**D3.1 — edit/extend existing planting from QuickAdd.**~~ ✅ Shipped 2026-06-17. See the D3.1 section. The natural follow-on is a per-row "Rediger" button on `PlantingRow` (for harvested/historical rows), which reuses the same `updatePlanting` seam.
 2. ~~**Hagekalender Cohort 1** (G + B + C)~~ ✅ Shipped 2026-06-17. ~~**Cohort 2** (F + E + D)~~ ✅ Shipped 2026-06-17 — companion hints, succession nudges, Sesongoversikt timeline. See the Hagekalender roadmap section. **Cohort 3 needs Phase F (harvest tracking) first** — that's the next real piece of new product surface.
 3. **Real-user feedback loop on the calendar** — get the SowNowCard + box picker + timeline in a real Norwegian gardener's hand across a couple of weeks before locking sowRule/companion/succession values. Pair with a targeted NLR/Hageselskapet cross-check on the plants the user actually grows.
-4. **Phase F (harvest tracking)** — unlocks Cohort 3 of the roadmap (multi-year intelligence). ~1 day to ship.
+4. ~~**Phase F (harvest tracking)**~~ ✅ Shipped 2026-06-18 — unlocks Cohort 3 (multi-year intelligence + yield dashboards). Those now wait on **≥1 logged season**, not on code.
 
 **Big bets — hold for signal before starting:**
 
 - **Phase H** (accounts/sync/tiers) — wait for at least one tester to explicitly ask for cross-device or shared editing.
 - **Phase G** (photos) — wait until users ask, and pair with H since localStorage can't hold many images.
 
-After D1+D2 ship and get real use, **Phase F (harvest tracking)** is a cheap follow-on (~1 day) that closes the loop.
+~~After D1+D2 ship and get real use, **Phase F (harvest tracking)** is a cheap follow-on (~1 day) that closes the loop.~~ ✅ Shipped 2026-06-18 — the loop is closed; multi-year intelligence (I) + yield dashboards (J) now wait on a logged season, not on code.
 
 **Phase E and Phase H are the big bets** — they shape the product story (E) and the business story (H). Hold both until user feedback gives concrete demand signals:
 

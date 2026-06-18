@@ -11,6 +11,9 @@ export interface Box {
   bedType?: BedType;
   /** Soil depth in cm. Drives the depth-fit check in box ranking; missing = unknown/unlimited (e.g. in-ground). */
   depthCm?: number;
+  /** Real-world footprint in cm (independent of the abstract grid `layout` units). Both optional; shown as a chip. */
+  widthCm?: number;
+  lengthCm?: number;
   layout: {
     x: number;
     y: number;
@@ -27,6 +30,8 @@ export interface Planting {
   variety?: string;
   plantedDate: string;
   harvestDate?: string;
+  /** Free-text yield logged at harvest (Phase F), e.g. "5 kg", "3 bøtter", "1 sekk". Optional. */
+  harvestYield?: string;
   notes?: string;
   status: "active" | "harvested" | "removed" | "failed";
   year: number;
@@ -74,4 +79,10 @@ export interface PlantInfo {
    * and the season timeline draws that band every year regardless of which year it was planted.
    */
   perennial?: boolean;
+  /**
+   * Rain-sensitive (Increment B follow-up) — foliage dislikes rain (fungal disease, fruit splitting),
+   * so the plant really wants a cover (greenhouse/tunnel), not just prefers it. Surfaces a note in the
+   * D2 card's "Plant ut" group and turns an uncovered-bed placement into a soft caution in box ranking.
+   */
+  rainSensitive?: boolean;
 }

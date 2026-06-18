@@ -16,6 +16,8 @@ interface GroupedRow {
   plantingId?: string;
   /** How many active plantings this row represents (>1 shows a "×N" badge). Used by "Høst snart". */
   count?: number;
+  /** Optional amber caveat shown under the helper (e.g. rain-sensitive → "sett under tak"). */
+  note?: string;
 }
 
 interface Grouped {
@@ -115,6 +117,7 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
           transplant.push({
             plant,
             helper: `${rule.weeksAfterLastFrost[0]}–${rule.weeksAfterLastFrost[1]} uker etter vårfrost`,
+            note: plant.rainSensitive ? "Liker ikke regn — sett under tak (drivhus/tunnel)" : undefined,
           });
           break;
         }
@@ -247,6 +250,11 @@ function SowGroup({ title, rows, language, onPickPlant }: SowGroupProps) {
               <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
                 {row.helper}
               </p>
+              {row.note && (
+                <p className="text-xs" style={{ color: "var(--amber)" }}>
+                  ☔ {row.note}
+                </p>
+              )}
             </div>
             {onPickPlant && (
               <button

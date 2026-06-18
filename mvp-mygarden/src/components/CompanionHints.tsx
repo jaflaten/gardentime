@@ -6,8 +6,10 @@ import type { PlantInfo } from "../types";
 interface CompanionHintsProps {
   /** The plant the user is about to add. */
   plantKey: string;
-  /** Plant keys already growing in this box (its active plantings). */
+  /** Plant keys already growing in this box (its active plantings) — the strong, same-soil signal. */
   neighbourKeys: string[];
+  /** Plant keys in *neighbouring* boxes (already de-duped against neighbourKeys) — softer wording. */
+  nearbyKeys?: string[];
 }
 
 function joinNames(plants: PlantInfo[], language: PlantLanguage): string {
@@ -23,7 +25,7 @@ function joinNames(plants: PlantInfo[], language: PlantLanguage): string {
  * has other active plantings. Soft information, never blocks. Returns null when there's no known
  * pairing, so callers can render it unconditionally.
  */
-export function CompanionHints({ plantKey, neighbourKeys }: CompanionHintsProps) {
+export function CompanionHints({ plantKey, neighbourKeys, nearbyKeys = [] }: CompanionHintsProps) {
   const findPlant = usePlantLookup();
   const language = useUiStore((state) => state.plantLanguage);
 
@@ -32,11 +34,14 @@ export function CompanionHints({ plantKey, neighbourKeys }: CompanionHintsProps)
     return null;
   }
   const hints = companionHints(plant, neighbourKeys, findPlant);
-  if (hints.length === 0) {
+  const nearbyHints = companionHints(plant, nearbyKeys, findPlant);
+  if (hints.length === 0 && nearbyHints.length === 0) {
     return null;
   }
   const good = hints.filter((hint) => hint.kind === "good").map((hint) => hint.plant);
   const bad = hints.filter((hint) => hint.kind === "bad").map((hint) => hint.plant);
+  const nearbyGood = nearbyHints.filter((hint) => hint.kind === "good").map((hint) => hint.plant);
+  const nearbyBad = nearbyHints.filter((hint) => hint.kind === "bad").map((hint) => hint.plant);
 
   return (
     <div className="space-y-1.5">
@@ -59,6 +64,28 @@ export function CompanionHints({ plantKey, neighbourKeys }: CompanionHintsProps)
           <span aria-hidden="true">⚠</span>
           <p className="flex-1">
             Dårlig naboskap med <strong>{joinNames(bad, language)}</strong> — de trives bedre hver for seg.
+          </p>
+        </div>
+      )}
+      {nearbyGood.length > 0 && (
+        <div
+          className="flex items-start gap-2 rounded-lg border p-2.5 text-sm"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+        >
+          <span aria-hidden="true">🌿</span>
+          <p className="flex-1">
+            Trives med <strong>{joinNames(nearbyGood, language)}</strong> i nabokassen.
+          </p>
+        </div>
+      )}
+      {nearbyBad.length > 0 && (
+        <div
+          className="flex items-start gap-2 rounded-lg border p-2.5 text-sm"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+        >
+          <span aria-hidden="true">⚠</span>
+          <p className="flex-1">
+            Mindre heldig naboskap med <strong>{joinNames(nearbyBad, language)}</strong> i nabokassen.
           </p>
         </div>
       )}

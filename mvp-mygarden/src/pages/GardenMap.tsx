@@ -113,6 +113,8 @@ export function GardenMap() {
   const [sunExposure, setSunExposure] = useState<SunExposure | "">("");
   const [bedType, setBedType] = useState<BedType | "">("");
   const [depthCm, setDepthCm] = useState<number | "">("");
+  const [widthCm, setWidthCm] = useState<number | "">("");
+  const [lengthCm, setLengthCm] = useState<number | "">("");
   const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [quickAddBoxId, setQuickAddBoxId] = useState<string | null>(null);
@@ -145,12 +147,16 @@ export function GardenMap() {
       sunExposure: sunExposure || undefined,
       bedType: bedType || undefined,
       depthCm: depthCm === "" ? undefined : depthCm,
+      widthCm: widthCm === "" ? undefined : widthCm,
+      lengthCm: lengthCm === "" ? undefined : lengthCm,
     });
     setName("");
     setDescription("");
     setSunExposure("");
     setBedType("");
     setDepthCm("");
+    setWidthCm("");
+    setLengthCm("");
     setShowCreateForm(false);
   };
 
@@ -457,9 +463,13 @@ export function GardenMap() {
                 sunExposure={sunExposure}
                 bedType={bedType}
                 depthCm={depthCm}
+                widthCm={widthCm}
+                lengthCm={lengthCm}
                 onSunExposureChange={setSunExposure}
                 onBedTypeChange={setBedType}
                 onDepthCmChange={setDepthCm}
+                onWidthCmChange={setWidthCm}
+                onLengthCmChange={setLengthCm}
               />
               <div className="flex gap-2">
                 <button

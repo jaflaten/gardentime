@@ -5,6 +5,7 @@
     "name_pl": "Pomidory koktajlowe",
     "name_en": "Cherry tomato",
     "emoji": "🍅",
+    "rainSensitive": true,
     "category": "vegetable",
     "family": "solanaceae",
     "sowRules": [
@@ -56,6 +57,7 @@
     "name_pl": "Pomidor wielkoowocowy",
     "name_en": "Beefsteak tomato",
     "emoji": "🍅",
+    "rainSensitive": true,
     "category": "vegetable",
     "family": "solanaceae",
     "sowRules": [
@@ -302,6 +304,7 @@
     "name_pl": "Papryka",
     "name_en": "Bell pepper",
     "emoji": "🫑",
+    "rainSensitive": true,
     "category": "vegetable",
     "family": "solanaceae",
     "sowRules": [

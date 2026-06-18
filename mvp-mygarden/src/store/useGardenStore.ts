@@ -14,6 +14,8 @@ interface AddBoxOptions {
   sunExposure?: Box["sunExposure"];
   bedType?: Box["bedType"];
   depthCm?: Box["depthCm"];
+  widthCm?: Box["widthCm"];
+  lengthCm?: Box["lengthCm"];
 }
 
 interface GardenStore {
@@ -31,7 +33,7 @@ interface GardenStore {
   addPlanting: (p: Omit<Planting, "id" | "year">) => void;
   updatePlanting: (id: string, patch: Partial<Planting>) => void;
   deletePlanting: (id: string) => void;
-  markHarvested: (id: string, date?: string) => void;
+  markHarvested: (id: string, opts?: { harvestYield?: string; date?: string }) => void;
   resetGarden: () => void;
   reloadFromStorage: () => void;
 }
@@ -55,6 +57,8 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
       sunExposure: options?.sunExposure,
       bedType: options?.bedType,
       depthCm: options?.depthCm,
+      widthCm: options?.widthCm,
+      lengthCm: options?.lengthCm,
       createdAt: new Date().toISOString(),
       zoneType: "BOX",
       layout: {
@@ -156,9 +160,13 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
     set({ plantings, lastSavedAt });
   },
 
-  markHarvested: (id, date) => {
-    const today = date ?? new Date().toISOString().split("T")[0];
-    const plantings = get().plantings.map((p) => (p.id === id ? { ...p, status: "harvested" as const, harvestDate: today } : p));
+  markHarvested: (id, opts) => {
+    const today = opts?.date ?? new Date().toISOString().split("T")[0];
+    // Only store a yield when the user actually typed one; an empty/blank field stays undefined.
+    const harvestYield = opts?.harvestYield?.trim() || undefined;
+    const plantings = get().plantings.map((p) =>
+      p.id === id ? { ...p, status: "harvested" as const, harvestDate: today, harvestYield } : p,
+    );
     const lastSavedAt = savePlantings(plantings);
     set({ plantings, lastSavedAt });
   },

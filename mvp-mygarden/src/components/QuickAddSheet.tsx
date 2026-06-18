@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { nearbyActivePlantKeys } from "../lib/boxAdjacency";
 import type { PlantFamily } from "../lib/families";
 import { getPlantName, usePlantLookup } from "../lib/plants";
 import { boxRotationHistory, familyConflictYears, plantingFamilyResolver } from "../lib/rotation";
@@ -192,6 +193,7 @@ interface PlantingEditorProps {
 
 function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: PlantingEditorProps) {
   const plantings = useGardenStore((state) => state.plantings);
+  const boxes = useGardenStore((state) => state.boxes);
   const addPlanting = useGardenStore((state) => state.addPlanting);
   const updatePlanting = useGardenStore((state) => state.updatePlanting);
   const findPlant = usePlantLookup();
@@ -224,6 +226,11 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
         .map((p) => p.plantKey)
         .filter(Boolean),
     [plantings, box.id, planting?.id],
+  );
+  // Active plants one bed over — proximity companionship (shared airspace, not shared soil).
+  const nearbyKeys = useMemo(
+    () => nearbyActivePlantKeys(box, boxes, plantings, neighbourKeys),
+    [box, boxes, plantings, neighbourKeys],
   );
   const previousSeasonFamilies = useMemo<PlantFamily[]>(() => {
     const families = new Set<PlantFamily>();
@@ -292,7 +299,7 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
         />
       )}
 
-      <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} />
+      <CompanionHints plantKey={plantKey} neighbourKeys={neighbourKeys} nearbyKeys={nearbyKeys} />
 
       {previousSeasonFamilies.length > 0 && (
         <div className="space-y-1.5 rounded-lg border p-2.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>

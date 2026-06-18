@@ -144,7 +144,7 @@
     { "id": "demo-pl-0200", "boxId": "demo-box-02", "plantKey": "tomat_cherry", "plantedDate": "2023-05-15", "harvestDate": "2023-09-01", "status": "harvested", "year": 2023 },
     { "id": "demo-pl-0201", "boxId": "demo-box-02", "plantKey": "salat", "plantedDate": "2024-04-20", "harvestDate": "2024-06-15", "status": "harvested", "year": 2024 },
     { "id": "demo-pl-0202", "boxId": "demo-box-02", "plantKey": "bønner", "plantedDate": "2025-05-25", "harvestDate": "2025-08-20", "status": "harvested", "year": 2025 },
-    { "id": "demo-pl-0203", "boxId": "demo-box-02", "plantKey": "gulrot", "variety": "Nantes", "plantedDate": "2026-04-15", "harvestDate": "2026-06-10", "status": "harvested", "year": 2026 },
+    { "id": "demo-pl-0203", "boxId": "demo-box-02", "plantKey": "gulrot", "variety": "Nantes", "plantedDate": "2026-04-15", "harvestDate": "2026-06-10", "harvestYield": "3 kg", "status": "harvested", "year": 2026 },
 
     { "id": "demo-pl-0301", "boxId": "demo-box-03", "plantKey": "potet", "plantedDate": "2025-05-01", "harvestDate": "2025-09-15", "status": "harvested", "year": 2025 },
 
