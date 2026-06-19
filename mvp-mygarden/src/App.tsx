@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { FeedbackButton } from "./components/FeedbackButton";
 import { BoxDetail } from "./pages/BoxDetail";
 import { GardenMap } from "./pages/GardenMap";
 import { Seedlings } from "./pages/Seedlings";
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/seedlings" element={<Seedlings />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
+      <FeedbackButton />
     </BrowserRouter>
   );
 }

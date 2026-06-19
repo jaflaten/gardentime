@@ -356,6 +356,16 @@ export function GardenMap() {
             </button>
           </div>
           <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={onBackupFile} />
+
+          <div className="rounded-lg border p-3 text-sm" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
+            <p className="mb-1 font-semibold">Slik fungerer det</p>
+            <ul className="space-y-1" style={{ color: "var(--text-muted)" }}>
+              <li>💾 Alt lagres lokalt i denne nettleseren — ingen konto, ingenting sendes til en server. Bytter du enhet eller tømmer nettleserdata, forsvinner hagen. Ta backup med <strong>Eksporter</strong> i Innstillinger.</li>
+              <li>🧪 Velg <strong>Testhage</strong> for å utforske med ferdige data — du kan alltid begynne på nytt etterpå.</li>
+              <li>↺ Du kan når som helst nullstille med <strong>Nullstill hage</strong> i Innstillinger for å komme tilbake hit.</li>
+            </ul>
+          </div>
+
           <div className="pt-1 text-sm">
             <Link to="/settings" style={{ color: "var(--green)" }}>
               ⚙ Innstillinger
