@@ -52,6 +52,17 @@ export function BoxDetail() {
   const [notes, setNotes] = useState("");
   const [showPickerError, setShowPickerError] = useState(false);
   const [rotationDismissed, setRotationDismissed] = useState(false);
+  // Layer 1 — retrospective backfill ("Legg til tidligere planting"). Its own form state so it never
+  // collides with the active add-plant form above; submits straight to history as a harvested row.
+  const [showHistoryForm, setShowHistoryForm] = useState(false);
+  const [hPlantKey, setHPlantKey] = useState("");
+  const [hCustomName, setHCustomName] = useState("");
+  const [hVariety, setHVariety] = useState("");
+  const [hQuantity, setHQuantity] = useState("");
+  const [hPlantedDate, setHPlantedDate] = useState("");
+  const [hHarvestDate, setHHarvestDate] = useState("");
+  const [hYield, setHYield] = useState("");
+  const [hPickerError, setHPickerError] = useState(false);
   const [editingBox, setEditingBox] = useState(false);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -206,6 +217,50 @@ export function BoxDetail() {
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
     setShowPickerError(false);
+  };
+
+  // Default a backfilled planting to "about a year ago" — the common case is "what I grew last season".
+  const oneYearAgoIso = () => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    return d.toISOString().split("T")[0];
+  };
+
+  const openHistoryForm = () => {
+    setHPlantKey("");
+    setHCustomName("");
+    setHVariety("");
+    setHQuantity("");
+    setHPlantedDate(oneYearAgoIso());
+    setHHarvestDate("");
+    setHYield("");
+    setHPickerError(false);
+    setShowHistoryForm(true);
+  };
+
+  const onSubmitHistory = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!hPlantKey && !hCustomName.trim()) {
+      setHPickerError(true);
+      return;
+    }
+    if (!hPlantedDate) {
+      return;
+    }
+    // A past planting is just a Planting with an earlier date (→ correct `year`, derived in the store)
+    // and a terminal status, so it lands in Historikk and counts for rotation/"forrige sesong".
+    addPlanting({
+      boxId: box.id,
+      plantKey: hPlantKey,
+      customName: hCustomName.trim() || undefined,
+      variety: hVariety.trim() || undefined,
+      quantity: parseQuantity(hQuantity),
+      plantedDate: hPlantedDate,
+      harvestDate: hHarvestDate || undefined,
+      harvestYield: hYield.trim() || undefined,
+      status: "harvested",
+    });
+    setShowHistoryForm(false);
   };
 
   return (
@@ -591,7 +646,119 @@ export function BoxDetail() {
       </section>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-lg font-semibold sm:text-xl">Historikk</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold sm:text-xl">Historikk</h2>
+          {!viewMode && !showHistoryForm && (
+            <button
+              type="button"
+              onClick={openHistoryForm}
+              className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
+              style={{ borderColor: "var(--border)", color: "var(--text)", backgroundColor: "var(--surface)" }}
+            >
+              + Legg til tidligere planting
+            </button>
+          )}
+        </div>
+
+        {showHistoryForm && (
+          <form className="space-y-3 rounded-lg border p-3" onSubmit={onSubmitHistory} style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Registrer noe du dyrket her tidligere — gir vekstskifte-historikk og «forrige sesong»-hint med én gang.
+            </p>
+            <PlantPicker
+              plantKey={hPlantKey}
+              customName={hCustomName}
+              onPlantKeyChange={(key) => {
+                setHPlantKey(key);
+                setHPickerError(false);
+              }}
+              onCustomNameChange={(name) => {
+                setHCustomName(name);
+                if (name.trim()) {
+                  setHPickerError(false);
+                }
+              }}
+            />
+            {hPickerError && (
+              <p className="text-sm" style={{ color: "var(--red)" }}>
+                Velg en plante eller skriv et eget plantenavn først.
+              </p>
+            )}
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Sort (valgfritt)</label>
+              <input
+                type="text"
+                value={hVariety}
+                onChange={(event) => setHVariety(event.target.value)}
+                placeholder="f.eks. Sungold"
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Antall planter (valgfritt)</label>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                value={hQuantity}
+                onChange={(event) => setHQuantity(event.target.value)}
+                placeholder="f.eks. 6"
+                className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-[10rem]"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Sådd/plantet dato</label>
+              <input
+                type="date"
+                value={hPlantedDate}
+                onChange={(event) => setHPlantedDate(event.target.value)}
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Høstet dato (valgfritt)</label>
+              <input
+                type="date"
+                value={hHarvestDate}
+                onChange={(event) => setHHarvestDate(event.target.value)}
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Avling (valgfritt)</label>
+              <input
+                type="text"
+                value={hYield}
+                onChange={(event) => setHYield(event.target.value)}
+                placeholder="f.eks. 3 kg"
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--green)", color: "white" }}
+              >
+                Lagre
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowHistoryForm(false)}
+                className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
+                style={{ backgroundColor: "var(--gray-light)", color: "var(--text)" }}
+              >
+                Avbryt
+              </button>
+            </div>
+          </form>
+        )}
+
         {historyPlantings.length === 0 ? (
           <p style={{ color: "var(--text-muted)" }}>Ingen historikk ennå.</p>
         ) : (
