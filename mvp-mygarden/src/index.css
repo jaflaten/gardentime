@@ -10,6 +10,11 @@
   --text-muted: #7a7060;
   --green: #3d6b4f;
   --green-light: #edf4ef;
+  /* Sesongoversikt zebra lanes: a warm terracotta-tinted stripe (red in it, clearly distinct from the
+     white --surface lane) and a matching warm border so every lane — white ones included — reads as a
+     panel. The bar track stays neutral --bg, so the green harvest band never clashes with the lane. */
+  --lane-stripe: #f1ddd0;
+  --lane-border: #ddc4b2;
   --amber: #c47c2b;
   --amber-light: #f9efe3;
   --red: #b84444;

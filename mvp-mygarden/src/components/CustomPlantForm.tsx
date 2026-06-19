@@ -1,10 +1,36 @@
 import { useState } from "react";
+import { type SunNeed } from "../lib/boxMeta";
 import { CATEGORY_LABELS, CATEGORY_VALUES, type PlantCategory } from "../lib/categories";
 import { FAMILY_INFO, type PlantFamily } from "../lib/families";
 import { useUiStore } from "../store/useUiStore";
 import type { HarvestRule, PlantInfo, SowRule } from "../types";
 
 const FAMILY_VALUES = Object.keys(FAMILY_INFO) as PlantFamily[];
+
+const MONTHS_NO = ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"];
+
+const SUN_NEED_LABELS: Record<SunNeed, string> = {
+  full: "☀️ Full sol",
+  partial: "⛅ Delvis sol",
+  shade: "🌥 Skygge",
+};
+const SUN_NEED_VALUES: SunNeed[] = ["full", "partial", "shade"];
+
+/** Split a stored "MM-DD" into editable {month,day} strings (no leading zeros). */
+function mmddToParts(mmdd: string): { month: string; day: string } {
+  const [m, d] = mmdd.split("-");
+  return { month: String(Number(m)), day: String(Number(d)) };
+}
+
+/** Build a "MM-DD" from the month/day inputs, or null when either is out of range. */
+function partsToMmdd(month: string, day: string): string | null {
+  const m = Number(month);
+  const d = Number(day);
+  if (!Number.isInteger(m) || m < 1 || m > 12 || !Number.isInteger(d) || d < 1 || d > 31) {
+    return null;
+  }
+  return `${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
 
 interface CustomPlantFormProps {
   initial?: Partial<Omit<PlantInfo, "key">>;
@@ -23,7 +49,7 @@ interface OutdoorSubState extends SowSubState {
   minSoilTempC: string;
 }
 
-type HarvestKind = "none" | "fromSowing" | "beforeFirstFrost";
+type HarvestKind = "none" | "fromSowing" | "beforeFirstFrost" | "seasonal";
 
 function findSowRule<T extends SowRule["type"]>(rules: SowRule[] | undefined, type: T): Extract<SowRule, { type: T }> | undefined {
   return rules?.find((rule): rule is Extract<SowRule, { type: T }> => rule.type === type);
@@ -55,29 +81,48 @@ function initialTransplant(initial?: SowRule[]): SowSubState {
     : { enabled: false, min: "", max: "" };
 }
 
-function initialHarvest(rule?: HarvestRule): {
+interface HarvestState {
   kind: HarvestKind;
   fromSowingMin: string;
   fromSowingMax: string;
   beforeFirstFrost: string;
-} {
+  seasonalFromMonth: string;
+  seasonalFromDay: string;
+  seasonalToMonth: string;
+  seasonalToDay: string;
+}
+
+const EMPTY_HARVEST: HarvestState = {
+  kind: "none",
+  fromSowingMin: "",
+  fromSowingMax: "",
+  beforeFirstFrost: "",
+  seasonalFromMonth: "",
+  seasonalFromDay: "",
+  seasonalToMonth: "",
+  seasonalToDay: "",
+};
+
+function initialHarvest(rule?: HarvestRule): HarvestState {
   if (rule && "weeksFromSowing" in rule) {
-    return {
-      kind: "fromSowing",
-      fromSowingMin: String(rule.weeksFromSowing[0]),
-      fromSowingMax: String(rule.weeksFromSowing[1]),
-      beforeFirstFrost: "",
-    };
+    return { ...EMPTY_HARVEST, kind: "fromSowing", fromSowingMin: String(rule.weeksFromSowing[0]), fromSowingMax: String(rule.weeksFromSowing[1]) };
   }
   if (rule && "weeksBeforeFirstFrost" in rule) {
+    return { ...EMPTY_HARVEST, kind: "beforeFirstFrost", beforeFirstFrost: String(rule.weeksBeforeFirstFrost) };
+  }
+  if (rule && "seasonal" in rule) {
+    const from = mmddToParts(rule.seasonal[0]);
+    const to = mmddToParts(rule.seasonal[1]);
     return {
-      kind: "beforeFirstFrost",
-      fromSowingMin: "",
-      fromSowingMax: "",
-      beforeFirstFrost: String(rule.weeksBeforeFirstFrost),
+      ...EMPTY_HARVEST,
+      kind: "seasonal",
+      seasonalFromMonth: from.month,
+      seasonalFromDay: from.day,
+      seasonalToMonth: to.month,
+      seasonalToDay: to.day,
     };
   }
-  return { kind: "none", fromSowingMin: "", fromSowingMax: "", beforeFirstFrost: "" };
+  return EMPTY_HARVEST;
 }
 
 function toRange(min: string, max: string): [number, number] | null {
@@ -99,12 +144,24 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
   const [category, setCategory] = useState<PlantCategory>(initial?.category ?? "vegetable");
   const [family, setFamily] = useState<PlantFamily>(initial?.family ?? "other");
   const [showAdvanced, setShowAdvanced] = useState(
-    Boolean((initial?.sowRules && initial.sowRules.length > 0) || initial?.harvestRule),
+    Boolean(
+      (initial?.sowRules && initial.sowRules.length > 0) ||
+        initial?.harvestRule ||
+        initial?.perennial ||
+        initial?.sunNeed ||
+        initial?.minDepthCm != null,
+    ),
   );
   const [indoor, setIndoor] = useState<SowSubState>(() => initialIndoor(initial?.sowRules));
   const [outdoor, setOutdoor] = useState<OutdoorSubState>(() => initialOutdoor(initial?.sowRules));
   const [transplant, setTransplant] = useState<SowSubState>(() => initialTransplant(initial?.sowRules));
   const [harvest, setHarvest] = useState(() => initialHarvest(initial?.harvestRule));
+  const [harvestDuration, setHarvestDuration] = useState(
+    initial?.harvestDurationWeeks != null ? String(initial.harvestDurationWeeks) : "",
+  );
+  const [perennial, setPerennial] = useState(Boolean(initial?.perennial));
+  const [sunNeed, setSunNeed] = useState<SunNeed | "">(initial?.sunNeed ?? "");
+  const [minDepthCm, setMinDepthCm] = useState(initial?.minDepthCm != null ? String(initial.minDepthCm) : "");
 
   const handleSave = () => {
     const trimmed = name.trim();
@@ -138,17 +195,32 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
     }
 
     let harvestRule: HarvestRule | undefined;
+    let harvestDurationWeeks: number | undefined;
     if (harvest.kind === "fromSowing") {
       const range = toRange(harvest.fromSowingMin, harvest.fromSowingMax);
       if (range) {
         harvestRule = { weeksFromSowing: range };
+        // Picking duration only applies to a from-sowing harvest window.
+        const durationNum = harvestDuration.trim() === "" ? NaN : Number(harvestDuration);
+        if (Number.isFinite(durationNum) && durationNum > 0) {
+          harvestDurationWeeks = Math.round(durationNum);
+        }
       }
     } else if (harvest.kind === "beforeFirstFrost") {
       const n = Number(harvest.beforeFirstFrost);
       if (Number.isFinite(n)) {
         harvestRule = { weeksBeforeFirstFrost: Math.round(n) };
       }
+    } else if (harvest.kind === "seasonal") {
+      const from = partsToMmdd(harvest.seasonalFromMonth, harvest.seasonalFromDay);
+      const to = partsToMmdd(harvest.seasonalToMonth, harvest.seasonalToDay);
+      if (from && to) {
+        harvestRule = { seasonal: [from, to] };
+      }
     }
+
+    const minDepthNum = minDepthCm.trim() === "" ? NaN : Number(minDepthCm);
+    const minDepthValue = Number.isFinite(minDepthNum) && minDepthNum > 0 ? Math.round(minDepthNum) : undefined;
 
     onSubmit({
       name_no: trimmed,
@@ -159,6 +231,10 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
       family,
       ...(sowRules.length > 0 ? { sowRules } : {}),
       ...(harvestRule ? { harvestRule } : {}),
+      ...(harvestDurationWeeks != null ? { harvestDurationWeeks } : {}),
+      ...(perennial ? { perennial: true } : {}),
+      ...(sunNeed ? { sunNeed } : {}),
+      ...(minDepthValue != null ? { minDepthCm: minDepthValue } : {}),
     });
   };
 
@@ -308,25 +384,41 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
                 Antall uker fra såing
               </label>
               {harvest.kind === "fromSowing" && (
-                <div className="ml-6 grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder="Min"
-                    value={harvest.fromSowingMin}
-                    onChange={(event) => setHarvest((prev) => ({ ...prev, fromSowingMin: event.target.value }))}
-                    className="input-touch w-full rounded-lg border px-3 py-2"
-                    style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-                  />
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    placeholder="Max"
-                    value={harvest.fromSowingMax}
-                    onChange={(event) => setHarvest((prev) => ({ ...prev, fromSowingMax: event.target.value }))}
-                    className="input-touch w-full rounded-lg border px-3 py-2"
-                    style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-                  />
+                <div className="ml-6 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="Min"
+                      value={harvest.fromSowingMin}
+                      onChange={(event) => setHarvest((prev) => ({ ...prev, fromSowingMin: event.target.value }))}
+                      className="input-touch w-full rounded-lg border px-3 py-2"
+                      style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+                    />
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="Max"
+                      value={harvest.fromSowingMax}
+                      onChange={(event) => setHarvest((prev) => ({ ...prev, fromSowingMax: event.target.value }))}
+                      className="input-touch w-full rounded-lg border px-3 py-2"
+                      style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+                    />
+                  </div>
+                  <label className="space-y-1 text-xs">
+                    <span className="block" style={{ color: "var(--text-muted)" }}>
+                      Høsteperiode (uker, valgfritt) — hvor lenge den høstes (f.eks. tomat, bønner)
+                    </span>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="f.eks. 8"
+                      value={harvestDuration}
+                      onChange={(event) => setHarvestDuration(event.target.value)}
+                      className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-[8rem]"
+                      style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+                    />
+                  </label>
                 </div>
               )}
               <label className="flex items-center gap-2">
@@ -350,7 +442,80 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
                   />
                 </div>
               )}
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  checked={harvest.kind === "seasonal"}
+                  onChange={() => setHarvest((prev) => ({ ...prev, kind: "seasonal" }))}
+                />
+                Fast høstesesong (samme datoer hvert år)
+              </label>
+              {harvest.kind === "seasonal" && (
+                <div className="ml-6 space-y-2">
+                  <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
+                    For flerårige planter (jordbær, rabarbra) som høstes i samme periode hvert år. Bruk gjerne datoene som
+                    passer din hage.
+                  </span>
+                  <SeasonalDateRow
+                    label="Fra"
+                    month={harvest.seasonalFromMonth}
+                    day={harvest.seasonalFromDay}
+                    onMonthChange={(month) => setHarvest((prev) => ({ ...prev, seasonalFromMonth: month }))}
+                    onDayChange={(day) => setHarvest((prev) => ({ ...prev, seasonalFromDay: day }))}
+                  />
+                  <SeasonalDateRow
+                    label="Til"
+                    month={harvest.seasonalToMonth}
+                    day={harvest.seasonalToDay}
+                    onMonthChange={(month) => setHarvest((prev) => ({ ...prev, seasonalToMonth: month }))}
+                    onDayChange={(day) => setHarvest((prev) => ({ ...prev, seasonalToDay: day }))}
+                  />
+                </div>
+              )}
             </div>
+          </div>
+
+          <div className="space-y-3 border-t pt-2" style={{ borderColor: "var(--border)" }}>
+            <span className="block text-sm font-medium">Voksekrav (valgfritt)</span>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={perennial} onChange={(event) => setPerennial(event.target.checked)} />
+              Flerårig — kommer igjen hvert år
+            </label>
+            {perennial && (
+              <p className="ml-6 text-xs" style={{ color: "var(--text-muted)" }}>
+                Flerårige planter teller ikke i vekstskifte, og høstes ofte i en fast sesong — sett «Fast høstesesong»
+                over for å vise høstevinduet i Sesongoversikt.
+              </p>
+            )}
+            <label className="space-y-1 text-sm">
+              <span className="block">Lysbehov</span>
+              <select
+                value={sunNeed}
+                onChange={(event) => setSunNeed(event.target.value as SunNeed | "")}
+                className="input-touch w-full rounded-lg border px-3 py-2"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              >
+                <option value="">Ikke angitt</option>
+                {SUN_NEED_VALUES.map((value) => (
+                  <option key={value} value={value}>
+                    {SUN_NEED_LABELS[value]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="space-y-1 text-sm">
+              <span className="block">Min. jorddybde (cm, valgfritt)</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                placeholder="f.eks. 30 for rotgrønnsaker"
+                value={minDepthCm}
+                onChange={(event) => setMinDepthCm(event.target.value)}
+                className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-[12rem]"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </label>
           </div>
         </div>
       )}
@@ -374,6 +539,48 @@ export function CustomPlantForm({ initial, onSubmit, onCancel, submitLabel = "La
           Avbryt
         </button>
       </div>
+    </div>
+  );
+}
+
+interface SeasonalDateRowProps {
+  label: string;
+  month: string;
+  day: string;
+  onMonthChange: (value: string) => void;
+  onDayChange: (value: string) => void;
+}
+
+function SeasonalDateRow({ label, month, day, onMonthChange, onDayChange }: SeasonalDateRowProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-8 text-xs" style={{ color: "var(--text-muted)" }}>
+        {label}
+      </span>
+      <select
+        value={month}
+        onChange={(event) => onMonthChange(event.target.value)}
+        className="input-touch flex-1 rounded-lg border px-2 py-2"
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+      >
+        <option value="">Måned</option>
+        {MONTHS_NO.map((name, index) => (
+          <option key={name} value={String(index + 1)}>
+            {name}
+          </option>
+        ))}
+      </select>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={1}
+        max={31}
+        placeholder="dag"
+        value={day}
+        onChange={(event) => onDayChange(event.target.value)}
+        className="input-touch w-20 rounded-lg border px-2 py-2"
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+      />
     </div>
   );
 }

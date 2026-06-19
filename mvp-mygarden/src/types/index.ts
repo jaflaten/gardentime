@@ -24,11 +24,24 @@ export interface Box {
 
 export interface Planting {
   id: string;
-  boxId: string;
+  /**
+   * The box this planting lives in. **Optional** — a planting with no `boxId` is an *indoor seedling*
+   * (forkultivering, Increment K): started on a windowsill before it has a home in the garden. The
+   * "Plant ut" action fills `boxId` in and stamps `transplantedDate`, at which point the same row
+   * becomes an ordinary box planting (its original indoor `plantedDate` is preserved for days-to-harvest).
+   * Use `isIndoorSeedling()` rather than testing this directly. Every per-box filter (`boxId === box.id`)
+   * already excludes seedlings; only *global* active-planting scans need to guard on it.
+   */
+  boxId?: string;
   plantKey: string;
   customName?: string;
   variety?: string;
+  /** How many individual plants this row represents (e.g. 6 tomato plants in one row). Optional; missing = unspecified (counted as 1 in box totals). */
+  quantity?: number;
+  /** Sow/plant date. For an indoor seedling this is the *indoor* sow date — preserved through "Plant ut". */
   plantedDate: string;
+  /** When an indoor seedling was planted out into its box (Increment K). Absent on direct-sown plantings; doubles as "was started indoors" provenance. */
+  transplantedDate?: string;
   harvestDate?: string;
   /** Free-text yield logged at harvest (Phase F), e.g. "5 kg", "3 bøtter", "1 sekk". Optional. */
   harvestYield?: string;
@@ -73,6 +86,13 @@ export interface PlantInfo {
   companionsBad?: string[];
   /** Succession interval in weeks (Increment E): re-sow every N weeks for a continuous harvest (salat, reddik). */
   successionWeeks?: number;
+  /**
+   * How many weeks the crop is *picked over* once it starts cropping (continuous croppers — beans,
+   * tomatoes, courgette, salat). Only meaningful with a `weeksFromSowing` harvest rule: the season
+   * timeline extends the harvest band by this many weeks past first-harvest, so a long-cropping plant
+   * draws a longer bar than a one-shot root. Missing = treated as a single short pick (no extension).
+   */
+  harvestDurationWeeks?: number;
   /**
    * Perennial — stays in the bed across seasons and re-fruits each year (jordbær, rabarbra, urter).
    * Its harvest window should be a `{ seasonal }` rule (absolute, repeats yearly) rather than sow-relative,

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
-import { mmddToDoy } from "../lib/seasonTimeline";
+import { mmddToDoy, seasonalShiftForPlant } from "../lib/seasonTimeline";
 import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
@@ -31,6 +31,8 @@ interface Grouped {
 interface SowNowCardProps {
   /** Called when the user taps "+ Legg til" on a row — wires to GardenMap's sow-mode flow. */
   onPickPlant?: (plantKey: string) => void;
+  /** Called from the "Så inne" group instead of onPickPlant — starts an indoor seedling (Increment K). */
+  onStartIndoor?: (plantKey: string) => void;
 }
 
 function harvestSoonForPlanting(
@@ -38,15 +40,17 @@ function harvestSoonForPlanting(
   rule: HarvestRule | undefined,
   todayDoy: number,
   firstFrostDoy: number,
+  seasonalShift: number,
 ): { matches: boolean; helper: string } {
   if (!rule) {
     return { matches: false, helper: "" };
   }
   if ("seasonal" in rule) {
     // Absolute calendar window (perennials) — matches whenever today falls within it, any year.
+    // Shifted toward the user's frost dates so a cold garden doesn't show "harvest now" too early.
     const year = new Date().getFullYear();
-    const start = mmddToDoy(rule.seasonal[0], year);
-    const end = mmddToDoy(rule.seasonal[1], year);
+    const start = mmddToDoy(rule.seasonal[0], year) + seasonalShift;
+    const end = mmddToDoy(rule.seasonal[1], year) + seasonalShift;
     if (todayDoy >= start && todayDoy <= end) {
       return { matches: true, helper: "Høstesesong nå" };
     }
@@ -80,7 +84,7 @@ function weeksSinceSowing(plantedDate: string): number {
   return Math.floor((new Date().getTime() - sown.getTime()) / (7 * 24 * 60 * 60 * 1000));
 }
 
-export function SowNowCard({ onPickPlant }: SowNowCardProps) {
+export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
   const location = useResolvedLocation();
   const plants = useMergedPlantList();
   const plantings = useGardenStore((state) => state.plantings);
@@ -131,7 +135,8 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
     const succession: GroupedRow[] = [];
     const latestActiveByKey = new Map<string, Planting>();
     for (const planting of plantings) {
-      if (planting.status !== "active" || !planting.plantKey) continue;
+      // Skip indoor seedlings (no boxId) — they're not yet a sown batch in a bed.
+      if (planting.status !== "active" || !planting.plantKey || !planting.boxId) continue;
       const prev = latestActiveByKey.get(planting.plantKey);
       if (!prev || planting.plantedDate > prev.plantedDate) {
         latestActiveByKey.set(planting.plantKey, planting);
@@ -155,10 +160,12 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
     const harvestSoon: GroupedRow[] = [];
     const harvestByKey = new Map<string, GroupedRow>();
     for (const planting of plantings) {
-      if (planting.status !== "active") continue;
+      // Indoor seedlings (no boxId) can't be "harvest soon" — they haven't been planted out.
+      if (planting.status !== "active" || !planting.boxId) continue;
       const plant = plants.find((p) => p.key === planting.plantKey);
       if (!plant?.harvestRule) continue;
-      const check = harvestSoonForPlanting(planting, plant.harvestRule, doy, location.firstFrostDoy);
+      const shift = seasonalShiftForPlant(plant.key, location.lastFrostDoy);
+      const check = harvestSoonForPlanting(planting, plant.harvestRule, doy, location.firstFrostDoy, shift);
       if (!check.matches) continue;
       const existing = harvestByKey.get(plant.key);
       if (existing) {
@@ -210,7 +217,13 @@ export function SowNowCard({ onPickPlant }: SowNowCardProps) {
         </button>
       </div>
 
-      <SowGroup title="Så inne" rows={grouped.indoor} language={language} onPickPlant={onPickPlant} />
+      <SowGroup
+        title="Så inne"
+        rows={grouped.indoor}
+        language={language}
+        onPickPlant={onStartIndoor ?? onPickPlant}
+        actionLabel={onStartIndoor ? "+ Start inne" : undefined}
+      />
       <SowGroup title="Så ute" rows={grouped.outdoor} language={language} onPickPlant={onPickPlant} />
       <SowGroup title="Plant ut" rows={grouped.transplant} language={language} onPickPlant={onPickPlant} />
       <SowGroup title="Suksesjon" rows={grouped.succession} language={language} onPickPlant={onPickPlant} />
@@ -224,9 +237,11 @@ interface SowGroupProps {
   rows: GroupedRow[];
   language: PlantLanguage;
   onPickPlant?: (plantKey: string) => void;
+  /** Override the per-row button label (defaults to "+ Legg til"). */
+  actionLabel?: string;
 }
 
-function SowGroup({ title, rows, language, onPickPlant }: SowGroupProps) {
+function SowGroup({ title, rows, language, onPickPlant, actionLabel }: SowGroupProps) {
   if (rows.length === 0) return null;
   return (
     <div className="space-y-2">
@@ -263,7 +278,7 @@ function SowGroup({ title, rows, language, onPickPlant }: SowGroupProps) {
                 className="rounded-lg border px-2 py-1 text-xs font-medium"
                 style={{ borderColor: "var(--green)", color: "var(--green)", backgroundColor: "var(--surface)" }}
               >
-                + Legg til
+                {actionLabel ?? "+ Legg til"}
               </button>
             )}
           </li>

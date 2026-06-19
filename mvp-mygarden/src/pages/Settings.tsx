@@ -73,7 +73,8 @@ function isPlantingLike(value: unknown): value is Planting {
   const planting = value as Partial<Planting>;
   return (
     typeof planting.id === "string" &&
-    typeof planting.boxId === "string" &&
+    // boxId is optional — indoor seedlings (forkultivering) have none until planted out.
+    (planting.boxId === undefined || typeof planting.boxId === "string") &&
     typeof planting.plantKey === "string" &&
     typeof planting.plantedDate === "string" &&
     typeof planting.year === "number" &&

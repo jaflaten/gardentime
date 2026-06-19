@@ -52,3 +52,30 @@ export function matchingSowKind(plant: PlantInfo, lastFrostDoy: number, doy = to
 export function isSowableNow(plant: PlantInfo, lastFrostDoy: number, doy = todayDoy()): boolean {
   return matchingSowKind(plant, lastFrostDoy, doy) !== null;
 }
+
+/**
+ * When should an indoor seedling go out? Derived purely from the plant's existing `transplant`
+ * sow rule (Increment K — no new metadata). Returns null if the plant has no transplant window.
+ * - `soon`: today is before the window — `weeks` ≈ how many weeks until it opens.
+ * - `ready`: today is inside the plant-out window.
+ * - `overdue`: the window has passed (the seedling is getting leggy indoors).
+ */
+export function transplantReadiness(
+  plant: PlantInfo,
+  lastFrostDoy: number,
+  doy = todayDoy(),
+): { status: "soon" | "ready" | "overdue"; weeks: number } | null {
+  const rule = plant.sowRules?.find((r) => r.type === "transplant");
+  if (!rule || rule.type !== "transplant") {
+    return null;
+  }
+  const [min, max] = rule.weeksAfterLastFrost;
+  const weeksFromLF = weeksFromLastFrost(doy, lastFrostDoy);
+  if (weeksFromLF < min) {
+    return { status: "soon", weeks: Math.max(0, Math.round(min - weeksFromLF)) };
+  }
+  if (weeksFromLF > max) {
+    return { status: "overdue", weeks: Math.round(weeksFromLF - max) };
+  }
+  return { status: "ready", weeks: 0 };
+}

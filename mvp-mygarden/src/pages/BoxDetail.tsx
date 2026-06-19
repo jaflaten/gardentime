@@ -6,6 +6,7 @@ import { FamilyChip } from "../components/FamilyChip";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PlantPicker } from "../components/PlantPicker";
 import { PlantingRow } from "../components/PlantingRow";
+import { parseQuantity } from "../lib/planting";
 import { RotationWarning } from "../components/RotationWarning";
 import {
   BED_TYPE_LABELS,
@@ -46,6 +47,7 @@ export function BoxDetail() {
   const [plantKey, setPlantKey] = useState("");
   const [customName, setCustomName] = useState("");
   const [variety, setVariety] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
   const [showPickerError, setShowPickerError] = useState(false);
@@ -60,7 +62,7 @@ export function BoxDetail() {
   const [editLength, setEditLength] = useState<number | "">("");
   const language = useUiStore((state) => state.plantLanguage);
 
-  const { boxes, plantings, addPlanting, updateBox, markHarvested, deletePlanting } = useGardenStore();
+  const { boxes, plantings, addPlanting, updateBox, updatePlanting, markHarvested, deletePlanting } = useGardenStore();
   const findPlant = usePlantLookup();
   const allPlants = useMergedPlantList();
   const location = useResolvedLocation();
@@ -70,6 +72,8 @@ export function BoxDetail() {
 
   const boxPlantings = useMemo(() => plantings.filter((planting) => planting.boxId === id), [plantings, id]);
   const activePlantings = boxPlantings.filter((planting) => planting.status === "active").sort(byNewestFirst);
+  // Total individual plants currently growing here — a planting with no quantity counts as 1.
+  const totalActivePlants = activePlantings.reduce((sum, planting) => sum + (planting.quantity ?? 1), 0);
   const historyPlantings = boxPlantings.filter((planting) => planting.status !== "active").sort(byNewestFirst);
 
   const targetYear = new Date(plantedDate).getFullYear();
@@ -158,6 +162,7 @@ export function BoxDetail() {
     setPlantKey(mostRecentActive?.plantKey ?? "");
     setCustomName(mostRecentActive && !mostRecentActive.plantKey ? (mostRecentActive.customName ?? "") : "");
     setVariety("");
+    setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
     setShowPickerError(false);
@@ -169,6 +174,7 @@ export function BoxDetail() {
     setPlantKey(plantKeyToAdd);
     setCustomName("");
     setVariety("");
+    setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
     setShowPickerError(false);
@@ -187,6 +193,7 @@ export function BoxDetail() {
       plantKey,
       customName: customName.trim() || undefined,
       variety: variety.trim() || undefined,
+      quantity: parseQuantity(quantity),
       plantedDate,
       notes: notes.trim() || undefined,
       status: "active",
@@ -195,6 +202,7 @@ export function BoxDetail() {
     setPlantKey("");
     setCustomName("");
     setVariety("");
+    setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
     setShowPickerError(false);
@@ -359,7 +367,17 @@ export function BoxDetail() {
       )}
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-lg font-semibold sm:text-xl">Nå</h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold sm:text-xl">Nå</h2>
+          {activePlantings.length > 0 && (
+            <span
+              className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium"
+              style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)", color: "var(--text-muted)" }}
+            >
+              🌱 {totalActivePlants} {totalActivePlants === 1 ? "plante" : "planter"} totalt
+            </span>
+          )}
+        </div>
         {activePlantings.length === 0 ? (
           <p style={{ color: "var(--text-muted)" }}>Ingen aktive planter.</p>
         ) : (
@@ -369,6 +387,7 @@ export function BoxDetail() {
                 key={planting.id}
                 planting={planting}
                 onHarvest={viewMode ? undefined : (plantingId, harvestYield) => markHarvested(plantingId, { harvestYield })}
+                onUpdate={viewMode ? undefined : updatePlanting}
                 onDelete={viewMode ? undefined : (plantingId) => deletePlanting(plantingId)}
               />
             ))}
@@ -518,6 +537,19 @@ export function BoxDetail() {
               />
             </div>
             <div className="space-y-2">
+              <label className="block text-sm font-medium">Antall planter (valgfritt)</label>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                value={quantity}
+                onChange={(event) => setQuantity(event.target.value)}
+                placeholder="f.eks. 6"
+                className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-[10rem]"
+                style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+              />
+            </div>
+            <div className="space-y-2">
               <label className="block text-sm font-medium">Plantet dato</label>
               <input
                 type="date"
@@ -574,6 +606,7 @@ export function BoxDetail() {
                     <PlantingRow
                       key={planting.id}
                       planting={planting}
+                      onUpdate={viewMode ? undefined : updatePlanting}
                       onDelete={viewMode ? undefined : (plantingId) => deletePlanting(plantingId)}
                     />
                   ))}

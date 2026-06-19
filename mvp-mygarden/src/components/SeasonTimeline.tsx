@@ -6,19 +6,208 @@ import {
   dateToDoy,
   doyToDate,
   doyToPercent,
+  groupTimelineItems,
   monthTicks,
+  type TimelineGroup,
+  type TimelineItem,
 } from "../lib/seasonTimeline";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
+import type { PlantLanguage } from "../store/useUiStore";
 
 const MONTHS_NO = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
+
+// Above this many active plantings the per-planting list gets unwieldy (Standardoppsett has ~46),
+// so we offer a grouped overview and default to it. Small gardens never see the toggle — the
+// detailed view they already know stays exactly as-is.
+const GROUP_THRESHOLD = 12;
+
+interface BarContext {
+  ticks: number[];
+  pct: (doy: number) => number;
+  todayInRange: boolean;
+  todayDoy: number;
+}
+
+/**
+ * The timeline track itself: month gridlines, the harvest band, one or more sow markers, and the
+ * today line. Shared by the detailed rows and the merged grouped rows so both read identically.
+ */
+function TimelineBar({
+  plantedDoys,
+  harvestWindow,
+  ctx,
+}: {
+  plantedDoys: number[];
+  harvestWindow: [number, number] | null;
+  ctx: BarContext;
+}) {
+  const { ticks, pct, todayInRange, todayDoy } = ctx;
+  return (
+    <div
+      className="relative h-5 rounded"
+      style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border)" }}
+    >
+      {/* month gridlines */}
+      {ticks.slice(1).map((tick) => (
+        <span
+          key={tick}
+          className="absolute top-0 bottom-0 w-px"
+          style={{ left: `${pct(tick)}%`, backgroundColor: "var(--border)" }}
+        />
+      ))}
+      {/* harvest window */}
+      {harvestWindow && harvestWindow[1] > harvestWindow[0] && (
+        <span
+          className="absolute top-1 bottom-1 rounded"
+          title="Forventet høstevindu"
+          style={{
+            left: `${pct(harvestWindow[0])}%`,
+            width: `${pct(harvestWindow[1]) - pct(harvestWindow[0])}%`,
+            backgroundColor: "var(--green-light)",
+            border: "1px solid var(--green)",
+          }}
+        />
+      )}
+      {/* planted marker(s) — omitted for plantings sown in a previous season (perennials) */}
+      {plantedDoys.map((doy, index) => (
+        <span
+          key={`${doy}-${index}`}
+          className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          title="Plantet"
+          style={{ left: `${pct(doy)}%`, backgroundColor: "var(--green)" }}
+        />
+      ))}
+      {/* today line */}
+      {todayInRange && (
+        <span
+          className="absolute top-0 bottom-0 w-0.5"
+          style={{ left: `${pct(todayDoy)}%`, backgroundColor: "var(--green)" }}
+        />
+      )}
+    </div>
+  );
+}
+
+// Alternate lanes get a warm parchment panel; the others stay on the white card. Every top-level lane
+// is bordered so the white ones still read as a panel. The bar track is a constant warm tone (lighter
+// than the stripe, faintly inset on white), so the green harvest band reads identically on every row.
+const laneBg = (striped: boolean) => (striped ? "var(--lane-stripe)" : "var(--surface)");
+
+/** A single planting row — the detailed view, also reused inside an expanded group. */
+function DetailRow({
+  item,
+  ctx,
+  language,
+  boxName,
+  striped,
+  indent = false,
+  paintRow = true,
+}: {
+  item: TimelineItem;
+  ctx: BarContext;
+  language: PlantLanguage;
+  boxName: (boxId: string | undefined) => string | undefined;
+  striped: boolean;
+  indent?: boolean;
+  paintRow?: boolean;
+}) {
+  const name = item.plant ? getPlantName(item.plant, language) : item.planting.customName || "Ukjent plante";
+  const box = boxName(item.planting.boxId);
+  return (
+    <li
+      className={`space-y-1 rounded-lg px-2 py-1.5 ${indent ? "ml-4" : ""} ${paintRow ? "border" : ""}`}
+      style={paintRow ? { backgroundColor: laneBg(striped), borderColor: "var(--lane-border)" } : undefined}
+    >
+      <p className="truncate text-xs font-medium">
+        {item.plant?.emoji ?? "🌱"} {name}
+        {item.planting.variety && <span style={{ color: "var(--text-muted)" }}> · {item.planting.variety}</span>}
+        {box && <span style={{ color: "var(--text-muted)" }}> · {box}</span>}
+        {item.plant?.perennial && <span style={{ color: "var(--text-muted)" }}> · flerårig</span>}
+      </p>
+      <TimelineBar
+        plantedDoys={item.plantedDoy !== null ? [item.plantedDoy] : []}
+        harvestWindow={item.harvestWindow}
+        ctx={ctx}
+      />
+    </li>
+  );
+}
+
+/** A merged plant row in the grouped view; expands to its individual {@link DetailRow}s. */
+function GroupRow({
+  group,
+  ctx,
+  language,
+  boxName,
+  open,
+  onToggle,
+  striped,
+}: {
+  group: TimelineGroup;
+  ctx: BarContext;
+  language: PlantLanguage;
+  boxName: (boxId: string | undefined) => string | undefined;
+  open: boolean;
+  onToggle: () => void;
+  striped: boolean;
+}) {
+  const name = group.plant
+    ? getPlantName(group.plant, language)
+    : group.items[0].planting.customName || "Ukjent plante";
+  const boxes = group.boxIds.map(boxName).filter(Boolean).join(", ");
+  return (
+    <li
+      className="space-y-1 rounded-lg border px-2 py-1.5"
+      style={{ backgroundColor: laneBg(striped), borderColor: "var(--lane-border)" }}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center gap-1 text-left"
+      >
+        <span aria-hidden="true" className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+          {open ? "▾" : "▸"}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-xs font-medium">
+          {group.plant?.emoji ?? "🌱"} {name}
+          <span style={{ color: "var(--text-muted)" }}> ×{group.items.length}</span>
+          {group.plant?.perennial && <span style={{ color: "var(--text-muted)" }}> · flerårig</span>}
+          {boxes && <span style={{ color: "var(--text-muted)" }}> · {boxes}</span>}
+        </span>
+      </button>
+      <TimelineBar plantedDoys={group.plantedDoys} harvestWindow={group.harvestWindow} ctx={ctx} />
+      {open && (
+        <ul className="space-y-2 pt-2">
+          {group.items.map((item) => (
+            <DetailRow
+              key={item.planting.id}
+              item={item}
+              ctx={ctx}
+              language={language}
+              boxName={boxName}
+              striped={striped}
+              paintRow={false}
+              indent
+            />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
 
 /**
  * Sesongoversikt (Increment D) — a horizontal timeline of the user's active plantings across the
  * growing season: when each was planted and its estimated harvest window, anchored to the location's
  * frost dates. Collapsible and off by default to keep the garden map uncluttered. Derives entirely
  * from existing data (plantings + plant rules + frost normals) — no new metadata.
+ *
+ * With many plantings the flat per-planting list gets long, so above {@link GROUP_THRESHOLD} rows a
+ * "Detaljert / Gruppert" toggle appears and defaults to a grouped overview (one row per plant, each
+ * expandable back into the detailed rows).
  */
 export function SeasonTimeline() {
   const location = useResolvedLocation();
@@ -27,6 +216,9 @@ export function SeasonTimeline() {
   const findPlant = usePlantLookup();
   const language = useUiStore((state) => state.plantLanguage);
   const [open, setOpen] = useState(false);
+  // null = follow the auto-default (grouped when many); a bool means the user chose explicitly.
+  const [groupedChoice, setGroupedChoice] = useState<boolean | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const year = new Date().getFullYear();
   const timeline = useMemo(() => {
@@ -35,6 +227,8 @@ export function SeasonTimeline() {
     }
     return buildSeasonTimeline(plantings, findPlant, location.lastFrostDoy, location.firstFrostDoy, year);
   }, [location, plantings, findPlant, year]);
+
+  const groups = useMemo(() => (timeline ? groupTimelineItems(timeline.items) : []), [timeline]);
 
   if (!location || !timeline) {
     return null;
@@ -45,7 +239,23 @@ export function SeasonTimeline() {
   const todayDoy = dateToDoy(new Date());
   const todayInRange = todayDoy >= range.startDoy && todayDoy <= range.endDoy;
   const pct = (doy: number) => doyToPercent(doy, range.startDoy, range.endDoy);
-  const boxName = (boxId: string) => boxes.find((box) => box.id === boxId)?.name;
+  const boxName = (boxId: string | undefined) => boxes.find((box) => box.id === boxId)?.name;
+  const ctx: BarContext = { ticks, pct, todayInRange, todayDoy };
+
+  // Only offer grouping when it actually collapses something (many rows AND fewer groups than rows).
+  const canGroup = items.length > GROUP_THRESHOLD && groups.length < items.length;
+  const grouped = canGroup && (groupedChoice ?? true);
+
+  const toggleGroup = (key: string) =>
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
 
   return (
     <section
@@ -66,10 +276,42 @@ export function SeasonTimeline() {
 
       {open && (
         <div className="space-y-3">
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-            Siste vårfrost ca. <strong>{formatDoy(lastFrostDoy, year)}</strong> · første høstfrost ca.{" "}
-            <strong>{formatDoy(firstFrostDoy, year)}</strong>
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Siste vårfrost ca. <strong>{formatDoy(lastFrostDoy, year)}</strong> · første høstfrost ca.{" "}
+              <strong>{formatDoy(firstFrostDoy, year)}</strong>
+            </p>
+            {canGroup && (
+              <div
+                role="group"
+                aria-label="Visning"
+                className="flex shrink-0 overflow-hidden rounded-lg border text-xs"
+                style={{ borderColor: "var(--border)" }}
+              >
+                {([
+                  ["Detaljert", false],
+                  ["Gruppert", true],
+                ] as const).map(([label, value]) => {
+                  const selected = grouped === value;
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setGroupedChoice(value)}
+                      aria-pressed={selected}
+                      className="px-2.5 py-1 font-medium"
+                      style={{
+                        backgroundColor: selected ? "var(--green)" : "transparent",
+                        color: selected ? "white" : "var(--text-muted)",
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {items.length === 0 ? (
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>
@@ -100,67 +342,40 @@ export function SeasonTimeline() {
 
               {/* Rows */}
               <ul className="space-y-2">
-                {items.map((item) => {
-                  const name = item.plant
-                    ? getPlantName(item.plant, language)
-                    : item.planting.customName || "Ukjent plante";
-                  const box = boxName(item.planting.boxId);
-                  return (
-                    <li key={item.planting.id} className="space-y-1">
-                      <p className="truncate text-xs font-medium">
-                        {item.plant?.emoji ?? "🌱"} {name}
-                        {item.planting.variety && (
-                          <span style={{ color: "var(--text-muted)" }}> · {item.planting.variety}</span>
-                        )}
-                        {box && <span style={{ color: "var(--text-muted)" }}> · {box}</span>}
-                        {item.plant?.perennial && (
-                          <span style={{ color: "var(--text-muted)" }}> · flerårig</span>
-                        )}
-                      </p>
-                      <div
-                        className="relative h-5 rounded"
-                        style={{ backgroundColor: "var(--bg)", border: "1px solid var(--border)" }}
-                      >
-                        {/* month gridlines */}
-                        {ticks.slice(1).map((tick) => (
-                          <span
-                            key={tick}
-                            className="absolute top-0 bottom-0 w-px"
-                            style={{ left: `${pct(tick)}%`, backgroundColor: "var(--border)" }}
-                          />
-                        ))}
-                        {/* harvest window */}
-                        {item.harvestWindow && item.harvestWindow[1] > item.harvestWindow[0] && (
-                          <span
-                            className="absolute top-1 bottom-1 rounded"
-                            title="Forventet høstevindu"
-                            style={{
-                              left: `${pct(item.harvestWindow[0])}%`,
-                              width: `${pct(item.harvestWindow[1]) - pct(item.harvestWindow[0])}%`,
-                              backgroundColor: "var(--green-light)",
-                              border: "1px solid var(--green)",
-                            }}
-                          />
-                        )}
-                        {/* planted marker — omitted for plantings sown in a previous season (perennials) */}
-                        {item.plantedDoy !== null && (
-                          <span
-                            className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                            title="Plantet"
-                            style={{ left: `${pct(item.plantedDoy)}%`, backgroundColor: "var(--green)" }}
-                          />
-                        )}
-                        {/* today line */}
-                        {todayInRange && (
-                          <span
-                            className="absolute top-0 bottom-0 w-0.5"
-                            style={{ left: `${pct(todayDoy)}%`, backgroundColor: "var(--green)" }}
-                          />
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
+                {grouped
+                  ? groups.map((group, index) =>
+                      group.items.length === 1 ? (
+                        <DetailRow
+                          key={group.key}
+                          item={group.items[0]}
+                          ctx={ctx}
+                          language={language}
+                          boxName={boxName}
+                          striped={index % 2 === 1}
+                        />
+                      ) : (
+                        <GroupRow
+                          key={group.key}
+                          group={group}
+                          ctx={ctx}
+                          language={language}
+                          boxName={boxName}
+                          open={expandedGroups.has(group.key)}
+                          onToggle={() => toggleGroup(group.key)}
+                          striped={index % 2 === 1}
+                        />
+                      ),
+                    )
+                  : items.map((item, index) => (
+                      <DetailRow
+                        key={item.planting.id}
+                        item={item}
+                        ctx={ctx}
+                        language={language}
+                        boxName={boxName}
+                        striped={index % 2 === 1}
+                      />
+                    ))}
               </ul>
 
               {/* Legend */}

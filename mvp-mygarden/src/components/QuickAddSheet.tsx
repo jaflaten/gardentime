@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { nearbyActivePlantKeys } from "../lib/boxAdjacency";
 import type { PlantFamily } from "../lib/families";
 import { getPlantName, usePlantLookup } from "../lib/plants";
+import { parseQuantity } from "../lib/planting";
 import { boxRotationHistory, familyConflictYears, plantingFamilyResolver } from "../lib/rotation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
@@ -203,6 +204,7 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
   const [plantKey, setPlantKey] = useState(() => planting?.plantKey ?? initialPlantKey ?? "");
   const [customName, setCustomName] = useState(() => planting?.customName ?? "");
   const [variety, setVariety] = useState(() => planting?.variety ?? "");
+  const [quantity, setQuantity] = useState(() => (planting?.quantity != null ? String(planting.quantity) : ""));
   const [plantedDate, setPlantedDate] = useState(() => planting?.plantedDate ?? new Date().toISOString().split("T")[0]);
   const [showPickerError, setShowPickerError] = useState(false);
   const [rotationDismissed, setRotationDismissed] = useState(false);
@@ -255,6 +257,7 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
       plantKey,
       customName: customName.trim() || undefined,
       variety: variety.trim() || undefined,
+      quantity: parseQuantity(quantity),
       plantedDate,
     };
     if (isEdit && planting) {
@@ -322,6 +325,20 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
           onChange={(event) => setVariety(event.target.value)}
           placeholder="f.eks. Sungold"
           className="input-touch w-full rounded-lg border px-3 py-2"
+          style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium">Antall planter (valgfritt)</label>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          value={quantity}
+          onChange={(event) => setQuantity(event.target.value)}
+          placeholder="f.eks. 6"
+          className="input-touch w-full rounded-lg border px-3 py-2 sm:max-w-[10rem]"
           style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
         />
       </div>

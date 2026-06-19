@@ -139,7 +139,10 @@ export function GardenGrid({ editMode, zoom, onZoomChange, fitNonce, onLongPress
     minH: MIN_BOX_UNITS,
   }));
   const activeBoxIds = useMemo(
-    () => new Set(plantings.filter((planting) => planting.status === "active").map((planting) => planting.boxId)),
+    () =>
+      new Set(
+        plantings.flatMap((planting) => (planting.status === "active" && planting.boxId ? [planting.boxId] : [])),
+      ),
     [plantings],
   );
   const maxBottomY = layout.reduce((max, item) => Math.max(max, item.y + item.h), 0);

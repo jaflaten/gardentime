@@ -6,6 +6,17 @@ import type { PlantInfo } from "../types";
 
 export const bundledPlants: PlantInfo[] = plants as PlantInfo[];
 
+const bundledKeySet = new Set(bundledPlants.map((entry) => entry.key));
+
+/**
+ * True for keys that ship with the app (vs. user-created custom plants). Used to decide whether a
+ * `seasonal` harvest window should be location-shifted: bundled windows are authored for a warm-lowland
+ * baseline and shift toward the user's frost dates; custom windows are entered for the user's own garden.
+ */
+export function isBundledPlantKey(key: string): boolean {
+  return bundledKeySet.has(key);
+}
+
 // Non-reactive lookup. Reads the current store snapshot; safe outside React
 // but does not subscribe — components that need to re-render when custom
 // plants change should use usePlantLookup or useMergedPlantList instead.

@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type TouchEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { FloatingUndo } from "../components/FloatingUndo";
@@ -8,11 +8,12 @@ import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
 import { SeasonTimeline } from "../components/SeasonTimeline";
+import { SowBoxPicker } from "../components/SowBoxPicker";
 import { SowNowCard } from "../components/SowNowCard";
-import { rankBoxesForPlant, type BoxFitTier } from "../lib/boxRanking";
 import type { BedType, SunExposure } from "../lib/boxMeta";
 import { isCustomPlantLike } from "../lib/customPlants";
-import { getPlantName, usePlantLookup } from "../lib/plants";
+import { usePlantLookup } from "../lib/plants";
+import { isIndoorSeedling } from "../lib/planting";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
 import demoGardenBackup from "../resources/demo-garden.json";
@@ -123,8 +124,10 @@ export function GardenMap() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pinchStateRef = useRef<PinchState | null>(null);
 
+  const navigate = useNavigate();
   const boxes = useGardenStore((state) => state.boxes);
   const plantings = useGardenStore((state) => state.plantings);
+  const seedlingCount = plantings.filter((p) => p.status === "active" && isIndoorSeedling(p)).length;
   const addBox = useGardenStore((state) => state.addBox);
   const reloadFromStorage = useGardenStore((state) => state.reloadFromStorage);
   const findPlant = usePlantLookup();
@@ -389,6 +392,21 @@ export function GardenMap() {
           {!viewMode && (
             <>
               <Link
+                to="/seedlings"
+                className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
+                style={{ borderColor: "var(--border)", color: "var(--text)" }}
+              >
+                🌱 Forkultivering
+                {seedlingCount > 0 && (
+                  <span
+                    className="ml-1.5 rounded-full px-1.5 py-0.5 text-xs font-semibold"
+                    style={{ backgroundColor: "var(--green-light)", color: "var(--green)" }}
+                  >
+                    {seedlingCount}
+                  </span>
+                )}
+              </Link>
+              <Link
                 to="/settings"
                 className="tap-target rounded-lg border px-3 py-2 text-sm font-medium"
                 style={{ borderColor: "var(--border)", color: "var(--text)" }}
@@ -420,6 +438,9 @@ export function GardenMap() {
         <SowNowCard
           onPickPlant={(plantKey) => {
             setSowPickPlantKey(plantKey);
+          }}
+          onStartIndoor={(plantKey) => {
+            navigate(`/seedlings?start=${encodeURIComponent(plantKey)}`);
           }}
         />
       )}
@@ -581,110 +602,6 @@ export function GardenMap() {
       )}
 
     </main>
-  );
-}
-
-const SOW_TIER_META: Record<BoxFitTier, { label: string; border: string; background: string }> = {
-  good: { label: "Anbefalt", border: "var(--green)", background: "var(--green-light)" },
-  ok: { label: "OK", border: "var(--border)", background: "var(--bg)" },
-  avoid: { label: "Frarådes", border: "var(--red)", background: "var(--red-light)" },
-};
-
-function SowBoxPicker({
-  boxes,
-  plant,
-  plantings,
-  findPlant,
-  onCancel,
-  onPick,
-}: {
-  boxes: Box[];
-  plant: PlantInfo | undefined;
-  plantings: Planting[];
-  findPlant: (key: string) => PlantInfo | undefined;
-  onCancel: () => void;
-  onPick: (boxId: string) => void;
-}) {
-  const plantLanguage = useUiStore((state) => state.plantLanguage);
-
-  const groups = useMemo(() => {
-    if (!plant) {
-      return null;
-    }
-    const ranked = rankBoxesForPlant(plant, boxes, plantings, findPlant, new Date().getFullYear(), plantLanguage);
-    return (["good", "ok", "avoid"] as BoxFitTier[])
-      .map((tier) => ({ tier, fits: ranked.filter((fit) => fit.tier === tier) }))
-      .filter((group) => group.fits.length > 0);
-  }, [plant, boxes, plantings, findPlant, plantLanguage]);
-
-  const plantName = plant ? getPlantName(plant, plantLanguage) : null;
-
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4"
-      onClick={onCancel}
-    >
-      <div
-        role="document"
-        onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl border shadow-lg sm:rounded-2xl"
-        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
-      >
-        <div className="flex items-center justify-between gap-2 border-b p-3" style={{ borderColor: "var(--border)" }}>
-          <h2 className="text-base font-semibold sm:text-lg">
-            {plantName ? `Hvor vil du så ${plantName}?` : "Velg kasse"}
-          </h2>
-          <button
-            type="button"
-            onClick={onCancel}
-            aria-label="Lukk"
-            className="tap-target rounded-full px-3 text-lg"
-            style={{ color: "var(--text-muted)" }}
-          >
-            ✕
-          </button>
-        </div>
-        {boxes.length === 0 ? (
-          <p className="p-3 text-sm" style={{ color: "var(--text-muted)" }}>
-            Ingen kasser ennå. Lag en kasse først.
-          </p>
-        ) : (
-          <div className="space-y-3 overflow-y-auto p-3">
-            {groups?.map((group) => {
-              const meta = SOW_TIER_META[group.tier];
-              return (
-                <div key={group.tier} className="space-y-1.5">
-                  <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>
-                    {meta.label}
-                  </p>
-                  <ul className="space-y-1.5">
-                    {group.fits.map((fit) => (
-                      <li key={fit.box.id}>
-                        <button
-                          type="button"
-                          onClick={() => onPick(fit.box.id)}
-                          className="tap-target w-full rounded-lg border px-3 py-2 text-left"
-                          style={{ borderColor: meta.border, backgroundColor: meta.background, color: "var(--text)" }}
-                        >
-                          <span className="block text-sm font-medium">{fit.box.name}</span>
-                          {fit.reasons.length > 0 && (
-                            <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
-                              {fit.reasons.join(" · ")}
-                            </span>
-                          )}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 

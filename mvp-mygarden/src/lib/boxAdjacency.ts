@@ -37,7 +37,7 @@ export function neighbouringBoxes(box: Box, boxes: Box[], gap: number = NEIGHBOU
 export function nearbyActivePlantKeys(
   box: Box,
   boxes: Box[],
-  plantings: { boxId: string; plantKey: string; status: string }[],
+  plantings: { boxId?: string; plantKey: string; status: string }[],
   sameBoxKeys: string[],
 ): string[] {
   const neighbourIds = new Set(neighbouringBoxes(box, boxes).map((b) => b.id));
@@ -47,7 +47,7 @@ export function nearbyActivePlantKeys(
     if (planting.status !== "active" || !planting.plantKey) {
       continue;
     }
-    if (neighbourIds.has(planting.boxId) && !exclude.has(planting.plantKey)) {
+    if (planting.boxId && neighbourIds.has(planting.boxId) && !exclude.has(planting.plantKey)) {
       keys.add(planting.plantKey);
     }
   }

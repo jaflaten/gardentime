@@ -1,3 +1,4 @@
+import { isBundledPlantKey } from "./plants";
 import type { HarvestRule, PlantInfo, Planting } from "../types";
 
 // Pure date/window math for the Sesongoversikt timeline (Increment D). Everything works in
@@ -5,6 +6,28 @@ import type { HarvestRule, PlantInfo, Planting } from "../types";
 // Kept separate from the component so the windowing is testable without React.
 
 const MS_PER_DAY = 86_400_000;
+
+// Warm-lowland Norwegian baseline that the bundled `seasonal` perennial windows were authored
+// against — Oslo/Stavanger/Bergen friland sit at last frost ≈ DOY 110 (~20 Apr), where mid-June
+// strawberries are realistic. A cooler garden (later last frost) pushes the harvest band later.
+// This is a frost proxy for ripening, not true phenology (limitation 4) — good enough to stop a
+// premature "harvest now" in cold gardens; per-garden calibration still wants Phase F.
+export const SEASONAL_REFERENCE_LAST_FROST_DOY = 110;
+
+/** Days to shift a BUNDLED `seasonal` window for a location (cooler ⇒ later). Clamped to a sane range. */
+export function seasonalShiftDays(lastFrostDoy: number): number {
+  const raw = Math.round(lastFrostDoy - SEASONAL_REFERENCE_LAST_FROST_DOY);
+  return Math.max(-30, Math.min(75, raw));
+}
+
+/**
+ * Resolve a plant's `seasonal` harvest window to a location-aware day shift. Bundled plants shift
+ * from the warm-lowland baseline toward the user's last frost; custom plants (entered for the user's
+ * own garden) are left as-is.
+ */
+export function seasonalShiftForPlant(plantKey: string | undefined, lastFrostDoy: number): number {
+  return plantKey && isBundledPlantKey(plantKey) ? seasonalShiftDays(lastFrostDoy) : 0;
+}
 
 export interface TimelineItem {
   planting: Planting;
@@ -65,13 +88,16 @@ function harvestWindow(
   plantedDoy: number | null,
   firstFrostDoy: number,
   year: number,
+  durationWeeks = 0,
+  seasonalShift = 0,
 ): [number, number] | null {
   if (!rule) {
     return null;
   }
   if ("seasonal" in rule) {
-    // Absolute calendar window, repeats yearly (perennials) — independent of the sow date.
-    return [mmddToDoy(rule.seasonal[0], year), mmddToDoy(rule.seasonal[1], year)];
+    // Absolute calendar window, repeats yearly (perennials) — independent of the sow date, but
+    // shifted toward the user's frost dates so a cold garden's band lands later (limitation 4 fix).
+    return [mmddToDoy(rule.seasonal[0], year) + seasonalShift, mmddToDoy(rule.seasonal[1], year) + seasonalShift];
   }
   if ("weeksFromSowing" in rule) {
     // Sow-relative — needs a sow date on this year's axis. A planting from a prior season has none.
@@ -79,7 +105,9 @@ function harvestWindow(
       return null;
     }
     const [min, max] = rule.weeksFromSowing;
-    return [plantedDoy + min * 7, plantedDoy + max * 7];
+    // Band starts at the earliest possible first-harvest and runs to the latest first-harvest plus
+    // the picking duration, so continuous croppers draw a longer bar than one-shot roots.
+    return [plantedDoy + min * 7, plantedDoy + (max + durationWeeks) * 7];
   }
   // weeksBeforeFirstFrost — ready in the run-up to the first autumn frost.
   return [firstFrostDoy - rule.weeksBeforeFirstFrost * 7, firstFrostDoy];
@@ -99,7 +127,8 @@ export function buildSeasonTimeline(
   year: number,
 ): SeasonTimeline {
   const active = plantings
-    .filter((planting) => planting.status === "active")
+    // Indoor seedlings (no boxId) aren't in the garden yet — they don't belong on the season axis.
+    .filter((planting) => planting.status === "active" && planting.boxId)
     .sort((a, b) => a.plantedDate.localeCompare(b.plantedDate));
 
   // Provisional band around the frost dates.
@@ -114,7 +143,8 @@ export function buildSeasonTimeline(
     const plantedDoy = plantedThisYear
       ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
       : null;
-    const win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year);
+    const seasonalShift = seasonalShiftForPlant(plant?.key, lastFrostDoy);
+    const win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
     if (plantedDoy !== null) {
       startDoy = Math.min(startDoy, plantedDoy);
     }
@@ -138,6 +168,56 @@ export function buildSeasonTimeline(
   }));
 
   return { range: { startDoy, endDoy }, year, lastFrostDoy, firstFrostDoy, items };
+}
+
+/**
+ * One row in the grouped ("Gruppert") Sesongoversikt: all active plantings of the same plant merged
+ * into a single timeline row. Used as the overview when a garden has many plantings; each group
+ * expands back into its individual {@link TimelineItem} rows (the default detailed view).
+ */
+export interface TimelineGroup {
+  /** Stable grouping key — the plant key, or `custom:<name>` for unkeyed free-text plantings. */
+  key: string;
+  /** Representative plant metadata (emoji/name); shared by every item in the group. */
+  plant: PlantInfo | undefined;
+  /** The underlying plantings, in the same chronological order as the flat item list. */
+  items: TimelineItem[];
+  /** All sow markers to draw on the merged bar (prior-season plantings contribute none). */
+  plantedDoys: number[];
+  /** Union of the members' harvest windows [start, end], or null when none have one. */
+  harvestWindow: [number, number] | null;
+  /** Distinct box ids the group occupies, in first-seen order (for the "· Kasse A, B" label). */
+  boxIds: string[];
+}
+
+/**
+ * Collapse a flat timeline-item list into one group per plant. Same-plant duplicates share a
+ * `harvestRule`, so their windows overlap and the union reads as a single clean band. Insertion
+ * order is preserved, so groups appear in the order their first planting was sown.
+ */
+export function groupTimelineItems(items: TimelineItem[]): TimelineGroup[] {
+  const groups = new Map<string, TimelineGroup>();
+  for (const item of items) {
+    const key = item.planting.plantKey || `custom:${item.planting.customName ?? "?"}`;
+    let group = groups.get(key);
+    if (!group) {
+      group = { key, plant: item.plant, items: [], plantedDoys: [], harvestWindow: null, boxIds: [] };
+      groups.set(key, group);
+    }
+    group.items.push(item);
+    if (item.plantedDoy !== null) {
+      group.plantedDoys.push(item.plantedDoy);
+    }
+    if (item.harvestWindow) {
+      group.harvestWindow = group.harvestWindow
+        ? [Math.min(group.harvestWindow[0], item.harvestWindow[0]), Math.max(group.harvestWindow[1], item.harvestWindow[1])]
+        : [item.harvestWindow[0], item.harvestWindow[1]];
+    }
+    if (item.planting.boxId && !group.boxIds.includes(item.planting.boxId)) {
+      group.boxIds.push(item.planting.boxId);
+    }
+  }
+  return [...groups.values()];
 }
 
 /** Whole-month tick day-of-years within the range (inclusive of the first month). */

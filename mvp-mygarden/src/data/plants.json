@@ -30,6 +30,7 @@
         14
       ]
     },
+    "harvestDurationWeeks": 8,
     "sunNeed": "full",
     "prefersBedType": [
       "greenhouse",
@@ -82,6 +83,7 @@
         16
       ]
     },
+    "harvestDurationWeeks": 8,
     "sunNeed": "full",
     "prefersBedType": [
       "greenhouse",
@@ -164,6 +166,7 @@
         8
       ]
     },
+    "harvestDurationWeeks": 3,
     "sunNeed": "partial",
     "companionsGood": [
       "agurk",
@@ -201,6 +204,7 @@
         10
       ]
     },
+    "harvestDurationWeeks": 8,
     "sunNeed": "full",
     "prefersBedType": [
       "greenhouse",
@@ -243,6 +247,7 @@
         10
       ]
     },
+    "harvestDurationWeeks": 8,
     "sunNeed": "full",
     "prefersBedType": [
       "greenhouse",
@@ -330,6 +335,7 @@
         22
       ]
     },
+    "harvestDurationWeeks": 6,
     "sunNeed": "full",
     "prefersBedType": [
       "greenhouse",
@@ -373,6 +379,7 @@
         12
       ]
     },
+    "harvestDurationWeeks": 10,
     "sunNeed": "partial",
     "companionsGood": [
       "tomat_cherry",
@@ -442,6 +449,7 @@
         12
       ]
     },
+    "harvestDurationWeeks": 3,
     "sunNeed": "full",
     "companionsGood": [
       "bønner",
@@ -480,6 +488,7 @@
         10
       ]
     },
+    "harvestDurationWeeks": 6,
     "sunNeed": "full",
     "companionsGood": [
       "agurk",
@@ -518,6 +527,7 @@
         8
       ]
     },
+    "harvestDurationWeeks": 2,
     "sunNeed": "partial",
     "companionsGood": [
       "blomkål",
@@ -615,6 +625,7 @@
         12
       ]
     },
+    "harvestDurationWeeks": 10,
     "sunNeed": "partial"
   },
   {
@@ -648,6 +659,7 @@
         9
       ]
     },
+    "harvestDurationWeeks": 10,
     "sunNeed": "full",
     "minDepthCm": 30,
     "companionsGood": [
@@ -988,6 +1000,7 @@
         12
       ]
     },
+    "harvestDurationWeeks": 4,
     "sunNeed": "partial",
     "minDepthCm": 25,
     "companionsBad": [
