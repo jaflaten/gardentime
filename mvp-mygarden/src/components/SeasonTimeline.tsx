@@ -225,7 +225,10 @@ export function SeasonTimeline() {
     if (!location) {
       return null;
     }
-    return buildSeasonTimeline(plantings, findPlant, location.lastFrostDoy, location.firstFrostDoy, year);
+    return buildSeasonTimeline(plantings, findPlant, location.lastFrostDoy, location.firstFrostDoy, year, {
+      base5: location.stationFrost.gddCurve5,
+      base10: location.stationFrost.gddCurve10,
+    });
   }, [location, plantings, findPlant, year]);
 
   const groups = useMemo(() => (timeline ? groupTimelineItems(timeline.items) : []), [timeline]);

@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
+import { gddHarvestWindow } from "../lib/gdd";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
-import { mmddToDoy, seasonalShiftForPlant } from "../lib/seasonTimeline";
+import { dateToDoy, mmddToDoy, seasonalShiftForPlant, type GddCurves } from "../lib/seasonTimeline";
 import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore, type PlantLanguage } from "../store/useUiStore";
-import type { HarvestRule, PlantInfo, Planting } from "../types";
+import type { PlantInfo, Planting } from "../types";
 
 const SESSION_DISMISS_KEY = "gt_sownow_dismissed_at";
 
@@ -37,11 +38,13 @@ interface SowNowCardProps {
 
 function harvestSoonForPlanting(
   planting: Planting,
-  rule: HarvestRule | undefined,
+  plant: PlantInfo,
   todayDoy: number,
   firstFrostDoy: number,
   seasonalShift: number,
+  curves?: GddCurves,
 ): { matches: boolean; helper: string } {
+  const rule = plant.harvestRule;
   if (!rule) {
     return { matches: false, helper: "" };
   }
@@ -63,7 +66,29 @@ function harvestSoonForPlanting(
     }
     return { matches: false, helper: "" };
   }
-  // weeksFromSowing — match if today is within window from plantedDate
+  // weeksFromSowing — prefer the GDD model when the plant is tagged and a station curve is available
+  // (location-aware ripening), else the fixed weeks-since-sowing window. GDD anchors on the outdoor
+  // start (transplant date if present, else sow date) and only applies to a planting started this year.
+  const refYear = new Date().getFullYear();
+  const transplantDoy =
+    planting.transplantedDate && Number(planting.transplantedDate.slice(0, 4)) === refYear
+      ? dateToDoy(new Date(`${planting.transplantedDate}T00:00:00`))
+      : null;
+  const plantedDoyThisYear =
+    Number(planting.plantedDate.slice(0, 4)) === refYear
+      ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
+      : null;
+  const anchorDoy = transplantDoy ?? plantedDoyThisYear;
+  const gdd = curves && anchorDoy !== null ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10) : null;
+  if (gdd && gdd.ripens && gdd.window) {
+    const [start, end] = gdd.window;
+    // "Soon" = within ~2 weeks before the predicted first harvest, through the end of the band.
+    if (todayDoy >= start - 14 && todayDoy <= end) {
+      const helper = todayDoy >= start ? "Moden nå" : `Moden om ca. ${Math.max(1, Math.round((start - todayDoy) / 7))} uker`;
+      return { matches: true, helper };
+    }
+    return { matches: false, helper: "" };
+  }
   const sown = new Date(`${planting.plantedDate}T00:00:00`);
   const today = new Date();
   const weeksSinceSowing = Math.floor((today.getTime() - sown.getTime()) / (7 * 24 * 60 * 60 * 1000));
@@ -165,7 +190,10 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
       const plant = plants.find((p) => p.key === planting.plantKey);
       if (!plant?.harvestRule) continue;
       const shift = seasonalShiftForPlant(plant.key, location.lastFrostDoy);
-      const check = harvestSoonForPlanting(planting, plant.harvestRule, doy, location.firstFrostDoy, shift);
+      const check = harvestSoonForPlanting(planting, plant, doy, location.firstFrostDoy, shift, {
+        base5: location.stationFrost.gddCurve5,
+        base10: location.stationFrost.gddCurve10,
+      });
       if (!check.matches) continue;
       const existing = harvestByKey.get(plant.key);
       if (existing) {

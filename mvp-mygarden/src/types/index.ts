@@ -79,6 +79,17 @@ export interface PlantInfo {
   prefersBedType?: BedType[];
   /** Minimum soil depth in cm the plant needs (root veg). A shallower box is discouraged. */
   minDepthCm?: number;
+  // Growing-degree-day harvest model (Increment I, Layer 0). All optional; missing = fall back to
+  // the `weeksFromSowing` harvest rule, so untagged/custom plants are unaffected.
+  /**
+   * Accumulated growing-degree-days from the plant's anchor to first harvest. The anchor is the
+   * *outdoor* start: the transplant date for plants with a `transplant` sow rule, otherwise the
+   * sow date. With a station GDD curve this yields a location-aware first-harvest date that
+   * supersedes `weeksFromSowing` (a cold garden ripens later from the *same* number).
+   */
+  gddToMaturity?: number;
+  /** Base temperature for `gddToMaturity`: 5 for cool crops, 10 for warm (heat-loving) crops. Default 5. */
+  gddBase?: 5 | 10;
   // Companion planting (Increment F). Lists hold OTHER plant keys; missing = no known pairing.
   /** Plants this one grows well beside — surfaced as a green hint when added near them. */
   companionsGood?: string[];

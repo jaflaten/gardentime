@@ -17,6 +17,14 @@ export interface FrostNormalEntry {
   lastFrostDoy: number;
   firstFrostDoy: number;
   gdd5: number;
+  /**
+   * Cumulative growing-degree-day curve (median 1991-2020), 13 month-boundary checkpoints:
+   * index 0 = year start (0), index k = cumulative GDD through the end of month k, index 12 =
+   * annual total. base 5 for cool crops, base 10 for warm crops. Drives location-aware harvest
+   * prediction (Increment I, Layer 0); see `src/lib/gdd.ts`.
+   */
+  gddCurve5: number[];
+  gddCurve10: number[];
 }
 
 export interface StationEntry {

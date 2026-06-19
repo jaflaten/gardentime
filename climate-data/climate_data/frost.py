@@ -32,6 +32,34 @@ class FrostNormal(TypedDict):
     lastFrostDoy: int
     firstFrostDoy: int
     gdd5: int
+    # Cumulative growing-degree-day curves (median across the normal years): 13 month-boundary
+    # checkpoints where index 0 = year start (always 0), index k = cumulative GDD through the end of
+    # month k, index 12 = annual total. base 5 for cool crops, base 10 for warm crops. Drives the
+    # location-aware harvest prediction in the app (Increment I, Layer 0). gddCurve5[12] == gdd5.
+    gddCurve5: list[int]
+    gddCurve10: list[int]
+
+
+def _monthly_cumulative(days: dict[int, dict[str, float]], year: int, base: float) -> list[int]:
+    """Cumulative GDD (base `base`) through the end of each month, as 13 checkpoints
+    (index 0 = 0, index 12 = annual total). Same per-day clipping and present-days-only
+    semantics as the `gdd5` sum, so gddCurve5[12] matches the gdd5 derivation."""
+    monthly = [0.0] * 13  # indices 1..12 used
+    jan1 = dt.date(year, 1, 1)
+    for doy, v in days.items():
+        if "tmean" not in v:
+            continue
+        g = v["tmean"] - base
+        if g <= 0.0:
+            continue
+        month = (jan1 + dt.timedelta(days=doy - 1)).month
+        monthly[month] += g
+    cum = [0] * 13
+    run = 0.0
+    for m in range(1, 13):
+        run += monthly[m]
+        cum[m] = int(round(run))
+    return cum
 
 
 def derive_from_observations(station_id: str) -> FrostNormal | None:
@@ -75,7 +103,9 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
     last_frosts: list[int] = []
     first_frosts: list[int] = []
     gdds: list[float] = []
-    for days in yearly.values():
+    curves5: list[list[int]] = []
+    curves10: list[list[int]] = []
+    for year, days in yearly.items():
         if len(days) < MIN_DAYS_PER_YEAR:
             continue
         last_spring = max(
@@ -95,17 +125,26 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
             first_frosts.append(first_autumn)
         if gdd > 0:
             gdds.append(gdd)
+            # Curves only from years with a real growing season, mirroring the gdd5 filter.
+            curves5.append(_monthly_cumulative(days, year, 5.0))
+            curves10.append(_monthly_cumulative(days, year, 10.0))
 
     if len(last_frosts) < MIN_YEARS_WITH_FROST or len(first_frosts) < MIN_YEARS_WITH_FROST:
         return None
     if not gdds:
         return None
 
+    # Median per checkpoint across years (each curve is a 13-length cumulative array).
+    gdd_curve5 = [int(round(median([c[k] for c in curves5]))) for k in range(13)]
+    gdd_curve10 = [int(round(median([c[k] for c in curves10]))) for k in range(13)]
+
     return {
         "key": station_id,
         "lastFrostDoy": int(round(median(last_frosts))),
         "firstFrostDoy": int(round(median(first_frosts))),
         "gdd5": int(round(median(gdds))),
+        "gddCurve5": gdd_curve5,
+        "gddCurve10": gdd_curve10,
     }
 
 

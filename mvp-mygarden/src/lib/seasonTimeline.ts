@@ -1,5 +1,12 @@
+import { gddHarvestWindow } from "./gdd";
 import { isBundledPlantKey } from "./plants";
 import type { HarvestRule, PlantInfo, Planting } from "../types";
+
+/** Station GDD curves (base 5 + base 10) for location-aware harvest prediction (Layer 0). */
+export interface GddCurves {
+  base5: number[];
+  base10: number[];
+}
 
 // Pure date/window math for the Sesongoversikt timeline (Increment D). Everything works in
 // day-of-year (1–366) within a single reference year so positions map cleanly to an x-axis.
@@ -125,6 +132,7 @@ export function buildSeasonTimeline(
   lastFrostDoy: number,
   firstFrostDoy: number,
   year: number,
+  gddCurves?: GddCurves,
 ): SeasonTimeline {
   const active = plantings
     // Indoor seedlings (no boxId) aren't in the garden yet — they don't belong on the season axis.
@@ -144,7 +152,24 @@ export function buildSeasonTimeline(
       ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
       : null;
     const seasonalShift = seasonalShiftForPlant(plant?.key, lastFrostDoy);
-    const win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
+    // GDD accumulates from the *outdoor* start: the transplant date when present (an indoor-started
+    // seedling's windowsill weeks don't count), otherwise the sow date.
+    const transplantedDoy =
+      planting.transplantedDate && Number(planting.transplantedDate.slice(0, 4)) === year
+        ? dateToDoy(new Date(`${planting.transplantedDate}T00:00:00`))
+        : null;
+    const anchorDoy = transplantedDoy ?? plantedDoy;
+    // Prefer the GDD harvest window when the plant is tagged and a station curve is available; else
+    // fall back to the frost-relative `weeksFromSowing`/seasonal rule (also when it "won't ripen" —
+    // honest won't-ripen messaging is deferred). gddHarvestWindow returns null for untagged plants.
+    const gdd =
+      gddCurves && anchorDoy !== null
+        ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10)
+        : null;
+    const win =
+      gdd && gdd.ripens && gdd.window
+        ? gdd.window
+        : harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
     if (plantedDoy !== null) {
       startDoy = Math.min(startDoy, plantedDoy);
     }
