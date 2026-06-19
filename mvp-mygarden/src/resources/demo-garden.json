@@ -167,6 +167,9 @@
     { "id": "demo-pl-1001", "boxId": "demo-box-10", "plantKey": "", "customName": "Ukjent staude", "plantedDate": "2025-06-01", "harvestDate": "2025-09-01", "status": "harvested", "year": 2025 },
 
     { "id": "demo-pl-1101", "boxId": "demo-box-11", "plantKey": "salat", "plantedDate": "2025-04-30", "harvestDate": "2025-06-25", "status": "harvested", "year": 2025 },
-    { "id": "demo-pl-1102", "boxId": "demo-box-11", "plantKey": "custom_demo01", "plantedDate": "2026-05-15", "status": "active", "year": 2026 }
+    { "id": "demo-pl-1102", "boxId": "demo-box-11", "plantKey": "custom_demo01", "plantedDate": "2026-05-15", "status": "active", "year": 2026 },
+
+    { "id": "demo-seed-01", "plantKey": "tomat_cherry", "variety": "Sungold", "quantity": 6, "plantedDate": "2026-05-20", "status": "active", "year": 2026 },
+    { "id": "demo-seed-02", "plantKey": "paprika", "quantity": 4, "plantedDate": "2026-05-10", "status": "active", "year": 2026 }
   ]
 }
