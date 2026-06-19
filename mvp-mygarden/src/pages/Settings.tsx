@@ -258,15 +258,15 @@ export function Settings() {
   const handleBundledImport = () => {
     const parsed = bundledGardenBackup as BackupPayload;
     if (!Array.isArray(parsed.boxes) || !parsed.boxes.every(isBoxLike)) {
-      alert("Innebygd standardoppsett mangler nødvendige felter.");
+      alert("Gartnerens eget oppsett mangler nødvendige felter.");
       return;
     }
     if (!Array.isArray(parsed.plantings) || !parsed.plantings.every(isPlantingLike)) {
-      alert("Innebygd standardoppsett mangler nødvendige felter.");
+      alert("Gartnerens eget oppsett mangler nødvendige felter.");
       return;
     }
     setPendingImport({
-      source: "innebygd standardoppsett",
+      source: "gartnerens eget oppsett",
       boxes: parsed.boxes,
       plantings: parsed.plantings,
       customPlants: [],
@@ -586,7 +586,7 @@ export function Settings() {
         </div>
 
         <div className="space-y-2 rounded-lg border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}>
-          <p style={{ color: "var(--text-muted)" }}>Importer standardoppsett fra appen:</p>
+          <p style={{ color: "var(--text-muted)" }}>Importer gartnerens eget oppsett:</p>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>
             Sist oppdatert: {bundledBackupLastUpdated}
           </p>
@@ -596,7 +596,7 @@ export function Settings() {
             className="tap-target rounded-lg px-4 py-2 text-sm font-medium"
             style={{ backgroundColor: "var(--green)", color: "white" }}
           >
-            Importer standard MyGarden-oppsett
+            Importer gartnerens eget oppsett
           </button>
         </div>
       </section>

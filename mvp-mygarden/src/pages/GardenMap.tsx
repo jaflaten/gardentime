@@ -208,7 +208,7 @@ export function GardenMap() {
       return;
     }
     setPendingImport({
-      source: "innebygd standardoppsett",
+      source: "gartnerens eget oppsett",
       boxes: parsed.boxes as Box[],
       plantings: parsed.plantings as Planting[],
       customPlants: [],
@@ -327,9 +327,9 @@ export function GardenMap() {
               className="tap-target rounded-lg border p-4 text-left text-sm font-medium"
               style={{ borderColor: "var(--green)", backgroundColor: "var(--green-light)", color: "var(--text)" }}
             >
-              <span className="block text-base font-semibold">Standardoppsett</span>
+              <span className="block text-base font-semibold">Gartnerens eget oppsett</span>
               <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
-                Importer det innebygde eksempeloppsettet.
+                Last inn gartnerens ferdige hageoppsett.
               </span>
             </button>
             <button

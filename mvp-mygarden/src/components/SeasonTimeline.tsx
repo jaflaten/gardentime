@@ -18,7 +18,7 @@ import type { PlantLanguage } from "../store/useUiStore";
 
 const MONTHS_NO = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
 
-// Above this many active plantings the per-planting list gets unwieldy (Standardoppsett has ~46),
+// Above this many active plantings the per-planting list gets unwieldy (gartnerens eget oppsett has ~46),
 // so we offer a grouped overview and default to it. Small gardens never see the toggle — the
 // detailed view they already know stays exactly as-is.
 const GROUP_THRESHOLD = 12;
