@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { gddHarvestWindow } from "../lib/gdd";
+import { coverGddFactor, gddHarvestWindow } from "../lib/gdd";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
 import { dateToDoy, mmddToDoy, seasonalShiftForPlant, type GddCurves } from "../lib/seasonTimeline";
 import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
@@ -43,6 +43,7 @@ function harvestSoonForPlanting(
   firstFrostDoy: number,
   seasonalShift: number,
   curves?: GddCurves,
+  coverFactor = 1,
 ): { matches: boolean; helper: string } {
   const rule = plant.harvestRule;
   if (!rule) {
@@ -79,7 +80,7 @@ function harvestSoonForPlanting(
       ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
       : null;
   const anchorDoy = transplantDoy ?? plantedDoyThisYear;
-  const gdd = curves && anchorDoy !== null ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10) : null;
+  const gdd = curves && anchorDoy !== null ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10, coverFactor) : null;
   if (gdd && gdd.ripens && gdd.window) {
     const [start, end] = gdd.window;
     // "Soon" = within ~2 weeks before the predicted first harvest, through the end of the band.
@@ -87,6 +88,10 @@ function harvestSoonForPlanting(
       const helper = todayDoy >= start ? "Moden nå" : `Moden om ca. ${Math.max(1, Math.round((start - todayDoy) / 7))} uker`;
       return { matches: true, helper };
     }
+    return { matches: false, helper: "" };
+  }
+  if (gdd && !gdd.ripens && coverFactor <= 1) {
+    // Won't ripen outdoors here — never "harvest soon".
     return { matches: false, helper: "" };
   }
   const sown = new Date(`${planting.plantedDate}T00:00:00`);
@@ -113,6 +118,7 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
   const location = useResolvedLocation();
   const plants = useMergedPlantList();
   const plantings = useGardenStore((state) => state.plantings);
+  const boxes = useGardenStore((state) => state.boxes);
   const language = useUiStore((state) => state.plantLanguage);
   const [dismissed, setDismissed] = useState(() => dismissedThisSession());
 
@@ -190,10 +196,16 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
       const plant = plants.find((p) => p.key === planting.plantKey);
       if (!plant?.harvestRule) continue;
       const shift = seasonalShiftForPlant(plant.key, location.lastFrostDoy);
-      const check = harvestSoonForPlanting(planting, plant, doy, location.firstFrostDoy, shift, {
-        base5: location.stationFrost.gddCurve5,
-        base10: location.stationFrost.gddCurve10,
-      });
+      const coverFactor = coverGddFactor(boxes.find((b) => b.id === planting.boxId)?.bedType);
+      const check = harvestSoonForPlanting(
+        planting,
+        plant,
+        doy,
+        location.firstFrostDoy,
+        shift,
+        { base5: location.stationFrost.gddCurve5, base10: location.stationFrost.gddCurve10 },
+        coverFactor,
+      );
       if (!check.matches) continue;
       const existing = harvestByKey.get(plant.key);
       if (existing) {
@@ -206,7 +218,7 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
     }
 
     return { indoor, outdoor, transplant, succession, harvestSoon };
-  }, [location, plants, plantings]);
+  }, [location, plants, plantings, boxes]);
 
   if (!location || dismissed) {
     return null;

@@ -131,7 +131,21 @@ function DetailRow({
         harvestWindow={item.harvestWindow}
         ctx={ctx}
       />
+      {item.wontRipen && <WontRipenNote warm={item.plant?.gddBase === 10} />}
     </li>
+  );
+}
+
+/**
+ * Honest note shown in place of a harvest band when a crop can't reach maturity outdoors here.
+ * Warm crops (base 10) want a cover; a cool long-season crop just runs out of season, so suggesting
+ * a greenhouse would be the wrong remedy — it reads "won't finish in time" instead.
+ */
+function WontRipenNote({ warm }: { warm: boolean }) {
+  return (
+    <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+      {warm ? "🏠 Modnes neppe ute her — krever drivhus eller tunnel" : "🍂 Rekker neppe å modnes ute her i år"}
+    </p>
   );
 }
 
@@ -179,6 +193,7 @@ function GroupRow({
         </span>
       </button>
       <TimelineBar plantedDoys={group.plantedDoys} harvestWindow={group.harvestWindow} ctx={ctx} />
+      {group.wontRipen && <WontRipenNote warm={group.plant?.gddBase === 10} />}
       {open && (
         <ul className="space-y-2 pt-2">
           {group.items.map((item) => (
@@ -225,11 +240,16 @@ export function SeasonTimeline() {
     if (!location) {
       return null;
     }
-    return buildSeasonTimeline(plantings, findPlant, location.lastFrostDoy, location.firstFrostDoy, year, {
-      base5: location.stationFrost.gddCurve5,
-      base10: location.stationFrost.gddCurve10,
-    });
-  }, [location, plantings, findPlant, year]);
+    return buildSeasonTimeline(
+      plantings,
+      findPlant,
+      location.lastFrostDoy,
+      location.firstFrostDoy,
+      year,
+      { base5: location.stationFrost.gddCurve5, base10: location.stationFrost.gddCurve10 },
+      boxes,
+    );
+  }, [location, plantings, findPlant, year, boxes]);
 
   const groups = useMemo(() => (timeline ? groupTimelineItems(timeline.items) : []), [timeline]);
 

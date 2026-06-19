@@ -1,6 +1,6 @@
-import { gddHarvestWindow } from "./gdd";
+import { coverGddFactor, gddHarvestWindow } from "./gdd";
 import { isBundledPlantKey } from "./plants";
-import type { HarvestRule, PlantInfo, Planting } from "../types";
+import type { Box, HarvestRule, PlantInfo, Planting } from "../types";
 
 /** Station GDD curves (base 5 + base 10) for location-aware harvest prediction (Layer 0). */
 export interface GddCurves {
@@ -47,6 +47,13 @@ export interface TimelineItem {
   plantedDoy: number | null;
   /** Estimated harvest window [startDoy, endDoy], or null when the plant has no harvest rule. */
   harvestWindow: [number, number] | null;
+  /**
+   * True when the GDD model says this crop won't reach maturity outdoors at this location *and* it's
+   * in an uncovered bed — i.e. it genuinely needs a greenhouse/tunnel here. Drives the
+   * "modnes neppe ute" note in place of a harvest bar. (A covered crop the crude model still can't
+   * ripen falls back to weeksFromSowing instead, to avoid a contradictory "needs greenhouse" note.)
+   */
+  wontRipen?: boolean;
 }
 
 export interface SeasonTimeline {
@@ -133,7 +140,9 @@ export function buildSeasonTimeline(
   firstFrostDoy: number,
   year: number,
   gddCurves?: GddCurves,
+  boxes?: Box[],
 ): SeasonTimeline {
+  const bedTypeById = new Map((boxes ?? []).map((box) => [box.id, box.bedType]));
   const active = plantings
     // Indoor seedlings (no boxId) aren't in the garden yet — they don't belong on the season axis.
     .filter((planting) => planting.status === "active" && planting.boxId)
@@ -159,17 +168,25 @@ export function buildSeasonTimeline(
         ? dateToDoy(new Date(`${planting.transplantedDate}T00:00:00`))
         : null;
     const anchorDoy = transplantedDoy ?? plantedDoy;
-    // Prefer the GDD harvest window when the plant is tagged and a station curve is available; else
-    // fall back to the frost-relative `weeksFromSowing`/seasonal rule (also when it "won't ripen" —
-    // honest won't-ripen messaging is deferred). gddHarvestWindow returns null for untagged plants.
+    const coverFactor = coverGddFactor(bedTypeById.get(planting.boxId ?? ""));
     const gdd =
       gddCurves && anchorDoy !== null
-        ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10)
+        ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10, coverFactor)
         : null;
-    const win =
-      gdd && gdd.ripens && gdd.window
-        ? gdd.window
-        : harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
+    // Prefer the GDD window when it ripens; show a "won't ripen" note when the GDD model says it
+    // can't *and* the bed is uncovered (genuinely needs a greenhouse). Otherwise fall back to the
+    // frost-relative `weeksFromSowing`/seasonal rule — including covered crops the crude cover model
+    // still can't ripen, so we never tell a greenhouse crop it "needs a greenhouse".
+    let win: [number, number] | null;
+    let wontRipen = false;
+    if (gdd && gdd.ripens && gdd.window) {
+      win = gdd.window;
+    } else if (gdd && !gdd.ripens && coverFactor <= 1) {
+      win = null;
+      wontRipen = true;
+    } else {
+      win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
+    }
     if (plantedDoy !== null) {
       startDoy = Math.min(startDoy, plantedDoy);
     }
@@ -177,7 +194,7 @@ export function buildSeasonTimeline(
       startDoy = Math.min(startDoy, win[0]);
       endDoy = Math.max(endDoy, win[1]);
     }
-    return { planting, plant, plantedDoy, win };
+    return { planting, plant, plantedDoy, win, wontRipen };
   });
 
   // Snap to month boundaries and clamp into the calendar year.
@@ -185,11 +202,12 @@ export function buildSeasonTimeline(
   endDoy = Math.min(366, monthEndDoy(endDoy, year));
 
   const clamp = (doy: number) => Math.max(startDoy, Math.min(endDoy, doy));
-  const items: TimelineItem[] = raw.map(({ planting, plant, plantedDoy, win }) => ({
+  const items: TimelineItem[] = raw.map(({ planting, plant, plantedDoy, win, wontRipen }) => ({
     planting,
     plant,
     plantedDoy: plantedDoy === null ? null : clamp(plantedDoy),
     harvestWindow: win ? [clamp(win[0]), clamp(win[1])] : null,
+    wontRipen,
   }));
 
   return { range: { startDoy, endDoy }, year, lastFrostDoy, firstFrostDoy, items };
@@ -211,6 +229,8 @@ export interface TimelineGroup {
   plantedDoys: number[];
   /** Union of the members' harvest windows [start, end], or null when none have one. */
   harvestWindow: [number, number] | null;
+  /** True when the group has no harvest band and at least one member won't ripen outdoors here. */
+  wontRipen?: boolean;
   /** Distinct box ids the group occupies, in first-seen order (for the "· Kasse A, B" label). */
   boxIds: string[];
 }
@@ -240,6 +260,15 @@ export function groupTimelineItems(items: TimelineItem[]): TimelineGroup[] {
     }
     if (item.planting.boxId && !group.boxIds.includes(item.planting.boxId)) {
       group.boxIds.push(item.planting.boxId);
+    }
+    if (item.wontRipen) {
+      group.wontRipen = true;
+    }
+  }
+  // A "won't ripen" flag only stands when the group has no harvest band of its own.
+  for (const group of groups.values()) {
+    if (group.harvestWindow) {
+      group.wontRipen = false;
     }
   }
   return [...groups.values()];
