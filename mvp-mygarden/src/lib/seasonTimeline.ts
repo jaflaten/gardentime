@@ -201,9 +201,14 @@ export function buildSeasonTimeline(
     return { planting, plant, plantedDoy, win, wontRipen };
   });
 
-  // Snap to month boundaries and clamp into the calendar year.
-  startDoy = Math.max(1, monthStartDoy(startDoy, year));
-  endDoy = Math.min(366, monthEndDoy(endDoy, year));
+  // Snap to month boundaries. Clamp into the calendar year *before* snapping: monthStart/EndDoy run
+  // doyToDate, which rolls a DOY past 31 Dec into the next year — a late long-season harvest band can
+  // overshoot (e.g. a crop that just ripens in late Oct with a 10-week band reaches ~DOY 367). Snapping
+  // that wrapped date returns late January, making endDoy < startDoy and collapsing the whole axis (no
+  // month ticks, every bar at 0 % width). Clamping the inputs first keeps the snap inside the year.
+  const lastDoyOfYear = dateToDoy(new Date(year, 11, 31));
+  startDoy = monthStartDoy(Math.max(1, Math.min(startDoy, lastDoyOfYear)), year);
+  endDoy = monthEndDoy(Math.max(1, Math.min(endDoy, lastDoyOfYear)), year);
 
   const clamp = (doy: number) => Math.max(startDoy, Math.min(endDoy, doy));
   const items: TimelineItem[] = raw.map(({ planting, plant, plantedDoy, win, wontRipen }) => ({
