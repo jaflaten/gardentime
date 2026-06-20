@@ -88,7 +88,12 @@ function harvestSoonForPlanting(
     curves && anchorDoy !== null
       ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10, coverFactor, effMaturity)
       : null;
-  if (gdd && gdd.ripens && gdd.window) {
+  const [minWeeks, maxWeeks] = rule.weeksFromSowing;
+  // Trust the GDD window only when it ripens *no later* than the weeksFromSowing field rule — GDD may
+  // pull a harvest earlier (warm garden), but a base-10 crop in a cool climate that GDD pushes past
+  // the field rule (squash → October) falls through to the field rule below. See resolveHarvestWindow.
+  const fieldStartDoy = plantedDoyThisYear !== null ? plantedDoyThisYear + minWeeks * 7 : null;
+  if (gdd && gdd.ripens && gdd.window && (fieldStartDoy === null || gdd.window[0] <= fieldStartDoy)) {
     const [start, end] = gdd.window;
     // "Soon" = within ~2 weeks before the predicted first harvest, through the end of the band.
     if (todayDoy >= start - 14 && todayDoy <= end) {
@@ -104,7 +109,6 @@ function harvestSoonForPlanting(
   const sown = new Date(`${planting.plantedDate}T00:00:00`);
   const today = new Date();
   const weeksSinceSowing = Math.floor((today.getTime() - sown.getTime()) / (7 * 24 * 60 * 60 * 1000));
-  const [minWeeks, maxWeeks] = rule.weeksFromSowing;
   if (weeksSinceSowing >= minWeeks - 1 && weeksSinceSowing <= maxWeeks + 1) {
     return { matches: true, helper: `Sådd for ${weeksSinceSowing} uker siden` };
   }

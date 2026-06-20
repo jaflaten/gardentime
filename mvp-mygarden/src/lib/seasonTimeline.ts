@@ -1,4 +1,4 @@
-import { coverGddFactor, gddHarvestWindow } from "./gdd";
+import { coverGddFactor, gddHarvestWindow, type GddHarvest } from "./gdd";
 import { isBundledPlantKey } from "./plants";
 import { effectiveGddToMaturity, resolveSowMethod } from "./sowMethod";
 import type { Box, HarvestRule, PlantInfo, Planting } from "../types";
@@ -129,6 +129,35 @@ function harvestWindow(
 }
 
 /**
+ * Combine the GDD prediction with the weeksFromSowing field rule into the harvest window we draw.
+ *
+ * The GDD model's job is to pull a harvest *earlier* in a warm garden, and to flag a genuinely
+ * too-cold crop as "won't ripen". It must NOT push a harvest *later* than the field rule: a base-10
+ * warm-season crop in a cool maritime climate accumulates degree-days so slowly that raw GDD drifts
+ * past first frost (squash sown in June at Sogndal predicted late October), which contradicts real
+ * Norwegian harvests (≈ August). So when GDD ripens but no earlier than the field window's first
+ * harvest, we trust the weeksFromSowing field rule instead — GDD may only move a harvest earlier.
+ *
+ * (Known limitation: the underlying base-10 heat budget itself may be under-credited at some stations;
+ * that's a separate climate-data question. This keeps the *prediction* honest in the meantime — it
+ * never claims a frost-tender crop ripens after the killing frost.)
+ */
+export function resolveHarvestWindow(
+  gdd: GddHarvest | null,
+  fieldWindow: [number, number] | null,
+  coverFactor: number,
+): { window: [number, number] | null; wontRipen: boolean } {
+  if (gdd && gdd.ripens && gdd.window) {
+    const window = fieldWindow && gdd.window[0] > fieldWindow[0] ? fieldWindow : gdd.window;
+    return { window, wontRipen: false };
+  }
+  if (gdd && !gdd.ripens && coverFactor <= 1) {
+    return { window: null, wontRipen: true };
+  }
+  return { window: fieldWindow, wontRipen: false };
+}
+
+/**
  * Build the season timeline for the user's active plantings. The axis spans from ~8 weeks before
  * the last spring frost (covers indoor-sow context) through the first autumn frost, expanded to
  * include any planting or harvest that falls outside that band, then snapped to whole months.
@@ -177,20 +206,20 @@ export function buildSeasonTimeline(
       gddCurves && anchorDoy !== null
         ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10, coverFactor, effMaturity)
         : null;
-    // Prefer the GDD window when it ripens; show a "won't ripen" note when the GDD model says it
-    // can't *and* the bed is uncovered (genuinely needs a greenhouse). Otherwise fall back to the
-    // frost-relative `weeksFromSowing`/seasonal rule — including covered crops the crude cover model
-    // still can't ripen, so we never tell a greenhouse crop it "needs a greenhouse".
-    let win: [number, number] | null;
-    let wontRipen = false;
-    if (gdd && gdd.ripens && gdd.window) {
-      win = gdd.window;
-    } else if (gdd && !gdd.ripens && coverFactor <= 1) {
-      win = null;
-      wontRipen = true;
-    } else {
-      win = harvestWindow(plant?.harvestRule, plantedDoy, firstFrostDoy, year, plant?.harvestDurationWeeks ?? 0, seasonalShift);
-    }
+    // The frost-relative `weeksFromSowing`/seasonal rule — the Norwegian field baseline, and the
+    // fallback for covered crops the crude cover model still can't ripen (so we never tell a
+    // greenhouse crop it "needs a greenhouse").
+    const fieldWin = harvestWindow(
+      plant?.harvestRule,
+      plantedDoy,
+      firstFrostDoy,
+      year,
+      plant?.harvestDurationWeeks ?? 0,
+      seasonalShift,
+    );
+    // GDD pulls the window earlier in a warm garden / flags a too-cold crop, but never later than
+    // the field rule (see resolveHarvestWindow — squash-in-October fix).
+    const { window: win, wontRipen } = resolveHarvestWindow(gdd, fieldWin, coverFactor);
     if (plantedDoy !== null) {
       startDoy = Math.min(startDoy, plantedDoy);
     }
