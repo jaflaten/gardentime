@@ -1,5 +1,6 @@
 import { coverGddFactor, gddHarvestWindow } from "./gdd";
 import { isBundledPlantKey } from "./plants";
+import { effectiveGddToMaturity, resolveSowMethod } from "./sowMethod";
 import type { Box, HarvestRule, PlantInfo, Planting } from "../types";
 
 /** Station GDD curves (base 5 + base 10) for location-aware harvest prediction (Layer 0). */
@@ -169,9 +170,12 @@ export function buildSeasonTimeline(
         : null;
     const anchorDoy = transplantedDoy ?? plantedDoy;
     const coverFactor = coverGddFactor(bedTypeById.get(planting.boxId ?? ""));
+    // Increment L: adjust maturity for the sow method (forkultivert vs direkte) before the GDD
+    // prediction, so the establishment credit can also flip a borderline crop's "won't ripen" verdict.
+    const effMaturity = effectiveGddToMaturity(plant, resolveSowMethod(planting, plant));
     const gdd =
       gddCurves && anchorDoy !== null
-        ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10, coverFactor)
+        ? gddHarvestWindow(plant, anchorDoy, gddCurves.base5, gddCurves.base10, coverFactor, effMaturity)
         : null;
     // Prefer the GDD window when it ripens; show a "won't ripen" note when the GDD model says it
     // can't *and* the bed is uncovered (genuinely needs a greenhouse). Otherwise fall back to the

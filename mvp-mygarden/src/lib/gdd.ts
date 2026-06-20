@@ -96,6 +96,10 @@ export interface GddHarvest {
  * `anchorDoy` is the outdoor start (transplant date if the plant transplants, else sow date).
  * The band runs from the predicted first harvest for `harvestDurationWeeks` (continuous croppers
  * draw a longer bar), with a 2-week floor so one-shot crops still show a visible window.
+ *
+ * `gddToMaturityOverride` lets a caller substitute the sow-method-adjusted maturity (Increment L's
+ * establishment credit, via `effectiveGddToMaturity`) instead of the plant's raw `gddToMaturity`,
+ * so the credit flows through *before* the ripens/won't-ripen decision below.
  */
 export function gddHarvestWindow(
   plant: PlantInfo | undefined,
@@ -103,18 +107,20 @@ export function gddHarvestWindow(
   curve5: number[] | undefined,
   curve10: number[] | undefined,
   coverFactor = 1,
+  gddToMaturityOverride?: number,
 ): GddHarvest | null {
-  if (!plant?.gddToMaturity) {
+  const gddToMaturity = gddToMaturityOverride ?? plant?.gddToMaturity;
+  if (!gddToMaturity) {
     return null;
   }
-  const curve = (plant.gddBase ?? 5) === 10 ? curve10 : curve5;
+  const curve = (plant?.gddBase ?? 5) === 10 ? curve10 : curve5;
   if (!curve || curve.length < 13) {
     return null;
   }
-  const start = predictHarvestDoy(curve, plant.gddToMaturity, anchorDoy, coverFactor);
+  const start = predictHarvestDoy(curve, gddToMaturity, anchorDoy, coverFactor);
   if (start === null) {
     return { window: null, ripens: false };
   }
-  const bandWeeks = Math.max(plant.harvestDurationWeeks ?? 0, 2);
+  const bandWeeks = Math.max(plant?.harvestDurationWeeks ?? 0, 2);
   return { window: [start, start + bandWeeks * 7], ripens: true };
 }

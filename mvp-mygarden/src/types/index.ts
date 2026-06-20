@@ -42,6 +42,14 @@ export interface Planting {
   plantedDate: string;
   /** When an indoor seedling was planted out into its box (Increment K). Absent on direct-sown plantings; doubles as "was started indoors" provenance. */
   transplantedDate?: string;
+  /**
+   * How this planting started (Increment L). `"transplant"` = forkultivert/planted out as an
+   * established seedling; `"direct"` = seeds sown straight into the bed on `plantedDate`. **Optional —
+   * absent means "use the crop's default"** (its `gddToMaturity` calibration baseline), so existing
+   * data and the common case are unchanged. Only stored when the user *deviates* from that default.
+   * Drives the bounded GDD establishment credit; resolve via `resolveSowMethod()`, never read directly.
+   */
+  startMethod?: "direct" | "transplant";
   harvestDate?: string;
   /** Free-text yield logged at harvest (Phase F), e.g. "5 kg", "3 bøtter", "1 sekk". Optional. */
   harvestYield?: string;
@@ -93,6 +101,16 @@ export interface PlantInfo {
   gddToMaturity?: number;
   /** Base temperature for `gddToMaturity`: 5 for cool crops, 10 for warm (heat-loving) crops. Default 5. */
   gddBase?: 5 | 10;
+  /**
+   * Bounded seed→transplant-ready establishment phase, in GDD **of this plant's own `gddBase`**
+   * (Increment L). The developmental head-start a pre-cultivated seedling has at plant-out — NOT the
+   * literal weeks spent indoors (a carton seedling is light/root-limited; the edible part bulks in the
+   * field). Used *only* when a planting's sow method deviates from the crop's default: credited
+   * (−) when forkultivating a natural-direct crop, added (+) when direct-sowing a natural-transplant
+   * crop. Clamped to ≤40 % of `gddToMaturity` in `effectiveGddToMaturity()` so fast crops can't
+   * collapse to "harvest on plant-out". Missing ⇒ a ~30 % fallback (still clamped).
+   */
+  gddEstablishment?: number;
   // Companion planting (Increment F). Lists hold OTHER plant keys; missing = no known pairing.
   /** Plants this one grows well beside — surfaced as a green hint when added near them. */
   companionsGood?: string[];

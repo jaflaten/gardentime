@@ -100,7 +100,7 @@ export function GardenInsights() {
       location.lastFrostDoy,
       location.firstFrostDoy,
       year,
-      { base5: location.stationFrost.gddCurve5, base10: location.stationFrost.gddCurve10 },
+      { base5: location.gddCurve5, base10: location.gddCurve10 },
       boxes,
     );
   }, [location, plantings, findPlant, year, boxes]);

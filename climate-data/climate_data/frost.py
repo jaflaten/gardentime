@@ -38,6 +38,11 @@ class FrostNormal(TypedDict):
     # location-aware harvest prediction in the app (Increment I, Layer 0). gddCurve5[12] == gdd5.
     gddCurve5: list[int]
     gddCurve10: list[int]
+    # Cumulative count of *growing days* (days with Tmean above base), same 13 checkpoints as the
+    # GDD curves. Lets the app lapse-correct the GDD heat budget for the user's elevation: a garden
+    # below its station is ΔT warmer, worth ~ΔT extra GDD per growing day (Increment I, Layer 0 fix).
+    growDays5: list[int]
+    growDays10: list[int]
 
 
 def _monthly_cumulative(days: dict[int, dict[str, float]], year: int, base: float) -> list[int]:
@@ -59,6 +64,27 @@ def _monthly_cumulative(days: dict[int, dict[str, float]], year: int, base: floa
     for m in range(1, 13):
         run += monthly[m]
         cum[m] = int(round(run))
+    return cum
+
+
+def _monthly_cumulative_growdays(days: dict[int, dict[str, float]], year: int, base: float) -> list[int]:
+    """Cumulative count of growing days (Tmean above `base`) through the end of each month, as 13
+    checkpoints. Mirrors `_monthly_cumulative` but counts qualifying days instead of summing GDD —
+    so the app can credit ~ΔT extra GDD per growing day when lapse-correcting for elevation."""
+    monthly = [0] * 13  # indices 1..12 used
+    jan1 = dt.date(year, 1, 1)
+    for doy, v in days.items():
+        if "tmean" not in v:
+            continue
+        if v["tmean"] - base <= 0.0:
+            continue
+        month = (jan1 + dt.timedelta(days=doy - 1)).month
+        monthly[month] += 1
+    cum = [0] * 13
+    run = 0
+    for m in range(1, 13):
+        run += monthly[m]
+        cum[m] = run
     return cum
 
 
@@ -105,6 +131,8 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
     gdds: list[float] = []
     curves5: list[list[int]] = []
     curves10: list[list[int]] = []
+    growdays5: list[list[int]] = []
+    growdays10: list[list[int]] = []
     for year, days in yearly.items():
         if len(days) < MIN_DAYS_PER_YEAR:
             continue
@@ -128,6 +156,8 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
             # Curves only from years with a real growing season, mirroring the gdd5 filter.
             curves5.append(_monthly_cumulative(days, year, 5.0))
             curves10.append(_monthly_cumulative(days, year, 10.0))
+            growdays5.append(_monthly_cumulative_growdays(days, year, 5.0))
+            growdays10.append(_monthly_cumulative_growdays(days, year, 10.0))
 
     if len(last_frosts) < MIN_YEARS_WITH_FROST or len(first_frosts) < MIN_YEARS_WITH_FROST:
         return None
@@ -137,6 +167,8 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
     # Median per checkpoint across years (each curve is a 13-length cumulative array).
     gdd_curve5 = [int(round(median([c[k] for c in curves5]))) for k in range(13)]
     gdd_curve10 = [int(round(median([c[k] for c in curves10]))) for k in range(13)]
+    grow_days5 = [int(round(median([c[k] for c in growdays5]))) for k in range(13)]
+    grow_days10 = [int(round(median([c[k] for c in growdays10]))) for k in range(13)]
 
     return {
         "key": station_id,
@@ -145,6 +177,8 @@ def derive_from_observations(station_id: str) -> FrostNormal | None:
         "gdd5": int(round(median(gdds))),
         "gddCurve5": gdd_curve5,
         "gddCurve10": gdd_curve10,
+        "growDays5": grow_days5,
+        "growDays10": grow_days10,
     }
 
 

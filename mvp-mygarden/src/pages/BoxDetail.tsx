@@ -6,7 +6,9 @@ import { FamilyChip } from "../components/FamilyChip";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { PlantPicker } from "../components/PlantPicker";
 import { PlantingRow } from "../components/PlantingRow";
+import { SowMethodField } from "../components/SowMethodField";
 import { parseQuantity } from "../lib/planting";
+import { type SowMethod } from "../lib/sowMethod";
 import { RotationWarning } from "../components/RotationWarning";
 import {
   BED_TYPE_LABELS,
@@ -50,6 +52,7 @@ export function BoxDetail() {
   const [quantity, setQuantity] = useState("");
   const [plantedDate, setPlantedDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
+  const [startMethod, setStartMethod] = useState<SowMethod | undefined>(undefined);
   const [showPickerError, setShowPickerError] = useState(false);
   const [rotationDismissed, setRotationDismissed] = useState(false);
   // Layer 1 — retrospective backfill ("Legg til tidligere planting"). Its own form state so it never
@@ -102,7 +105,8 @@ export function BoxDetail() {
     return Array.from(families);
   }, [boxPlantings, findPlant, previousYear]);
 
-  const selectedFamily = plantKey ? findPlant(plantKey)?.family : undefined;
+  const selectedPlant = plantKey ? findPlant(plantKey) : undefined;
+  const selectedFamily = selectedPlant?.family;
   const neighbourKeys = useMemo(
     () => activePlantings.map((planting) => planting.plantKey).filter(Boolean),
     [activePlantings],
@@ -176,6 +180,7 @@ export function BoxDetail() {
     setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
+    setStartMethod(undefined);
     setShowPickerError(false);
     setShowForm(true);
   };
@@ -188,6 +193,7 @@ export function BoxDetail() {
     setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
+    setStartMethod(undefined);
     setShowPickerError(false);
     setShowFitPanel(false);
     setShowForm(true);
@@ -206,6 +212,8 @@ export function BoxDetail() {
       variety: variety.trim() || undefined,
       quantity: parseQuantity(quantity),
       plantedDate,
+      // Only the deviation is stored; undefined = "use the crop default" (resolveSowMethod).
+      startMethod,
       notes: notes.trim() || undefined,
       status: "active",
     });
@@ -216,6 +224,7 @@ export function BoxDetail() {
     setQuantity("");
     setPlantedDate(new Date().toISOString().split("T")[0]);
     setNotes("");
+    setStartMethod(undefined);
     setShowPickerError(false);
   };
 
@@ -614,6 +623,12 @@ export function BoxDetail() {
                 style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
               />
             </div>
+            <SowMethodField
+              plant={selectedPlant}
+              value={startMethod}
+              onChange={setStartMethod}
+              hasLocation={Boolean(location)}
+            />
             <div className="space-y-2">
               <label className="block text-sm font-medium">Notater (valgfritt)</label>
               <textarea

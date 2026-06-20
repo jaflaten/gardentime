@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { coverGddFactor, gddHarvestWindow } from "../lib/gdd";
 import { getPlantName, useMergedPlantList } from "../lib/plants";
 import { dateToDoy, mmddToDoy, seasonalShiftForPlant, type GddCurves } from "../lib/seasonTimeline";
+import { effectiveGddToMaturity, resolveSowMethod } from "../lib/sowMethod";
 import { isSowableNow, todayDoy, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "../lib/sowWindow";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
@@ -80,7 +81,13 @@ function harvestSoonForPlanting(
       ? dateToDoy(new Date(`${planting.plantedDate}T00:00:00`))
       : null;
   const anchorDoy = transplantDoy ?? plantedDoyThisYear;
-  const gdd = curves && anchorDoy !== null ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10, coverFactor) : null;
+  // Increment L: same sow-method maturity adjustment as the season timeline, so "Høst snart" and
+  // "Neste til høsting" agree for a pre-cultivated crop instead of disagreeing by the establishment credit.
+  const effMaturity = effectiveGddToMaturity(plant, resolveSowMethod(planting, plant));
+  const gdd =
+    curves && anchorDoy !== null
+      ? gddHarvestWindow(plant, anchorDoy, curves.base5, curves.base10, coverFactor, effMaturity)
+      : null;
   if (gdd && gdd.ripens && gdd.window) {
     const [start, end] = gdd.window;
     // "Soon" = within ~2 weeks before the predicted first harvest, through the end of the band.
@@ -203,7 +210,7 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
         doy,
         location.firstFrostDoy,
         shift,
-        { base5: location.stationFrost.gddCurve5, base10: location.stationFrost.gddCurve10 },
+        { base5: location.gddCurve5, base10: location.gddCurve10 },
         coverFactor,
       );
       if (!check.matches) continue;

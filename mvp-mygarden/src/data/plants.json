@@ -150,7 +150,8 @@
     ],
     "successionWeeks": 4,
     "gddToMaturity": 850,
-    "gddBase": 5
+    "gddBase": 5,
+    "gddEstablishment": 285
   },
   {
     "key": "salat",
@@ -184,7 +185,8 @@
     ],
     "successionWeeks": 3,
     "gddToMaturity": 380,
-    "gddBase": 5
+    "gddBase": 5,
+    "gddEstablishment": 150
   },
   {
     "key": "basilikum",
@@ -409,7 +411,8 @@
       "tomat_stor"
     ],
     "gddToMaturity": 550,
-    "gddBase": 5
+    "gddBase": 5,
+    "gddEstablishment": 200
   },
   {
     "key": "gresskar",
@@ -873,7 +876,8 @@
       "pak_choi"
     ],
     "gddToMaturity": 700,
-    "gddBase": 5
+    "gddBase": 5,
+    "gddEstablishment": 250
   },
   {
     "key": "pak_choi",

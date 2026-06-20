@@ -4,6 +4,8 @@ import type { PlantFamily } from "../lib/families";
 import { getPlantName, usePlantLookup } from "../lib/plants";
 import { parseQuantity } from "../lib/planting";
 import { boxRotationHistory, familyConflictYears, plantingFamilyResolver } from "../lib/rotation";
+import { type SowMethod } from "../lib/sowMethod";
+import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting } from "../types";
@@ -11,6 +13,7 @@ import { CompanionHints } from "./CompanionHints";
 import { FamilyChip } from "./FamilyChip";
 import { PlantPicker } from "./PlantPicker";
 import { RotationWarning } from "./RotationWarning";
+import { SowMethodField } from "./SowMethodField";
 
 interface QuickAddSheetProps {
   box: Box | null;
@@ -198,6 +201,7 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
   const addPlanting = useGardenStore((state) => state.addPlanting);
   const updatePlanting = useGardenStore((state) => state.updatePlanting);
   const findPlant = usePlantLookup();
+  const location = useResolvedLocation();
 
   const isEdit = planting !== null;
 
@@ -206,8 +210,11 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
   const [variety, setVariety] = useState(() => planting?.variety ?? "");
   const [quantity, setQuantity] = useState(() => (planting?.quantity != null ? String(planting.quantity) : ""));
   const [plantedDate, setPlantedDate] = useState(() => planting?.plantedDate ?? new Date().toISOString().split("T")[0]);
+  const [startMethod, setStartMethod] = useState<SowMethod | undefined>(() => planting?.startMethod);
   const [showPickerError, setShowPickerError] = useState(false);
   const [rotationDismissed, setRotationDismissed] = useState(false);
+
+  const selectedPlant = plantKey ? findPlant(plantKey) : undefined;
 
   const targetYear = useMemo(() => new Date(plantedDate).getFullYear(), [plantedDate]);
   const previousYear = targetYear - 1;
@@ -259,6 +266,8 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
       variety: variety.trim() || undefined,
       quantity: parseQuantity(quantity),
       plantedDate,
+      // Only the deviation is stored; undefined = "use the crop default" (resolveSowMethod).
+      startMethod,
     };
     if (isEdit && planting) {
       // Preserve identity + revive nothing: edit targets the existing active row in place.
@@ -353,6 +362,13 @@ function PlantingEditor({ box, planting, initialPlantKey, onClose, toggle }: Pla
           style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
         />
       </div>
+
+      <SowMethodField
+        plant={selectedPlant}
+        value={startMethod}
+        onChange={setStartMethod}
+        hasLocation={Boolean(location)}
+      />
 
       <div className="flex flex-wrap gap-2 pt-1">
         <button
