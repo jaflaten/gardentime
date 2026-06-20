@@ -16,7 +16,7 @@ import { isCustomPlantLike } from "../lib/customPlants";
 import { usePlantLookup } from "../lib/plants";
 import { isIndoorSeedling } from "../lib/planting";
 import { saveBoxes, savePlantings } from "../lib/storage";
-import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
+import bundledGardenBackup from "../resources/spirr-v2.json";
 import demoGardenBackup from "../resources/demo-garden.json";
 import plantsData from "../data/plants.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
@@ -254,7 +254,7 @@ export function GardenMap() {
           ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
           : [];
         setPendingImport({
-          source: "MyGarden backup-fil",
+          source: "Spirr backup-fil",
           boxes: parsed.boxes as Box[],
           plantings: parsed.plantings as Planting[],
           customPlants: importedCustomPlants,
@@ -303,7 +303,10 @@ export function GardenMap() {
       <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-3 p-3 sm:gap-4 sm:p-4">
         <header className="rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h1 className="text-xl font-semibold sm:text-2xl">🌱 Velkommen til MyGarden</h1>
+            <h1 className="flex items-center gap-2 text-xl font-semibold sm:text-2xl">
+              <img src="/spirr-mark.svg" alt="" className="h-7 w-7 sm:h-8 sm:w-8" />
+              Velkommen til Spirr
+            </h1>
             <LanguageToggle />
           </div>
         </header>
@@ -341,7 +344,7 @@ export function GardenMap() {
             >
               <span className="block text-base font-semibold">Importer JSON-fil</span>
               <span className="block text-xs" style={{ color: "var(--text-muted)" }}>
-                Last opp en MyGarden backup-fil.
+                Last opp en Spirr backup-fil.
               </span>
             </button>
             <button
@@ -393,8 +396,9 @@ export function GardenMap() {
         style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-xl font-semibold sm:text-2xl">
-            🌱 Hagen vår{viewMode && <span className="ml-2 text-sm font-medium" style={{ color: "var(--text-muted)" }}>(visning)</span>}
+          <h1 className="flex items-center gap-2 text-xl font-semibold sm:text-2xl">
+            <img src="/spirr-mark.svg" alt="Spirr" className="h-7 w-7 sm:h-8 sm:w-8" />
+            Hagen vår{viewMode && <span className="ml-2 text-sm font-medium" style={{ color: "var(--text-muted)" }}>(visning)</span>}
           </h1>
           <LastSavedBadge />
         </div>

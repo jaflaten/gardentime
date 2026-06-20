@@ -1,6 +1,6 @@
 /**
  * importLegacy.ts
- * Converts a DinoGarden JSON export (exportVersion 1.x) into GardenTime MVP
+ * Converts a DinoGarden JSON export (exportVersion 1.x) into Spirr MVP
  * Box[] objects with pre-computed react-grid-layout positions.
  *
  * Usage:

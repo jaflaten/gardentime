@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     blocks: [
       {
         type: "section",
-        text: { type: "mrkdwn", text: `🌱 *Ny tilbakemelding fra MyGarden*\n>${trimmed.replace(/\n/g, "\n>")}` },
+        text: { type: "mrkdwn", text: `🌱 *Ny tilbakemelding fra Spirr*\n>${trimmed.replace(/\n/g, "\n>")}` },
       },
       {
         type: "context",

@@ -9,7 +9,7 @@ import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
 import { FAMILY_INFO } from "../lib/families";
 import { findPostnummer, formatDoy, isValidPostnummer, resolveLocation } from "../lib/location";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
-import bundledGardenBackup from "../resources/mvp-mygarden-v2.json";
+import bundledGardenBackup from "../resources/spirr-v2.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useLocationStore } from "../store/useLocationStore";
@@ -97,7 +97,7 @@ function exportData() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `gardentime-backup-${new Date().toISOString().split("T")[0]}.json`;
+  anchor.download = `spirr-backup-${new Date().toISOString().split("T")[0]}.json`;
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -232,7 +232,7 @@ export function Settings() {
       try {
         const parsed = JSON.parse(loadEvent.target?.result as string) as BackupPayload;
         if (!Array.isArray(parsed.boxes) || !Array.isArray(parsed.plantings)) {
-          alert("Ugyldig backup-fil. Velg en eksportert MyGarden backup-fil.");
+          alert("Ugyldig backup-fil. Velg en eksportert Spirr backup-fil.");
           return;
         }
         if (!parsed.boxes.every(isBoxLike) || !parsed.plantings.every(isPlantingLike)) {
@@ -243,7 +243,7 @@ export function Settings() {
           ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
           : [];
         setPendingImport({
-          source: "MyGarden backup-fil",
+          source: "Spirr backup-fil",
           boxes: parsed.boxes,
           plantings: parsed.plantings,
           customPlants: importedCustomPlants,
@@ -564,7 +564,7 @@ export function Settings() {
       </section>
 
       <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
-        <h2 className="text-lg font-semibold sm:text-xl">MyGarden backup</h2>
+        <h2 className="text-lg font-semibold sm:text-xl">Spirr backup</h2>
         <button
           type="button"
           onClick={exportData}
@@ -575,7 +575,7 @@ export function Settings() {
         </button>
 
         <div className="space-y-2">
-          <p style={{ color: "var(--text-muted)" }}>Importer en tidligere eksportert MyGarden backup:</p>
+          <p style={{ color: "var(--text-muted)" }}>Importer en tidligere eksportert Spirr backup:</p>
           <input
             type="file"
             accept=".json"
