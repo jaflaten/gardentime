@@ -68,6 +68,9 @@ export interface PlantInfo {
   name_pl: string;
   name_en: string;
   emoji: string;
+  /** A natural display colour for the plant (e.g. strawberry red, carrot orange). Used to tint the
+   *  composition donut's species slices; missing = fall back to the generic chart palette. */
+  color?: string;
   category: "vegetable" | "herb" | "fruit" | "flower";
   family: PlantFamily;
   sowRules?: SowRule[];

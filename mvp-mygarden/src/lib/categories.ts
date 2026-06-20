@@ -7,13 +7,15 @@ interface CategoryLabel {
   name_no: string;
   name_pl: string;
   emoji: string;
+  /** Colour for the composition donut's Kategori mode. */
+  color: string;
 }
 
 export const CATEGORY_LABELS: Record<PlantCategory, CategoryLabel> = {
-  vegetable: { name_no: "Grønnsak", name_pl: "Warzywo", emoji: "🥕" },
-  herb:      { name_no: "Urt",      name_pl: "Zioło",   emoji: "🌿" },
-  fruit:     { name_no: "Frukt",    name_pl: "Owoc",    emoji: "🍓" },
-  flower:    { name_no: "Blomst",   name_pl: "Kwiat",   emoji: "🌸" },
+  vegetable: { name_no: "Grønnsak", name_pl: "Warzywo", emoji: "🥕", color: "#6f9e44" },
+  herb:      { name_no: "Urt",      name_pl: "Zioło",   emoji: "🌿", color: "#3f9e8a" },
+  fruit:     { name_no: "Frukt",    name_pl: "Owoc",    emoji: "🍓", color: "#d64545" },
+  flower:    { name_no: "Blomst",   name_pl: "Kwiat",   emoji: "🌸", color: "#e07baf" },
 };
 
 export const CATEGORY_VALUES: PlantCategory[] = ["vegetable", "herb", "fruit", "flower"];

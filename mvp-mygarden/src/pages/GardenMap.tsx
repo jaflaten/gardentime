@@ -4,6 +4,7 @@ import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { FloatingUndo } from "../components/FloatingUndo";
 import { GardenGrid, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
+import { GardenInsights } from "../components/GardenInsights";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
@@ -584,6 +585,8 @@ export function GardenMap() {
           />
         </div>
       </section>
+
+      <GardenInsights />
 
       <FloatingUndo editMode={editMode && !viewMode} />
 

@@ -274,6 +274,59 @@ export function groupTimelineItems(items: TimelineItem[]): TimelineGroup[] {
   return [...groups.values()];
 }
 
+/**
+ * One crop's progress toward harvest, derived from the same {@link buildSeasonTimeline} windows.
+ * Feeds the "Neste til høst" maturity list — a per-planting growth bar + days-to-harvest.
+ */
+export interface MaturityRow {
+  item: TimelineItem;
+  /** 0–100 growth from sow/anchor to first harvest; null for a prior-season planting (no sow dot). */
+  progress: number | null;
+  /** Days until first harvest. ≤0 means the window has opened (ready/picking). */
+  daysToHarvest: number;
+  /** Today is inside the harvest window. */
+  ready: boolean;
+}
+
+/**
+ * Build the maturity rows for every active planting that has an estimated harvest window, soonest
+ * first (already-ready crops lead). Plantings with no window (no rule, or "won't ripen") are omitted.
+ */
+export function maturityRows(timeline: SeasonTimeline, todayDoy: number): MaturityRow[] {
+  const rows: MaturityRow[] = [];
+  for (const item of timeline.items) {
+    if (!item.harvestWindow) {
+      continue;
+    }
+    const [start, end] = item.harvestWindow;
+    const ready = todayDoy >= start && todayDoy <= end;
+    const daysToHarvest = start - todayDoy;
+    const progress =
+      item.plantedDoy !== null && start > item.plantedDoy
+        ? Math.max(0, Math.min(100, ((todayDoy - item.plantedDoy) / (start - item.plantedDoy)) * 100))
+        : null;
+    rows.push({ item, progress, daysToHarvest, ready });
+  }
+  // Soonest-to-harvest first; ready crops (daysToHarvest ≤ 0) naturally sort to the top.
+  return rows.sort((a, b) => a.daysToHarvest - b.daysToHarvest);
+}
+
+/**
+ * Count active plantings whose *first harvest* falls in each calendar month (index 0–11). Drives the
+ * "Høstekalender" — a forward-looking bar of how busy each month's harvest will be.
+ */
+export function harvestCountByMonth(timeline: SeasonTimeline): number[] {
+  const counts = new Array(12).fill(0);
+  for (const item of timeline.items) {
+    if (!item.harvestWindow) {
+      continue;
+    }
+    const month = doyToDate(item.harvestWindow[0], timeline.year).getMonth();
+    counts[month] += 1;
+  }
+  return counts;
+}
+
 /** Whole-month tick day-of-years within the range (inclusive of the first month). */
 export function monthTicks(startDoy: number, endDoy: number, year: number): number[] {
   const ticks: number[] = [];
