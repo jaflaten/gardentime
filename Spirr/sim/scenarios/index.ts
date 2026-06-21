@@ -3,8 +3,18 @@ import type { Scenario } from "./types";
 import precultivation from "./precultivation-windowsill-feb.scenario";
 import firstTime from "./first-time-empty-vestland-march.scenario";
 import multiYear from "./multi-year-rotation-veteran.scenario";
+import directVsTransplant from "./direct-sow-vs-transplant.scenario";
+import midsummer from "./midsummer-harvest-rush.scenario";
+import coldStation from "./cold-station-wont-ripen.scenario";
 
-export const SCENARIOS: Scenario[] = [precultivation, firstTime, multiYear];
+export const SCENARIOS: Scenario[] = [
+  precultivation,
+  firstTime,
+  multiYear,
+  directVsTransplant,
+  midsummer,
+  coldStation,
+];
 
 export function getScenarios(keys: string): Scenario[] {
   if (keys === "all") {

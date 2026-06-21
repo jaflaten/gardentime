@@ -68,6 +68,12 @@ export function renderSnapshot(g: ObservedGarden): string {
     lines.push(`${h.handle} ${h.plantKey} — ${h.status}${h.wontRipen ? " (modner ikke ute her)" : ""}`);
   }
 
+  if (g.wontRipen.length > 0) {
+    lines.push("");
+    lines.push(`## ⚠ Modner ikke ute her (for kaldt) — vurder drivhus/tunnel`);
+    lines.push(plantList(g.wontRipen));
+  }
+
   lines.push("");
   lines.push(
     `## Hagen i tall: ${g.stats.totalActive} aktive, ${g.stats.distinctSpecies} arter, ${g.stats.distinctFamilies} familier, ${g.stats.bedsInUse} kasser i bruk`,

@@ -39,7 +39,10 @@ function summarizeOffered(g: ObservedGarden): OfferedSummary {
     sowOutdoor: g.sowNow.outdoor.map((p) => p.key),
     plantOut: g.sowNow.plantOut.map((p) => p.key),
     harvestSoon: g.harvestSoon.map((h) => `${h.handle} ${h.plantKey} (${h.status})`),
-    warnings: g.boxes.flatMap((b) => b.rotationCautions.map((c) => `kasse ${b.handle}: ${c}`)),
+    warnings: [
+      ...g.boxes.flatMap((b) => b.rotationCautions.map((c) => `kasse ${b.handle}: ${c}`)),
+      ...(g.wontRipen.length ? [`modner ikke ute: ${g.wontRipen.map((p) => p.key).join(", ")}`] : []),
+    ],
   };
 }
 

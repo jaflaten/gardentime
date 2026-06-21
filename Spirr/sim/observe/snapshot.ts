@@ -61,6 +61,8 @@ export interface ObservedGarden {
   boxes: ObservedBox[];
   seedlings: ObservedSeedling[];
   harvestSoon: ObservedHarvest[];
+  /** Active boxed crops the GDD model says won't ripen outdoors here (no harvest window) — a cold-garden signal. */
+  wontRipen: ObservedPlant[];
   stats: { totalActive: number; distinctSpecies: number; distinctFamilies: number; bedsInUse: number };
 }
 
@@ -159,8 +161,10 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
     });
 
   // Harvest-soon — reuse the real season timeline, then bucket each boxed planting by where today sits
-  // relative to its computed harvest band.
+  // relative to its computed harvest band. Crops the GDD model says won't ripen here have NO window, so
+  // they never enter harvestSoon — surface them separately (the cold-garden "modner ikke ute" signal).
   const harvestSoon: ObservedHarvest[] = [];
+  const wontRipen: ObservedPlant[] = [];
   if (resolved) {
     const timeline = buildSeasonTimeline(
       plantings,
@@ -174,6 +178,9 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
     for (const item of timeline.items) {
       if (item.planting.status !== "active") {
         continue;
+      }
+      if (item.wontRipen && item.plant) {
+        wontRipen.push(lean(item.plant));
       }
       const win = item.harvestWindow;
       if (win) {
@@ -216,6 +223,7 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
     boxes: observedBoxes,
     seedlings,
     harvestSoon,
+    wontRipen,
     stats: {
       totalActive: stats.totalActive,
       distinctSpecies: stats.distinctSpecies,
