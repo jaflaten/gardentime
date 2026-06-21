@@ -9,6 +9,7 @@
 // removed / failed rows are past, so they drop out of composition too (but they DO feed the
 // season-status and per-year history, which is where looking back is the point).
 
+import { now } from "./clock";
 import { FAMILY_INFO, type PlantFamily } from "./families";
 import { isIndoorSeedling } from "./planting";
 import { ROTATION_LOOKBACK_YEARS } from "./rotation";
@@ -218,9 +219,9 @@ export function computeGardenStats(
   plantings: Planting[],
   boxes: Array<{ id: string }>,
   findPlant: (key: string) => PlantInfo | undefined,
-  now: Date = new Date(),
+  today: Date = now(),
 ): GardenStats {
-  const currentYear = now.getFullYear();
+  const currentYear = today.getFullYear();
   const active = plantings.filter(isActiveInGarden);
 
   const totalPlants = active.reduce((sum, p) => sum + (p.quantity ?? 1), 0);

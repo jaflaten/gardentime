@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { create } from "zustand";
+import { now } from "../lib/clock";
 import { loadBoxes, loadLastSaved, loadPlantings, resetGarden as resetGardenStorage, saveBoxes, savePlantings } from "../lib/storage";
 import type { Box, Planting } from "../types";
 
@@ -59,7 +60,7 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
       depthCm: options?.depthCm,
       widthCm: options?.widthCm,
       lengthCm: options?.lengthCm,
-      createdAt: new Date().toISOString(),
+      createdAt: now().toISOString(),
       zoneType: "BOX",
       layout: {
         x: (existing * NEW_BOX_W) % NEW_BOX_WRAP_COLS,
@@ -161,7 +162,7 @@ export const useGardenStore = create<GardenStore>((set, get) => ({
   },
 
   markHarvested: (id, opts) => {
-    const today = opts?.date ?? new Date().toISOString().split("T")[0];
+    const today = opts?.date ?? now().toISOString().split("T")[0];
     // Only store a yield when the user actually typed one; an empty/blank field stays undefined.
     const harvestYield = opts?.harvestYield?.trim() || undefined;
     const plantings = get().plantings.map((p) =>

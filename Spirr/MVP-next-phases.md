@@ -878,3 +878,22 @@ Histories use **2024 + 2025** (prior seasons, inside the 2-year `ROTATION_LOOKBA
 4. Eyeball each box against its "Exercises" column; fix any fixture/feature mismatch.
 
 > **Note:** boxes carry `depthCm` in the table above, but that field doesn't exist on `Box` yet — it arrives with **Increment B**. Until then, seed only `sunExposure` + `bedType`; add the `depthCm` values to the fixture in the same PR that introduces the field, so the shallow-box scenarios become live exactly when B can read them.
+
+## Dev tooling — Test Simmer (LLM-gardener simulation harness) — ✅ M1 + most of M2/M3 SHIPPED 2026-06-21
+
+> Design doc: `mvp-test-simmer.md`. A local LLM (Ollama `qwen2.5:7b`/`32b`) acts as the gardener and drives the real Spirr stores/libs through every life stage across a simulated season, headless, in Node — no browser, no real time. Hard invariants catch bugs; an optional LLM-judge surfaces UX friction.
+
+**Landed (all new code under `sim/`, plus a tiny production seam):**
+- **Clock seam** `src/lib/clock.ts` (`setNow`/`now`/`isOverridden`) wired into the four real now-reads: `sowWindow.todayDoy`, `useGardenStore` (`addBox.createdAt`, `markHarvested` default), `planting.daysSince` default, `gardenStats.computeGardenStats` default. `main.tsx` reads `?simNow=` for the browser tier. Backward-compatible (defaults to real `new Date()`); `tsc -b`/eslint/`vite build` stay clean.
+- **Runtime** (`sim/runtime/`): in-memory `localStorage` shim installed *before* stores load (Node 25 ships a built-in `localStorage` accessor — overridden via `defineProperty`; the side-effect `install.ts` must be the first import because `seasonTimeline → plants.ts → useGardenStore` initializes a store at module-load). `SimClock` over the seam with seasonal-event derivation.
+- **Driver** (`sim/driver/`): `AppDriver` facade (the gardener's verbs) → real store calls, all dates from the SimClock; new nanoids captured via `.at(-1)`; stable short handles (`A`, `#1`) so the LLM never sees nanoids; strict-but-forgiving action schema (never throws).
+- **Observe** (`sim/observe/`): `ObservedGarden` rebuilt from the *same* pure libs the UI calls (sowWindow, seasonTimeline, rotation, gardenStats) + compact Norwegian text render + transcript log.
+- **Gardener** (`sim/gardener/`): Ollama `/api/chat` JSON client; agent loop (observe→prompt→validate→apply→advance) with guardrails (step budget, reprompt-on-invalid, stall watchdog that force-advances); 4 personas.
+- **Eval** (`sim/eval/`): 11 hard invariants (identity continuity, seedlings never leak into box views/timeline/composition, `year===year(plantedDate)`, no NaN dates, **rotation-flag soundness**, perennials never flagged, …); opt-in LLM-judge for friction.
+- **Runner/replay/report** (`sim/run.ts`, `sim/replay.ts`, `sim/report/`): `npm run sim -- --scenario <key|all> --model qwen2.5:7b[,qwen2.5:32b] [--judge]`; deterministic `replay.ts` re-applies recorded actions with no LLM; markdown+JSON reports to `sim/report/out/` (gitignored).
+- **Regression** (`sim/__tests__/`): Vitest (`npm test`) — clock-seam units + replay-determinism over a committed transcript fixture. 8 tests green.
+- **Scenarios:** `precultivation-windowsill-feb` (walking skeleton), `first-time-empty-vestland-march` (no-location cold start), `multi-year-rotation-veteran` (seeded from `demo-garden.json` — exercises vekstskifte warnings + the jordbær perennial).
+
+**Validated results (2026-06-21):** precultivation arc green on both `qwen2.5:7b` (59 steps, 3 recoverable errors, 74s) and `qwen2.5:32b` (43 steps, **0 errors**, 394s — cleaner but ~5× slower). multi-year veteran green (28 steps); the veteran correctly *saw and avoided* the baked-in "solanaceae 3 år på rad" rotation warning. All hard invariants held across every run — the LLM's weird-but-valid sequences also fuzzed the pure libs without producing a single NaN/throw.
+
+**Deferred (M2/M3 tail):** remaining scenarios (`direct-sow-vs-transplant`, `midsummer-harvest-rush`, `cold-station-wont-ripen`); export/import round-trip invariant; tier-2 Chrome-DevTools browser fidelity check via `?simNow=`; extracting the last `.tsx` grouping logic (SowNowCard/GardenInsights) into pure libs to close the observation-drift gap.

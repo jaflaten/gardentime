@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Sim harness generated reports (the committed fixture under sim/__tests__ is the regression source)
+sim/report/out/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

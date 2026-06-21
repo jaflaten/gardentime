@@ -1,3 +1,4 @@
+import { now } from "./clock";
 import type { PlantInfo, SowRule } from "../types";
 
 // Shared frost-relative sow-window math. Used by the SowNowCard (D2) and the BoxDetail
@@ -5,9 +6,9 @@ import type { PlantInfo, SowRule } from "../types";
 
 /** Today's day-of-year (1–366). */
 export function todayDoy(): number {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
+  const today = now();
+  const start = new Date(today.getFullYear(), 0, 0);
+  const diff = today.getTime() - start.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
