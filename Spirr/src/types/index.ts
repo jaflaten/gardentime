@@ -137,4 +137,11 @@ export interface PlantInfo {
    * D2 card's "Plant ut" group and turns an uncovered-bed placement into a soft caution in box ranking.
    */
   rainSensitive?: boolean;
+  /**
+   * Frost-tender — a warm-season crop that frost kills or damages (tomat, agurk, basilikum, squash …).
+   * Set from horticultural norms, independent of the GDD `gddBase`. Drives the plant-out caution
+   * (`frostTenderPlantOutCaution`): planting such a seedling out before the last spring frost risks
+   * losing it. Hardy/cool-season crops (erter, kål, løk) leave this unset.
+   */
+  frostTender?: boolean;
 }

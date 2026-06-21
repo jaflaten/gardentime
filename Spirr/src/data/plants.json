@@ -53,7 +53,8 @@
       "potet"
     ],
     "gddToMaturity": 800,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "tomat_stor",
@@ -109,7 +110,8 @@
       "potet"
     ],
     "gddToMaturity": 1050,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "gulrot",
@@ -232,7 +234,8 @@
       "tomat_stor"
     ],
     "gddToMaturity": 350,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "agurk",
@@ -285,7 +288,8 @@
       "potet"
     ],
     "gddToMaturity": 550,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "jordbær",
@@ -370,7 +374,8 @@
       "persillerot"
     ],
     "gddToMaturity": 1150,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "persille",
@@ -455,7 +460,8 @@
       "potet"
     ],
     "gddToMaturity": 900,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "erter",
@@ -539,7 +545,8 @@
       "løk"
     ],
     "gddToMaturity": 500,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "spinat",
@@ -716,7 +723,8 @@
       "potet"
     ],
     "gddToMaturity": 350,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "mais",
@@ -761,7 +769,8 @@
       "tomat_stor"
     ],
     "gddToMaturity": 1150,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "purre",
@@ -959,7 +968,8 @@
     },
     "sunNeed": "full",
     "gddToMaturity": 850,
-    "gddBase": 10
+    "gddBase": 10,
+    "frostTender": true
   },
   {
     "key": "potet",

@@ -4,7 +4,7 @@ import { PlantPicker } from "../components/PlantPicker";
 import { SowBoxPicker } from "../components/SowBoxPicker";
 import { getPlantName, useMergedPlantList, usePlantLookup } from "../lib/plants";
 import { isIndoorSeedling, parseQuantity, plantedAgeLabel } from "../lib/planting";
-import { todayDoy, transplantReadiness, weeksFromLastFrost, withinIndoorWindow } from "../lib/sowWindow";
+import { frostTenderPlantOutCaution, todayDoy, transplantReadiness, weeksFromLastFrost, withinIndoorWindow } from "../lib/sowWindow";
 import { doyToDate } from "../lib/seasonTimeline";
 import type { ResolvedLocation } from "../lib/location";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
@@ -122,6 +122,8 @@ function SeedlingRow({ seedling, plant, language, location }: SeedlingRowProps) 
   const name = seedling.customName ?? (plant ? getPlantName(plant, language) : seedling.plantKey || "Ukjent plante");
   const age = plantedAgeLabel(seedling.plantedDate);
   const readiness = plant && location ? transplantReadiness(plant, location.lastFrostDoy) : null;
+  // A2: warn before planting a frost-tender seedling out ahead of the last spring frost.
+  const frostCaution = plant && location ? frostTenderPlantOutCaution(plant, location.lastFrostDoy, todayDoy()) : null;
 
   const readinessText =
     readiness == null
@@ -184,6 +186,7 @@ function SeedlingRow({ seedling, plant, language, location }: SeedlingRowProps) 
           plantings={plantings}
           findPlant={findPlant}
           verb="plante ut"
+          caution={frostCaution}
           onCancel={() => setPlanningOut(false)}
           onPick={plantOut}
         />

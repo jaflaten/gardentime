@@ -1,6 +1,7 @@
 // Small shared helpers for planting fields, kept out of components so the add/edit
 // surfaces (QuickAddSheet, BoxDetail, PlantingRow) all parse the same way.
 
+import { now } from "./clock";
 import type { Planting } from "../types";
 
 /**
@@ -23,10 +24,10 @@ export function parseQuantity(value: string): number | undefined {
  * Whole days between a planting's date (YYYY-MM-DD) and `now`. Both ends are normalized to local
  * midnight so the count doesn't drift across a DST transition. Negative if the date is in the future.
  */
-export function daysSince(dateStr: string, now: Date = new Date()): number {
+export function daysSince(dateStr: string, today: Date = now()): number {
   const planted = new Date(`${dateStr}T00:00:00`);
   const plantedMid = new Date(planted.getFullYear(), planted.getMonth(), planted.getDate()).getTime();
-  const nowMid = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const nowMid = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
   return Math.round((nowMid - plantedMid) / 86_400_000);
 }
 

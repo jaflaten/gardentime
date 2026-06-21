@@ -1,0 +1,1489 @@
+{
+  "scenario": "cold-station-wont-ripen",
+  "title": "Kald stasjon — modner ikke ute (Alta)",
+  "model": "qwen2.5:7b",
+  "persona": "maximise-harvest",
+  "generatedAt": "2026-06-21T08:40:51.871Z",
+  "summary": {
+    "steps": 34,
+    "llmCalls": 35,
+    "advances": 12,
+    "errors": 1,
+    "forcedAdvances": 0,
+    "evalTokens": 644,
+    "finalDate": "2026-10-01"
+  },
+  "invariants": [
+    {
+      "name": "unique planting ids",
+      "ok": true,
+      "detail": "10 unique"
+    },
+    {
+      "name": "boxed plantings reference a real box",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "year matches plantedDate",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "harvestDate >= plantedDate",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "transplantedDate >= plantedDate (identity continuity)",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "no NaN/unparseable dates",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "indoor seedlings excluded from timeline",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "garden stats finite",
+      "ok": true,
+      "detail": "3 active"
+    },
+    {
+      "name": "composition counts boxed actives only",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "rotation flags are sound (real repeat within lookback)",
+      "ok": true,
+      "detail": "2 box-rows checked"
+    },
+    {
+      "name": "no perennial-only family flagged for rotation",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "all actions structured (no throw)",
+      "ok": true,
+      "detail": "ok"
+    }
+  ],
+  "invariantsGreen": true,
+  "friction": [
+    {
+      "severity": "high",
+      "title": "Ignorerede anbefaling om modning ikke ute",
+      "evidence": "[2026-03-20] APP: ⚠:modner ikke ute: løk; [2026-05-28] GARTNER plant_out (plantet ut #2 i kasse A)",
+      "suggestion": "Forbedre appen til å automatisk planlegge modning for varmekjære og gi gartneren mulighet til å bekrefte eller endre denne planleggingen."
+    },
+    {
+      "severity": "medium",
+      "title": "Feil i planting av rosmarin",
+      "evidence": "[2026-04-30] GARTNER sow_indoor FEIL:unknown plant \"rossmarin\" — use a key from the catalog",
+      "suggestion": "Forbedre appens validering av planter for å unngå feil som kan føre til misforståelse og feil i dyrking."
+    },
+    {
+      "severity": "medium",
+      "title": "Modning av purre ute sent",
+      "evidence": "[2026-07-31] GARTNER sow_outdoor (sådde purre ute i kasse A som #10)",
+      "suggestion": "Forbedre appen til å gi mer tidlig anbefaling om modning av purre for å unngå skade fra vårfrost."
+    },
+    {
+      "severity": "low",
+      "title": "Forsinket høst av løk",
+      "evidence": "[2026-07-31] GARTNER sow_outdoor (sådde purre ute i kasse A som #10); [2026-09-19] GARTNER harvest (høstet #2 (Avling av purre))",
+      "suggestion": "Forbedre appen til å gi mer tidlig anbefaling om høst for løk for å unngå skade fra høstfrost."
+    },
+    {
+      "severity": "low",
+      "title": "Modning av purre ute for sent",
+      "evidence": "[2026-07-31] GARTNER sow_outdoor (sådde purre ute i kasse A som #10); [2026-09-19] GARTNER harvest (høstet #2 (Avling av purre))",
+      "suggestion": "Forbedre appen til å gi mer tidlig anbefaling om modning av purre for å unngå skade fra høstfrost."
+    },
+    {
+      "severity": "low",
+      "title": "Forsinket høst av åkerbønner",
+      "evidence": "[2026-07-31] GARTNER sow_outdoor (sådde purre ute i kasse A som #10); [2026-09-19] GARTNER harvest (høstet #2 (Avling av purre))",
+      "suggestion": "Forbedre appen til å gi mer tidlig anbefaling om høst for åkerbønner for å unngå skade fra høstfrost."
+    }
+  ],
+  "transcript": [
+    {
+      "kind": "observe",
+      "step": 1,
+      "simDate": "2026-03-20",
+      "doy": 79,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "action",
+      "step": 1,
+      "simDate": "2026-03-20",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "rosmarin",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#1",
+        "note": "sådde rosmarin inne (forkultivering) som #1"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 2,
+      "simDate": "2026-03-20",
+      "doy": 79,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "action",
+      "step": 2,
+      "simDate": "2026-03-20",
+      "action": {
+        "action": "add_box",
+        "name": "Gulrot & Agurk",
+        "bedType": "open",
+        "sunExposure": "sun",
+        "depthCm": 25
+      },
+      "result": {
+        "ok": true,
+        "handle": "C",
+        "note": "kasse C «Gulrot & Agurk»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 3,
+      "simDate": "2026-03-20",
+      "doy": 79,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "action",
+      "step": 3,
+      "simDate": "2026-03-20",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "purre",
+        "quantity": 5
+      },
+      "result": {
+        "ok": true,
+        "handle": "#2",
+        "note": "sådde purre inne (forkultivering) som #2"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 4,
+      "simDate": "2026-03-20",
+      "doy": 79,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "action",
+      "step": 4,
+      "simDate": "2026-03-20",
+      "action": {
+        "action": "sow_outdoor",
+        "plant": "løk",
+        "box": "A",
+        "quantity": 5
+      },
+      "result": {
+        "ok": true,
+        "handle": "#3",
+        "note": "sådde løk ute i kasse A som #3"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 5,
+      "simDate": "2026-03-20",
+      "doy": 79,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 5,
+      "simDate": "2026-03-21",
+      "action": {
+        "action": "advance_days",
+        "days": 1
+      },
+      "result": {
+        "ok": true,
+        "note": "→ 2026-03-21 (doy 80)"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 6,
+      "simDate": "2026-03-21",
+      "doy": 80,
+      "offered": {
+        "sowIndoor": [
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 6,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 90,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. apr"
+        },
+        "note": "→ 1. apr 2026-03-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 6,
+      "simDate": "2026-03-31",
+      "label": "1. apr",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 7,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "tomat_stor",
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 7,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "add_box",
+        "name": "Dypdyr",
+        "bedType": "raised",
+        "sunExposure": "partial",
+        "depthCm": 20
+      },
+      "result": {
+        "ok": true,
+        "handle": "D",
+        "note": "kasse D «Dypdyr»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 8,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "tomat_stor",
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 8,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_stor",
+        "quantity": 3
+      },
+      "result": {
+        "ok": true,
+        "handle": "#4",
+        "note": "sådde tomat_stor inne (forkultivering) som #4"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 9,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "tomat_stor",
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 9,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "add_box",
+        "name": "Kasse E",
+        "bedType": "open",
+        "sunExposure": "partial",
+        "depthCm": 20
+      },
+      "result": {
+        "ok": true,
+        "handle": "E",
+        "note": "kasse E «Kasse E»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 10,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "tomat_stor",
+          "rosmarin",
+          "purre",
+          "løk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 10,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 120,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. mai"
+        },
+        "note": "→ 1. mai 2026-04-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 10,
+      "simDate": "2026-04-30",
+      "label": "1. mai",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 11,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 11,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "agurk",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#5",
+        "note": "sådde agurk inne (forkultivering) som #5"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 12,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 12,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "sow_outdoor",
+        "plant": "åkerbønner",
+        "box": "A",
+        "quantity": 1
+      },
+      "result": {
+        "ok": true,
+        "handle": "#6",
+        "note": "sådde åkerbønner ute i kasse A som #6"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 13,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 13,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "add_box",
+        "name": "Kasse F",
+        "bedType": "open",
+        "sunExposure": "partial",
+        "depthCm": 20
+      },
+      "result": {
+        "ok": true,
+        "handle": "F",
+        "note": "kasse F «Kasse F»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 14,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "rossmarin",
+        "quantity": 1
+      },
+      "result": {
+        "ok": false,
+        "error": "unknown plant \"rossmarin\" — use a key from the catalog"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 15,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 15,
+      "simDate": "2026-05-28",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 148,
+          "year": 2026,
+          "kind": "last-frost",
+          "label": "siste vårfrost"
+        },
+        "note": "→ siste vårfrost 2026-05-28"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 15,
+      "simDate": "2026-05-28",
+      "label": "siste vårfrost",
+      "eventKind": "last-frost"
+    },
+    {
+      "kind": "observe",
+      "step": 16,
+      "simDate": "2026-05-28",
+      "doy": 148,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 16,
+      "simDate": "2026-05-28",
+      "action": {
+        "action": "plant_out",
+        "planting": "#2",
+        "box": "A"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #2 i kasse A"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 17,
+      "simDate": "2026-05-28",
+      "doy": 148,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 17,
+      "simDate": "2026-05-28",
+      "action": {
+        "action": "add_box",
+        "name": "Kasse G",
+        "bedType": "open",
+        "sunExposure": "partial",
+        "depthCm": 20
+      },
+      "result": {
+        "ok": true,
+        "handle": "G",
+        "note": "kasse G «Kasse G»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 18,
+      "simDate": "2026-05-28",
+      "doy": 148,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 18,
+      "simDate": "2026-05-28",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_stor",
+        "quantity": 3
+      },
+      "result": {
+        "ok": true,
+        "handle": "#7",
+        "note": "sådde tomat_stor inne (forkultivering) som #7"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 19,
+      "simDate": "2026-05-28",
+      "doy": 148,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 19,
+      "simDate": "2026-06-11",
+      "action": {
+        "action": "advance_days",
+        "days": 14
+      },
+      "result": {
+        "ok": true,
+        "note": "→ 2026-06-11 (doy 162)"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 20,
+      "simDate": "2026-06-11",
+      "doy": 162,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "bønner",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "solsikke",
+          "potet",
+          "reddik",
+          "persillerot",
+          "kålrot"
+        ],
+        "plantOut": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "agurk",
+          "jordbær",
+          "paprika",
+          "gresskar",
+          "timian",
+          "rosmarin",
+          "squash",
+          "mais",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 20,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 171,
+          "year": 2026,
+          "kind": "solstice",
+          "label": "sommersolverv"
+        },
+        "note": "→ sommersolverv 2026-06-20"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 20,
+      "simDate": "2026-06-20",
+      "label": "sommersolverv",
+      "eventKind": "solstice"
+    },
+    {
+      "kind": "observe",
+      "step": 21,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 21,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "plant_out",
+        "planting": "#1",
+        "box": "G"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #1 i kasse G"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 22,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 22,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "add_box",
+        "name": "Kasse H",
+        "bedType": "open",
+        "sunExposure": "partial",
+        "depthCm": 20
+      },
+      "result": {
+        "ok": true,
+        "handle": "H",
+        "note": "kasse H «Kasse H»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 23,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 23,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_stor",
+        "quantity": 4
+      },
+      "result": {
+        "ok": true,
+        "handle": "#8",
+        "note": "sådde tomat_stor inne (forkultivering) som #8"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 24,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 24,
+      "simDate": "2026-06-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 181,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. jul"
+        },
+        "note": "→ 1. jul 2026-06-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 24,
+      "simDate": "2026-06-30",
+      "label": "1. jul",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 25,
+      "simDate": "2026-06-30",
+      "doy": 181,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "reddik"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 25,
+      "simDate": "2026-06-30",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 4
+      },
+      "result": {
+        "ok": true,
+        "handle": "#9",
+        "note": "sådde tomat_cherry inne (forkultivering) som #9"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 26,
+      "simDate": "2026-06-30",
+      "doy": 181,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "reddik"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 26,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 212,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. aug"
+        },
+        "note": "→ 1. aug 2026-07-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 26,
+      "simDate": "2026-07-31",
+      "label": "1. aug",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 27,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#6 åkerbønner (ready)"
+        ],
+        "warnings": [
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 27,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "harvest",
+        "planting": "#6",
+        "yield": "Avling av åkerbønner"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #6 (Avling av åkerbønner)"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 28,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: purre, løk"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 28,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "sow_outdoor",
+        "plant": "purre",
+        "box": "A",
+        "quantity": 4
+      },
+      "result": {
+        "ok": true,
+        "handle": "#10",
+        "note": "sådde purre ute i kasse A som #10"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 29,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: purre, løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 29,
+      "simDate": "2026-08-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 243,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. sep"
+        },
+        "note": "→ 1. sep 2026-08-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 29,
+      "simDate": "2026-08-31",
+      "label": "1. sep",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 30,
+      "simDate": "2026-08-31",
+      "doy": 243,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: purre, løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 30,
+      "simDate": "2026-08-31",
+      "action": {
+        "action": "remove_planting",
+        "planting": "#4",
+        "reason": "failed"
+      },
+      "result": {
+        "ok": true,
+        "note": "feilet #4"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 31,
+      "simDate": "2026-08-31",
+      "doy": 243,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: purre, løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 31,
+      "simDate": "2026-09-19",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 262,
+          "year": 2026,
+          "kind": "first-frost",
+          "label": "første høstfrost"
+        },
+        "note": "→ første høstfrost 2026-09-19"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 31,
+      "simDate": "2026-09-19",
+      "label": "første høstfrost",
+      "eventKind": "first-frost"
+    },
+    {
+      "kind": "observe",
+      "step": 32,
+      "simDate": "2026-09-19",
+      "doy": 262,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: purre, løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 32,
+      "simDate": "2026-09-19",
+      "action": {
+        "action": "harvest",
+        "planting": "#2",
+        "yield": "Avling av purre"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #2 (Avling av purre)"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 33,
+      "simDate": "2026-09-19",
+      "doy": 262,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie amaryllidaceae dyrket her 2026",
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 33,
+      "simDate": "2026-09-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 273,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. okt"
+        },
+        "note": "→ 1. okt 2026-09-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 33,
+      "simDate": "2026-09-30",
+      "label": "1. okt",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 34,
+      "simDate": "2026-09-30",
+      "doy": 273,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie amaryllidaceae dyrket her 2026",
+          "kasse A: familie fabaceae dyrket her 2026",
+          "modner ikke ute: løk, purre"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 34,
+      "simDate": "2026-10-01",
+      "action": {
+        "action": "advance_days",
+        "days": 1
+      },
+      "result": {
+        "ok": true,
+        "note": "→ 2026-10-01 (doy 274)"
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { now } from "./clock";
 import type { PlantInfo, SowRule } from "../types";
 
 // Shared frost-relative sow-window math. Used by the SowNowCard (D2) and the BoxDetail
@@ -5,9 +6,9 @@ import type { PlantInfo, SowRule } from "../types";
 
 /** Today's day-of-year (1–366). */
 export function todayDoy(): number {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
+  const today = now();
+  const start = new Date(today.getFullYear(), 0, 0);
+  const diff = today.getTime() - start.getTime();
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
@@ -78,4 +79,32 @@ export function transplantReadiness(
     return { status: "overdue", weeks: Math.round(weeksFromLF - max) };
   }
   return { status: "ready", weeks: 0 };
+}
+
+/** A warm-season crop that frost kills/damages (set from the catalog's `frostTender` flag). */
+export function isFrostTender(plant: PlantInfo): boolean {
+  return plant.frostTender === true;
+}
+
+/**
+ * Soft caution shown when an indoor seedling of a frost-tender crop is planted out *before* the last
+ * spring frost (`doy < lastFrostDoy`) — a late frost can kill it. Mirrors the rotation / won't-ripen
+ * cautions: returns a Norwegian message, or null when there's nothing to warn about. Pure (formats the
+ * frost date from a fixed reference year — last frost is always in spring, so no leap-day ambiguity).
+ */
+export function frostTenderPlantOutCaution(
+  plant: PlantInfo,
+  lastFrostDoy: number,
+  doy = todayDoy(),
+): string | null {
+  if (!isFrostTender(plant) || doy >= lastFrostDoy) {
+    return null;
+  }
+  // Format the frost day-of-year as dd.mm off a fixed non-leap year (last frost is always in spring,
+  // so no Feb-29 ambiguity). Inlined to keep this module free of the store-backed seasonTimeline chain.
+  const frostDate = new Date(2001, 0, 1);
+  frostDate.setDate(frostDate.getDate() + Math.round(lastFrostDoy) - 1);
+  const dd = String(frostDate.getDate()).padStart(2, "0");
+  const mm = String(frostDate.getMonth() + 1).padStart(2, "0");
+  return `Frostømfintlig plante — siste vårfrost er ca. ${dd}.${mm}. Frost før det kan skade utplantede planter.`;
 }

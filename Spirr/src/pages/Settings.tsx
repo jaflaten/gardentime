@@ -9,7 +9,7 @@ import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
 import { FAMILY_INFO } from "../lib/families";
 import { findPostnummer, formatDoy, isValidPostnummer, resolveLocation } from "../lib/location";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
-import bundledGardenBackup from "../resources/spirr-v2.json";
+import bundledGardenBackup from "../resources/spirr-v3.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useLocationStore } from "../store/useLocationStore";
