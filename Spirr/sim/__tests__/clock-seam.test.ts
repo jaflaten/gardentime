@@ -32,6 +32,19 @@ describe("clock seam", () => {
     expect(isOverridden()).toBe(false);
   });
 
+  it("anchors date-only strings to the local calendar day (not UTC midnight)", () => {
+    setNow("2026-03-15");
+    expect(now().getFullYear()).toBe(2026);
+    expect(now().getMonth()).toBe(2); // March
+    expect(now().getDate()).toBe(15); // not the 14th in negative-offset zones
+  });
+
+  it("ignores unparsable input and stays on real time", () => {
+    setNow("not-a-date");
+    expect(isOverridden()).toBe(false);
+    expect(Number.isNaN(now().getTime())).toBe(false);
+  });
+
   it("todayDoy() follows the simulated clock", () => {
     setNow("2026-01-01");
     expect(todayDoy()).toBe(1);
