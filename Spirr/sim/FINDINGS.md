@@ -42,6 +42,20 @@ GDD threshold for alliums whose edible part doesn't need full maturity. Not nece
 concrete data point for whoever calibrates `gddToMaturity`/`gddBase` per crop. (Heat-lovers like tomat/
 paprika flagging won't-ripen there is correct.)
 
+### A5. `set_location` dead-ends on a missing postnummer, and the model can't recover *(2026-06-21)*
+In `first-time-empty-vestland-march` the eager-beginner kept calling `set_location` with postnummer
+**4065** — which **isn't in the 5132-entry dataset** (4063/4068/4070 are, 4065 is a real-looking gap) —
+got `did not resolve to a station`, and **fixated: 48 steps, 48 errors, 0 plants, watchdog force-advanced
+8×**, season ended empty. The judge flagged it: *"ignored a clear error and kept doing invalid actions."*
+Two angles, both worth a look:
+- **Product:** postnummer **coverage gaps** are real (4065 looks valid but resolves to nothing), and the
+  error message *"did not resolve to a station"* offers no recovery path. A real user typing 4065 hits the
+  same wall. Consider nearest-postnummer fallback (4065 → 4063/4068) or a "fant ikke — prøv et nærliggende
+  postnummer" hint. Surfaced now via the new `Sesongresultat` block (sådd 0, høstet 0 = nothing happened).
+- **Harness:** a stuck model retrying the same failing action is the watchdog's job, but 48/48 errored is a
+  signal the system prompt should tell the gardener to *try a different value* after a `set_location` failure
+  (and scenarios that gate everything behind location could pre-seed it, like the others do).
+
 ### A4. Confirmed-good behaviour (no action needed, but worth knowing it works)
 - Identity continuity holds everywhere: indoor `plantedDate` preserved through plant-out, `year` never
   drifts, no NaN/throws across any run (the LLM's weird sequences fuzzed the libs clean).

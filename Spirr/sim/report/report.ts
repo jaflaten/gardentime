@@ -6,6 +6,7 @@ import type { AgentRunSummary } from "../gardener/agent";
 import type { InvariantResult } from "../eval/invariants";
 import type { Transcript, TranscriptEntry } from "../observe/log";
 import type { FrictionFinding } from "../eval/judge";
+import { computeSeasonOutcome, type SeasonOutcome } from "../eval/outcome";
 
 export interface RunReport {
   scenario: string;
@@ -16,6 +17,8 @@ export interface RunReport {
   summary: AgentRunSummary;
   invariants: InvariantResult[];
   invariantsGreen: boolean;
+  /** Descriptive season-outcome telemetry (not pass/fail) — quantifies harvest behaviour (A1). */
+  outcome: SeasonOutcome;
   friction?: FrictionFinding[];
   transcript: TranscriptEntry[];
 }
@@ -39,6 +42,7 @@ export function buildReport(
     summary,
     invariants,
     invariantsGreen: invariants.every((i) => i.ok),
+    outcome: computeSeasonOutcome(transcript.entries),
     friction,
     transcript: transcript.entries,
   };
@@ -83,6 +87,17 @@ export function reportToMarkdown(r: RunReport): string {
   lines.push(
     `Steg: ${r.summary.steps} · LLM-kall: ${r.summary.llmCalls} · tids-hopp: ${r.summary.advances} (tvungne: ${r.summary.forcedAdvances}) · feil: ${r.summary.errors} · eval-tokens: ${r.summary.evalTokens} · sluttdato: ${r.summary.finalDate}`,
   );
+  if (r.outcome) {
+    const o = r.outcome;
+    lines.push("");
+    lines.push(`### Sesongresultat (beskrivende, ikke pass/fail)`);
+    lines.push(
+      `Gartnerens handlinger — sådd: ${o.sown} · plantet ut: ${o.plantedOut} · høstet: ${o.harvested} · fjernet/mislyktes: ${o.removedOrFailed}`,
+    );
+    lines.push(
+      `Høsting — modne signaler vist: ${o.harvestSignalsOffered} · faktisk høstet: ${o.harvested} · modne uhøstet ved sesongslutt: ${o.ripeAtSeasonEnd}`,
+    );
+  }
   lines.push("");
   lines.push(`## Invarianter — ${r.invariantsGreen ? "✅ ALLE GRØNNE" : "❌ BRUDD"}`);
   for (const inv of r.invariants) {
