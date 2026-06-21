@@ -3,7 +3,9 @@
 // one reprompt, not a crashed run.
 
 import type { BedType, SunExposure } from "../../src/lib/boxMeta";
-import type { PlantInfo } from "../../src/types";
+import { FAMILY_INFO } from "../../src/lib/families";
+import type { PlantFamily } from "../../src/lib/families";
+import type { HarvestRule, PlantInfo, SowRule } from "../../src/types";
 
 export type GardenAction =
   | { action: "set_location"; postnummer: string; elevationM?: number; frostJusteringDays?: number }
@@ -23,7 +25,19 @@ export type GardenAction =
   | { action: "remove_planting"; planting: string; reason: "removed" | "failed" }
   | { action: "advance_days"; days: number }
   | { action: "advance_to_next_event" }
-  | { action: "note"; text: string };
+  | { action: "note"; text: string }
+  | {
+      action: "add_custom_plant";
+      name_no: string;
+      emoji?: string;
+      category: PlantInfo["category"];
+      family: PlantFamily;
+      gddToMaturity?: number;
+      gddBase?: 5 | 10;
+      frostTender?: boolean;
+      sowRules?: SowRule[];
+      harvestRule?: HarvestRule;
+    };
 
 export const ACTION_NAMES = [
   "set_location",
@@ -36,10 +50,13 @@ export const ACTION_NAMES = [
   "advance_days",
   "advance_to_next_event",
   "note",
+  "add_custom_plant",
 ] as const;
 
 const BED_TYPES: BedType[] = ["open", "raised", "container", "greenhouse", "tunnel"];
 const SUN_EXPOSURES: SunExposure[] = ["sun", "partial", "shade"];
+const PLANT_CATEGORIES: PlantInfo["category"][] = ["vegetable", "herb", "fruit", "flower"];
+const PLANT_FAMILIES = Object.keys(FAMILY_INFO) as PlantFamily[];
 
 export interface ValidationOk {
   ok: true;
@@ -148,6 +165,38 @@ export function validateAction(raw: unknown): ValidationOk | ValidationErr {
         return { ok: false, error: "note needs `text`" };
       }
       return { ok: true, action: { action: "note", text } };
+    }
+    case "add_custom_plant": {
+      const name_no = str(o.name_no) ?? str(o.name);
+      if (!name_no) {
+        return { ok: false, error: "add_custom_plant needs a `name_no`" };
+      }
+      const category = str(o.category) as PlantInfo["category"] | undefined;
+      if (!category || !PLANT_CATEGORIES.includes(category)) {
+        return { ok: false, error: `add_custom_plant category must be one of ${PLANT_CATEGORIES.join(", ")}` };
+      }
+      const family = str(o.family) as PlantFamily | undefined;
+      if (!family || !PLANT_FAMILIES.includes(family)) {
+        return { ok: false, error: `add_custom_plant family must be one of ${PLANT_FAMILIES.join(", ")}` };
+      }
+      const gddBase = num(o.gddBase);
+      return {
+        ok: true,
+        action: {
+          action: "add_custom_plant",
+          name_no,
+          emoji: str(o.emoji) ?? "🌱",
+          category,
+          family,
+          gddToMaturity: num(o.gddToMaturity),
+          gddBase: gddBase === 10 ? 10 : gddBase === 5 ? 5 : undefined,
+          frostTender: o.frostTender === true || o.frostTender === "true" ? true : undefined,
+          // Optional rules passed through loosely — if malformed the plant is still created (it just
+          // won't surface in the sow-window/harvest groups), keeping one bad field from failing the run.
+          sowRules: Array.isArray(o.sowRules) ? (o.sowRules as SowRule[]) : undefined,
+          harvestRule: o.harvestRule && typeof o.harvestRule === "object" ? (o.harvestRule as HarvestRule) : undefined,
+        },
+      };
     }
     default:
       return { ok: false, error: `unknown action "${a}"; expected one of ${ACTION_NAMES.join(", ")}` };

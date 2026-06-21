@@ -9,6 +9,8 @@ import type { HandleRegistry } from "./handles";
 import type { GardenAction } from "./schema";
 import type { ActionResult } from "../observe/log";
 import { isIndoorSeedling } from "../../src/lib/planting";
+import { frostTenderPlantOutCaution } from "../../src/lib/sowWindow";
+import type { CustomPlantInput } from "../../src/store/useCustomPlantsStore";
 
 export interface ApplyOutcome extends ActionResult {
   /** The seasonal event crossed by an advance action, if any (for the transcript). */
@@ -51,7 +53,27 @@ export class AppDriver {
       }
       case "note":
         return { ok: true, note: action.text };
+      case "add_custom_plant":
+        return this.addCustomPlant(action);
     }
+  }
+
+  private addCustomPlant(a: Extract<GardenAction, { action: "add_custom_plant" }>): ApplyOutcome {
+    const input: CustomPlantInput = {
+      name_no: a.name_no,
+      name_pl: a.name_no,
+      name_en: a.name_no,
+      emoji: a.emoji ?? "🌱",
+      category: a.category,
+      family: a.family,
+      gddToMaturity: a.gddToMaturity,
+      gddBase: a.gddBase,
+      frostTender: a.frostTender,
+      sowRules: a.sowRules,
+      harvestRule: a.harvestRule,
+    };
+    const plant = this.ctx.customPlantsStore.getState().addPlant(input);
+    return { ok: true, note: `lagde egendefinert plante «${a.name_no}» (key ${plant.key})` };
   }
 
   private setLocation(a: Extract<GardenAction, { action: "set_location" }>): ApplyOutcome {
@@ -132,7 +154,12 @@ export class AppDriver {
     }
     // Preserve plantedDate (indoor sow date); only set boxId + transplantedDate. Identity continuity.
     this.garden.updatePlanting(id, { boxId, transplantedDate: this.clock.iso() });
-    return { ok: true, note: `plantet ut ${plantingHandle} i kasse ${boxHandle}` };
+    // A2: a frost-tender seedling planted out before last frost gets a soft caution (the app would
+    // show one here) — recorded on the result note so the transcript/judge can see the early plant-out.
+    const plant = this.ctx.findPlant(pl.plantKey);
+    const resolved = this.ctx.locationStore.getState().resolved();
+    const caution = plant && resolved ? frostTenderPlantOutCaution(plant, resolved.lastFrostDoy, this.clock.doy()) : null;
+    return { ok: true, note: `plantet ut ${plantingHandle} i kasse ${boxHandle}${caution ? ` — ⚠ ${caution}` : ""}` };
   }
 
   private harvest(plantingHandle: string, harvestYield?: string): ApplyOutcome {

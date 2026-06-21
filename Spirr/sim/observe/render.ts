@@ -56,7 +56,8 @@ export function renderSnapshot(g: ObservedGarden): string {
   }
   for (const s of g.seedlings) {
     const r = s.readiness ? `${s.readiness}${s.weeks ? ` (~${s.weeks} uker)` : ""}` : "ingen utplantingsvindu";
-    lines.push(`${s.handle} ${s.plantKey} (${s.ageLabel || "ny"}) — plant ut: ${r}`);
+    const frost = s.frostRisk ? " ⚠ frostømfintlig — risiko ved utplanting før siste vårfrost" : "";
+    lines.push(`${s.handle} ${s.plantKey} (${s.ageLabel || "ny"}) — plant ut: ${r}${frost}`);
   }
 
   lines.push("");
@@ -72,6 +73,12 @@ export function renderSnapshot(g: ObservedGarden): string {
     lines.push("");
     lines.push(`## ⚠ Modner ikke ute her (for kaldt) — vurder drivhus/tunnel`);
     lines.push(plantList(g.wontRipen));
+  }
+
+  if (g.customPlants.length > 0) {
+    lines.push("");
+    lines.push(`## Egendefinerte planter (dine egne — bruk key i plant-feltet)`);
+    lines.push(plantList(g.customPlants));
   }
 
   lines.push("");

@@ -24,6 +24,8 @@ export function SowBoxPicker({
   onPick,
   /** Override the heading verb. Defaults to "så" (sow); "Plant ut" passes "plante ut". */
   verb = "så",
+  /** Optional soft caution shown above the box list (e.g. frost-tender plant-out before last frost). */
+  caution,
 }: {
   boxes: Box[];
   plant: PlantInfo | undefined;
@@ -32,6 +34,7 @@ export function SowBoxPicker({
   onCancel: () => void;
   onPick: (boxId: string) => void;
   verb?: string;
+  caution?: string | null;
 }) {
   const plantLanguage = useUiStore((state) => state.plantLanguage);
 
@@ -74,6 +77,14 @@ export function SowBoxPicker({
             ✕
           </button>
         </div>
+        {caution && (
+          <p
+            className="mx-3 mt-3 rounded-lg border px-3 py-2 text-xs"
+            style={{ borderColor: "var(--amber)", backgroundColor: "var(--amber-light, var(--bg))", color: "var(--amber)" }}
+          >
+            ⚠️ {caution}
+          </p>
+        )}
         {boxes.length === 0 ? (
           <p className="p-3 text-sm" style={{ color: "var(--text-muted)" }}>
             Ingen kasser ennå. Lag en kasse først.

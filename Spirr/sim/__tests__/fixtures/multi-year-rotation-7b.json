@@ -1,0 +1,1560 @@
+{
+  "scenario": "multi-year-rotation-veteran",
+  "title": "Vekstskifte over flere sesonger (Testhage, 4. sesong)",
+  "model": "qwen2.5:7b",
+  "persona": "methodical-veteran",
+  "generatedAt": "2026-06-21T08:37:29.239Z",
+  "summary": {
+    "steps": 28,
+    "llmCalls": 28,
+    "advances": 10,
+    "errors": 3,
+    "forcedAdvances": 0,
+    "evalTokens": 486,
+    "finalDate": "2026-10-17"
+  },
+  "invariants": [
+    {
+      "name": "unique planting ids",
+      "ok": true,
+      "detail": "32 unique"
+    },
+    {
+      "name": "boxed plantings reference a real box",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "year matches plantedDate",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "harvestDate >= plantedDate",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "transplantedDate >= plantedDate (identity continuity)",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "no NaN/unparseable dates",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "indoor seedlings excluded from timeline",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "garden stats finite",
+      "ok": true,
+      "detail": "8 active"
+    },
+    {
+      "name": "composition counts boxed actives only",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "rotation flags are sound (real repeat within lookback)",
+      "ok": true,
+      "detail": "10 box-rows checked"
+    },
+    {
+      "name": "no perennial-only family flagged for rotation",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "all actions structured (no throw)",
+      "ok": true,
+      "detail": "ok"
+    }
+  ],
+  "invariantsGreen": true,
+  "friction": [
+    {
+      "severity": "high",
+      "title": "Ignorer av anbefaling om vekstskifte",
+      "evidence": "[2026-03-15] APP: ⚠:kasse A: familie solanaceae dyrket her 2026, 2025, 2024 | kasse B: familie asteraceae dyrket her 2024 | kasse B: familie fabaceae dyrket her 2025 | kasse B: familie apiaceae dyrket her 2026 | kasse C: familie solanaceae dyrket her 2025 | kasse D: familie asteraceae dyrket her 2025 | kasse E: familie amaranthaceae dyrket her 2025 | kasse G: familie poaceae dyrket her 2024 | kasse G: familie cucurbitaceae dyrket her 2025 | kasse I: familie amaryllidaceae dyrket her 2025 | kasse K: familie asteraceae dyrket her 2025",
+      "suggestion": "Gjenta vekstskifte-advarsler for å unngå skade på jordbær og andre sensitives planter."
+    },
+    {
+      "severity": "medium",
+      "title": "Feil i planting av ukjent plantetype",
+      "evidence": "[2026-05-04] GARTNER sow_outdoor FEIL:unknown plant \"#17\" — use a key from the catalog | [2026-05-31] APP: høst-snart:#16 jordbær, #15 erter, #10 basilikum (soon)",
+      "suggestion": "Sjekk og oppdatere plantekatalogen for å unngå feil i fremtidige planteringer."
+    },
+    {
+      "severity": "medium",
+      "title": "Forsøk på å plantet ut en allerede plantet ut plant",
+      "evidence": "[2026-09-30] GARTNER remove_planting (feilet #30)",
+      "suggestion": "Implementer mer utfordring eller feilmelding når en plant er allerede plantet ut."
+    },
+    {
+      "severity": "low",
+      "title": "Forsøk på å plantere uforvalte plantetyper",
+      "evidence": "[2026-05-04] GARTNER sow_outdoor FEIL:unknown plant \"#17\" — use a key from the catalog | [2026-09-30] APP: høst-snart:#24 paprika (ready), #11 persille (ready), #22 custom_demo01 (soon)",
+      "suggestion": "Oppgi mer utfordring eller feilmelding når en ukjent plantetype er valgt."
+    },
+    {
+      "severity": "low",
+      "title": "Feil i plantering av uforvalte plantetyper",
+      "evidence": "[2026-05-31] GARTNER plant_out FEIL:#30 is already planted out (in a box)",
+      "suggestion": "Oppgi mer utfordring eller feilmelding når en plant er allerede plantet ut."
+    },
+    {
+      "severity": "low",
+      "title": "Forsøk på å plantere uforvalte plantetyper",
+      "evidence": "[2026-09-30] APP: høst-snart:#24 paprika (ready), #11 persille (ready), #22 custom_demo01 (soon)",
+      "suggestion": "Oppgi mer utfordring eller feilmelding når en ukjent plantetype er valgt."
+    }
+  ],
+  "transcript": [
+    {
+      "kind": "observe",
+      "step": 1,
+      "simDate": "2026-03-15",
+      "doy": 74,
+      "offered": {
+        "sowIndoor": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "persille",
+          "timian",
+          "gressløk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 1,
+      "simDate": "2026-03-15",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#25",
+        "note": "sådde tomat_cherry inne (forkultivering) som #25"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 2,
+      "simDate": "2026-03-15",
+      "doy": 74,
+      "offered": {
+        "sowIndoor": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "persille",
+          "timian",
+          "gressløk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 2,
+      "simDate": "2026-03-15",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_stor",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#26",
+        "note": "sådde tomat_stor inne (forkultivering) som #26"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 3,
+      "simDate": "2026-03-15",
+      "doy": 74,
+      "offered": {
+        "sowIndoor": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "persille",
+          "timian",
+          "gressløk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 3,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 90,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. apr"
+        },
+        "note": "→ 1. apr 2026-03-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 3,
+      "simDate": "2026-03-31",
+      "label": "1. apr",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 4,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 4,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "agurk",
+        "quantity": 5
+      },
+      "result": {
+        "ok": true,
+        "handle": "#27",
+        "note": "sådde agurk inne (forkultivering) som #27"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 5,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 5,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "agurk",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#28",
+        "note": "sådde agurk inne (forkultivering) som #28"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 6,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 6,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 2
+      },
+      "result": {
+        "ok": true,
+        "handle": "#29",
+        "note": "sådde tomat_cherry inne (forkultivering) som #29"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 7,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 7,
+      "simDate": "2026-03-31",
+      "action": {
+        "action": "sow_outdoor",
+        "plant": "hpg4",
+        "box": "H",
+        "quantity": 5
+      },
+      "result": {
+        "ok": false,
+        "error": "unknown plant \"hpg4\" — use a key from the catalog"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 8,
+      "simDate": "2026-03-31",
+      "doy": 90,
+      "offered": {
+        "sowIndoor": [
+          "agurk",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 8,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 120,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. mai"
+        },
+        "note": "→ 1. mai 2026-04-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 8,
+      "simDate": "2026-04-30",
+      "label": "1. mai",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 9,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 9,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 1
+      },
+      "result": {
+        "ok": true,
+        "handle": "#30",
+        "note": "sådde tomat_cherry inne (forkultivering) som #30"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 10,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 10,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "add_box",
+        "name": "Grønnhuse 2",
+        "bedType": "greenhouse",
+        "sunExposure": "sun",
+        "depthCm": 30
+      },
+      "result": {
+        "ok": true,
+        "handle": "L",
+        "note": "kasse L «Grønnhuse 2»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 11,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 11,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "add_box",
+        "name": "Eksperiment2",
+        "bedType": "open",
+        "sunExposure": "partial",
+        "depthCm": 25
+      },
+      "result": {
+        "ok": true,
+        "handle": "M",
+        "note": "kasse M «Eksperiment2»"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 12,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 12,
+      "simDate": "2026-04-30",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 1
+      },
+      "result": {
+        "ok": true,
+        "handle": "#31",
+        "note": "sådde tomat_cherry inne (forkultivering) som #31"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 13,
+      "simDate": "2026-04-30",
+      "doy": 120,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 13,
+      "simDate": "2026-05-04",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 124,
+          "year": 2026,
+          "kind": "last-frost",
+          "label": "siste vårfrost"
+        },
+        "note": "→ siste vårfrost 2026-05-04"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 13,
+      "simDate": "2026-05-04",
+      "label": "siste vårfrost",
+      "eventKind": "last-frost"
+    },
+    {
+      "kind": "observe",
+      "step": 14,
+      "simDate": "2026-05-04",
+      "doy": 124,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål",
+          "custom_demo01"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-05-04",
+      "action": {
+        "action": "sow_outdoor",
+        "plant": "#17",
+        "box": "H",
+        "quantity": 1
+      },
+      "result": {
+        "ok": false,
+        "error": "unknown plant \"#17\" — use a key from the catalog"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 15,
+      "simDate": "2026-05-04",
+      "doy": 124,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål",
+          "custom_demo01"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 15,
+      "simDate": "2026-05-04",
+      "action": {
+        "action": "plant_out",
+        "planting": "#30",
+        "box": "A"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #30 i kasse A"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 16,
+      "simDate": "2026-05-04",
+      "doy": 124,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "erter",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "åkerbønner",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål",
+          "custom_demo01"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 16,
+      "simDate": "2026-05-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 151,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. jun"
+        },
+        "note": "→ 1. jun 2026-05-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 16,
+      "simDate": "2026-05-31",
+      "label": "1. jun",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 17,
+      "simDate": "2026-05-31",
+      "doy": 151,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 17,
+      "simDate": "2026-05-31",
+      "action": {
+        "action": "plant_out",
+        "planting": "#24",
+        "box": "H"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #24 i kasse H"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 18,
+      "simDate": "2026-05-31",
+      "doy": 151,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 18,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 171,
+          "year": 2026,
+          "kind": "solstice",
+          "label": "sommersolverv"
+        },
+        "note": "→ sommersolverv 2026-06-20"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 18,
+      "simDate": "2026-06-20",
+      "label": "sommersolverv",
+      "eventKind": "solstice"
+    },
+    {
+      "kind": "observe",
+      "step": 19,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#16 jordbær (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 19,
+      "simDate": "2026-06-20",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "tomat_cherry",
+        "quantity": 5
+      },
+      "result": {
+        "ok": true,
+        "handle": "#32",
+        "note": "sådde tomat_cherry inne (forkultivering) som #32"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 20,
+      "simDate": "2026-06-20",
+      "doy": 171,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#16 jordbær (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 20,
+      "simDate": "2026-06-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 181,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. jul"
+        },
+        "note": "→ 1. jul 2026-06-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 20,
+      "simDate": "2026-06-30",
+      "label": "1. jul",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 21,
+      "simDate": "2026-06-30",
+      "doy": 181,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#16 jordbær (ready)",
+          "#15 erter (soon)",
+          "#10 basilikum (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 21,
+      "simDate": "2026-06-30",
+      "action": {
+        "action": "plant_out",
+        "planting": "#32",
+        "box": "H"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #32 i kasse H"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 22,
+      "simDate": "2026-06-30",
+      "doy": 181,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#16 jordbær (ready)",
+          "#15 erter (soon)",
+          "#10 basilikum (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 22,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 212,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. aug"
+        },
+        "note": "→ 1. aug 2026-07-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 22,
+      "simDate": "2026-07-31",
+      "label": "1. aug",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 23,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#16 jordbær (ready)",
+          "#30 tomat_cherry (ready)",
+          "#15 erter (ready)",
+          "#10 basilikum (ready)",
+          "#11 persille (ready)",
+          "#19 timian (soon)",
+          "#17 agurk (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 23,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "harvest",
+        "planting": "#16",
+        "yield": "Eter høstet jordbær fra kasse G."
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #16 (Eter høstet jordbær fra kasse G.)"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 24,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#30 tomat_cherry (ready)",
+          "#15 erter (ready)",
+          "#10 basilikum (ready)",
+          "#11 persille (ready)",
+          "#19 timian (soon)",
+          "#17 agurk (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 24,
+      "simDate": "2026-07-31",
+      "action": {
+        "action": "plant_out",
+        "planting": "#30",
+        "box": "H"
+      },
+      "result": {
+        "ok": false,
+        "error": "#30 is already planted out (in a box)",
+        "noop": true
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 25,
+      "simDate": "2026-07-31",
+      "doy": 212,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#30 tomat_cherry (ready)",
+          "#15 erter (ready)",
+          "#10 basilikum (ready)",
+          "#11 persille (ready)",
+          "#19 timian (soon)",
+          "#17 agurk (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 25,
+      "simDate": "2026-08-31",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 243,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. sep"
+        },
+        "note": "→ 1. sep 2026-08-31"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 25,
+      "simDate": "2026-08-31",
+      "label": "1. sep",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 26,
+      "simDate": "2026-08-31",
+      "doy": 243,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#30 tomat_cherry (ready)",
+          "#10 basilikum (ready)",
+          "#24 paprika (soon)",
+          "#11 persille (ready)",
+          "#17 agurk (ready)",
+          "#32 tomat_cherry (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 26,
+      "simDate": "2026-09-30",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 273,
+          "year": 2026,
+          "kind": "month-start",
+          "label": "1. okt"
+        },
+        "note": "→ 1. okt 2026-09-30"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 26,
+      "simDate": "2026-09-30",
+      "label": "1. okt",
+      "eventKind": "month-start"
+    },
+    {
+      "kind": "observe",
+      "step": 27,
+      "simDate": "2026-09-30",
+      "doy": 273,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#30 tomat_cherry (ready)",
+          "#24 paprika (ready)",
+          "#11 persille (ready)",
+          "#22 custom_demo01 (soon)",
+          "#32 tomat_cherry (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 27,
+      "simDate": "2026-09-30",
+      "action": {
+        "action": "remove_planting",
+        "planting": "#30",
+        "reason": "failed"
+      },
+      "result": {
+        "ok": true,
+        "note": "feilet #30"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 28,
+      "simDate": "2026-09-30",
+      "doy": 273,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#24 paprika (ready)",
+          "#11 persille (ready)",
+          "#22 custom_demo01 (soon)",
+          "#32 tomat_cherry (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie solanaceae dyrket her 2026, 2025, 2024",
+          "kasse B: familie asteraceae dyrket her 2024",
+          "kasse B: familie fabaceae dyrket her 2025",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie solanaceae dyrket her 2025",
+          "kasse D: familie asteraceae dyrket her 2025",
+          "kasse E: familie amaranthaceae dyrket her 2025",
+          "kasse G: familie poaceae dyrket her 2024",
+          "kasse G: familie cucurbitaceae dyrket her 2025",
+          "kasse I: familie amaryllidaceae dyrket her 2025",
+          "kasse K: familie asteraceae dyrket her 2025"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 28,
+      "simDate": "2026-10-17",
+      "action": {
+        "action": "advance_to_next_event"
+      },
+      "result": {
+        "ok": true,
+        "event": {
+          "doy": 290,
+          "year": 2026,
+          "kind": "first-frost",
+          "label": "første høstfrost"
+        },
+        "note": "→ første høstfrost 2026-10-17"
+      }
+    },
+    {
+      "kind": "event",
+      "step": 28,
+      "simDate": "2026-10-17",
+      "label": "første høstfrost",
+      "eventKind": "first-frost"
+    }
+  ]
+}

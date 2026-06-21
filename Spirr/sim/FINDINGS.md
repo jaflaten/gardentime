@@ -27,11 +27,13 @@ midsummer harvested once against 37 prompts. 32B harvests far more (11) than 7B 
 model capability — but the gap is wide and consistent enough to suspect the **harvest CTA reads as
 informational, not actionable**. Worth a UX look: does "Høst snart" tell the user *to do something*?
 
-### A2. No caution when planting a frost-tender seedling out *before* last frost *(low confidence / product idea)*
+### A2. No caution when planting a frost-tender seedling out *before* last frost — ✅ DONE (2026-06-21)
 The eager-beginner planted a tomato out on **2026-03-08 (doy 67)** in Sogndal, where last frost is
 **doy 114** — ~6 weeks early, and the app's "Plant ut" group hadn't offered it. The driver allowed it
-(as the real UI would — it's a button on the seedling). **Idea:** a soft caution at plant-out time when
-`doy < lastFrostDoy` for a frost-tender crop, mirroring the existing rotation/won't-ripen cautions.
+(as the real UI would — it's a button on the seedling). **Shipped:** explicit `frostTender` flag on the
+catalog (10 warm-season crops) + pure `frostTenderPlantOutCaution()` in `sowWindow.ts`; a soft amber
+caution in the `SowBoxPicker` "Plant ut" flow; mirrored in the sim (`ObservedSeedling.frostRisk`, the
+gardener's `warnings`, and the driver's plant-out note). Mirrors the rotation/won't-ripen cautions.
 
 ### A3. GDD model flags `løk` and `purre` as "won't ripen" in Alta *(calibration question)*
 In the cold-station scenario, onion and leek are flagged *modner ikke ute her*. Onions/leeks **are**
@@ -50,38 +52,42 @@ paprika flagging won't-ripen there is correct.)
 
 ## B. Harness gaps — what needs improving
 
-### B1. The qualitative layer is thin — `note` is never used, judge runs on ~nothing *(highest priority)*
-- Across all 7 runs the gardener used the `note` verb **0 times**, so the design doc's "gardener wrote a
-  struggle note" friction signal is never captured. Either prompt the model to note confusion explicitly,
-  or accept that friction comes only from the judge.
-- The **LLM-judge is opt-in and was only run on one scenario** (multi-year, which returned 0 — it was a
-  clean run). The judge *does* work (a manual run on the precultivation transcript produced 6 findings
-  incl. the A2 early plant-out), but it needs to run across **all** scenarios to populate the qualitative
-  layer. It also timed out on long transcripts until bounded with `num_predict` — verify it now survives
-  the 59-action precultivation run before trusting it in CI.
+> **Status (2026-06-21): B1–B5 addressed in code.** The only remaining piece is the *operational* re-run
+> of `--judge` on local Ollama to see the prompt changes take effect — the existing 6 judged runs are
+> already collated into `report/out/FRICTION.md`.
 
-### B2. `addCustomPlant` was never implemented *(coverage gap vs. the design doc)*
-The driver/schema has no `add_custom_plant` action — the gardener can't create custom plants (it only
-*observes* the one seeded in demo-garden). The design doc lists `addCustomPlant(...)` as a driver verb.
-Add it so the custom-plant path (and its merge into the sow-window/catalog logic) gets exercised.
+### B1. The qualitative layer is thin — `note` is never used, judge runs on ~nothing — ✅ DONE
+- Added a light `note`-nudge line to the gardener system prompt (encourage a note when something is
+  unclear/missing/surprising). Prompt-only — re-run on Ollama to measure the effect.
+- New `sim/report/friction-summary.ts` collates every report's `--judge` friction into
+  `report/out/FRICTION.md` (currently **29 findings from 6 judged runs**, so the judge already survives
+  the long transcripts). Run `--scenario all --judge` then this script after any fresh batch.
 
-### B3. Observation drift is real and unverified *(the main known risk — confirmed)*
-Finding the won't-ripen gap (crops with no harvest window were invisible to the gardener) is proof this
-class of bug exists: the snapshot is rebuilt from libs, not the actual `.tsx` render. Two follow-ups:
-- Extract the remaining grouping logic from `SowNowCard`/`GardenInsights`/`Seedlings` into pure libs so
-  the snapshot can't diverge from the screen.
-- Wire the **tier-2 browser pass** (`?simNow=` + Chrome DevTools) to assert the rendered cards match the
-  headless snapshot for ≥1 scenario. Nothing currently checks render fidelity.
+### B2. `addCustomPlant` was never implemented — ✅ DONE
+Added the `add_custom_plant` driver verb (`schema.ts` validation + `actions.ts` → `useCustomPlantsStore.addPlant`);
+the generated key is surfaced via the new `ObservedGarden.customPlants` section in `render.ts` so the
+gardener can sow what it just created. Exercises the custom-plant merge into the sow-window/catalog logic.
 
-### B4. Plant-key vs. handle confusion in the prompt *(minor)*
-The model occasionally passed a planting handle (`#17`) or a typo (`rossmarin`, `hpg4`) into the `plant`
-field. Validation caught all of them (structured error, recoverable), but the system prompt could more
-sharply separate "plant **key** from the catalog" from "**handle** like #1/A".
+### B3. Observation drift is real and unverified — ✅ DONE (browser pass = manual step)
+- Extracted the SowNowCard grouping logic into the shared pure lib `src/lib/sowNowGroups.ts`
+  (`groupSowNow`/`groupSuccession`/`harvestSoonForPlanting`/`groupHarvestSoon`); both `SowNowCard.tsx`
+  and `sim/observe/snapshot.ts` now build sow-now + harvest-soon from the *same* functions, so they can't
+  diverge (the snapshot previously computed harvest-soon a different way than the screen).
+- Added `sim/browser-fidelity.ts` — the tier-2 pass: emits the exact `gt_*` localStorage + expected card
+  contents for a fixture, and a `check` mode diffs the scraped DOM (`?simNow=` + Chrome DevTools MCP)
+  against the headless snapshot. *Remaining (manual):* run the live browser scrape for a scenario.
+- *Still inline (minor):* GardenInsights' `groupMaturity` is already pure; `Seedlings` has no complex
+  grouping; the "Suksesjon" group is on screen but not yet mirrored in the snapshot.
 
-### B5. Only the precultivation transcript is frozen as a regression fixture
-The replay/Vitest determinism test covers one scenario. The other 5 (esp. multi-year rotation and
-cold-station, which exercise the most logic) should each be frozen as a committed fixture so a lib change
-that breaks them is caught by `npm test`.
+### B4. Plant-key vs. handle confusion in the prompt — ✅ DONE
+Sharpened the *Regler* in the gardener system prompt to explicitly separate a catalog **key** (used in
+`plant`/`sow` fields) from a **handle** (`#1`/`A` for the gardener's own plantings/boxes), stating "never
+use a handle in the plant field" outright. Validation already caught these; this cuts the reprompt rate.
+
+### B5. Only the precultivation transcript is frozen as a regression fixture — ✅ DONE
+Froze the 5 remaining scenarios as replay fixtures under `sim/__tests__/fixtures/` (each verified green
+via `sim/replay.ts` first) and made `replay-determinism.test.ts` table-driven over all 6 — `npm test` now
+guards every scenario's determinism + invariants.
 
 ---
 
@@ -109,11 +115,13 @@ that breaks them is caught by `npm test`.
 
 ## D. Suggested priority order
 
-1. **Run `--judge` across all 6 scenarios** and read the friction findings (B1) — cheapest way to turn
-   the runs into product feedback. Verify the judge survives the longest transcript first.
-2. **Close observation drift** (B3): extract SowNowCard/GardenInsights grouping to pure libs, then add the
-   tier-2 browser fidelity check. This is the harness's biggest correctness risk.
-3. **Decide on A1 (harvest CTA)** and **A3 (allium GDD calibration)** — both are concrete, both are
-   one-look human decisions.
-4. Add `addCustomPlant` (B2) + the export/import and GDD-anchor invariants (C).
-5. Freeze the remaining scenarios as regression fixtures (B5).
+Original plan — **A2 + B1–B5 shipped 2026-06-21** (see the ✅ markers above). What's left:
+
+1. ~~Run `--judge` across all 6 scenarios (B1)~~ — collated into `report/out/FRICTION.md`. *Remaining:*
+   re-run on Ollama so the new note-nudge prompt takes effect, then re-collate.
+2. ~~Close observation drift (B3)~~ — grouping extracted to `sowNowGroups.ts`; `browser-fidelity.ts`
+   wired. *Remaining (manual):* the live browser scrape for ≥1 scenario.
+3. **Decide on A1 (harvest CTA)** and **A3 (allium GDD calibration)** — both concrete, both one-look
+   human decisions. *(Not yet done.)*
+4. ~~Add `addCustomPlant` (B2)~~ done. *Remaining:* the export/import and GDD-anchor invariants (C).
+5. ~~Freeze the remaining scenarios as regression fixtures (B5)~~ done (all 6 frozen + table-driven test).

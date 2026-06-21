@@ -42,6 +42,9 @@ function summarizeOffered(g: ObservedGarden): OfferedSummary {
     warnings: [
       ...g.boxes.flatMap((b) => b.rotationCautions.map((c) => `kasse ${b.handle}: ${c}`)),
       ...(g.wontRipen.length ? [`modner ikke ute: ${g.wontRipen.map((p) => p.key).join(", ")}`] : []),
+      ...(g.seedlings.some((s) => s.frostRisk)
+        ? [`frostrisiko ved utplanting nå: ${g.seedlings.filter((s) => s.frostRisk).map((s) => s.plantKey).join(", ")}`]
+        : []),
     ],
   };
 }
@@ -66,13 +69,15 @@ function buildSystemPrompt(persona: Persona, catalog: ReturnType<typeof leanCata
     `- {"action":"advance_days","days":N} — la N dager gå.`,
     `- {"action":"advance_to_next_event"} — hopp til neste sesonghendelse (frost, månedsskifte, solverv).`,
     `- {"action":"note","text":"..."} — skriv en kort observasjon (hvis du synes noe er forvirrende eller mangler).`,
+    `- {"action":"add_custom_plant","name_no":"...","category":"vegetable|herb|fruit|flower","family":"...","gddBase":5|10} — lag en egen plante som ikke finnes i katalogen. Du får en ny key tilbake; bruk den i plant-feltet etterpå.`,
     ``,
     `Regler:`,
-    `- Bruk PLANTENØKLER (key), ikke norske navn, i plant-feltet.`,
+    `- plant-feltet skal ALLTID være en PLANTENØKKEL (key) fra katalogen, f.eks. "tomat_cherry" — aldri det norske navnet.`,
+    `- "#1", "#2" er HANDLER for DINE plantinger og "A", "B" for DINE kasser (de vises i tilstanden). Bruk ALDRI en handle (#1/A) i plant-feltet, og aldri en key der det skal stå #-nummer (planting) eller bokstav (kasse).`,
     `- Forkultivering: sow_indoor uten kasse → senere plant_out i en kasse. Direktesåing: sow_outdoor i en kasse.`,
-    `- Kasser refereres med bokstav (A, B, ...); plantinger med #-nummer (#1, #2, ...). Disse vises i tilstanden.`,
     `- Når det ikke er noe meningsfullt å gjøre akkurat nå, MÅ du la tiden gå (advance_to_next_event eller advance_days), ellers stopper sesongen.`,
     `- Følg appens forslag når de gir mening for målet ditt.`,
+    `- Bruk note når noe i appen er uklart, mangler, eller overrasker deg — det hjelper oss å forbedre appen.`,
     ``,
     `Plantekatalog (key (navn, kategori)): ${plants}`,
   ].join("\n");

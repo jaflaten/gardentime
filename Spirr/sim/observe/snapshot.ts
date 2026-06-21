@@ -8,9 +8,11 @@ import type { SimClock } from "../runtime/clock";
 import type { HandleRegistry } from "../driver/handles";
 import type { PlantInfo, Planting } from "../../src/types";
 import type { ResolvedLocation } from "../../src/lib/location";
-import { matchingSowKind, transplantReadiness } from "../../src/lib/sowWindow";
+import { isFrostTender, transplantReadiness } from "../../src/lib/sowWindow";
+import { groupSowNow, harvestSoonForPlanting } from "../../src/lib/sowNowGroups";
 import { isIndoorSeedling, plantedAgeLabel } from "../../src/lib/planting";
-import { buildSeasonTimeline } from "../../src/lib/seasonTimeline";
+import { buildSeasonTimeline, seasonalShiftForPlant } from "../../src/lib/seasonTimeline";
+import { coverGddFactor } from "../../src/lib/gdd";
 import { boxRotationHistory, plantingFamilyResolver, familyConflictYears } from "../../src/lib/rotation";
 import { computeGardenStats } from "../../src/lib/gardenStats";
 
@@ -43,6 +45,8 @@ export interface ObservedSeedling {
   ageLabel: string;
   readiness: "soon" | "ready" | "overdue" | null;
   weeks: number;
+  /** Frost-tender crop whose plant-out now (doy < lastFrostDoy) risks frost damage — the A2 caution. */
+  frostRisk: boolean;
 }
 export interface ObservedHarvest {
   handle: string;
@@ -63,6 +67,8 @@ export interface ObservedGarden {
   harvestSoon: ObservedHarvest[];
   /** Active boxed crops the GDD model says won't ripen outdoors here (no harvest window) — a cold-garden signal. */
   wontRipen: ObservedPlant[];
+  /** Custom plants the gardener has created (add_custom_plant) — surfaced so their keys are discoverable. */
+  customPlants: ObservedPlant[];
   stats: { totalActive: number; distinctSpecies: number; distinctFamilies: number; bedsInUse: number };
 }
 
@@ -100,19 +106,14 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
   const plantings = ctx.gardenStore.getState().plantings;
   const boxes = ctx.gardenStore.getState().boxes;
 
-  // "Hva passer å så nå?" — same sow-window rule the SowNowCard uses, grouped by action kind.
+  // "Hva passer å så nå?" — the SAME grouper the SowNowCard renders (src/lib/sowNowGroups), so the
+  // headless snapshot can't drift from the screen.
   const sowNow = { indoor: [] as ObservedPlant[], outdoor: [] as ObservedPlant[], plantOut: [] as ObservedPlant[] };
   if (resolved) {
-    for (const plant of mergedPlants) {
-      const kind = matchingSowKind(plant, resolved.lastFrostDoy, doy);
-      if (kind === "indoor") {
-        sowNow.indoor.push(lean(plant));
-      } else if (kind === "outdoor") {
-        sowNow.outdoor.push(lean(plant));
-      } else if (kind === "transplant") {
-        sowNow.plantOut.push(lean(plant));
-      }
-    }
+    const groups = groupSowNow(mergedPlants, resolved.lastFrostDoy, doy);
+    sowNow.indoor = groups.indoor.map((r) => lean(r.plant));
+    sowNow.outdoor = groups.outdoor.map((r) => lean(r.plant));
+    sowNow.plantOut = groups.transplant.map((r) => lean(r.plant));
   }
 
   // Boxes + occupancy + per-box rotation caution (the decision-time signal a sow here would raise).
@@ -157,49 +158,43 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
         ageLabel: plantedAgeLabel(p.plantedDate, today),
         readiness: tr?.status ?? null,
         weeks: tr?.weeks ?? 0,
+        frostRisk: !!(plant && resolved && isFrostTender(plant) && doy < resolved.lastFrostDoy),
       };
     });
 
-  // Harvest-soon — reuse the real season timeline, then bucket each boxed planting by where today sits
-  // relative to its computed harvest band. Crops the GDD model says won't ripen here have NO window, so
-  // they never enter harvestSoon — surface them separately (the cold-garden "modner ikke ute" signal).
+  // Harvest-soon — the SAME per-planting decision the SowNowCard "Høst snart" group uses
+  // (src/lib/sowNowGroups.harvestSoonForPlanting), so the snapshot mirrors the screen. Crops the GDD
+  // model says won't ripen here never match "harvest soon" — surface them separately from the season
+  // timeline (the cold-garden "modner ikke ute" signal).
   const harvestSoon: ObservedHarvest[] = [];
   const wontRipen: ObservedPlant[] = [];
   if (resolved) {
-    const timeline = buildSeasonTimeline(
-      plantings,
-      findPlant,
-      resolved.lastFrostDoy,
-      resolved.firstFrostDoy,
-      year,
-      { base5: resolved.gddCurve5, base10: resolved.gddCurve10 },
-      boxes,
-    );
-    for (const item of timeline.items) {
-      if (item.planting.status !== "active") {
+    const curves = { base5: resolved.gddCurve5, base10: resolved.gddCurve10 };
+    for (const p of plantings) {
+      if (p.status !== "active" || !p.boxId) {
         continue;
       }
-      if (item.wontRipen && item.plant) {
-        wontRipen.push(lean(item.plant));
+      const plant = findPlant(p.plantKey);
+      if (!plant?.harvestRule) {
+        continue;
       }
-      const win = item.harvestWindow;
-      if (win) {
-        const [start, end] = win;
-        let status: "ready" | "soon" | null = null;
-        if (doy >= start && doy <= end) {
-          status = "ready";
-        } else if (doy >= start - 14 && doy < start) {
-          status = "soon";
-        }
-        if (status) {
-          harvestSoon.push({
-            handle: handles.plantingHandle(item.planting.id) ?? "?",
-            plantKey: item.planting.plantKey,
-            name: item.plant?.name_no ?? item.planting.plantKey,
-            status,
-            wontRipen: item.wontRipen ?? false,
-          });
-        }
+      const shift = seasonalShiftForPlant(plant.key, resolved.lastFrostDoy);
+      const coverFactor = coverGddFactor(boxes.find((b) => b.id === p.boxId)?.bedType);
+      const check = harvestSoonForPlanting(p, plant, today, doy, resolved.firstFrostDoy, shift, curves, coverFactor);
+      if (check.matches) {
+        harvestSoon.push({
+          handle: handles.plantingHandle(p.id) ?? "?",
+          plantKey: p.plantKey,
+          name: plant.name_no ?? p.plantKey,
+          status: check.status,
+          wontRipen: false,
+        });
+      }
+    }
+    const timeline = buildSeasonTimeline(plantings, findPlant, resolved.lastFrostDoy, resolved.firstFrostDoy, year, curves, boxes);
+    for (const item of timeline.items) {
+      if (item.planting.status === "active" && item.wontRipen && item.plant) {
+        wontRipen.push(lean(item.plant));
       }
     }
   }
@@ -224,6 +219,7 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
     seedlings,
     harvestSoon,
     wontRipen,
+    customPlants: ctx.customPlantsStore.getState().plants.map(lean),
     stats: {
       totalActive: stats.totalActive,
       distinctSpecies: stats.distinctSpecies,
