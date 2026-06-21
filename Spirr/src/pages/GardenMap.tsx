@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { FloatingUndo } from "../components/FloatingUndo";
-import { GardenGrid, MAX_MAP_ZOOM, MIN_MAP_ZOOM } from "../components/GardenGrid";
+import { EXTRA_LEFT_COLS, GardenGrid, MAX_MAP_ZOOM, MIN_MAP_ZOOM, topRowPadding } from "../components/GardenGrid";
 import { GardenInsights } from "../components/GardenInsights";
 import { LanguageToggle } from "../components/LanguageToggle";
 import { LastSavedBadge } from "../components/LastSavedBadge";
@@ -120,14 +120,13 @@ function gridFootprint(boxes: Box[]): { cols: number; rows: number } {
   if (boxes.length === 0) {
     return { cols: 0, rows: 0 };
   }
-  // Mirrors the math in GardenGrid.tsx — see EXTRA_LEFT_COLS/EXTRA_TOP_ROWS.
-  const EXTRA_LEFT = 4;
-  const EXTRA_TOP = 14;
+  // Mirrors the offset math in GardenGrid.tsx — shared helpers keep them from drifting.
+  const topPad = topRowPadding(boxes);
   let maxX = 0;
   let maxY = 0;
   boxes.forEach((box) => {
-    const right = box.layout.x + box.layout.w + EXTRA_LEFT;
-    const bottom = Math.max(-EXTRA_TOP, box.layout.y) + EXTRA_TOP + box.layout.h;
+    const right = box.layout.x + box.layout.w + EXTRA_LEFT_COLS;
+    const bottom = Math.max(-topPad, box.layout.y) + topPad + box.layout.h;
     if (right > maxX) {
       maxX = right;
     }

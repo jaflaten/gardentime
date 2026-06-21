@@ -3,11 +3,21 @@ import ReactGridLayout, { getCompactor, type Layout, type LayoutItem, useContain
 import { useNavigate } from "react-router-dom";
 import { useGardenStore } from "../store/useGardenStore";
 import { useUiStore } from "../store/useUiStore";
+import type { Box } from "../types";
 import { BoxTile } from "./BoxTile";
 import { GridMinimap } from "./GridMinimap";
 
 export const EXTRA_LEFT_COLS = 4;
-export const EXTRA_TOP_ROWS = 14;
+
+// Rows of empty "scratch space" reserved above the topmost box so boxes can be dragged upward into
+// negative-y territory. Adaptive: just enough to clear the highest box (most-negative y) plus one
+// buffer row, so the grid hugs the content instead of leaving a fixed gap. Returns 1 when every box
+// sits at y >= 0. Grows automatically when a box is dragged higher (its y goes more negative).
+// Replaces the old fixed `EXTRA_TOP_ROWS = 14`.
+export function topRowPadding(boxes: Box[]): number {
+  const minY = boxes.reduce((min, box) => Math.min(min, box.layout.y), 0);
+  return Math.max(0, -minY) + 1;
+}
 export const MAP_BASE_COL_WIDTH = 48;
 // Base pixels per grid row. Tuned so a 2-row-tall box (the smallest common box) still has
 // room for its name plus two plant rows without the text spilling past the border.
@@ -46,6 +56,7 @@ interface ZoomFocal {
 
 export function GardenGrid({ editMode, zoom, onZoomChange, fitNonce, onLongPressBox }: GardenGridProps) {
   const { boxes, plantings, saveGridLayout } = useGardenStore();
+  const topPad = topRowPadding(boxes);
   const gridSize = useUiStore((state) => state.gridSize);
   const navigate = useNavigate();
   const { width, containerRef, mounted } = useContainerWidth();
@@ -166,7 +177,7 @@ export function GardenGrid({ editMode, zoom, onZoomChange, fitNonce, onLongPress
   const layout: Layout = boxes.map((box) => ({
     i: box.id,
     x: box.layout.x + EXTRA_LEFT_COLS,
-    y: Math.max(-EXTRA_TOP_ROWS, box.layout.y) + EXTRA_TOP_ROWS,
+    y: Math.max(-topPad, box.layout.y) + topPad,
     w: box.layout.w,
     h: box.layout.h,
     minW: MIN_BOX_UNITS,
@@ -203,7 +214,7 @@ export function GardenGrid({ editMode, zoom, onZoomChange, fitNonce, onLongPress
         .map((item: LayoutItem) => ({
           i: item.i,
           x: item.x - EXTRA_LEFT_COLS,
-          y: Math.max(-EXTRA_TOP_ROWS, item.y - EXTRA_TOP_ROWS),
+          y: Math.max(-topPad, item.y - topPad),
           w: item.w,
           h: item.h,
         })),

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { CustomPlantForm } from "../components/CustomPlantForm";
 import { LanguageToggle } from "../components/LanguageToggle";
-import { EXTRA_LEFT_COLS, EXTRA_TOP_ROWS } from "../components/GardenGrid";
+import { EXTRA_LEFT_COLS, topRowPadding } from "../components/GardenGrid";
 import { CATEGORY_LABELS } from "../lib/categories";
 import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
 import { FAMILY_INFO } from "../lib/families";
@@ -106,11 +106,12 @@ function gridFootprint(boxes: Box[]): { cols: number; rows: number } {
   if (boxes.length === 0) {
     return { cols: 0, rows: 0 };
   }
+  const topPad = topRowPadding(boxes);
   let maxX = 0;
   let maxY = 0;
   boxes.forEach((box) => {
     const right = box.layout.x + box.layout.w + EXTRA_LEFT_COLS;
-    const bottom = Math.max(-EXTRA_TOP_ROWS, box.layout.y) + EXTRA_TOP_ROWS + box.layout.h;
+    const bottom = Math.max(-topPad, box.layout.y) + topPad + box.layout.h;
     if (right > maxX) {
       maxX = right;
     }
