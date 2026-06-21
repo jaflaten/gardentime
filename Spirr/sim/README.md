@@ -4,6 +4,8 @@ A local LLM (Ollama) plays the **gardener** and drives the real Spirr stores/lib
 stage across a simulated season — headless, in Node, in seconds. Hard invariants catch bugs; an
 optional LLM-judge surfaces UX friction. Design doc: [`../mvp-test-simmer.md`](../mvp-test-simmer.md).
 
+📋 **[FINDINGS.md](./FINDINGS.md)** — what the first runs revealed (product signals + harness gaps + what else to test).
+
 ## Run
 
 ```bash
