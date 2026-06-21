@@ -16,7 +16,7 @@ import { isCustomPlantLike } from "../lib/customPlants";
 import { usePlantLookup } from "../lib/plants";
 import { isIndoorSeedling } from "../lib/planting";
 import { saveBoxes, savePlantings } from "../lib/storage";
-import bundledGardenBackup from "../resources/spirr-v2.json";
+import bundledGardenBackup from "../resources/spirr-v3.json";
 import demoGardenBackup from "../resources/demo-garden.json";
 import plantsData from "../data/plants.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
