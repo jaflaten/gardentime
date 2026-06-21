@@ -20,6 +20,12 @@ export const MIN_MAP_ZOOM = 0.2;
 export const MAX_MAP_ZOOM = 1.2;
 const BOTTOM_SPACER_KEY = "__bottom_spacer__";
 
+// Remember the grid viewport scroll across SPA route changes (e.g. opening a box and pressing
+// "Tilbake") so returning to the map keeps the same box under the cursor instead of snapping to
+// the origin. Module-level (not a ref) so it survives the unmount/remount of a route change, but
+// resets on a full page reload — matching the intent that only in-session back-nav is anchored.
+let savedViewportScroll: { left: number; top: number } | null = null;
+
 interface GardenGridProps {
   editMode: boolean;
   zoom: number;
@@ -110,6 +116,34 @@ export function GardenGrid({ editMode, zoom, onZoomChange, fitNonce, onLongPress
     viewport.scrollLeft = focal.ratioX * viewport.scrollWidth - focal.pointerX;
     viewport.scrollTop = focal.ratioY * viewport.scrollHeight - focal.pointerY;
   }, [zoom]);
+
+  // Keep the remembered scroll position current as the user pans the grid.
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) {
+      return;
+    }
+    const handleScroll = () => {
+      savedViewportScroll = { left: viewport.scrollLeft, top: viewport.scrollTop };
+    };
+    viewport.addEventListener("scroll", handleScroll, { passive: true });
+    return () => viewport.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Restore that position once, after the grid has measured on (re)mount — so returning from a box
+  // lands on the same view rather than the origin. Runs before paint to avoid a visible jump.
+  const didRestoreScroll = useRef(false);
+  useLayoutEffect(() => {
+    if (!mounted || didRestoreScroll.current) {
+      return;
+    }
+    didRestoreScroll.current = true;
+    const viewport = viewportRef.current;
+    if (viewport && savedViewportScroll) {
+      viewport.scrollLeft = savedViewportScroll.left;
+      viewport.scrollTop = savedViewportScroll.top;
+    }
+  }, [mounted]);
 
   // "Tilpass" — fit all columns into the viewport width (vertical scrolls), framed from the origin.
   // Margin-aware so the columns don't spill past the edge; uses the real viewport, not the window.

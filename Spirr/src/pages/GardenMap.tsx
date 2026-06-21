@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type TouchEvent } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode, type TouchEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BoxMetaFields } from "../components/BoxMetaFields";
 import { ConfirmModal } from "../components/ConfirmModal";
@@ -82,6 +82,40 @@ function useViewMode(): boolean {
   return useMemo(() => new URLSearchParams(window.location.search).has("view"), []);
 }
 
+// Remember the page (window) scroll across SPA route changes so pressing "Tilbake" from a box
+// returns to where the page was rather than the top. Pairs with the grid's own viewport-scroll
+// memory in GardenGrid. Module-level: survives unmount/remount, resets on a full reload.
+let savedWindowScroll = 0;
+
+// Records window scroll while the map is shown and restores it once on (re)mount, before paint.
+function useWindowScrollMemory() {
+  useEffect(() => {
+    const handleScroll = () => {
+      savedWindowScroll = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+  useLayoutEffect(() => {
+    if (savedWindowScroll <= 0) {
+      return;
+    }
+    // Re-apply across a few frames: the grid mounts after measuring, so the page may still be too
+    // short on the first frame and the browser would clamp the restore. Stop once it sticks.
+    const target = savedWindowScroll;
+    let frames = 0;
+    let raf = 0;
+    const apply = () => {
+      window.scrollTo(0, target);
+      if (window.scrollY < target && frames++ < 10) {
+        raf = requestAnimationFrame(apply);
+      }
+    };
+    apply();
+    return () => cancelAnimationFrame(raf);
+  }, []);
+}
+
 function gridFootprint(boxes: Box[]): { cols: number; rows: number } {
   if (boxes.length === 0) {
     return { cols: 0, rows: 0 };
@@ -106,6 +140,7 @@ function gridFootprint(boxes: Box[]): { cols: number; rows: number } {
 
 export function GardenMap() {
   const viewMode = useViewMode();
+  useWindowScrollMemory();
   const [editMode, setEditMode] = useState(false);
   const [zoom, setZoom] = useState(0.9);
   const [fitNonce, setFitNonce] = useState(0);
