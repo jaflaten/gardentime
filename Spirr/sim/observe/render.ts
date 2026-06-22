@@ -26,11 +26,38 @@ export function renderSnapshot(g: ObservedGarden): string {
     lines.push(`Sted: IKKE SATT — du må sette lokasjon (set_location) før noe annet gir mening.`);
   }
 
+  // ⚡ Action-priority block FIRST — the gardener's job is to harvest what it plants. Ripe crops and
+  // ready seedlings are the high-value, time-sensitive moves; surface them up top as imperatives with the
+  // EXACT handle to use (the handle-confusion failure mode: model picks the wrong #N). Sowing is demoted
+  // below so the gardener clears the bed/tray before adding more (the over-sow → stranded-seedling leak).
+  const ripe = g.harvestSoon.filter((h) => h.status === "ready");
+  const readyOut = g.seedlings.filter((s) => s.readiness === "ready" || s.readiness === "overdue");
+  if (g.location) {
+    lines.push("");
+    lines.push("## ⚡ Gjør først (tidssensitivt — høst/plant ut før du sår mer)");
+    if (ripe.length > 0) {
+      lines.push(`🌾 HØST NÅ (moden — bruk harvest med nøyaktig denne handelen): ${ripe.map((h) => `${h.handle} ${h.plantKey}`).join(", ")}`);
+    }
+    if (readyOut.length > 0) {
+      lines.push(
+        `🌱 PLANT UT NÅ (frøplante klar — bruk plant_out med denne handelen): ${readyOut
+          .map((s) => `${s.handle} ${s.plantKey}${s.readiness === "overdue" ? " (på overtid!)" : ""}${s.frostRisk ? " ⚠frostrisiko" : ""}`)
+          .join(", ")}`,
+      );
+    }
+    if (ripe.length === 0 && readyOut.length === 0) {
+      lines.push("(ingenting haster akkurat nå — la tiden gå eller så/plant noe nytt)");
+    }
+  }
+
   lines.push("");
-  lines.push("## Hva passer å gjøre nå?");
+  lines.push("## Hva passer å så nå? (arter — bruk key i sow_indoor/sow_outdoor)");
   lines.push(`Så inne: ${plantList(g.sowNow.indoor)}`);
   lines.push(`Så ute: ${plantList(g.sowNow.outdoor)}`);
-  lines.push(`Plant ut (forkultiverte arter klare): ${plantList(g.sowNow.plantOut)}`);
+  // NB: this is a sowing-window hint about SPECIES, not a plant_out target. plant_out acts on a seedling
+  // HANDLE (#N) from the "🌱 PLANT UT NÅ" block above — never on a species key. (Avoids the model
+  // emitting plant_out for a species and burning visits on invalid actions.)
+  lines.push(`Arter i utplantingsvindu (kun relevant hvis du forkultiverer dem): ${plantList(g.sowNow.plantOut)}`);
 
   lines.push("");
   lines.push(`## Kasser (${g.boxes.length})`);
@@ -66,7 +93,8 @@ export function renderSnapshot(g: ObservedGarden): string {
     lines.push("(ingenting nær høsting)");
   }
   for (const h of g.harvestSoon) {
-    lines.push(`${h.handle} ${h.plantKey} — ${h.status}${h.wontRipen ? " (modner ikke ute her)" : ""}`);
+    const status = h.status === "ready" ? "MODEN — høst nå" : "snart moden";
+    lines.push(`${h.handle} ${h.plantKey} — ${status}${h.wontRipen ? " (modner ikke ute her)" : ""}`);
   }
 
   if (g.wontRipen.length > 0) {

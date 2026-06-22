@@ -103,7 +103,13 @@ export function buildSnapshot(ctx: SimContext, clock: SimClock, handles: HandleR
   const today = clock.now();
   const findPlant = ctx.findPlant;
   const mergedPlants: PlantInfo[] = [...ctx.bundledPlants, ...ctx.customPlantsStore.getState().plants];
-  const plantings = ctx.gardenStore.getState().plantings;
+  // Only plantings that have actually been sown by today are observable — a planting whose plantedDate is
+  // in the future hasn't happened yet. In the real app "now" is the clock, so every stored planting is
+  // already in the past; this filter only corrects the sim, where a fixture can be back-dated before a
+  // seeded planting's date (e.g. demo-garden's May 2026 seedlings seen from a March start). Surfacing one
+  // let the gardener "plant out" a not-yet-sown seedling → transplantedDate < plantedDate (a false invariant break).
+  const todayIso = clock.iso();
+  const plantings = ctx.gardenStore.getState().plantings.filter((p) => p.plantedDate <= todayIso);
   const boxes = ctx.gardenStore.getState().boxes;
 
   // "Hva passer å så nå?" — the SAME grouper the SowNowCard renders (src/lib/sowNowGroups), so the

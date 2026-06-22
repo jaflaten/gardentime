@@ -85,7 +85,7 @@ export function reportToMarkdown(r: RunReport): string {
   lines.push("");
   lines.push(`## Sammendrag`);
   lines.push(
-    `Steg: ${r.summary.steps} · LLM-kall: ${r.summary.llmCalls} · tids-hopp: ${r.summary.advances} (tvungne: ${r.summary.forcedAdvances}) · feil: ${r.summary.errors} · eval-tokens: ${r.summary.evalTokens} · sluttdato: ${r.summary.finalDate}`,
+    `Steg: ${r.summary.steps} · oppmøte: ${r.summary.attendedVisits}/${r.summary.steps} uker · LLM-kall: ${r.summary.llmCalls} · tids-hopp: ${r.summary.advances} (tvungne: ${r.summary.forcedAdvances}) · feil: ${r.summary.errors} · eval-tokens: ${r.summary.evalTokens} · sluttdato: ${r.summary.finalDate}`,
   );
   if (r.outcome) {
     const o = r.outcome;
@@ -96,6 +96,10 @@ export function reportToMarkdown(r: RunReport): string {
     );
     lines.push(
       `Høsting — modne signaler vist: ${o.harvestSignalsOffered} · faktisk høstet: ${o.harvested} · modne uhøstet ved sesongslutt: ${o.ripeAtSeasonEnd}`,
+    );
+    const pct = (r: number | null) => (r == null ? "—" : `${Math.round(r * 100)}%`);
+    lines.push(
+      `🌾 Høsterate (høstet av modne): ${o.ripeHarvested}/${o.harvestSignalsOffered} = **${pct(o.harvestRate)}** · utplantingsrate (av forkultiverte): ${o.plantedOut}/${o.sownIndoor} = ${pct(o.plantOutRate)}`,
     );
   }
   lines.push("");

@@ -32,7 +32,10 @@ describe("AppDriver add_custom_plant → sow_indoor", () => {
       gddBase: 5,
     });
     expect(created.ok).toBe(true);
-    const key = created.note?.match(/key (custom_\w+)/)?.[1];
+    // Key is `custom_${nanoid(8)}` — nanoid's alphabet includes "-", which `\w` excludes. Matching
+    // `\w+` truncated the key whenever the random suffix held a "-" (~12% of runs) → findPlant missed →
+    // the B7 flake. `[\w-]+` captures the whole key. (Root cause was this regex, not store isolation.)
+    const key = created.note?.match(/key (custom_[\w-]+)/)?.[1];
     expect(key).toBeTruthy();
     expect(ctx.findPlant(key!)).toBeDefined();
 

@@ -92,6 +92,49 @@ export function parseActionReply(content: string): unknown {
   }
 }
 
+export interface ParsedBatch {
+  /** True when the reply was a recognizable batch structure — even an empty one. False = junk, reprompt. */
+  parsed: boolean;
+  actions: unknown[];
+}
+
+/**
+ * Extract a BATCH of actions from a model reply (the visit loop asks "what do you do today?" and the
+ * gardener may answer with several moves or none). Tolerates `{actions:[...]}`, a bare array, or a single
+ * object. Critically, distinguishes a VALID empty batch (`{"actions":[]}` — a legitimate "nothing to do
+ * this week", per the system prompt) from genuinely unparseable junk, so the visit loop only reprompts on
+ * the latter and a quiet week costs ONE call, not two (review S1).
+ */
+export function parseActionBatch(content: string): ParsedBatch {
+  const trimmed = content.trim();
+  const pick = (obj: unknown): ParsedBatch | null => {
+    if (Array.isArray(obj)) return { parsed: true, actions: obj };
+    if (obj && typeof obj === "object") {
+      const actions = (obj as { actions?: unknown }).actions;
+      if (Array.isArray(actions)) return { parsed: true, actions };
+      // A bare single action object → one-element batch (only if it looks like an action).
+      if ("action" in (obj as Record<string, unknown>)) return { parsed: true, actions: [obj] };
+    }
+    return null; // valid JSON but not an action structure → treat as unparseable (reprompt).
+  };
+  try {
+    const r = pick(JSON.parse(trimmed));
+    if (r) return r;
+  } catch {
+    /* fall through to prose-embedded extraction */
+  }
+  const match = trimmed.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+  if (match) {
+    try {
+      const r = pick(JSON.parse(match[0]));
+      if (r) return r;
+    } catch {
+      /* ignore */
+    }
+  }
+  return { parsed: false, actions: [] };
+}
+
 /** Whether an Ollama host is reachable. */
 export async function ollamaUp(host = DEFAULT_HOST): Promise<boolean> {
   try {

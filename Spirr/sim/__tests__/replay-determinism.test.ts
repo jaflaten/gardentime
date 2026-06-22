@@ -28,6 +28,7 @@ const FIXTURES: FixtureSpec[] = [
   { name: "first-time-empty-vestland-march", file: "first-time-empty-7b.json" },
   { name: "midsummer-harvest-rush", file: "midsummer-harvest-rush-7b.json" },
   { name: "multi-year-rotation-veteran", file: "multi-year-rotation-7b.json" },
+  { name: "neglected-harvest", file: "neglected-harvest-7b.json" },
 ];
 
 function loadFixture(file: string): RunReport {

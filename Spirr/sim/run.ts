@@ -99,7 +99,7 @@ async function main() {
       writeFileSync(join(OUT_DIR, `${base}.json`), JSON.stringify(report, null, 2));
 
       console.log(
-        `  ${green ? "✅" : "❌"} invariants · ${summary.steps} steps · ${summary.llmCalls} LLM calls · ${summary.advances} advances · ${summary.errors} errors · ${summary.evalTokens} tokens · ${wallSec}s → ${summary.finalDate}`,
+        `  ${green ? "✅" : "❌"} invariants · ${summary.steps} steps (${summary.attendedVisits} attended) · ${summary.llmCalls} LLM calls · ${summary.advances} advances · ${summary.errors} errors · ${summary.evalTokens} tokens · ${wallSec}s → ${summary.finalDate}`,
       );
       if (!green) {
         for (const inv of invariants.filter((i) => !i.ok)) {

@@ -182,3 +182,182 @@ CLI: `tsx sim/run.ts --scenario all --model qwen2.5:7b`. Runs scenario(s) × mod
 - Pixel/CSS regression (covered ad hoc by tier-2, not asserted).
 - Auto-tuning plant GDD/sow metadata from sim results (the sim *reports*; calibration stays a human decision — "show the data, not prescriptions").
 - Per the working rule in `MVP-next-phases.md`, add a section there when this lands.
+
+---
+
+## Revision 2 — closing the harvest gap (2026-06-21, night session)
+
+> **STATUS: IMPLEMENTED & VALIDATED 2026-06-22.** All three changes (visit loop, salience, north-star
+> metric) shipped; `tsc` + `eslint` clean, `npm test` 49 green, 6 fixtures re-frozen. 7b harvest-of-ripe
+> ~15% → 100% (total harvests 3 → 33); 32b precultivation 100%/100%. Results + remaining gaps in
+> `sim/FINDINGS.md` → "Revision 2". The one tried-and-rejected extension (tray-pressure suppression) and the
+> still-open link-2 (plant-out) leak are documented there. The sections below are the as-built record.
+
+> The harness is built and green; the open problem from `sim/FINDINGS.md` A1 is that **the LLM
+> gardener under-harvests systemically** — it rarely harvests the plants it plants. This revision
+> reasons that problem down to fundamentals and redesigns the agent loop around it. North star:
+> **the gardener should harvest most of what it plants.**
+
+### What the baseline actually shows (current config, qwen2.5:7b)
+With the Oct horizons + `maxSteps 70–80` now in place, runs **do complete the season** (precultivation
+reached 2026-10-30, 15 advances). So "the run ends before crops mature" is *fixed* — yet harvest is still
+near-zero. precultivation 7b: **sowed 9 · planted out 3 · 1 ever ripe · 0 harvested.** The chain leaks at
+*every* link, not just the last one.
+
+### First-principles: a harvest requires an unbroken 4-link chain
+1. **Sow** a crop.
+2. **Plant out** the seedling into a bed (indoor seedlings never ripen — they're not in the ground).
+3. **Ripen** — time must advance to maturity *and* the crop must be able to ripen in this location.
+4. **Harvest** — the gardener sees "moden" and acts on it.
+
+Mapping the baseline leak to links:
+- **Link 2 leak (the biggest surprise):** sowed 9 indoor, planted out only 3 → **6 seedlings stranded
+  in the tray forever.** The gardener over-sows indoors and forgets to plant out.
+- **Link 3 leak:** of 3 planted out, only 1 ripened — partly correct (cold Sogndal won't ripen heat-lovers),
+  partly mistiming.
+- **Link 4 leak:** 1 ripe, 0 harvested — the A1 salience problem (the "Høst snart" CTA reads as info, not a verb).
+- **Hidden tax on all links — the LLM is a bad clock.** The single-action loop forces the model to *also*
+  emit `advance_*` to march time; it forgets (watchdog force-advanced), and every advance burns a step from
+  the same budget that the real decisions need. Budget and horizon fight each other.
+
+### The redesign: the harness owns the clock; the gardener acts in batches per visit
+Delete the LLM's responsibility for time (per the project philosophy — question the requirement, then
+subtract). A real gardener never "advances time"; they just open the app on a later day. So:
+
+```
+for visitDate in schedule(startDate, endDate):     # harness-owned calendar
+    clock.setDate(visitDate)
+    snapshot = buildSnapshot()
+    actions[] = ask LLM: "what do you do today?" → JSON {"actions":[ ... ]}  (0..N, may be empty)
+    for a in actions: driver.apply(a); record       # advance verbs are not offered
+    # harness advances to the next visit automatically
+```
+
+Why this dissolves three leaks at once:
+- **Season always completes** regardless of model quality → crops always reach maturity (link 3 time-half).
+- **100% of LLM calls are decisions** (no advance bookkeeping) → more harvests per token; watchdog/stall
+  machinery becomes a vestigial safety net, not a load-bearing part.
+- **Ripe + ready-to-plant-out crops are re-presented every visit until acted on** → links 2 and 4 stop
+  leaking silently; a missed harvest gets another chance next week instead of vanishing.
+
+**Schedule:** weekly cadence is the robust v1 (Feb→Oct ≈ 36 visits ≈ 36–72 LLM calls — comparable cost,
+strictly more decisions). Optionally jump-to-next-event while the garden is dormant (winter / nothing
+sowable or ripe) to keep visit counts down. Cap total visits + batch size (≤ ~8 actions/visit) as the cost
+ceiling, replacing `maxSteps`.
+
+**Batch actions:** the model returns `{"actions":[...]}`; `parseActionReply` already tolerates arrays (it
+currently keeps only the first — change it to keep all). Apply sequentially against the live store; a handle
+created earlier in a batch is registered immediately so later actions in the same batch can reference it;
+invalid actions return the existing structured error and are skipped, not fatal. Empty array = "nothing to
+do today" — the legitimate replacement for the old `advance` no-op.
+
+**Backward-compat:** the action schema and `AppDriver` are unchanged (advance verbs stay valid, just not
+offered in the visit prompt), so `replay.ts` + the frozen fixtures + determinism tests keep working. Re-freeze
+fixtures from new transcripts after the change.
+
+### Salience fixes (link 4, mirrors product finding A1) — independent, ship regardless
+- Render the **harvest-ready** and **ready-to-plant-out** sections *first* (right after the header), in
+  Norwegian, with an imperative CTA and explicit handles: `🌾 HØST NÅ (moden): #26 tomat_cherry, #12 salat`
+  and `🌱 PLANT UT NÅ (klare): #1 tomat`. Translate `ready→moden`, `soon→snart` (no English in a NO prompt).
+- System-prompt rule: "Hvis noe står som MODEN, høst det denne turen. Hvis en frøplante er KLAR til
+  utplanting, plant den ut." (Acting on these isn't optional bookkeeping; it's the goal.)
+- This is *also* a concrete product signal: the same imperative should make the in-app "Høst snart" card an
+  actionable CTA (the A1 decision the human owes).
+
+### Measuring it — the north-star metric (`eval/outcome.ts`)
+Add a true harvest-rate over gardener-sown crops, computable from the transcript:
+- `sownThisRun` → of those, `everRipe` (handle ever shown "moden") → of those, `harvested`.
+- **`harvestRate = harvested / everRipe`** (the headline), plus `plantOutRate = plantedOut / sownIndoor`
+  (link-2 leak) and `ripeUnharvestedAtEnd` (pure misses). Reported per run + aggregated across the matrix so
+  7b-vs-32b and before/after are one glance.
+
+### Fairness note on scenarios
+"Harvest what you plant" is only achievable where crops *can* ripen. The clean harvest tests are
+**midsummer-harvest-rush** (warm, established Testhage) and **first-time-empty / direct-sow** in milder spots.
+cold-station and heat-lovers-in-Sogndal *should* show low harvest (correctly un-ripenable) — judge those on
+"did it avoid planting what can't ripen," not on harvest count.
+
+### Build order (this session)
+1. ✅ Baseline captured (all scenarios, 7b) for before/after.
+2. Harvest-rate metric (`outcome.ts`) — measure first.
+3. Visit-loop agent + batch actions; rewire `run.ts`; keep schema/driver stable.
+4. Salience (render harvest/plant-out first + NO imperative; prompt rules).
+5. `tsc`/`lint`, smoke 1 scenario on 7b, then full 7b run; compare harvest-rate to baseline.
+6. 32b on the harvest-critical scenarios; re-freeze fixtures; `vitest` green.
+7. Update `FINDINGS.md`, this doc, and `MVP-next-phases.md`.
+
+### Rubberduck — Revision 2 holes
+| # | Concern | Resolution |
+|---|---------|-----------|
+| R1 | Visit-loop is a big swing; could break the green harness | Schema + driver + replay untouched; loop is the only rewrite; re-freeze fixtures; gate on tsc/lint/vitest |
+| R2 | Batch handle-staleness (action references a handle made earlier in the same batch) | Apply sequentially; driver registers handles on creation; invalid → structured skip, not fatal |
+| R3 | Weekly cadence inflates LLM calls | Comparable to old `maxSteps`; every call now a decision; optional event-jump while dormant; cap visits + batch size |
+| R4 | Low harvest might be *correct* (won't-ripen) and look like a regression | Harvest-rate denominator is `everRipe`, so un-ripenable crops don't count against it; judge cold scenarios separately |
+| R5 | Forgetful persona *should* under-harvest | Metric is descriptive, never pass/fail; compare across personas/models, don't gate |
+
+### Post-implementation review (read-only agent, 2026-06-22) — no blockers, two should-fixes shipped
+A focused adversarial review of the implemented code (loop termination, batch apply, snapshot filter, driver
+guards, metric, determinism) found **no state-corrupting or invariant-breaking bugs** and confirmed the
+season-completion guarantee (loop exits exactly at the horizon, 36/70 steps). Two should-fixes were applied:
+- **S1 (fixed).** The empty-batch reprompt couldn't tell a *valid* `{"actions":[]}` ("nothing to do this
+  week") from unparseable junk, so every quiet winter week burned a wasted second LLM call (and falsified
+  "100% of calls are decisions"). `parseActionBatch` now returns `{parsed, actions}`; the loop reprompts
+  only when `!parsed`.
+- **S2 (fixed).** The per-visit cap counted *invalid* actions and could silently drop trailing **harvests**
+  if the model front-loaded sows — a muted re-introduction of the under-harvest leak. The loop now
+  validates, drops time-verbs/invalids for free, **priority-sorts** (location/box → harvest/plant-out →
+  remove → sow) so the goal-critical moves always survive the cap, and logs any truncation.
+- **S3 (accepted, documented).** Weekly cadence means a crop first ripening in the final ≤7-day window
+  before the horizon is never offered. Inherent to the cadence; in practice 7b still hit 100% harvest-rate,
+  so accepted as a known granularity limit rather than adding daily-cadence complexity near season end.
+
+---
+
+## Revision 3 — visit-skip persona: making the harvest-rate metric falsifiable (2026-06-22)
+
+> **STATUS: IMPLEMENTED & VALIDATED 2026-06-22.** `tsc`/`eslint` clean, `npm test` 57 green. Full results +
+> reasoning in `sim/FINDINGS.md` → "Revision 3". This is the as-built record.
+
+The Revision-2 adversarial review (`sim/FINDINGS.md` → "Results critique") showed the **100% harvest-rate was
+pinned by construction**: a ready crop was always harvested the same visit (so a miss never accrued), and the
+harvest window *expires* (so a crop unobserved during its window is an *invisible* miss). Fix (a) from that
+critique — a **deterministic visit-skip persona** — is now shipped.
+
+**First principles.** A *recorded* miss needs a crop to be (1) observed ready at least once **and** (2) never
+harvested. Because the ready window expires, "just visit less" fails both ways — the window can pass entirely
+between visits, unobserved. So the mechanism **splits observation from action**: the harness samples ripeness
+**every** calendar week (the `observe` entry feeds `everReady` = ground-truth "ever offerable"), but only
+calls the gardener on **attended** weeks. A crop ripe only during an absence is then in `everReady` but never
+harvested → a recorded miss. `computeSeasonOutcome` needed **no change** — it already derives `everReady`
+from observations and harvests from actions.
+
+**The absence model — a holiday block, not a taper.** A probabilistic season-taper was tried first and stayed
+at 100% (the Testhage harvest is front-loaded, so a late taper misses nothing ripe; and 2–3 week windows are
+caught on the next attended week after any single skip). The robust model is a **contiguous summer holiday**
+(`Persona.attendance = { awayFrom, awayTo }`, mid-Jul → late-Aug): a ~6-week block categorically outlasts any
+window, so the miss is **structural and deterministic** (date comparison, no RNG → reproducible across Ollama
+noise), and it's realistic — a city-dweller ("Travel byboer") away over the fellesferie. Result on 7b:
+**harvest-rate 63% (5/8)**, with erter/agurk/persille stranded by the holiday.
+
+**Build (this session):**
+1. `Persona.attendance` + `visit-skip` persona (`gardener/persona.ts`); `shouldAttend` extracted to a
+   store-free `gardener/attendance.ts` so it's unit-testable without the localStorage bootstrap.
+2. Observe/act split in the visit loop (`gardener/agent.ts`) + `attendedVisits` on the summary, surfaced as
+   "oppmøte: N/M uker" in the report and run console.
+3. Dedicated `scenarios/neglected-harvest.scenario.ts` (pre-seeded Testhage into early Oct, pinned to the
+   persona) + registry entry; frozen fixture `__tests__/fixtures/neglected-harvest-7b.json` in the
+   table-driven replay suite; a `shouldAttend` determinism unit test.
+4. `eval/outcome.ts` doc-comment clarified (`everReady` is sampled every week, attendance-independent).
+
+**Backward-compatible:** `attendance` is opt-in, so every other persona keeps the unchanged every-week loop
+and the 6 existing fixtures replay green. **Open (critique b–e), unchanged by this pass:** side-by-side
+harvested/ripe/unripe counts, an explicit `engaged` flag, sow→ripeHarvest as the primary metric.
+
+### Rubberduck — Revision 3 holes
+| # | Concern | Resolution |
+|---|---------|-----------|
+| R1 | "Just visit less" — why insufficient? | The ready window expires; an unobserved window is an *invisible* miss. Observe every week (act only when attended) surfaces it. |
+| R2 | Does observing on an absent week distort `everReady`? | It redefines it from "shown to the user" to "ever ripe/offerable" (ground truth) — the honest denominator for "of all that ripened, how much did this absent gardener catch?" |
+| R3 | Is sub-100% luck (Ollama noise)? | No — the holiday weeks are fixed dates and a ~6-week block exceeds any 2–3 week window, so crops ripening mid-holiday are stranded structurally; only *which* extend past the return wobbles. |
+| R4 | Breaks the green harness? | `attendance` opt-in → other personas' loop path byte-identical; schema/driver/replay untouched; 6 existing fixtures + 57 tests green. |
+| R5 | Degenerate empty run (cf. cold-station)? | Scenario is pre-seeded harvest-rich, so `everReady > 0` and the gardener harvests the non-holiday crops — no null/"—" headline. |

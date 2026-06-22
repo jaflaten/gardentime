@@ -3,21 +3,21 @@
   "title": "Første sesong fra blanke ark (Sogndal, mars)",
   "model": "qwen2.5:7b",
   "persona": "eager-beginner",
-  "generatedAt": "2026-06-21T08:35:10.637Z",
+  "generatedAt": "2026-06-21T22:41:42.678Z",
   "summary": {
-    "steps": 33,
-    "llmCalls": 33,
-    "advances": 12,
-    "errors": 1,
-    "forcedAdvances": 1,
-    "evalTokens": 551,
+    "steps": 31,
+    "llmCalls": 31,
+    "advances": 31,
+    "errors": 2,
+    "forcedAdvances": 0,
+    "evalTokens": 587,
     "finalDate": "2026-09-30"
   },
   "invariants": [
     {
       "name": "unique planting ids",
       "ok": true,
-      "detail": "15 unique"
+      "detail": "9 unique"
     },
     {
       "name": "boxed plantings reference a real box",
@@ -52,7 +52,7 @@
     {
       "name": "garden stats finite",
       "ok": true,
-      "detail": "2 active"
+      "detail": "1 active"
     },
     {
       "name": "composition counts boxed actives only",
@@ -76,32 +76,18 @@
     }
   ],
   "invariantsGreen": true,
-  "friction": [
-    {
-      "severity": "high",
-      "title": "Gartneren ignorerte anbefalinger om modning av agurk.",
-      "evidence": "[2026-03-31] APP: ⚠:modner ikke ute: agurk; [2026-04-30] APP: ⚠:modner ikke ute: agurk; [2026-05-31] APP: ⚠:modner ikke ute: agurk",
-      "suggestion": "Forbedre appen ved å automatisk modne ut agurk når den er maturoffert, eller gi mer tydelige anbefalinger om denne prosessen."
-    },
-    {
-      "severity": "medium",
-      "title": "Gartneren plantet ut tomat_stor for sent.",
-      "evidence": "[2026-06-30] GARTNER sow_indoor (sådde tomat_stor inne (forkultivering) som #14); [2026-08-31] GARTNER sow_outdoor (sådde tomat_stor ute i kasse A som #15)",
-      "suggestion": "Forbedre appen ved å gi mer tydelige anbefalinger om tidspunkter for planting ut basert på doy og lokalitet."
-    },
-    {
-      "severity": "medium",
-      "title": "Gartneren glemte å høste tomat_cherry.",
-      "evidence": "[2026-06-30] GARTNER sow_indoor (sådde tomat_cherry inne (forkultivering) som #12); [2026-08-31] APP: ⚠:kasse A: familie cucurbitaceae dyrket her 2026 | kasse A: familie solanaceae dyrket her 2026 | modner ikke ute: tomat_cherry",
-      "suggestion": "Forbedre appen ved å automatisk høste og fjerne planter når de er maturoffert, eller gi mer tydelige anbefalinger om høstetidspunkter."
-    },
-    {
-      "severity": "low",
-      "title": "Gartneren feilet i å plant ut tomat_cherry.",
-      "evidence": "[2026-07-31] GARTNER plant_out FEIL:#12 is already planted out (in a box)",
-      "suggestion": "Forbedre appen ved å gi mer tydelige feilmeldinger og muligheten til å korrigere feil."
-    }
-  ],
+  "outcome": {
+    "sown": 9,
+    "sownIndoor": 9,
+    "plantedOut": 5,
+    "harvested": 4,
+    "removedOrFailed": 0,
+    "harvestSignalsOffered": 4,
+    "ripeAtSeasonEnd": 0,
+    "ripeHarvested": 4,
+    "harvestRate": 1,
+    "plantOutRate": 0.5555555555555556
+  },
   "transcript": [
     {
       "kind": "observe",
@@ -122,7 +108,7 @@
       "simDate": "2026-03-01",
       "action": {
         "action": "set_location",
-        "postnummer": "4053"
+        "postnummer": "4051"
       },
       "result": {
         "ok": true,
@@ -132,14 +118,37 @@
     {
       "kind": "observe",
       "step": 2,
-      "simDate": "2026-03-01",
-      "doy": 60,
+      "simDate": "2026-03-08",
+      "doy": 67,
       "offered": {
         "sowIndoor": [
+          "tomat_cherry",
           "tomat_stor",
-          "rosmarin",
-          "purre",
-          "løk"
+          "basilikum",
+          "persille",
+          "timian",
+          "gressløk"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 3,
+      "simDate": "2026-03-15",
+      "doy": 74,
+      "offered": {
+        "sowIndoor": [
+          "tomat_cherry",
+          "basilikum",
+          "persille",
+          "timian",
+          "gressløk",
+          "blomkål",
+          "brokkoli"
         ],
         "sowOutdoor": [],
         "plantOut": [],
@@ -149,235 +158,151 @@
     },
     {
       "kind": "action",
-      "step": 2,
-      "simDate": "2026-03-01",
+      "step": 3,
+      "simDate": "2026-03-15",
       "action": {
         "action": "add_box",
-        "name": "Tomat og rosmarin",
-        "bedType": "open",
+        "name": "Indekskasse 1",
+        "bedType": "raised",
         "sunExposure": "sun",
         "depthCm": 20
       },
       "result": {
         "ok": true,
         "handle": "A",
-        "note": "kasse A «Tomat og rosmarin»"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 3,
-      "simDate": "2026-03-01",
-      "doy": 60,
-      "offered": {
-        "sowIndoor": [
-          "tomat_stor",
-          "rosmarin",
-          "purre",
-          "løk"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
+        "note": "kasse A «Indekskasse 1»"
       }
     },
     {
       "kind": "action",
       "step": 3,
-      "simDate": "2026-03-01",
+      "simDate": "2026-03-15",
       "action": {
         "action": "sow_indoor",
-        "plant": "tomat_stor",
-        "quantity": 2
-      },
-      "result": {
-        "ok": true,
-        "handle": "#1",
-        "note": "sådde tomat_stor inne (forkultivering) som #1"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 4,
-      "simDate": "2026-03-01",
-      "doy": 60,
-      "offered": {
-        "sowIndoor": [
-          "tomat_stor",
-          "rosmarin",
-          "purre",
-          "løk"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
-      }
-    },
-    {
-      "kind": "action",
-      "step": 4,
-      "simDate": "2026-03-01",
-      "action": {
-        "action": "sow_indoor",
-        "plant": "tomat_stor",
+        "plant": "tomat_cherry",
         "quantity": 5
       },
       "result": {
         "ok": true,
-        "handle": "#2",
-        "note": "sådde tomat_stor inne (forkultivering) som #2"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 5,
-      "simDate": "2026-03-01",
-      "doy": 60,
-      "offered": {
-        "sowIndoor": [
-          "tomat_stor",
-          "rosmarin",
-          "purre",
-          "løk"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
+        "handle": "#1",
+        "note": "sådde tomat_cherry inne (forkultivering) som #1"
       }
     },
     {
       "kind": "action",
-      "step": 5,
-      "simDate": "2026-03-01",
+      "step": 3,
+      "simDate": "2026-03-15",
       "action": {
         "action": "sow_indoor",
-        "plant": "purre",
+        "plant": "basilikum",
         "quantity": 3
       },
       "result": {
         "ok": true,
-        "handle": "#3",
-        "note": "sådde purre inne (forkultivering) som #3"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 6,
-      "simDate": "2026-03-01",
-      "doy": 60,
-      "offered": {
-        "sowIndoor": [
-          "tomat_stor",
-          "rosmarin",
-          "purre",
-          "løk"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
+        "handle": "#2",
+        "note": "sådde basilikum inne (forkultivering) som #2"
       }
     },
     {
       "kind": "action",
-      "step": 6,
-      "simDate": "2026-03-01",
+      "step": 3,
+      "simDate": "2026-03-15",
       "action": {
         "action": "sow_indoor",
-        "plant": "tomat_stor",
+        "plant": "persille",
+        "quantity": 4
+      },
+      "result": {
+        "ok": true,
+        "handle": "#3",
+        "note": "sådde persille inne (forkultivering) som #3"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 3,
+      "simDate": "2026-03-15",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "timian",
         "quantity": 2
       },
       "result": {
         "ok": true,
         "handle": "#4",
-        "note": "sådde tomat_stor inne (forkultivering) som #4"
-      }
-    },
-    {
-      "kind": "system",
-      "step": 6,
-      "simDate": "2026-03-31",
-      "text": "watchdog: 6 handlinger uten å la tiden gå → → 1. apr 2026-03-31"
-    },
-    {
-      "kind": "event",
-      "step": 6,
-      "simDate": "2026-03-31",
-      "label": "1. apr",
-      "eventKind": "month-start"
-    },
-    {
-      "kind": "observe",
-      "step": 7,
-      "simDate": "2026-03-31",
-      "doy": 90,
-      "offered": {
-        "sowIndoor": [
-          "agurk",
-          "kålrot",
-          "knutekål"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
+        "note": "sådde timian inne (forkultivering) som #4"
       }
     },
     {
       "kind": "action",
-      "step": 7,
-      "simDate": "2026-03-31",
+      "step": 3,
+      "simDate": "2026-03-15",
       "action": {
         "action": "sow_indoor",
-        "plant": "agurk",
-        "quantity": 1
+        "plant": "gressløk",
+        "quantity": 3
       },
       "result": {
         "ok": true,
         "handle": "#5",
-        "note": "sådde agurk inne (forkultivering) som #5"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 8,
-      "simDate": "2026-03-31",
-      "doy": 90,
-      "offered": {
-        "sowIndoor": [
-          "agurk",
-          "kålrot",
-          "knutekål"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": []
+        "note": "sådde gressløk inne (forkultivering) som #5"
       }
     },
     {
       "kind": "action",
-      "step": 8,
-      "simDate": "2026-03-31",
+      "step": 3,
+      "simDate": "2026-03-15",
       "action": {
         "action": "sow_indoor",
-        "plant": "agurk",
-        "quantity": 2
+        "plant": "blomkål",
+        "quantity": 6
       },
       "result": {
         "ok": true,
         "handle": "#6",
-        "note": "sådde agurk inne (forkultivering) som #6"
+        "note": "sådde blomkål inne (forkultivering) som #6"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 3,
+      "simDate": "2026-03-15",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "brokkoli",
+        "quantity": 4
+      },
+      "result": {
+        "ok": true,
+        "handle": "#7",
+        "note": "sådde brokkoli inne (forkultivering) som #7"
       }
     },
     {
       "kind": "observe",
-      "step": 9,
-      "simDate": "2026-03-31",
-      "doy": 90,
+      "step": 4,
+      "simDate": "2026-03-22",
+      "doy": 81,
+      "offered": {
+        "sowIndoor": [
+          "blomkål",
+          "brokkoli",
+          "kålrot",
+          "knutekål"
+        ],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 5,
+      "simDate": "2026-03-29",
+      "doy": 88,
       "offered": {
         "sowIndoor": [
           "agurk",
@@ -386,878 +311,769 @@
         ],
         "sowOutdoor": [],
         "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 6,
+      "simDate": "2026-04-05",
+      "doy": 95,
+      "offered": {
+        "sowIndoor": [
+          "gresskar",
+          "squash",
+          "mais",
+          "pak_choi",
+          "solsikke"
+        ],
+        "sowOutdoor": [
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 7,
+      "simDate": "2026-04-12",
+      "doy": 102,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "erter",
+          "spinat",
+          "åkerbønner"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 8,
+      "simDate": "2026-04-19",
+      "doy": 109,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 9,
+      "simDate": "2026-04-26",
+      "doy": 116,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "salat",
+          "erter",
+          "spinat",
+          "reddik",
+          "persillerot",
+          "åkerbønner"
+        ],
+        "plantOut": [
+          "løk"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "frostrisiko ved utplanting nå: tomat_cherry, basilikum"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 10,
+      "simDate": "2026-05-03",
+      "doy": 123,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "potet",
+          "reddik",
+          "persillerot",
+          "kålrot"
+        ],
+        "plantOut": [
+          "jordbær",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
+        "harvestSoon": [],
+        "warnings": []
+      }
+    },
+    {
+      "kind": "system",
+      "step": 10,
+      "simDate": "2026-05-03",
+      "text": "ugyldig handling hoppet over: plant_out needs `planting` (e.g. #1) and `box` (e.g. A)"
+    },
+    {
+      "kind": "system",
+      "step": 10,
+      "simDate": "2026-05-03",
+      "text": "ugyldig handling hoppet over: plant_out needs `planting` (e.g. #1) and `box` (e.g. A)"
+    },
+    {
+      "kind": "observe",
+      "step": 11,
+      "simDate": "2026-05-10",
+      "doy": 130,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "persille",
+          "bønner",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "solsikke",
+          "potet",
+          "reddik",
+          "persillerot",
+          "kålrot"
+        ],
+        "plantOut": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "agurk",
+          "jordbær",
+          "timian",
+          "squash",
+          "mais",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
+        ],
         "harvestSoon": [],
         "warnings": []
       }
     },
     {
       "kind": "action",
-      "step": 9,
-      "simDate": "2026-03-31",
+      "step": 11,
+      "simDate": "2026-05-10",
       "action": {
-        "action": "sow_outdoor",
-        "plant": "agurk",
-        "box": "A",
-        "quantity": 2
+        "action": "plant_out",
+        "planting": "#1",
+        "box": "A"
       },
       "result": {
         "ok": true,
-        "handle": "#7",
-        "note": "sådde agurk ute i kasse A som #7"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 10,
-      "simDate": "2026-03-31",
-      "doy": 90,
-      "offered": {
-        "sowIndoor": [
-          "agurk",
-          "kålrot",
-          "knutekål"
-        ],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "modner ikke ute: agurk"
-        ]
+        "note": "plantet ut #1 i kasse A"
       }
     },
     {
       "kind": "action",
-      "step": 10,
-      "simDate": "2026-04-30",
+      "step": 11,
+      "simDate": "2026-05-10",
       "action": {
-        "action": "advance_to_next_event"
+        "action": "plant_out",
+        "planting": "#2",
+        "box": "A"
       },
       "result": {
         "ok": true,
-        "event": {
-          "doy": 120,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. mai"
-        },
-        "note": "→ 1. mai 2026-04-30"
+        "note": "plantet ut #2 i kasse A"
       }
     },
     {
-      "kind": "event",
-      "step": 10,
-      "simDate": "2026-04-30",
-      "label": "1. mai",
-      "eventKind": "month-start"
+      "kind": "action",
+      "step": 11,
+      "simDate": "2026-05-10",
+      "action": {
+        "action": "plant_out",
+        "planting": "#4",
+        "box": "A"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #4 i kasse A"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 11,
+      "simDate": "2026-05-10",
+      "action": {
+        "action": "note",
+        "text": "Plantert ut tomat_cherry, basilikum og timian. Persille mangler et utplantingsvindu."
+      },
+      "result": {
+        "ok": true,
+        "note": "Plantert ut tomat_cherry, basilikum og timian. Persille mangler et utplantingsvindu."
+      }
+    },
+    {
+      "kind": "note",
+      "step": 11,
+      "simDate": "2026-05-10",
+      "text": "Plantert ut tomat_cherry, basilikum og timian. Persille mangler et utplantingsvindu."
     },
     {
       "kind": "observe",
-      "step": 11,
-      "simDate": "2026-04-30",
-      "doy": 120,
+      "step": 12,
+      "simDate": "2026-05-17",
+      "doy": 137,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
           "gulrot",
           "salat",
           "persille",
-          "spinat",
-          "gressløk",
+          "bønner",
           "rødbeter",
-          "pak_choi",
+          "solsikke",
           "potet",
           "reddik",
-          "persillerot",
           "kålrot"
         ],
         "plantOut": [
+          "basilikum",
           "jordbær",
-          "purre",
-          "løk",
-          "blomkål",
-          "brokkoli",
-          "knutekål"
+          "paprika",
+          "gresskar",
+          "timian",
+          "rosmarin",
+          "squash",
+          "mais"
         ],
-        "harvestSoon": [],
+        "harvestSoon": [
+          "#2 basilikum (ready)"
+        ],
         "warnings": [
-          "modner ikke ute: agurk"
+          "modner ikke ute: tomat_cherry"
         ]
       }
     },
     {
       "kind": "action",
-      "step": 11,
-      "simDate": "2026-04-30",
+      "step": 12,
+      "simDate": "2026-05-17",
+      "action": {
+        "action": "harvest",
+        "planting": "#2"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #2"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 12,
+      "simDate": "2026-05-17",
+      "action": {
+        "action": "note",
+        "text": "Basilikum #2 høstet."
+      },
+      "result": {
+        "ok": true,
+        "note": "Basilikum #2 høstet."
+      }
+    },
+    {
+      "kind": "note",
+      "step": 12,
+      "simDate": "2026-05-17",
+      "text": "Basilikum #2 høstet."
+    },
+    {
+      "kind": "observe",
+      "step": 13,
+      "simDate": "2026-05-24",
+      "doy": 144,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
+          "reddik"
+        ],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 13,
+      "simDate": "2026-05-24",
+      "action": {
+        "action": "plant_out",
+        "planting": "#6",
+        "box": "A"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #6 i kasse A"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 13,
+      "simDate": "2026-05-24",
+      "action": {
+        "action": "plant_out",
+        "planting": "#7",
+        "box": "A"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #7 i kasse A"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 14,
+      "simDate": "2026-05-31",
+      "doy": 151,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "reddik"
+        ],
+        "plantOut": [],
+        "harvestSoon": [
+          "#4 timian (ready)",
+          "#6 blomkål (ready)",
+          "#7 brokkoli (ready)"
+        ],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-05-31",
+      "action": {
+        "action": "harvest",
+        "planting": "#4"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #4"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-05-31",
+      "action": {
+        "action": "harvest",
+        "planting": "#6"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #6"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-05-31",
+      "action": {
+        "action": "harvest",
+        "planting": "#7"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #7"
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 15,
+      "simDate": "2026-06-07",
+      "doy": 158,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "reddik"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 15,
+      "simDate": "2026-06-07",
       "action": {
         "action": "sow_indoor",
-        "plant": "purre",
-        "quantity": 3
+        "plant": "persille",
+        "quantity": 2
       },
       "result": {
         "ok": true,
         "handle": "#8",
-        "note": "sådde purre inne (forkultivering) som #8"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 12,
-      "simDate": "2026-04-30",
-      "doy": 120,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "gulrot",
-          "salat",
-          "persille",
-          "spinat",
-          "gressløk",
-          "rødbeter",
-          "pak_choi",
-          "potet",
-          "reddik",
-          "persillerot",
-          "kålrot"
-        ],
-        "plantOut": [
-          "jordbær",
-          "purre",
-          "løk",
-          "blomkål",
-          "brokkoli",
-          "knutekål"
-        ],
-        "harvestSoon": [],
-        "warnings": [
-          "modner ikke ute: agurk"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 12,
-      "simDate": "2026-05-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 151,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. jun"
-        },
-        "note": "→ 1. jun 2026-05-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 12,
-      "simDate": "2026-05-31",
-      "label": "1. jun",
-      "eventKind": "month-start"
-    },
-    {
-      "kind": "observe",
-      "step": 13,
-      "simDate": "2026-05-31",
-      "doy": 151,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "reddik"
-        ],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "modner ikke ute: agurk"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 13,
-      "simDate": "2026-05-31",
-      "action": {
-        "action": "remove_planting",
-        "planting": "#7",
-        "reason": "failed"
-      },
-      "result": {
-        "ok": true,
-        "note": "feilet #7"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 14,
-      "simDate": "2026-05-31",
-      "doy": 151,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "reddik"
-        ],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 14,
-      "simDate": "2026-06-03",
-      "action": {
-        "action": "advance_days",
-        "days": 3
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-06-03 (doy 154)"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 15,
-      "simDate": "2026-06-03",
-      "doy": 154,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "reddik"
-        ],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026"
-        ]
+        "note": "sådde persille inne (forkultivering) som #8"
       }
     },
     {
       "kind": "action",
       "step": 15,
-      "simDate": "2026-06-20",
+      "simDate": "2026-06-07",
       "action": {
-        "action": "advance_to_next_event"
+        "action": "note",
+        "text": "Persille har nå fått et utplantingsvindu, kan nå forkultiveres."
       },
       "result": {
         "ok": true,
-        "event": {
-          "doy": 171,
-          "year": 2026,
-          "kind": "solstice",
-          "label": "sommersolverv"
-        },
-        "note": "→ sommersolverv 2026-06-20"
+        "note": "Persille har nå fått et utplantingsvindu, kan nå forkultiveres."
       }
     },
     {
-      "kind": "event",
+      "kind": "note",
       "step": 15,
-      "simDate": "2026-06-20",
-      "label": "sommersolverv",
-      "eventKind": "solstice"
+      "simDate": "2026-06-07",
+      "text": "Persille har nå fått et utplantingsvindu, kan nå forkultiveres."
     },
     {
       "kind": "observe",
       "step": 16,
-      "simDate": "2026-06-20",
-      "doy": 171,
+      "simDate": "2026-06-14",
+      "doy": 165,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [],
         "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026"
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
         ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 16,
-      "simDate": "2026-06-20",
-      "action": {
-        "action": "remove_planting",
-        "planting": "#1",
-        "reason": "failed"
-      },
-      "result": {
-        "ok": true,
-        "note": "feilet #1"
       }
     },
     {
       "kind": "observe",
       "step": 17,
-      "simDate": "2026-06-20",
-      "doy": 171,
+      "simDate": "2026-06-21",
+      "doy": 172,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [],
         "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026"
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 18,
+      "simDate": "2026-06-28",
+      "doy": 179,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 19,
+      "simDate": "2026-07-05",
+      "doy": 186,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 20,
+      "simDate": "2026-07-12",
+      "doy": 193,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 21,
+      "simDate": "2026-07-19",
+      "doy": 200,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 22,
+      "simDate": "2026-07-26",
+      "doy": 207,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 23,
+      "simDate": "2026-08-02",
+      "doy": 214,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 24,
+      "simDate": "2026-08-09",
+      "doy": 221,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 25,
+      "simDate": "2026-08-16",
+      "doy": 228,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 26,
+      "simDate": "2026-08-23",
+      "doy": 235,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 27,
+      "simDate": "2026-08-30",
+      "doy": 242,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 28,
+      "simDate": "2026-09-06",
+      "doy": 249,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
+          "modner ikke ute: tomat_cherry"
         ]
       }
     },
     {
       "kind": "action",
-      "step": 17,
-      "simDate": "2026-06-20",
+      "step": 28,
+      "simDate": "2026-09-06",
       "action": {
         "action": "sow_indoor",
-        "plant": "tomat_stor",
-        "quantity": 2
+        "plant": "persille",
+        "quantity": 3
       },
       "result": {
         "ok": true,
         "handle": "#9",
-        "note": "sådde tomat_stor inne (forkultivering) som #9"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 18,
-      "simDate": "2026-06-20",
-      "doy": 171,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 18,
-      "simDate": "2026-06-20",
-      "action": {
-        "action": "plant_out",
-        "planting": "#9",
-        "box": "A"
-      },
-      "result": {
-        "ok": true,
-        "note": "plantet ut #9 i kasse A"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 19,
-      "simDate": "2026-06-20",
-      "doy": 171,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "modner ikke ute: tomat_stor"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 19,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "advance_days",
-        "days": 1
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-06-21 (doy 172)"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 20,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "modner ikke ute: tomat_stor"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 20,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "remove_planting",
-        "planting": "#9",
-        "reason": "removed"
-      },
-      "result": {
-        "ok": true,
-        "note": "fjernet #9"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 21,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 21,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "sow_indoor",
-        "plant": "tomat_cherry",
-        "quantity": 3
-      },
-      "result": {
-        "ok": true,
-        "handle": "#10",
-        "note": "sådde tomat_cherry inne (forkultivering) som #10"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 22,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 22,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "sow_indoor",
-        "plant": "tomat_stor",
-        "quantity": 3
-      },
-      "result": {
-        "ok": true,
-        "handle": "#11",
-        "note": "sådde tomat_stor inne (forkultivering) som #11"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 23,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 23,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "sow_outdoor",
-        "plant": "tomat_cherry",
-        "box": "A",
-        "quantity": 3
-      },
-      "result": {
-        "ok": true,
-        "handle": "#12",
-        "note": "sådde tomat_cherry ute i kasse A som #12"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 24,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 24,
-      "simDate": "2026-06-21",
-      "action": {
-        "action": "sow_indoor",
-        "plant": "purre",
-        "quantity": 3
-      },
-      "result": {
-        "ok": true,
-        "handle": "#13",
-        "note": "sådde purre inne (forkultivering) som #13"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 25,
-      "simDate": "2026-06-21",
-      "doy": 172,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 25,
-      "simDate": "2026-06-30",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 181,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. jul"
-        },
-        "note": "→ 1. jul 2026-06-30"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 25,
-      "simDate": "2026-06-30",
-      "label": "1. jul",
-      "eventKind": "month-start"
-    },
-    {
-      "kind": "observe",
-      "step": 26,
-      "simDate": "2026-06-30",
-      "doy": 181,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 26,
-      "simDate": "2026-07-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 212,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. aug"
-        },
-        "note": "→ 1. aug 2026-07-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 26,
-      "simDate": "2026-07-31",
-      "label": "1. aug",
-      "eventKind": "month-start"
-    },
-    {
-      "kind": "observe",
-      "step": 27,
-      "simDate": "2026-07-31",
-      "doy": 212,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 27,
-      "simDate": "2026-07-31",
-      "action": {
-        "action": "plant_out",
-        "planting": "#12",
-        "box": "A"
-      },
-      "result": {
-        "ok": false,
-        "error": "#12 is already planted out (in a box)",
-        "noop": true
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 28,
-      "simDate": "2026-07-31",
-      "doy": 212,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 28,
-      "simDate": "2026-08-07",
-      "action": {
-        "action": "advance_days",
-        "days": 7
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-08-07 (doy 219)"
+        "note": "sådde persille inne (forkultivering) som #9"
       }
     },
     {
       "kind": "observe",
       "step": 29,
-      "simDate": "2026-08-07",
-      "doy": 219,
+      "simDate": "2026-09-13",
+      "doy": 256,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [],
         "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
           "modner ikke ute: tomat_cherry"
         ]
       }
-    },
-    {
-      "kind": "action",
-      "step": 29,
-      "simDate": "2026-08-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 243,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. sep"
-        },
-        "note": "→ 1. sep 2026-08-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 29,
-      "simDate": "2026-08-31",
-      "label": "1. sep",
-      "eventKind": "month-start"
     },
     {
       "kind": "observe",
       "step": 30,
-      "simDate": "2026-08-31",
-      "doy": 243,
+      "simDate": "2026-09-20",
+      "doy": 263,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [],
         "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
           "modner ikke ute: tomat_cherry"
         ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 30,
-      "simDate": "2026-08-31",
-      "action": {
-        "action": "sow_indoor",
-        "plant": "tomat_stor",
-        "quantity": 3
-      },
-      "result": {
-        "ok": true,
-        "handle": "#14",
-        "note": "sådde tomat_stor inne (forkultivering) som #14"
       }
     },
     {
       "kind": "observe",
       "step": 31,
-      "simDate": "2026-08-31",
-      "doy": 243,
+      "simDate": "2026-09-27",
+      "doy": 270,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [],
         "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
+          "kasse A: familie lamiaceae dyrket her 2026",
+          "kasse A: familie brassicaceae dyrket her 2026",
           "modner ikke ute: tomat_cherry"
         ]
       }
-    },
-    {
-      "kind": "action",
-      "step": 31,
-      "simDate": "2026-08-31",
-      "action": {
-        "action": "sow_outdoor",
-        "plant": "tomat_stor",
-        "box": "A",
-        "quantity": 5
-      },
-      "result": {
-        "ok": true,
-        "handle": "#15",
-        "note": "sådde tomat_stor ute i kasse A som #15"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 32,
-      "simDate": "2026-08-31",
-      "doy": 243,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry, tomat_stor"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 32,
-      "simDate": "2026-09-07",
-      "action": {
-        "action": "advance_days",
-        "days": 7
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-09-07 (doy 250)"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 33,
-      "simDate": "2026-09-07",
-      "doy": 250,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [],
-        "plantOut": [],
-        "harvestSoon": [],
-        "warnings": [
-          "kasse A: familie cucurbitaceae dyrket her 2026",
-          "kasse A: familie solanaceae dyrket her 2026",
-          "modner ikke ute: tomat_cherry, tomat_stor"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 33,
-      "simDate": "2026-09-30",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 273,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. okt"
-        },
-        "note": "→ 1. okt 2026-09-30"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 33,
-      "simDate": "2026-09-30",
-      "label": "1. okt",
-      "eventKind": "month-start"
     }
   ]
 }

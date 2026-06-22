@@ -6,6 +6,7 @@ import multiYear from "./multi-year-rotation-veteran.scenario";
 import directVsTransplant from "./direct-sow-vs-transplant.scenario";
 import midsummer from "./midsummer-harvest-rush.scenario";
 import coldStation from "./cold-station-wont-ripen.scenario";
+import neglectedHarvest from "./neglected-harvest.scenario";
 
 export const SCENARIOS: Scenario[] = [
   precultivation,
@@ -14,6 +15,7 @@ export const SCENARIOS: Scenario[] = [
   directVsTransplant,
   midsummer,
   coldStation,
+  neglectedHarvest,
 ];
 
 export function getScenarios(keys: string): Scenario[] {

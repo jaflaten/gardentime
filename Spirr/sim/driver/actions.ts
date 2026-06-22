@@ -152,6 +152,10 @@ export class AppDriver {
     if (!isIndoorSeedling(pl)) {
       return { ok: false, error: `${plantingHandle} is already planted out (in a box)`, noop: true };
     }
+    if (this.clock.iso() < pl.plantedDate) {
+      // Guard: a seedling can't be planted out before it was sown (would reverse transplantedDate<plantedDate).
+      return { ok: false, error: `${plantingHandle} er ikke sådd ennå (sådd ${pl.plantedDate})` };
+    }
     // Preserve plantedDate (indoor sow date); only set boxId + transplantedDate. Identity continuity.
     this.garden.updatePlanting(id, { boxId, transplantedDate: this.clock.iso() });
     // A2: a frost-tender seedling planted out before last frost gets a soft caution (the app would
@@ -176,6 +180,10 @@ export class AppDriver {
     }
     if (isIndoorSeedling(pl)) {
       return { ok: false, error: `${plantingHandle} is still an indoor seedling — plant it out before harvest` };
+    }
+    if (this.clock.iso() < pl.plantedDate) {
+      // Guard: can't harvest a planting before it was sown (would reverse harvestDate<plantedDate).
+      return { ok: false, error: `${plantingHandle} er ikke sådd ennå (sådd ${pl.plantedDate})` };
     }
     this.garden.markHarvested(id, { date: this.clock.iso(), harvestYield });
     return { ok: true, note: `høstet ${plantingHandle}${harvestYield ? ` (${harvestYield})` : ""}` };

@@ -3,21 +3,21 @@
   "title": "Direktesåing vs forkultivering (Sogndal, april)",
   "model": "qwen2.5:7b",
   "persona": "methodical-veteran",
-  "generatedAt": "2026-06-21T08:38:16.084Z",
+  "generatedAt": "2026-06-21T22:45:19.034Z",
   "summary": {
-    "steps": 18,
-    "llmCalls": 18,
-    "advances": 11,
+    "steps": 25,
+    "llmCalls": 25,
+    "advances": 25,
     "errors": 1,
     "forcedAdvances": 0,
-    "evalTokens": 255,
-    "finalDate": "2026-10-27"
+    "evalTokens": 417,
+    "finalDate": "2026-10-05"
   },
   "invariants": [
     {
       "name": "unique planting ids",
       "ok": true,
-      "detail": "4 unique"
+      "detail": "5 unique"
     },
     {
       "name": "boxed plantings reference a real box",
@@ -52,7 +52,7 @@
     {
       "name": "garden stats finite",
       "ok": true,
-      "detail": "1 active"
+      "detail": "0 active"
     },
     {
       "name": "composition counts boxed actives only",
@@ -62,7 +62,7 @@
     {
       "name": "rotation flags are sound (real repeat within lookback)",
       "ok": true,
-      "detail": "2 box-rows checked"
+      "detail": "3 box-rows checked"
     },
     {
       "name": "no perennial-only family flagged for rotation",
@@ -76,26 +76,18 @@
     }
   ],
   "invariantsGreen": true,
-  "friction": [
-    {
-      "severity": "high",
-      "title": "Ignorer av app-anbefaling om utplanting",
-      "evidence": "[2026-04-15] APP: plant-ut-klar:løk; høst-snart:#2 salat (soon)\n[2026-04-15] GARTNER plant_out FEIL:#2 is already planted out (in a box)",
-      "suggestion": "Forbedre app-funksjonen for å sikre at gartnerne ikke ignorerer viktige anbefalinger."
-    },
-    {
-      "severity": "medium",
-      "title": "Forkert tidsplanering for høst",
-      "evidence": "[2026-05-31] GARTNER sow_indoor (sådde reddik inne (forkultivering) som #3)\n[2026-05-31] GARTNER sow_outdoor (sådde reddik ute i kasse A som #4)\n[2026-05-31] GARTNER plant_out (plantet ut #3 i kasse A)\n[2026-07-05] APP: høst-snart:#4 reddik (ready)",
-      "suggestion": "Korrigerere appen for å sikre at høst-datoene alignes med reelle voksendeperioder."
-    },
-    {
-      "severity": "low",
-      "title": "Forsvunnet anbefaling om høst",
-      "evidence": "[2026-07-05] GARTNER harvest (høstet #4 (Rødheter))\n[2026-07-05] APP: ⚠:kasse A: familie asteraceae dyrket her 2026 | kasse A: familie brassicaceae dyrket her 2026 | kasse B: familie asteraceae dyrket her 2026",
-      "suggestion": "Forbedre appen for å sikre at høst-datoene oppdateres korrekt i appen."
-    }
-  ],
+  "outcome": {
+    "sown": 3,
+    "sownIndoor": 1,
+    "plantedOut": 1,
+    "harvested": 5,
+    "removedOrFailed": 0,
+    "harvestSignalsOffered": 3,
+    "ripeAtSeasonEnd": 0,
+    "ripeHarvested": 3,
+    "harvestRate": 1,
+    "plantOutRate": 1
+  },
   "transcript": [
     {
       "kind": "observe",
@@ -116,7 +108,7 @@
           "løk"
         ],
         "harvestSoon": [
-          "#2 salat (soon)"
+          "#2 salat (ready)"
         ],
         "warnings": []
       }
@@ -126,21 +118,39 @@
       "step": 1,
       "simDate": "2026-04-15",
       "action": {
-        "action": "plant_out",
+        "action": "harvest",
         "planting": "#2",
-        "box": "A"
+        "yield": "Moden salat"
       },
       "result": {
-        "ok": false,
-        "error": "#2 is already planted out (in a box)",
-        "noop": true
+        "ok": true,
+        "note": "høstet #2 (Moden salat)"
       }
+    },
+    {
+      "kind": "action",
+      "step": 1,
+      "simDate": "2026-04-15",
+      "action": {
+        "action": "note",
+        "text": "Harvestet #2 salat da den var moden."
+      },
+      "result": {
+        "ok": true,
+        "note": "Harvestet #2 salat da den var moden."
+      }
+    },
+    {
+      "kind": "note",
+      "step": 1,
+      "simDate": "2026-04-15",
+      "text": "Harvestet #2 salat da den var moden."
     },
     {
       "kind": "observe",
       "step": 2,
-      "simDate": "2026-04-15",
-      "doy": 105,
+      "simDate": "2026-04-22",
+      "doy": 112,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
@@ -154,105 +164,6 @@
         "plantOut": [
           "løk"
         ],
-        "harvestSoon": [
-          "#2 salat (soon)"
-        ],
-        "warnings": []
-      }
-    },
-    {
-      "kind": "action",
-      "step": 2,
-      "simDate": "2026-04-24",
-      "action": {
-        "action": "advance_days",
-        "days": 9
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-04-24 (doy 114)"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 3,
-      "simDate": "2026-04-24",
-      "doy": 114,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "gulrot",
-          "salat",
-          "persille",
-          "erter",
-          "spinat",
-          "gressløk",
-          "rødbeter",
-          "pak_choi",
-          "potet",
-          "reddik",
-          "persillerot",
-          "åkerbønner",
-          "kålrot"
-        ],
-        "plantOut": [
-          "jordbær",
-          "purre",
-          "løk",
-          "blomkål",
-          "brokkoli",
-          "knutekål"
-        ],
-        "harvestSoon": [
-          "#2 salat (ready)"
-        ],
-        "warnings": []
-      }
-    },
-    {
-      "kind": "action",
-      "step": 3,
-      "simDate": "2026-04-24",
-      "action": {
-        "action": "harvest",
-        "planting": "#2",
-        "yield": "Salat klar til høst"
-      },
-      "result": {
-        "ok": true,
-        "note": "høstet #2 (Salat klar til høst)"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 4,
-      "simDate": "2026-04-24",
-      "doy": 114,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "gulrot",
-          "salat",
-          "persille",
-          "erter",
-          "spinat",
-          "gressløk",
-          "rødbeter",
-          "pak_choi",
-          "potet",
-          "reddik",
-          "persillerot",
-          "åkerbønner",
-          "kålrot"
-        ],
-        "plantOut": [
-          "jordbær",
-          "purre",
-          "løk",
-          "blomkål",
-          "brokkoli",
-          "knutekål"
-        ],
         "harvestSoon": [],
         "warnings": [
           "kasse B: familie asteraceae dyrket her 2026"
@@ -260,35 +171,10 @@
       }
     },
     {
-      "kind": "action",
-      "step": 4,
-      "simDate": "2026-04-30",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 120,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. mai"
-        },
-        "note": "→ 1. mai 2026-04-30"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 4,
-      "simDate": "2026-04-30",
-      "label": "1. mai",
-      "eventKind": "month-start"
-    },
-    {
       "kind": "observe",
-      "step": 5,
-      "simDate": "2026-04-30",
-      "doy": 120,
+      "step": 3,
+      "simDate": "2026-04-29",
+      "doy": 119,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
@@ -319,44 +205,43 @@
       }
     },
     {
-      "kind": "action",
-      "step": 5,
-      "simDate": "2026-05-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 151,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. jun"
-        },
-        "note": "→ 1. jun 2026-05-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 5,
-      "simDate": "2026-05-31",
-      "label": "1. jun",
-      "eventKind": "month-start"
-    },
-    {
       "kind": "observe",
-      "step": 6,
-      "simDate": "2026-05-31",
-      "doy": 151,
+      "step": 4,
+      "simDate": "2026-05-06",
+      "doy": 126,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
-          "reddik"
+          "gulrot",
+          "salat",
+          "persille",
+          "bønner",
+          "spinat",
+          "gressløk",
+          "rødbeter",
+          "pak_choi",
+          "solsikke",
+          "potet",
+          "reddik",
+          "persillerot",
+          "kålrot"
         ],
-        "plantOut": [],
-        "harvestSoon": [
-          "#1 salat (ready)"
+        "plantOut": [
+          "tomat_cherry",
+          "tomat_stor",
+          "basilikum",
+          "agurk",
+          "jordbær",
+          "timian",
+          "squash",
+          "mais",
+          "purre",
+          "løk",
+          "blomkål",
+          "brokkoli",
+          "knutekål"
         ],
+        "harvestSoon": [],
         "warnings": [
           "kasse B: familie asteraceae dyrket her 2026"
         ]
@@ -364,33 +249,68 @@
     },
     {
       "kind": "action",
-      "step": 6,
-      "simDate": "2026-05-31",
+      "step": 4,
+      "simDate": "2026-05-06",
       "action": {
-        "action": "sow_indoor",
-        "plant": "reddik",
-        "quantity": 4
+        "action": "sow_outdoor",
+        "plant": "gulrot",
+        "box": "B",
+        "quantity": 3
       },
       "result": {
         "ok": true,
         "handle": "#3",
-        "note": "sådde reddik inne (forkultivering) som #3"
+        "note": "sådde gulrot ute i kasse B som #3"
       }
     },
     {
+      "kind": "action",
+      "step": 4,
+      "simDate": "2026-05-06",
+      "action": {
+        "action": "note",
+        "text": "Planter gulrot direkte ute i kassen B."
+      },
+      "result": {
+        "ok": true,
+        "note": "Planter gulrot direkte ute i kassen B."
+      }
+    },
+    {
+      "kind": "note",
+      "step": 4,
+      "simDate": "2026-05-06",
+      "text": "Planter gulrot direkte ute i kassen B."
+    },
+    {
       "kind": "observe",
-      "step": 7,
-      "simDate": "2026-05-31",
-      "doy": 151,
+      "step": 5,
+      "simDate": "2026-05-13",
+      "doy": 133,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
-          "reddik"
+          "gulrot",
+          "salat",
+          "persille",
+          "bønner",
+          "rødbeter",
+          "solsikke",
+          "potet",
+          "reddik",
+          "kålrot"
         ],
-        "plantOut": [],
-        "harvestSoon": [
-          "#1 salat (ready)"
+        "plantOut": [
+          "basilikum",
+          "jordbær",
+          "paprika",
+          "gresskar",
+          "timian",
+          "rosmarin",
+          "squash",
+          "mais"
         ],
+        "harvestSoon": [],
         "warnings": [
           "kasse B: familie asteraceae dyrket her 2026"
         ]
@@ -398,31 +318,54 @@
     },
     {
       "kind": "action",
-      "step": 7,
-      "simDate": "2026-05-31",
+      "step": 5,
+      "simDate": "2026-05-13",
       "action": {
-        "action": "sow_outdoor",
-        "plant": "reddik",
-        "box": "A",
+        "action": "add_box",
+        "name": "Kasse C",
+        "bedType": "raised",
+        "sunExposure": "sun",
+        "depthCm": 25
+      },
+      "result": {
+        "ok": true,
+        "handle": "C",
+        "note": "kasse C «Kasse C»"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 5,
+      "simDate": "2026-05-13",
+      "action": {
+        "action": "sow_indoor",
+        "plant": "bønner",
         "quantity": 4
       },
       "result": {
         "ok": true,
         "handle": "#4",
-        "note": "sådde reddik ute i kasse A som #4"
+        "note": "sådde bønner inne (forkultivering) som #4"
       }
     },
     {
       "kind": "observe",
-      "step": 8,
-      "simDate": "2026-05-31",
-      "doy": 151,
+      "step": 6,
+      "simDate": "2026-05-20",
+      "doy": 140,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
+          "gulrot",
+          "salat",
+          "rødbeter",
           "reddik"
         ],
-        "plantOut": [],
+        "plantOut": [
+          "jordbær",
+          "paprika",
+          "rosmarin"
+        ],
         "harvestSoon": [
           "#1 salat (ready)"
         ],
@@ -433,56 +376,23 @@
     },
     {
       "kind": "action",
-      "step": 8,
-      "simDate": "2026-05-31",
-      "action": {
-        "action": "plant_out",
-        "planting": "#3",
-        "box": "A"
-      },
-      "result": {
-        "ok": true,
-        "note": "plantet ut #3 i kasse A"
-      }
-    },
-    {
-      "kind": "observe",
-      "step": 9,
-      "simDate": "2026-05-31",
-      "doy": 151,
-      "offered": {
-        "sowIndoor": [],
-        "sowOutdoor": [
-          "reddik"
-        ],
-        "plantOut": [],
-        "harvestSoon": [
-          "#1 salat (ready)"
-        ],
-        "warnings": [
-          "kasse B: familie asteraceae dyrket her 2026"
-        ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 9,
-      "simDate": "2026-05-31",
+      "step": 6,
+      "simDate": "2026-05-20",
       "action": {
         "action": "harvest",
         "planting": "#1",
-        "yield": "Harvested mature lettuce"
+        "yield": "Salat moden høstet"
       },
       "result": {
         "ok": true,
-        "note": "høstet #1 (Harvested mature lettuce)"
+        "note": "høstet #1 (Salat moden høstet)"
       }
     },
     {
       "kind": "observe",
-      "step": 10,
-      "simDate": "2026-05-31",
-      "doy": 151,
+      "step": 7,
+      "simDate": "2026-05-27",
+      "doy": 147,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [
@@ -498,174 +408,245 @@
     },
     {
       "kind": "action",
-      "step": 10,
-      "simDate": "2026-06-20",
+      "step": 7,
+      "simDate": "2026-05-27",
       "action": {
-        "action": "advance_to_next_event"
+        "action": "sow_outdoor",
+        "plant": "reddik",
+        "box": "C",
+        "quantity": 3
       },
       "result": {
         "ok": true,
-        "event": {
-          "doy": 171,
-          "year": 2026,
-          "kind": "solstice",
-          "label": "sommersolverv"
-        },
-        "note": "→ sommersolverv 2026-06-20"
+        "handle": "#5",
+        "note": "sådde reddik ute i kasse C som #5"
       }
     },
     {
-      "kind": "event",
+      "kind": "observe",
+      "step": 8,
+      "simDate": "2026-06-03",
+      "doy": 154,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [
+          "reddik"
+        ],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "system",
+      "step": 8,
+      "simDate": "2026-06-03",
+      "text": "ugyldig handling hoppet over: plant_out needs `planting` (e.g. #1) and `box` (e.g. A)"
+    },
+    {
+      "kind": "observe",
+      "step": 9,
+      "simDate": "2026-06-10",
+      "doy": 161,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [
+          "#5 reddik (soon)"
+        ],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "action",
+      "step": 9,
+      "simDate": "2026-06-10",
+      "action": {
+        "action": "harvest",
+        "planting": "#5",
+        "yield": "Reddik moden"
+      },
+      "result": {
+        "ok": true,
+        "note": "høstet #5 (Reddik moden)"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 9,
+      "simDate": "2026-06-10",
+      "action": {
+        "action": "note",
+        "text": "Harvestet moden reddik, nå klar til neste planting."
+      },
+      "result": {
+        "ok": true,
+        "note": "Harvestet moden reddik, nå klar til neste planting."
+      }
+    },
+    {
+      "kind": "note",
+      "step": 9,
+      "simDate": "2026-06-10",
+      "text": "Harvestet moden reddik, nå klar til neste planting."
+    },
+    {
+      "kind": "observe",
       "step": 10,
-      "simDate": "2026-06-20",
-      "label": "sommersolverv",
-      "eventKind": "solstice"
+      "simDate": "2026-06-17",
+      "doy": 168,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
     },
     {
       "kind": "observe",
       "step": 11,
-      "simDate": "2026-06-20",
-      "doy": 171,
+      "simDate": "2026-06-24",
+      "doy": 175,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
-        "harvestSoon": [
-          "#3 reddik (ready)",
-          "#4 reddik (soon)"
-        ],
+        "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
-      }
-    },
-    {
-      "kind": "action",
-      "step": 11,
-      "simDate": "2026-06-27",
-      "action": {
-        "action": "advance_days",
-        "days": 7
-      },
-      "result": {
-        "ok": true,
-        "note": "→ 2026-06-27 (doy 178)"
       }
     },
     {
       "kind": "observe",
       "step": 12,
-      "simDate": "2026-06-27",
-      "doy": 178,
+      "simDate": "2026-07-01",
+      "doy": 182,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
-        "harvestSoon": [
-          "#3 reddik (ready)",
-          "#4 reddik (ready)"
-        ],
+        "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
-    },
-    {
-      "kind": "action",
-      "step": 12,
-      "simDate": "2026-06-30",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 181,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. jul"
-        },
-        "note": "→ 1. jul 2026-06-30"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 12,
-      "simDate": "2026-06-30",
-      "label": "1. jul",
-      "eventKind": "month-start"
     },
     {
       "kind": "observe",
       "step": 13,
-      "simDate": "2026-06-30",
-      "doy": 181,
+      "simDate": "2026-07-08",
+      "doy": 189,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [
-          "#3 reddik (ready)",
-          "#4 reddik (ready)"
+          "#3 gulrot (soon)"
         ],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
     },
     {
       "kind": "action",
       "step": 13,
-      "simDate": "2026-07-05",
+      "simDate": "2026-07-08",
       "action": {
-        "action": "advance_days",
-        "days": 5
+        "action": "harvest",
+        "planting": "#3",
+        "yield": "Gulrot moden"
       },
       "result": {
         "ok": true,
-        "note": "→ 2026-07-05 (doy 186)"
+        "note": "høstet #3 (Gulrot moden)"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 13,
+      "simDate": "2026-07-08",
+      "action": {
+        "action": "plant_out",
+        "planting": "#4",
+        "box": "B"
+      },
+      "result": {
+        "ok": true,
+        "note": "plantet ut #4 i kasse B"
       }
     },
     {
       "kind": "observe",
       "step": 14,
-      "simDate": "2026-07-05",
-      "doy": 186,
+      "simDate": "2026-07-15",
+      "doy": 196,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
         "plantOut": [],
         "harvestSoon": [
-          "#4 reddik (ready)"
+          "#4 bønner (ready)"
         ],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
     },
     {
       "kind": "action",
       "step": 14,
-      "simDate": "2026-07-05",
+      "simDate": "2026-07-15",
+      "action": {
+        "action": "set_location",
+        "postnummer": "6857"
+      },
+      "result": {
+        "ok": true,
+        "note": "Sogndal LH (siste frost doy 114)"
+      }
+    },
+    {
+      "kind": "action",
+      "step": 14,
+      "simDate": "2026-07-15",
       "action": {
         "action": "harvest",
         "planting": "#4",
-        "yield": "Rødheter成熟的回答如下："
+        "yield": "bønner høstet"
       },
       "result": {
         "ok": true,
-        "note": "høstet #4 (Rødheter成熟的回答如下：)"
+        "note": "høstet #4 (bønner høstet)"
       }
     },
     {
       "kind": "observe",
       "step": 15,
-      "simDate": "2026-07-05",
-      "doy": 186,
+      "simDate": "2026-07-22",
+      "doy": 203,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
@@ -673,41 +654,18 @@
         "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse A: familie brassicaceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
     },
     {
-      "kind": "action",
-      "step": 15,
-      "simDate": "2026-07-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 212,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. aug"
-        },
-        "note": "→ 1. aug 2026-07-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 15,
-      "simDate": "2026-07-31",
-      "label": "1. aug",
-      "eventKind": "month-start"
-    },
-    {
       "kind": "observe",
       "step": 16,
-      "simDate": "2026-07-31",
-      "doy": 212,
+      "simDate": "2026-07-29",
+      "doy": 210,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
@@ -715,41 +673,18 @@
         "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse A: familie brassicaceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
     },
     {
-      "kind": "action",
-      "step": 16,
-      "simDate": "2026-08-31",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 243,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. sep"
-        },
-        "note": "→ 1. sep 2026-08-31"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 16,
-      "simDate": "2026-08-31",
-      "label": "1. sep",
-      "eventKind": "month-start"
-    },
-    {
       "kind": "observe",
       "step": 17,
-      "simDate": "2026-08-31",
-      "doy": 243,
+      "simDate": "2026-08-05",
+      "doy": 217,
       "offered": {
         "sowIndoor": [],
         "sowOutdoor": [],
@@ -757,39 +692,149 @@
         "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse A: familie brassicaceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
-    },
-    {
-      "kind": "action",
-      "step": 17,
-      "simDate": "2026-09-30",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 273,
-          "year": 2026,
-          "kind": "month-start",
-          "label": "1. okt"
-        },
-        "note": "→ 1. okt 2026-09-30"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 17,
-      "simDate": "2026-09-30",
-      "label": "1. okt",
-      "eventKind": "month-start"
     },
     {
       "kind": "observe",
       "step": 18,
+      "simDate": "2026-08-12",
+      "doy": 224,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 19,
+      "simDate": "2026-08-19",
+      "doy": 231,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 20,
+      "simDate": "2026-08-26",
+      "doy": 238,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 21,
+      "simDate": "2026-09-02",
+      "doy": 245,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 22,
+      "simDate": "2026-09-09",
+      "doy": 252,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 23,
+      "simDate": "2026-09-16",
+      "doy": 259,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 24,
+      "simDate": "2026-09-23",
+      "doy": 266,
+      "offered": {
+        "sowIndoor": [],
+        "sowOutdoor": [],
+        "plantOut": [],
+        "harvestSoon": [],
+        "warnings": [
+          "kasse A: familie asteraceae dyrket her 2026",
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
+        ]
+      }
+    },
+    {
+      "kind": "observe",
+      "step": 25,
       "simDate": "2026-09-30",
       "doy": 273,
       "offered": {
@@ -799,35 +844,12 @@
         "harvestSoon": [],
         "warnings": [
           "kasse A: familie asteraceae dyrket her 2026",
-          "kasse A: familie brassicaceae dyrket her 2026",
-          "kasse B: familie asteraceae dyrket her 2026"
+          "kasse B: familie asteraceae dyrket her 2026",
+          "kasse B: familie apiaceae dyrket her 2026",
+          "kasse B: familie fabaceae dyrket her 2026",
+          "kasse C: familie brassicaceae dyrket her 2026"
         ]
       }
-    },
-    {
-      "kind": "action",
-      "step": 18,
-      "simDate": "2026-10-27",
-      "action": {
-        "action": "advance_to_next_event"
-      },
-      "result": {
-        "ok": true,
-        "event": {
-          "doy": 300,
-          "year": 2026,
-          "kind": "first-frost",
-          "label": "første høstfrost"
-        },
-        "note": "→ første høstfrost 2026-10-27"
-      }
-    },
-    {
-      "kind": "event",
-      "step": 18,
-      "simDate": "2026-10-27",
-      "label": "første høstfrost",
-      "eventKind": "first-frost"
     }
   ]
 }
