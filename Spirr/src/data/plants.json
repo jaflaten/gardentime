@@ -1307,5 +1307,180 @@
     ],
     "gddToMaturity": 550,
     "gddBase": 5
+  },
+  {
+    "key": "rosenkål",
+    "name_no": "Rosenkål",
+    "name_pl": "Brukselka",
+    "name_en": "Brussels sprouts",
+    "emoji": "🥬",
+    "color": "#5e8d4a",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        24,
+        28
+      ]
+    },
+    "harvestDurationWeeks": 6,
+    "sunNeed": "partial",
+    "minDepthCm": 30,
+    "companionsGood": [
+      "løk",
+      "rødbeter",
+      "spinat"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "gddToMaturity": 1200,
+    "gddBase": 5
+  },
+  {
+    "key": "grønnkål",
+    "name_no": "Grønnkål",
+    "name_pl": "Jarmuż",
+    "name_en": "Kale",
+    "emoji": "🥬",
+    "color": "#3d6b35",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        9,
+        11
+      ]
+    },
+    "harvestDurationWeeks": 8,
+    "sunNeed": "partial",
+    "minDepthCm": 25,
+    "companionsGood": [
+      "løk",
+      "rødbeter",
+      "spinat"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "gddToMaturity": 600,
+    "gddBase": 5
+  },
+  {
+    "key": "hodekål",
+    "name_no": "Hodekål",
+    "name_pl": "Kapusta głowiasta",
+    "name_en": "Cabbage",
+    "emoji": "🥬",
+    "color": "#9bbf7a",
+    "category": "vegetable",
+    "family": "brassicaceae",
+    "sowRules": [
+      {
+        "type": "indoor",
+        "weeksBeforeLastFrost": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          2
+        ]
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        14,
+        18
+      ]
+    },
+    "sunNeed": "partial",
+    "minDepthCm": 25,
+    "companionsGood": [
+      "løk",
+      "rødbeter",
+      "spinat"
+    ],
+    "companionsBad": [
+      "jordbær",
+      "tomat_cherry",
+      "tomat_stor"
+    ],
+    "gddToMaturity": 900,
+    "gddBase": 5
+  },
+  {
+    "key": "koriander",
+    "name_no": "Koriander",
+    "name_pl": "Kolendra",
+    "name_en": "Coriander",
+    "emoji": "🌿",
+    "color": "#6fae52",
+    "category": "herb",
+    "family": "apiaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        6,
+        8
+      ]
+    },
+    "harvestDurationWeeks": 3,
+    "sunNeed": "partial",
+    "companionsGood": [
+      "salat",
+      "spinat"
+    ],
+    "successionWeeks": 3,
+    "gddToMaturity": 250,
+    "gddBase": 5
   }
 ]
