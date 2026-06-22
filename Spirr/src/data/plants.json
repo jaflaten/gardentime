@@ -1482,5 +1482,44 @@
     "successionWeeks": 3,
     "gddToMaturity": 250,
     "gddBase": 5
+  },
+  {
+    "key": "dill",
+    "name_no": "Dill",
+    "name_pl": "Koper",
+    "name_en": "Dill",
+    "emoji": "🌿",
+    "color": "#7ba84a",
+    "category": "herb",
+    "family": "apiaceae",
+    "sowRules": [
+      {
+        "type": "outdoor",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ],
+        "minSoilTempC": 7
+      }
+    ],
+    "harvestRule": {
+      "weeksFromSowing": [
+        6,
+        8
+      ]
+    },
+    "harvestDurationWeeks": 4,
+    "sunNeed": "full",
+    "companionsGood": [
+      "agurk",
+      "løk",
+      "salat"
+    ],
+    "companionsBad": [
+      "gulrot"
+    ],
+    "successionWeeks": 3,
+    "gddToMaturity": 250,
+    "gddBase": 5
   }
 ]
