@@ -33,6 +33,17 @@ export interface FrostNormalEntry {
    */
   growDays5?: number[];
   growDays10?: number[];
+  /**
+   * Number of years (1991–2024, ≥300 obs days each) the normal is derived from. Optional —
+   * pre-Tier-2 data lacks it. Recent, well-sited stations may have a short record.
+   */
+  years?: number;
+  /**
+   * Coarse reliability of the frost dates: `"low"` when the station has a short record
+   * (< ~15 contributing years), else `"high"`. The app surfaces `"low"` as a caution so the
+   * user knows the dates for a young station are less certain. Optional (pre-Tier-2 data lacks it).
+   */
+  confidence?: "high" | "low";
 }
 
 export interface StationEntry {
@@ -119,6 +130,10 @@ export interface ResolvedLocation {
    */
   gddCurve5: number[];
   gddCurve10: number[];
+  /** Years the station's normal is derived from (undefined for pre-Tier-2 data). */
+  stationYears?: number;
+  /** `"low"` when the station has a short record — surfaced as a caution. */
+  stationConfidence?: "high" | "low";
 }
 
 /**
@@ -160,6 +175,8 @@ export function resolveLocation(input: ResolveLocationInput): ResolvedLocation |
     elevationShiftDays,
     gddCurve5,
     gddCurve10,
+    stationYears: stationFrost.years,
+    stationConfidence: stationFrost.confidence,
   };
 }
 

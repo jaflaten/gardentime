@@ -490,6 +490,12 @@ export function Settings() {
                 {resolvedLocation.station.elevationM} m).
               </p>
             )}
+            {resolvedLocation.stationConfidence === "low" && (
+              <p className="text-xs" style={{ color: "#b4690e" }}>
+                ⚠ Kort måleserie{resolvedLocation.stationYears ? ` (~${resolvedLocation.stationYears} år)` : ""} — frostdatoene
+                for denne stasjonen er mer usikre enn for stasjoner med lange serier.
+              </p>
+            )}
           </div>
         )}
 
