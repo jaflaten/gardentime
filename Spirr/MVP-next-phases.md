@@ -1,5 +1,7 @@
 # Spirr — Next Phases Planned
 
+> **➡️ Way-forward planning has moved to [`MVP-next-phase-v2.md`](MVP-next-phase-v2.md)** (2026-06-22) — a short, current map of what's done and what's next. This file remains the full historical record + as-built logs.
+
 > **Working rule:** This doc is the source of truth for what's planned and what's shipped. After completing any task in scope of these phases, update the relevant section *before* ending the session — move done items into **Shipped**, mark decisions as locked, record the actual numbers/paths that replaced any placeholders. Don't leave the doc lagging behind the code.
 
 ## Status
