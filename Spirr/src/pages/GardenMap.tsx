@@ -11,7 +11,9 @@ import { QuickAddSheet } from "../components/QuickAddSheet";
 import { SeasonTimeline } from "../components/SeasonTimeline";
 import { SowBoxPicker } from "../components/SowBoxPicker";
 import { SowNowCard } from "../components/SowNowCard";
+import { SowPlanCard } from "../components/SowPlanCard";
 import type { BedType, SunExposure } from "../lib/boxMeta";
+import { now } from "../lib/clock";
 import { isCustomPlantLike } from "../lib/customPlants";
 import { usePlantLookup } from "../lib/plants";
 import { isIndoorSeedling } from "../lib/planting";
@@ -22,6 +24,7 @@ import plantsData from "../data/plants.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useLocationStore } from "../store/useLocationStore";
+import { useSowPlanStore } from "../store/useSowPlanStore";
 import { useUiStore } from "../store/useUiStore";
 import type { Box, Planting, PlantInfo } from "../types";
 
@@ -172,6 +175,12 @@ export function GardenMap() {
   const setPostnummer = useLocationStore((state) => state.setPostnummer);
   const setElevation = useLocationStore((state) => state.setElevation);
   const setFrostJustering = useLocationStore((state) => state.setFrostJustering);
+  const sowPlanEntries = useSowPlanStore((state) => state.entries);
+  const planYear = now().getFullYear();
+  const plannedKeys = useMemo(
+    () => new Set(sowPlanEntries.filter((e) => e.year === planYear).map((e) => e.plantKey)),
+    [sowPlanEntries, planYear],
+  );
 
   const showOnboarding = !viewMode && boxes.length === 0 && !onboardingDismissed;
 
@@ -484,7 +493,19 @@ export function GardenMap() {
       <NoLocationBanner viewMode={viewMode} />
 
       {!viewMode && (
+        <SowPlanCard
+          onPickPlant={(plantKey) => {
+            setSowPickPlantKey(plantKey);
+          }}
+          onStartIndoor={(plantKey) => {
+            navigate(`/seedlings?start=${encodeURIComponent(plantKey)}`);
+          }}
+        />
+      )}
+
+      {!viewMode && (
         <SowNowCard
+          plannedKeys={plannedKeys}
           onPickPlant={(plantKey) => {
             setSowPickPlantKey(plantKey);
           }}

@@ -27,21 +27,20 @@ Full details + browser-verification notes live in `MVP-next-phases.md`. The shor
 
 Three things came out of the latest review. These are the priorities.
 
-### 2.1 Såplan + sowing reminders — *the flagship new feature*
+### 2.1 Såplan + sowing reminders — *the flagship new feature* — ✅ v1 SHIPPED 2026-07-06
 
 **The idea (user).** Use pre-cultivation as a **planning** tool, not just tracking. In February a gardener wants to decide *what they'll grow this year*, and then be **reminded when to start each seed** (especially forkultivering / indoor sowing). "An app that reminds me when to sow the seeds for the plants I'm going to have."
 
-**What we already have vs. the gap:**
-- ✅ The *timing math* exists — `SowNowCard` already computes **Så inne / Så ute / Plant ut** windows for every tagged plant against the user's frost dates.
-- ✅ The *tracking* exists — Increment **K** (Forkultivering tray) records seedlings once started.
-- ❌ **Missing: the plan + the nudge.** There's no way to say "I intend to grow tomatoes, paprika, grønnkål this year," and nothing proactively tells you "start tomatoes inne **this week**." Today you have to open the app and read the card.
+**Shipped (v1, as-built log in `MVP-next-phases.md`):**
+1. **Min såplan** — per-year wishlist card at the top of GardenMap (`SowPlanCard.tsx`, `useSowPlanStore`, `gt_sowplan` — the 4th localStorage namespace, Phase-H-ready). Each planned crop shows its **next action + date** from a new pure lib (`sowPlan.ts` — `nextActionForPlant`: open window → "Så inne nå — til ca. 14.03", else nearest upcoming → "Plant ut fra ca. 02.05", else "over for i år"); crops already planted this year show "✓ Startet i år".
+2. **Reminder strip (Increment H v1)** — "🔔 På tide: Cherrytomater (så inne)" at the top of the card when a planned crop's window is open and it isn't started yet. Dedupe via `gt_reminders` (`year:kind:plantKey` → timestamp): dismissed/acted nudges stay gone for the season, but a *later* window (plant-ut after så-inne) re-surfaces the crop. Web push stays future work (§3).
+3. **Hand-off into K** — "Start inne" on a due crop opens the Forkultivering form pre-filled (`/seedlings?start=…`); ute/plant-ut rows reuse GardenMap's sow-mode flow.
+4. **SowNowCard pinning** — planned crops sort first in every group with a ⭐.
+5. Backup export/import round-trips `sowPlan` (optional field, version 2 unchanged).
 
-**Proposed shape (to design, not yet locked):**
-1. **Min såplan** — a lightweight list of *intended* crops for the season (a wishlist, no box yet). Likely reuses `PlantInfo` keys + a tiny store; the plan **filters/pins** the existing SowNowCard windows to the crops you care about, so each planned crop shows its next action + date ("Så inne ~uke 9", "Plant ut etter 17. mai").
-2. **Reminders (= Increment H, see §3)** — surface "på tide å så X inne" as a **session banner v1** (cheap, no infra), later opt-in web push. Dedupe via `gt_reminders` timestamps.
-3. **Hand-off into K** — "start nå" on a planned crop creates the indoor seedling in the Forkultivering tray (closes plan → cultivate → plant out → harvest).
+**Verified:** 72 vitest green (incl. new `sow-plan.test.ts`), `tsc -b`/eslint/`vite build` clean; in-browser via `?simNow=2026-03-10` (strip → Start inne → seedling form → dedupe on return).
 
-**Why it fits.** It's the natural capstone over D2 + K + H, it's the "calendar intelligence is the identity" bet, and it serves a real unmet need (hobby gardeners aren't served by pro ag scheduling tools).
+**Why it fits.** It's the natural capstone over D2 + K + H, it's the "calendar intelligence is the identity" bet, and it serves a real unmet need (hobby gardeners aren't served by pro ag scheduling tools). Also the last unshipped **free-tier** item in `MONETIZATION.md` §2 — and the retention engine that later makes premium push-alerts sellable.
 
 ### 2.2 Harvest-readiness status progression — "Klar for høsting" — ✅ SHIPPED 2026-07-02
 
@@ -89,13 +88,14 @@ What was done, and what we learned:
 
 | Item | Status | Notes |
 |---|---|---|
-| **Increment H — reminders/notifications** | **Promoted** → see §2.1 | Session banner v1 ≈ ½ day; web push (service worker) 2–3 days. Was Cohort 4. |
+| **Increment H — reminders/notifications** | **v1 shipped** with §2.1 (2026-07-06) | In-app reminder strip on the Såplan card, deduped via `gt_reminders`. Remaining: opt-in **web push** (service worker, 2–3 days) — a natural Spirr+ premium lever (`MONETIZATION.md` §2). |
 | **I Layer 0.5 — live-weather GDD** | Candidate | This year's real temps + ~9-day forecast (MET/yr.no) → harvest estimate tightens as season runs. Needs a runtime weather API → pairs with **Phase H** (online tier). |
 | **I Layer 2 — self-calibration** | Waits on data | Needs ≥1 logged season of the user's own harvests. §2.3 cross-check is the interim. |
 | **I Layer 3 — cross-user regional aggregate** | Waits on Phase H | "Gardeners near you sowed tomato ≈ 12 May." The long-term data moat. |
 | **J — remaining charts** | Partly waits on F data | Yield-over-time + box-productivity need logged `harvestYield` (free-text → needs parse step). Diversity-over-time line is cheap & buildable now. Clickable donut/heatmap → grid filter is an interaction, not a chart. |
 | **Phase G — photos** | Hold for signal | localStorage can't hold many images → needs IndexedDB or backend. Pair with H. |
-| **Phase H — accounts/sync/tiers** | Big bet, hold for signal | Build only when a tester explicitly asks for cross-device / shared editing. Free = all intelligence; paid = scale + sync. Data layer already shaped for it (3 localStorage namespaces → 3 Supabase tables). |
+| **Phase H — accounts/sync/tiers** | Big bet, hold for signal | Build only when a tester explicitly asks for cross-device / shared editing. Business model now mapped in **[`MONETIZATION.md`](MONETIZATION.md)** (2026-07-06): free = current-season intelligence; Spirr+ = sync, frost-alerts (push), live-GDD, photos, multi-garden, full history — ~349 NOK/yr + founders' lifetime. Data layer already shaped for it (3 localStorage namespaces → 3 Supabase tables). |
+| Perennials/bær/frukttrær content | Funnel candidate | Biggest documented gap across all competitor planners ("everything assumes annual veg"). Data model already supports perennial + seasonal windows — content work, widens audience. See `MONETIZATION.md` §5. |
 | Phase E nutrient-flow hints | Not planned | E's rotation + companion scope already shipped as G + F. |
 
 ---
@@ -115,7 +115,7 @@ The sim harness is solid (Rev 3 made the harvest-rate metric falsifiable). Open 
 0. **§2.4 weather stations** — ✅ DONE 2026-06-23: 132 → **564 stations**, 70% of postnumre now on a closer station, Sogndal fixed (→ Kaupanger 170 m). Pending: commit, and a quick in-browser sanity check at a few stations. (Tier 3 elevation-aware assignment de-prioritised; seNorge gridded is the only remaining lever.)
 1. **§2.2 Harvest-readiness labels** — ✅ DONE 2026-07-02: `Snart klar (~N uker)` → `Klar for høsting` → `Bør høstes snart` across all four harvest-rule branches; SowNowCard + "Neste til høsting" wording/colour; sim treats "late" as ripe.
 2. **§2.3 GDD cross-check** — data quality; everything downstream leans on prediction trust. Make the worklist, then correct `plants.json` crop-by-crop (start with what the user grows + the 5 new plants).
-3. **§2.1 Såplan + reminders** — the flagship. Design first (plan entity + how it reuses SowNowCard windows), then build **reminders v1 as a session banner** (Increment H ½-day) and the pinned "Min såplan" list, with hand-off into the K tray.
+3. **§2.1 Såplan + reminders** — ✅ v1 DONE 2026-07-06: "Min såplan" card + in-app reminder strip (`gt_reminders` dedupe) + hand-off into the K tray + ⭐ pinning in SowNowCard + backup round-trip. Remaining: web push (see §3).
 4. **Test Simmer Rev 4** — when returning to harness work.
 
 **Held for explicit user signal:** Phase G (photos), Phase H (accounts/sync), I Layers 0.5/2/3.

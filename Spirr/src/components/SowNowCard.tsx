@@ -22,13 +22,23 @@ interface SowNowCardProps {
   onPickPlant?: (plantKey: string) => void;
   /** Called from the "Så inne" group instead of onPickPlant — starts an indoor seedling (Increment K). */
   onStartIndoor?: (plantKey: string) => void;
+  /** Crops in this year's Såplan (§2.1) — pinned to the top of each group with a ⭐. */
+  plannedKeys?: Set<string>;
+}
+
+/** Stable partition: planned crops first, everything else in original order. */
+function pinPlanned(rows: SowNowRow[], plannedKeys?: Set<string>): SowNowRow[] {
+  if (!plannedKeys?.size) {
+    return rows;
+  }
+  return [...rows.filter((r) => plannedKeys.has(r.plant.key)), ...rows.filter((r) => !plannedKeys.has(r.plant.key))];
 }
 
 function dismissedThisSession(): boolean {
   return Boolean(sessionStorage.getItem(SESSION_DISMISS_KEY));
 }
 
-export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
+export function SowNowCard({ onPickPlant, onStartIndoor, plannedKeys }: SowNowCardProps) {
   const location = useResolvedLocation();
   const plants = useMergedPlantList();
   const plantings = useGardenStore((state) => state.plantings);
@@ -44,11 +54,13 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
     const doy = todayDoy();
     const sow = groupSowNow(plants, location.lastFrostDoy, doy);
     return {
-      ...sow,
-      succession: groupSuccession(plantings, plants, location.lastFrostDoy, doy, today),
-      harvestSoon: groupHarvestSoon(plantings, plants, boxes, location, doy, today),
+      indoor: pinPlanned(sow.indoor, plannedKeys),
+      outdoor: pinPlanned(sow.outdoor, plannedKeys),
+      transplant: pinPlanned(sow.transplant, plannedKeys),
+      succession: pinPlanned(groupSuccession(plantings, plants, location.lastFrostDoy, doy, today), plannedKeys),
+      harvestSoon: pinPlanned(groupHarvestSoon(plantings, plants, boxes, location, doy, today), plannedKeys),
     };
-  }, [location, plants, plantings, boxes]);
+  }, [location, plants, plantings, boxes, plannedKeys]);
 
   if (!location || dismissed) {
     return null;
@@ -93,11 +105,12 @@ export function SowNowCard({ onPickPlant, onStartIndoor }: SowNowCardProps) {
         language={language}
         onPickPlant={onStartIndoor ?? onPickPlant}
         actionLabel={onStartIndoor ? "+ Start inne" : undefined}
+        plannedKeys={plannedKeys}
       />
-      <SowGroup title="Så ute" rows={grouped.outdoor} language={language} onPickPlant={onPickPlant} />
-      <SowGroup title="Plant ut" rows={grouped.transplant} language={language} onPickPlant={onPickPlant} />
-      <SowGroup title="Suksesjon" rows={grouped.succession} language={language} onPickPlant={onPickPlant} />
-      <SowGroup title="Høst snart" rows={grouped.harvestSoon} language={language} onPickPlant={onPickPlant} />
+      <SowGroup title="Så ute" rows={grouped.outdoor} language={language} onPickPlant={onPickPlant} plannedKeys={plannedKeys} />
+      <SowGroup title="Plant ut" rows={grouped.transplant} language={language} onPickPlant={onPickPlant} plannedKeys={plannedKeys} />
+      <SowGroup title="Suksesjon" rows={grouped.succession} language={language} onPickPlant={onPickPlant} plannedKeys={plannedKeys} />
+      <SowGroup title="Høst snart" rows={grouped.harvestSoon} language={language} onPickPlant={onPickPlant} plannedKeys={plannedKeys} />
     </section>
   );
 }
@@ -109,6 +122,7 @@ interface SowGroupProps {
   onPickPlant?: (plantKey: string) => void;
   /** Override the per-row button label (defaults to "+ Legg til"). */
   actionLabel?: string;
+  plannedKeys?: Set<string>;
 }
 
 /** Helper-text colour for the §2.2 ripeness progression; rows without a status stay muted. */
@@ -118,7 +132,7 @@ function helperColor(status: SowNowRow["status"]): string {
   return "var(--text-muted)";
 }
 
-function SowGroup({ title, rows, language, onPickPlant, actionLabel }: SowGroupProps) {
+function SowGroup({ title, rows, language, onPickPlant, actionLabel, plannedKeys }: SowGroupProps) {
   if (rows.length === 0) return null;
   return (
     <div className="space-y-2">
@@ -134,6 +148,7 @@ function SowGroup({ title, rows, language, onPickPlant, actionLabel }: SowGroupP
           >
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">
+                {plannedKeys?.has(row.plant.key) && <span title="I såplanen din">⭐ </span>}
                 {row.plant.emoji} {getPlantName(row.plant, language)}
                 {row.count != null && row.count > 1 && (
                   <span style={{ color: "var(--text-muted)" }}> ×{row.count}</span>

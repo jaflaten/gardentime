@@ -8,11 +8,13 @@ import { CATEGORY_LABELS } from "../lib/categories";
 import { isCustomPlantLike, loadCustomPlants } from "../lib/customPlants";
 import { FAMILY_INFO } from "../lib/families";
 import { findPostnummer, formatDoy, isValidPostnummer, resolveLocation } from "../lib/location";
+import { loadSowPlan, type SowPlanEntry } from "../lib/sowPlanStorage";
 import { loadBoxes, loadPlantings, saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/spirr-v3.json";
 import { useCustomPlantsStore } from "../store/useCustomPlantsStore";
 import { useGardenStore } from "../store/useGardenStore";
 import { useLocationStore } from "../store/useLocationStore";
+import { useSowPlanStore } from "../store/useSowPlanStore";
 import {
   DEFAULT_GRID_SIZE,
   GRID_COLS_MAX,
@@ -29,6 +31,7 @@ interface BackupPayload {
   boxes: unknown[];
   plantings: unknown[];
   customPlants?: unknown[];
+  sowPlan?: unknown[];
 }
 
 interface PendingImport {
@@ -36,6 +39,15 @@ interface PendingImport {
   boxes: Box[];
   plantings: Planting[];
   customPlants: PlantInfo[];
+  sowPlan: SowPlanEntry[];
+}
+
+function isSowPlanEntryLike(value: unknown): value is SowPlanEntry {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+  const entry = value as Partial<SowPlanEntry>;
+  return typeof entry.plantKey === "string" && typeof entry.year === "number";
 }
 
 function formatBackupTimestamp(value: unknown) {
@@ -92,6 +104,7 @@ function exportData() {
     boxes: loadBoxes(),
     plantings: loadPlantings(),
     customPlants: loadCustomPlants(),
+    sowPlan: loadSowPlan(),
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -135,6 +148,7 @@ export function Settings() {
   const updateCustomPlant = useCustomPlantsStore((state) => state.updatePlant);
   const deleteCustomPlant = useCustomPlantsStore((state) => state.deletePlant);
   const replaceCustomPlants = useCustomPlantsStore((state) => state.replaceAll);
+  const replaceSowPlan = useSowPlanStore((state) => state.replaceAll);
   const language = useUiStore((state) => state.plantLanguage);
 
   const locationPostnummer = useLocationStore((state) => state.postnummer);
@@ -243,11 +257,13 @@ export function Settings() {
         const importedCustomPlants = Array.isArray(parsed.customPlants)
           ? (parsed.customPlants.filter(isCustomPlantLike) as PlantInfo[])
           : [];
+        const importedSowPlan = Array.isArray(parsed.sowPlan) ? parsed.sowPlan.filter(isSowPlanEntryLike) : [];
         setPendingImport({
           source: "Spirr backup-fil",
           boxes: parsed.boxes,
           plantings: parsed.plantings,
           customPlants: importedCustomPlants,
+          sowPlan: importedSowPlan,
         });
       } catch {
         alert("Kunne ikke lese backup-filen. Kontroller at den er gyldig JSON.");
@@ -271,6 +287,7 @@ export function Settings() {
       boxes: parsed.boxes,
       plantings: parsed.plantings,
       customPlants: [],
+      sowPlan: [],
     });
   };
 
@@ -281,6 +298,7 @@ export function Settings() {
     saveBoxes(pendingImport.boxes);
     savePlantings(pendingImport.plantings);
     replaceCustomPlants(pendingImport.customPlants);
+    replaceSowPlan(pendingImport.sowPlan);
     const footprint = gridFootprint(pendingImport.boxes);
     ensureGridFits(footprint.cols, footprint.rows);
     reloadFromStorage();
