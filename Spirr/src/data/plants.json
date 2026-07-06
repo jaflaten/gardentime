@@ -1521,5 +1521,356 @@
     "successionWeeks": 3,
     "gddToMaturity": 250,
     "gddBase": 5
+  },
+  {
+    "perennial": true,
+    "key": "bringebær",
+    "name_no": "Sommerbringebær",
+    "name_pl": "Malina letnia",
+    "name_en": "Summer raspberry",
+    "emoji": "🍇",
+    "color": "#c0396b",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-10",
+        "08-25"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "høstbringebær",
+    "name_no": "Høstbringebær",
+    "name_pl": "Malina jesienna",
+    "name_en": "Autumn raspberry",
+    "emoji": "🍇",
+    "color": "#a8324f",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "08-25",
+        "10-05"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "solbær",
+    "name_no": "Solbær",
+    "name_pl": "Porzeczka czarna",
+    "name_en": "Blackcurrant",
+    "emoji": "🫐",
+    "color": "#3a2a4a",
+    "category": "fruit",
+    "family": "grossulariaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-15",
+        "08-15"
+      ]
+    },
+    "sunNeed": "partial"
+  },
+  {
+    "perennial": true,
+    "key": "rips",
+    "name_no": "Rips",
+    "name_pl": "Porzeczka czerwona",
+    "name_en": "Redcurrant",
+    "emoji": "🍇",
+    "color": "#d64545",
+    "category": "fruit",
+    "family": "grossulariaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-25",
+        "08-25"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "stikkelsbær",
+    "name_no": "Stikkelsbær",
+    "name_pl": "Agrest",
+    "name_en": "Gooseberry",
+    "emoji": "🍈",
+    "color": "#9bbf5a",
+    "category": "fruit",
+    "family": "grossulariaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-25",
+        "08-25"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "hageblåbær",
+    "name_no": "Hageblåbær",
+    "name_pl": "Borówka amerykańska",
+    "name_en": "Highbush blueberry",
+    "emoji": "🫐",
+    "color": "#5a6ebf",
+    "category": "fruit",
+    "family": "ericaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-25",
+        "09-20"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "rabarbra",
+    "name_no": "Rabarbra",
+    "name_pl": "Rabarbar",
+    "name_en": "Rhubarb",
+    "emoji": "🌿",
+    "color": "#c65a5a",
+    "category": "vegetable",
+    "family": "polygonaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "05-01",
+        "06-24"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "asparges",
+    "name_no": "Asparges",
+    "name_pl": "Szparagi",
+    "name_en": "Asparagus",
+    "emoji": "🌱",
+    "color": "#7aa86a",
+    "category": "vegetable",
+    "family": "asparagaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          0,
+          4
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "05-01",
+        "06-24"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "jordskokk",
+    "name_no": "Jordskokk",
+    "name_pl": "Topinambur",
+    "name_en": "Jerusalem artichoke",
+    "emoji": "🌻",
+    "color": "#d9a441",
+    "category": "vegetable",
+    "family": "asteraceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -2,
+          4
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "10-01",
+        "11-15"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "eple",
+    "name_no": "Eple",
+    "name_pl": "Jabłoń",
+    "name_en": "Apple",
+    "emoji": "🍎",
+    "color": "#cf3b3b",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -4,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "08-25",
+        "10-15"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "plomme",
+    "name_no": "Plomme",
+    "name_pl": "Śliwa",
+    "name_en": "Plum",
+    "emoji": "🍑",
+    "color": "#7d4a8a",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -4,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "08-20",
+        "09-20"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "pære",
+    "name_no": "Pære",
+    "name_pl": "Grusza",
+    "name_en": "Pear",
+    "emoji": "🍐",
+    "color": "#b5c24a",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -4,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "09-01",
+        "10-10"
+      ]
+    },
+    "sunNeed": "full"
+  },
+  {
+    "perennial": true,
+    "key": "morell",
+    "name_no": "Morell",
+    "name_pl": "Czereśnia",
+    "name_en": "Sweet cherry",
+    "emoji": "🍒",
+    "color": "#a01a2a",
+    "category": "fruit",
+    "family": "rosaceae",
+    "sowRules": [
+      {
+        "type": "transplant",
+        "weeksAfterLastFrost": [
+          -4,
+          6
+        ]
+      }
+    ],
+    "harvestRule": {
+      "seasonal": [
+        "07-01",
+        "08-10"
+      ]
+    },
+    "sunNeed": "full"
   }
 ]

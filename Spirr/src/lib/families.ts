@@ -14,6 +14,9 @@ export type PlantFamily =
   | "poaceae"
   | "ericaceae"
   | "convolvulaceae"
+  | "grossulariaceae"
+  | "polygonaceae"
+  | "asparagaceae"
   | "other";
 
 interface FamilyInfo {
@@ -39,6 +42,9 @@ export const FAMILY_INFO: Record<PlantFamily, FamilyInfo> = {
   poaceae:        { name_no: "Grasfamilien",         name_pl: "Wiechlinowate",     name_en: "Grasses",     emoji: "🌾", color: "#d4a843" },
   ericaceae:      { name_no: "Lyngfamilien",         name_pl: "Wrzosowate",        name_en: "Heaths",      emoji: "🫐", color: "#5a6ebf" },
   convolvulaceae: { name_no: "Vindelfamilien",       name_pl: "Powojowate",        name_en: "Bindweeds",   emoji: "🍠", color: "#8a5a9e" },
+  grossulariaceae:{ name_no: "Ripsfamilien",         name_pl: "Agrestowate",       name_en: "Currants",    emoji: "🫐", color: "#7a3b6b" },
+  polygonaceae:   { name_no: "Slireknefamilien",     name_pl: "Rdestowate",        name_en: "Knotweeds",   emoji: "🌿", color: "#b0553f" },
+  asparagaceae:   { name_no: "Aspargesfamilien",     name_pl: "Szparagowate",      name_en: "Asparagus",   emoji: "🌱", color: "#7aa86a" },
   other:          { name_no: "Annet",                name_pl: "Inne",              name_en: "Other",       emoji: "🌱", color: "#9aa17f" },
 };
 

@@ -94,7 +94,7 @@ What was done, and what we learned:
 | **J — remaining charts** | Partly waits on F data | Yield-over-time + box-productivity need logged `harvestYield` (free-text → needs parse step). Diversity-over-time line is cheap & buildable now. Clickable donut/heatmap → grid filter is an interaction, not a chart. |
 | **Phase G — photos** | Hold for signal | localStorage can't hold many images → needs IndexedDB or backend. Pair with H. |
 | **Phase H — accounts/sync/tiers** | Big bet, hold for signal | Build only when a tester explicitly asks for cross-device / shared editing. Business model now mapped in **[`MONETIZATION.md`](MONETIZATION.md)** (2026-07-06): free = current-season intelligence; Spirr+ = sync, frost-alerts (push), live-GDD, photos, multi-garden, full history — ~349 NOK/yr + founders' lifetime. Data layer already shaped for it (3 localStorage namespaces → 3 Supabase tables). |
-| Perennials/bær/frukttrær content | Funnel candidate | Biggest documented gap across all competitor planners ("everything assumes annual veg"). Data model already supports perennial + seasonal windows — content work, widens audience. See `MONETIZATION.md` §5. |
+| Perennials/bær/frukttrær content | ✅ v1 shipped 2026-07-06 | 13 crops added (bringebær ×2, solbær, rips, stikkelsbær, hageblåbær, rabarbra, asparges, jordskokk, eple, plomme, pære, morell) → 50 plants; 3 new families. The funnel gap from `MONETIZATION.md` §5. Fixed two latent bugs en route (past-season perennials showing "Klar nå"; GardenInsights ignoring the clock seam). Future: per-crop care/pruning calendar could be a Spirr+ lever. |
 | Phase E nutrient-flow hints | Not planned | E's rotation + companion scope already shipped as G + F. |
 
 ---
