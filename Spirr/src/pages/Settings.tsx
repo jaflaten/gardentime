@@ -427,6 +427,10 @@ export function Settings() {
                 Bruk postnummer-default ({previewedPostnummer.centroidElevationM} m)
               </button>
             )}
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              💡 Standardhøyden er omtrent sentrum av postnummeret. Bor du høyere oppe i dalen eller i en li,
+              sett høyden der du faktisk dyrker — hver 100 m gjør vårfrosten ca. 6–7 dager senere.
+            </p>
           </label>
         </div>
 

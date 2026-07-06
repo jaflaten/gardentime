@@ -17,6 +17,7 @@ import { now } from "../lib/clock";
 import { isCustomPlantLike } from "../lib/customPlants";
 import { usePlantLookup } from "../lib/plants";
 import { isIndoorSeedling } from "../lib/planting";
+import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { saveBoxes, savePlantings } from "../lib/storage";
 import bundledGardenBackup from "../resources/spirr-v3.json";
 import demoGardenBackup from "../resources/demo-garden.json";
@@ -491,6 +492,7 @@ export function GardenMap() {
       </header>
 
       <NoLocationBanner viewMode={viewMode} />
+      <ElevationHintBanner viewMode={viewMode} />
 
       {!viewMode && (
         <SowPlanCard
@@ -674,6 +676,59 @@ export function GardenMap() {
       )}
 
     </main>
+  );
+}
+
+const ELEV_HINT_DISMISS_KEY = "gt_elev_hint_dismissed";
+
+/**
+ * One-time nudge: when a postnummer is set but the elevation is still the town-centre centroid
+ * default, remind the user that frost dates are for the centroid and that up-valley/hillside gardens
+ * should set their real elevation. Postnummer centroids can't capture a valley's gradient (a Sogndal
+ * code spans the 5 m fjord town up past 400 m), and being too low means frost dates that read weeks
+ * too early — the dangerous direction. Dismissal is remembered per postnummer.
+ */
+function ElevationHintBanner({ viewMode }: { viewMode: boolean }) {
+  const location = useResolvedLocation();
+  const [dismissedFor, setDismissedFor] = useState<string | null>(() =>
+    localStorage.getItem(ELEV_HINT_DISMISS_KEY),
+  );
+  if (viewMode || !location) {
+    return null;
+  }
+  const code = location.postnummer.postnummer;
+  // Still on the auto-filled centroid default (setPostnummer seeds elevationM = centroidElevationM),
+  // and not already dismissed for this postnummer.
+  if (location.userElevationM !== location.postnummer.centroidElevationM || dismissedFor === code) {
+    return null;
+  }
+  const dismiss = () => {
+    localStorage.setItem(ELEV_HINT_DISMISS_KEY, code);
+    setDismissedFor(code);
+  };
+  return (
+    <div
+      className="flex items-start justify-between gap-3 rounded-xl border p-3 text-sm sm:p-4"
+      style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)", color: "var(--text)" }}
+    >
+      <p>
+        📍 Frostdatoene gjelder omtrent sentrum av {location.postnummer.kommune} (
+        {location.postnummer.centroidElevationM} moh). Dyrker du høyere oppe i dalen eller i en li?{" "}
+        <Link to="/settings" className="underline" style={{ color: "var(--green)" }}>
+          Sett din egen høyde
+        </Link>{" "}
+        — hver 100 m gjør vårfrosten ca. 6–7 dager senere.
+      </p>
+      <button
+        type="button"
+        onClick={dismiss}
+        aria-label="Skjul"
+        className="tap-target rounded-full px-2 text-lg"
+        style={{ color: "var(--text-muted)" }}
+      >
+        ✕
+      </button>
+    </div>
   );
 }
 
