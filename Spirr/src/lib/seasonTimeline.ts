@@ -339,6 +339,12 @@ export function maturityRows(timeline: SeasonTimeline, todayDoy: number): Maturi
       continue;
     }
     const [start, end] = item.harvestWindow;
+    // A window that has fully closed is not "next to harvest" — drop it, so an active perennial
+    // whose season has passed (e.g. rabarbra by August) doesn't linger as a false "Klar nå". The
+    // §2.2 "bør høstes" late-nudge still fires inside the window (todayDoy <= end).
+    if (todayDoy > end) {
+      continue;
+    }
     const ready = todayDoy >= start && todayDoy <= end;
     const late = ready && harvestWindowStatus(todayDoy, start, end) === "late";
     const daysToHarvest = start - todayDoy;

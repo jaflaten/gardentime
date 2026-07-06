@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { now } from "../lib/clock";
 import { CATEGORY_LABELS, type PlantCategory } from "../lib/categories";
 import { FAMILY_INFO, type PlantFamily } from "../lib/families";
 import {
@@ -89,7 +90,7 @@ export function GardenInsights() {
 
   // Harvest-window-derived views (maturity + harvest calendar) reuse the season timeline, so they
   // need a resolved location like Sesongoversikt does — hidden when no postnummer is set.
-  const year = new Date().getFullYear();
+  const year = now().getFullYear();
   const timeline = useMemo(() => {
     if (!location) {
       return null;
@@ -105,7 +106,7 @@ export function GardenInsights() {
     );
   }, [location, plantings, findPlant, year, boxes]);
 
-  const todayDoy = dateToDoy(new Date());
+  const todayDoy = dateToDoy(now());
   const maturity = useMemo(() => (timeline ? maturityRows(timeline, todayDoy) : []), [timeline, todayDoy]);
   const harvestMonths = useMemo(() => (timeline ? harvestCountByMonth(timeline) : null), [timeline]);
 
