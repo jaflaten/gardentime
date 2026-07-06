@@ -90,6 +90,37 @@ export interface GddHarvest {
 }
 
 /**
+ * Ripeness progression within a harvest window (§2.2 — the humane version of the sim's A1
+ * under-harvesting finding): "soon" before the window opens, "ready" inside it, escalating to
+ * "late" (bør høstes snart) in the window's final days so the signal isn't one blunt state.
+ */
+export type HarvestStatus = "soon" | "ready" | "late";
+
+/** Days before the window end within which "ready" escalates to "late". */
+const LATE_TAIL_DAYS = 7;
+
+/**
+ * Where `todayDoy` sits in a [start, end] harvest window. Callers should only ask when today is
+ * at least near the window (the matching cutoffs stay theirs); `lateTailDays` widens the "late"
+ * tail for long seasonal windows. Windows have a 2-week floor, so the default 7-day tail never
+ * swallows a whole window.
+ */
+export function harvestWindowStatus(
+  todayDoy: number,
+  start: number,
+  end: number,
+  lateTailDays = LATE_TAIL_DAYS,
+): HarvestStatus {
+  if (todayDoy < start) {
+    return "soon";
+  }
+  if (todayDoy > end - lateTailDays) {
+    return "late";
+  }
+  return "ready";
+}
+
+/**
  * GDD-based harvest window for a planting, or null when the GDD model doesn't apply (plant has no
  * `gddToMaturity`, or no station curve) — caller should then use the `weeksFromSowing` rule.
  *

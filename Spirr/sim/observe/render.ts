@@ -30,7 +30,7 @@ export function renderSnapshot(g: ObservedGarden): string {
   // ready seedlings are the high-value, time-sensitive moves; surface them up top as imperatives with the
   // EXACT handle to use (the handle-confusion failure mode: model picks the wrong #N). Sowing is demoted
   // below so the gardener clears the bed/tray before adding more (the over-sow → stranded-seedling leak).
-  const ripe = g.harvestSoon.filter((h) => h.status === "ready");
+  const ripe = g.harvestSoon.filter((h) => h.status !== "soon"); // ready + late are both ripe
   const readyOut = g.seedlings.filter((s) => s.readiness === "ready" || s.readiness === "overdue");
   if (g.location) {
     lines.push("");
@@ -93,7 +93,8 @@ export function renderSnapshot(g: ObservedGarden): string {
     lines.push("(ingenting nær høsting)");
   }
   for (const h of g.harvestSoon) {
-    const status = h.status === "ready" ? "MODEN — høst nå" : "snart moden";
+    const status =
+      h.status === "late" ? "MODEN — bør høstes nå (vinduet er snart over)" : h.status === "ready" ? "MODEN — høst nå" : "snart moden";
     lines.push(`${h.handle} ${h.plantKey} — ${status}${h.wontRipen ? " (modner ikke ute her)" : ""}`);
   }
 

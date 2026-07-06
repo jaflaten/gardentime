@@ -85,6 +85,46 @@ describe("harvestSoonForPlanting (weeks-since-sowing fallback, no GDD curve)", (
     const r = harvestSoonForPlanting(planting({ boxId: "A" }), salat, now, 125, FF, 0, undefined, 1);
     expect(r.matches).toBe(false);
   });
+
+  it("reports 'soon' just before the window and 'late' just past it (§2.2 progression)", () => {
+    // salat weeksFromSowing [6,8]: 5 weeks → soon (pre-window grace), 9 weeks → late (post-window grace).
+    const now = new Date("2026-06-19T00:00:00");
+    const soon = harvestSoonForPlanting(planting({ boxId: "A", plantedDate: "2026-05-15" }), salat, now, 170, FF, 0, undefined, 1);
+    expect(soon.matches).toBe(true);
+    expect(soon.status).toBe("soon");
+    const late = harvestSoonForPlanting(planting({ boxId: "A", plantedDate: "2026-04-17" }), salat, now, 170, FF, 0, undefined, 1);
+    expect(late.matches).toBe(true);
+    expect(late.status).toBe("late");
+    expect(late.helper).toMatch(/Bør høstes snart/);
+  });
+});
+
+describe("harvestSoonForPlanting (GDD branch, §2.2 progression)", () => {
+  // Linear cumulative curve: 100 GDD/month. Sown 2026-05-01 (doy 121, cum ≈ 403) with
+  // gddToMaturity 100 → ripe ≈ doy 152, band [152, 166] (2-week floor).
+  const LINEAR5 = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200];
+  const curves = { base5: LINEAR5, base10: LINEAR5 };
+  const gddSalat: PlantInfo = { ...salat, gddToMaturity: 100 };
+  const pl = planting({ boxId: "A", plantKey: "salat", plantedDate: "2026-05-01" });
+
+  it("is 'soon' with a weeks estimate before the window opens", () => {
+    const r = harvestSoonForPlanting(pl, gddSalat, new Date("2026-05-20T00:00:00"), 140, FF, 0, curves, 1);
+    expect(r.matches).toBe(true);
+    expect(r.status).toBe("soon");
+    expect(r.helper).toMatch(/Snart klar/);
+  });
+
+  it("is 'ready' inside the window", () => {
+    const r = harvestSoonForPlanting(pl, gddSalat, new Date("2026-06-04T00:00:00"), 155, FF, 0, curves, 1);
+    expect(r.status).toBe("ready");
+    expect(r.helper).toBe("Klar for høsting");
+  });
+
+  it("escalates to 'late' in the window's final days", () => {
+    const r = harvestSoonForPlanting(pl, gddSalat, new Date("2026-06-10T00:00:00"), 161, FF, 0, curves, 1);
+    expect(r.status).toBe("late");
+    expect(r.helper).toMatch(/Bør høstes snart/);
+  });
 });
 
 describe("groupHarvestSoon", () => {
@@ -104,6 +144,19 @@ describe("groupHarvestSoon", () => {
     const now = new Date("2026-06-19T00:00:00");
     const rows = groupHarvestSoon([planting({ boxId: undefined })], [salat], [], noCurveLocation, 170, now);
     expect(rows).toHaveLength(0);
+  });
+
+  it("keeps the most urgent member's status when collapsing (late > ready)", () => {
+    const now = new Date("2026-06-19T00:00:00");
+    const plantings = [
+      planting({ id: "p1", boxId: "A", plantKey: "salat", plantedDate: "2026-05-01" }), // 7 wks → ready
+      planting({ id: "p2", boxId: "B", plantKey: "salat", plantedDate: "2026-04-17" }), // 9 wks → late
+    ];
+    const rows = groupHarvestSoon(plantings, [salat], [box("A"), box("B")], noCurveLocation, 170, now);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].count).toBe(2);
+    expect(rows[0].status).toBe("late");
+    expect(rows[0].plantingId).toBe("p2");
   });
 });
 

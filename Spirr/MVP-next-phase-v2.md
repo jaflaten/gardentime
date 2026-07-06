@@ -43,13 +43,17 @@ Three things came out of the latest review. These are the priorities.
 
 **Why it fits.** It's the natural capstone over D2 + K + H, it's the "calendar intelligence is the identity" bet, and it serves a real unmet need (hobby gardeners aren't served by pro ag scheduling tools).
 
-### 2.2 Harvest-readiness status progression — "Klar for høsting"
+### 2.2 Harvest-readiness status progression — "Klar for høsting" — ✅ SHIPPED 2026-07-02
 
-**The point (user).** "HØST NÅ" is too blunt for real humans. But does **"Høst snart"** ever escalate to **"Klar for høsting"**? → **No, not today.** The "Høst snart" signal is effectively one state.
+**The point (user).** "HØST NÅ" is too blunt for real humans. The "Høst snart" signal was effectively one state.
 
-**Proposed (small, shippable now, no signal needed):** derive a gentle ripeness *progression* from the crop's position in its GDD/harvest window, e.g.
-`Snart klar (~N uker)` → `Klar for høsting` (in-window) → (optionally) `Bør høstes snart` near window end.
-This is the human-friendly version of the sim's A1 finding (systemic under-harvesting) — clarity, not nagging. Touches `SowNowCard` "Høst snart" + the "Neste til høsting" chart wording.
+**Shipped:** a ripeness *progression* derived from the crop's position in its harvest window:
+`Snart klar (~N uker)` → `Klar for høsting` (in-window) → `Bør høstes snart` (final 7 days of the window; 14 for long seasonal windows). The human-friendly version of the sim's A1 finding (systemic under-harvesting) — clarity, not nagging.
+
+- **Source of truth:** `harvestWindowStatus()` in `src/lib/gdd.ts` (`HarvestStatus = "soon" | "ready" | "late"`); all four harvest-rule branches in `sowNowGroups.harvestSoonForPlanting` now emit the progression (GDD window · seasonal window, 14-day tail · before-first-frost, "late" when frost ≤1 week · weeksFromSowing fallback, "late" past `maxWeeks`).
+- **UI:** SowNowCard "Høst snart" helpers carry the new wording, coloured green (ready) / amber (late); "Neste til høsting" shows **"Bør høstes"** in amber via a new `MaturityRow.late` flag. Collapsed ×N rows keep the *most urgent* member's status (late > ready > soon), so one overdue bed isn't hidden behind nine merely-ready ones.
+- **Sim kept honest:** "late" counts as *ripe* in the harness (`render.ts` ⚡-block, `outcome.ts` ripe-handle parsing, snapshot status type widened) — the harvest-rate metric doesn't lose crops that escalate past "ready".
+- Tests: 5 new cases (fallback soon/late, GDD soon/ready/late, urgency collapse); full suite 62/62, `tsc -b` + `vite build` clean.
 
 ### 2.3 Better GDD values — NLR / Hageselskapet cross-check
 
@@ -109,7 +113,7 @@ The sim harness is solid (Rev 3 made the harvest-rate metric falsifiable). Open 
 ## 5. Recommended order
 
 0. **§2.4 weather stations** — ✅ DONE 2026-06-23: 132 → **564 stations**, 70% of postnumre now on a closer station, Sogndal fixed (→ Kaupanger 170 m). Pending: commit, and a quick in-browser sanity check at a few stations. (Tier 3 elevation-aware assignment de-prioritised; seNorge gridded is the only remaining lever.)
-1. **§2.2 Harvest-readiness labels** — tiny, shippable now, no signal needed; humane version of the sim's A1 finding.
+1. **§2.2 Harvest-readiness labels** — ✅ DONE 2026-07-02: `Snart klar (~N uker)` → `Klar for høsting` → `Bør høstes snart` across all four harvest-rule branches; SowNowCard + "Neste til høsting" wording/colour; sim treats "late" as ripe.
 2. **§2.3 GDD cross-check** — data quality; everything downstream leans on prediction trust. Make the worklist, then correct `plants.json` crop-by-crop (start with what the user grows + the 5 new plants).
 3. **§2.1 Såplan + reminders** — the flagship. Design first (plan entity + how it reuses SowNowCard windows), then build **reminders v1 as a session banner** (Increment H ½-day) and the pinned "Min såplan" list, with hand-off into the K tray.
 4. **Test Simmer Rev 4** — when returning to harness work.

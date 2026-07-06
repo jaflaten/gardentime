@@ -3,7 +3,7 @@
 // from one source of truth. Pure: takes the day-of-year and a `now` Date explicitly (no `new Date()` /
 // no clock seam), so a pinned clock (`?simNow=`, sim runs) is honoured and the result is testable.
 
-import { coverGddFactor, gddHarvestWindow } from "./gdd";
+import { coverGddFactor, gddHarvestWindow, harvestWindowStatus, type HarvestStatus } from "./gdd";
 import { dateToDoy, mmddToDoy, seasonalShiftForPlant, type GddCurves } from "./seasonTimeline";
 import { effectiveGddToMaturity, resolveSowMethod } from "./sowMethod";
 import { isSowableNow, weeksFromLastFrost, withinAfterLFWindow, withinIndoorWindow } from "./sowWindow";
@@ -18,6 +18,8 @@ export interface SowNowRow {
   count?: number;
   /** Optional amber caveat under the helper (e.g. rain-sensitive → "sett under tak"). */
   note?: string;
+  /** Ripeness progression for "Høst snart" rows (§2.2) — colours the helper (soon/ready/late). */
+  status?: HarvestStatus;
 }
 
 export interface SowNowGroups {
@@ -34,7 +36,7 @@ export interface HarvestLocation {
   gddCurve10: number[];
 }
 
-export type HarvestStatus = "ready" | "soon";
+export type { HarvestStatus } from "./gdd";
 
 const MS_PER_WEEK = 7 * 86_400_000;
 
@@ -116,9 +118,10 @@ export function groupSuccession(
 }
 
 /**
- * Whether a single boxed planting is "harvest soon" today, and how soon. Prefers the GDD model when the
- * plant is tagged and a station curve is available (location-aware ripening), else the fixed
- * weeks-since-sowing window. GDD anchors on the outdoor start (transplant date if present, else sow date)
+ * Whether a single boxed planting is "harvest soon" today, and how soon — as a ripeness progression
+ * (§2.2): "soon" (snart klar) → "ready" (klar for høsting) → "late" (bør høstes snart, near the window
+ * end). Prefers the GDD model when the plant is tagged and a station curve is available (location-aware
+ * ripening), else the fixed weeks-since-sowing window. GDD anchors on the outdoor start (transplant date if present, else sow date)
  * and only applies to a planting started this year. `now` is passed in so the clock seam is honoured.
  */
 export function harvestSoonForPlanting(
@@ -137,19 +140,31 @@ export function harvestSoonForPlanting(
   }
   const year = now.getFullYear();
   if ("seasonal" in rule) {
-    // Absolute calendar window (perennials), shifted toward the user's frost dates.
+    // Absolute calendar window (perennials), shifted toward the user's frost dates. Seasonal windows
+    // run for months, so the "late" tail is widened to a fortnight.
     const start = mmddToDoy(rule.seasonal[0], year) + seasonalShift;
     const end = mmddToDoy(rule.seasonal[1], year) + seasonalShift;
     if (todayDoy >= start && todayDoy <= end) {
-      return { matches: true, helper: "Høstesesong nå", status: "ready" };
+      const status = harvestWindowStatus(todayDoy, start, end, 14);
+      const helper = status === "late" ? "Bør høstes snart — sesongen er snart over" : "Høstesesong nå";
+      return { matches: true, helper, status };
     }
     return { matches: false, helper: "", status: "soon" };
   }
   if ("weeksBeforeFirstFrost" in rule) {
     const weeksUntilFrost = (firstFrostDoy - todayDoy) / 7;
     if (weeksUntilFrost >= 0 && weeksUntilFrost <= rule.weeksBeforeFirstFrost + 2) {
-      const status: HarvestStatus = weeksUntilFrost <= rule.weeksBeforeFirstFrost ? "ready" : "soon";
-      return { matches: true, helper: `Frost om ca. ${Math.max(0, Math.round(weeksUntilFrost))} uker`, status };
+      // Escalate to "late" when frost is imminent — the crop must come in within the week.
+      const status: HarvestStatus =
+        weeksUntilFrost <= 1 ? "late" : weeksUntilFrost <= rule.weeksBeforeFirstFrost ? "ready" : "soon";
+      const frostIn = `frost om ca. ${Math.max(0, Math.round(weeksUntilFrost))} uker`;
+      const helper =
+        status === "late"
+          ? `Bør høstes snart — ${frostIn}`
+          : status === "ready"
+            ? `Klar for høsting — ${frostIn}`
+            : `Snart klar — ${frostIn}`;
+      return { matches: true, helper, status };
     }
     return { matches: false, helper: "", status: "soon" };
   }
@@ -175,9 +190,14 @@ export function harvestSoonForPlanting(
   if (gdd && gdd.ripens && gdd.window && (fieldStartDoy === null || gdd.window[0] <= fieldStartDoy)) {
     const [start, end] = gdd.window;
     if (todayDoy >= start - 14 && todayDoy <= end) {
-      const ready = todayDoy >= start;
-      const helper = ready ? "Moden nå" : `Moden om ca. ${Math.max(1, Math.round((start - todayDoy) / 7))} uker`;
-      return { matches: true, helper, status: ready ? "ready" : "soon" };
+      const status = harvestWindowStatus(todayDoy, start, end);
+      const helper =
+        status === "late"
+          ? "Bør høstes snart — vinduet er snart over"
+          : status === "ready"
+            ? "Klar for høsting"
+            : `Snart klar (~${Math.max(1, Math.round((start - todayDoy) / 7))} uker)`;
+      return { matches: true, helper, status };
     }
     return { matches: false, helper: "", status: "soon" };
   }
@@ -187,14 +207,27 @@ export function harvestSoonForPlanting(
   }
   const weeks = weeksSince(planting.plantedDate, now);
   if (weeks >= minWeeks - 1 && weeks <= maxWeeks + 1) {
-    return { matches: true, helper: `Sådd for ${weeks} uker siden`, status: "ready" };
+    const status: HarvestStatus = weeks < minWeeks ? "soon" : weeks > maxWeeks ? "late" : "ready";
+    const sownAgo = `sådd for ${weeks} uker siden`;
+    const helper =
+      status === "late"
+        ? `Bør høstes snart — ${sownAgo}`
+        : status === "ready"
+          ? `Klar for høsting — ${sownAgo}`
+          : `Snart klar (~1 uke) — ${sownAgo}`;
+    return { matches: true, helper, status };
   }
   return { matches: false, helper: "", status: "soon" };
 }
 
+/** Collapse order for a plant's plantings — the most urgent status represents the group. */
+const STATUS_URGENCY: Record<HarvestStatus, number> = { soon: 0, ready: 1, late: 2 };
+
 /**
  * "Høst snart" — active boxed plantings whose harvest rule matches today, collapsed to one row per plant
- * with a count (so a garden with ten jordbær beds shows "Jordbær ×10", not ten lines).
+ * with a count (so a garden with ten jordbær beds shows "Jordbær ×10", not ten lines). The row carries
+ * the most urgent member's status/helper (late > ready > soon), so one overdue bed isn't hidden behind
+ * nine merely-ready ones.
  */
 export function groupHarvestSoon(
   plantings: Planting[],
@@ -227,8 +260,13 @@ export function groupHarvestSoon(
     const existing = byKey.get(plant.key);
     if (existing) {
       existing.count = (existing.count ?? 1) + 1;
+      if (STATUS_URGENCY[check.status] > STATUS_URGENCY[existing.status ?? "soon"]) {
+        existing.status = check.status;
+        existing.helper = check.helper;
+        existing.plantingId = planting.id;
+      }
     } else {
-      const row: SowNowRow = { plant, helper: check.helper, plantingId: planting.id, count: 1 };
+      const row: SowNowRow = { plant, helper: check.helper, plantingId: planting.id, count: 1, status: check.status };
       byKey.set(plant.key, row);
       harvestSoon.push(row);
     }

@@ -111,6 +111,13 @@ interface SowGroupProps {
   actionLabel?: string;
 }
 
+/** Helper-text colour for the §2.2 ripeness progression; rows without a status stay muted. */
+function helperColor(status: SowNowRow["status"]): string {
+  if (status === "ready") return "var(--green)";
+  if (status === "late") return "var(--amber)";
+  return "var(--text-muted)";
+}
+
 function SowGroup({ title, rows, language, onPickPlant, actionLabel }: SowGroupProps) {
   if (rows.length === 0) return null;
   return (
@@ -132,7 +139,7 @@ function SowGroup({ title, rows, language, onPickPlant, actionLabel }: SowGroupP
                   <span style={{ color: "var(--text-muted)" }}> ×{row.count}</span>
                 )}
               </p>
-              <p className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
+              <p className="truncate text-xs" style={{ color: helperColor(row.status) }}>
                 {row.helper}
               </p>
               {row.note && (

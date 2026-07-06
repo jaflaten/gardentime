@@ -1,4 +1,4 @@
-import { coverGddFactor, gddHarvestWindow, type GddHarvest } from "./gdd";
+import { coverGddFactor, gddHarvestWindow, harvestWindowStatus, type GddHarvest } from "./gdd";
 import { isBundledPlantKey } from "./plants";
 import { effectiveGddToMaturity, resolveSowMethod } from "./sowMethod";
 import type { Box, HarvestRule, PlantInfo, Planting } from "../types";
@@ -324,6 +324,8 @@ export interface MaturityRow {
   daysToHarvest: number;
   /** Today is inside the harvest window. */
   ready: boolean;
+  /** Today is in the window's final days — "bør høstes" before the window closes (§2.2). */
+  late: boolean;
 }
 
 /**
@@ -338,12 +340,13 @@ export function maturityRows(timeline: SeasonTimeline, todayDoy: number): Maturi
     }
     const [start, end] = item.harvestWindow;
     const ready = todayDoy >= start && todayDoy <= end;
+    const late = ready && harvestWindowStatus(todayDoy, start, end) === "late";
     const daysToHarvest = start - todayDoy;
     const progress =
       item.plantedDoy !== null && start > item.plantedDoy
         ? Math.max(0, Math.min(100, ((todayDoy - item.plantedDoy) / (start - item.plantedDoy)) * 100))
         : null;
-    rows.push({ item, progress, daysToHarvest, ready });
+    rows.push({ item, progress, daysToHarvest, ready, late });
   }
   // Soonest-to-harvest first; ready crops (daysToHarvest ≤ 0) naturally sort to the top.
   return rows.sort((a, b) => a.daysToHarvest - b.daysToHarvest);

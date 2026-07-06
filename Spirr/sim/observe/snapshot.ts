@@ -52,7 +52,8 @@ export interface ObservedHarvest {
   handle: string;
   plantKey: string;
   name: string;
-  status: "ready" | "soon";
+  /** §2.2 ripeness progression — "late" is still ripe (window closing), not a third pre-ripe state. */
+  status: "ready" | "soon" | "late";
   wontRipen: boolean;
 }
 export interface ObservedGarden {

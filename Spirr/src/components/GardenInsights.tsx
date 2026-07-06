@@ -484,6 +484,9 @@ function MaturityList({ rows, language, year }: { rows: MaturityRow[]; language:
   const groups = groupMaturity(rows);
   const shown = groups.slice(0, MATURITY_LIMIT);
   const dayLabel = (row: MaturityRow): string => {
+    if (row.late) {
+      return "Bør høstes";
+    }
     if (row.ready || row.daysToHarvest <= 0) {
       return "Klar nå";
     }
@@ -516,7 +519,13 @@ function MaturityList({ rows, language, year }: { rows: MaturityRow[]; language:
                 </span>
                 <span
                   className="shrink-0 font-medium"
-                  style={{ color: rep.ready || rep.daysToHarvest <= 0 ? "var(--green)" : "var(--text-muted)" }}
+                  style={{
+                    color: rep.late
+                      ? "var(--amber)"
+                      : rep.ready || rep.daysToHarvest <= 0
+                        ? "var(--green)"
+                        : "var(--text-muted)",
+                  }}
                 >
                   {dayLabel(rep)}
                 </span>

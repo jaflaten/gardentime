@@ -47,9 +47,9 @@ export interface SeasonOutcome {
   plantOutRate: number | null;
 }
 
-/** "A tomat (ready)" → "A"; null when the item isn't a ready signal. */
+/** "A tomat (ready)" / "(late)" → "A"; null when the item isn't a ripe signal ("late" = still ripe, §2.2). */
 function readyHandle(item: string): string | null {
-  return item.includes("(ready)") ? item.split(" ")[0] : null;
+  return item.includes("(ready)") || item.includes("(late)") ? item.split(" ")[0] : null;
 }
 
 export function computeSeasonOutcome(entries: TranscriptEntry[]): SeasonOutcome {
