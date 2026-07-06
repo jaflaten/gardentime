@@ -50,8 +50,12 @@ def build(stations: list[StationEntry], with_elevation: bool = False) -> list[Po
     else:
         for e in entries:
             e["centroidElevationM"] = DEFAULT_ELEVATION_M
-        print(f"  centroidElevationM={DEFAULT_ELEVATION_M} (user overrides in app settings)")
-        # TODO: replace with offline Kartverket DEM lookup for per-postnummer centroid elevation
+        print(f"  centroidElevationM={DEFAULT_ELEVATION_M} (PLACEHOLDER — pass --with-elevation for real DEM)")
+        # NOTE: the placeholder makes the app's lapse-rate correction (location.ts) anchor to a fake
+        # baseline and over-warm high-elevation districts. Real per-postnummer elevation is fetched
+        # above with --with-elevation (open-meteo SRTM DEM). The shipped postnummer.json was backfilled
+        # in place by ../backfill_elevation.py (2026-07-06) without a full re-derive; a full build should
+        # be run WITH --with-elevation. A future offline Kartverket DEM would remove the API dependency.
 
     for e in entries:
         e["stationId"] = _nearest_station(e["centroidLat"], e["centroidLon"], stations)["id"]
