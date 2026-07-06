@@ -54,16 +54,15 @@ Three things came out of the latest review. These are the priorities.
 - **Sim kept honest:** "late" counts as *ripe* in the harness (`render.ts` ⚡-block, `outcome.ts` ripe-handle parsing, snapshot status type widened) — the harvest-rate metric doesn't lose crops that escalate past "ready".
 - Tests: 5 new cases (fallback soon/late, GDD soon/ready/late, urgency collapse); full suite 62/62, `tsc -b` + `vite build` clean.
 
-### 2.3 Better GDD values — NLR / Hageselskapet cross-check
+### 2.3 Better GDD values — NLR / Hageselskapet cross-check — ✅ DONE 2026-07-06
 
-**The point (user).** "I'd definitely like better GDD values so we can predict better." The `gddToMaturity` / `harvestRule` numbers are **literature-grade first estimates** (flagged in `MVP-next-phases.md` Increment D limitation 2 + I Layer 0). The 5 new plants (rosenkål/grønnkål/hodekål/koriander/dill) are estimates too.
+**The point (user).** "I'd definitely like better GDD values so we can predict better." The `gddToMaturity` numbers were **literature-grade first estimates** (flagged in `MVP-next-phases.md` Increment D limitation 2 + I Layer 0).
 
-**Plan (a concrete mini-project, no code risk):**
-1. Build the worklist: every bundled plant's `gddToMaturity`, `gddBase`, `harvestRule`, `sowRules`, `harvestDurationWeeks` (and the crops the user actually grows first).
-2. Cross-reference against **NLR**, **Hageselskapet**, **Felleskjøpet**, **Plantepleien**, **Frøportalen/seed-packet days-to-maturity** — prefer Norwegian sources.
-3. Convert days-to-maturity → GDD where needed; correct `plants.json`; note the source per crop.
-4. Validate in-browser at a couple of stations (warm Oslo vs. cold valley) that the harvest months read sensibly.
-5. Layer 2 self-calibration (logged harvests) remains the long-term refinement — this is the cheap interim that doesn't wait a season.
+**What was done:** cross-checked all bundled crops against Norwegian sources (NLR, Hageselskapet/agropub, NIBIO, Felleskjøpet, Solhatt, Nelson Garden NO, Skolehager). Built a calibration harness replicating `gdd.ts` over the real station curves and tuned each suspect value against the sourced Norwegian harvest month at Oslo/Kristiansand. **Corrected 9 crops** — the base-10 warm crops were systematically far too high (7 read *"modner ikke"* in Oslo where they demonstrably ripen): cherrytomat 800→430, tomat_stor 1050→620, paprika 1150→700, agurk 550→430, gresskar 900→600, mais 1150→600, solsikke base10/850→base5/700, rødbeter 700→800, grønnkål 600→720. Base-5 roots/brassicas already predicted sensible months — left as-is. **Verified in-browser** (Oslo 0350): cherrytomat now ~2 Aug, solsikke ~5 Aug (were won't-ripen); cold Røros still withholds the marginal warm crops.
+
+**Layer 2 self-calibration (logged harvests) remains the long-term refinement** — this was the cheap interim that doesn't wait a season.
+
+> **⚠ Finding for §2.4 (out of scope here, logged):** every one of the 5132 postnumre in `postnummer.json` carries a placeholder `centroidElevationM: 150`. Because `location.ts:154` uses that as the garden elevation when the user hasn't set one, the lapse-rate correction is anchored to a fake 150 m baseline — it *miscorrects* proportional to how far the serving station's real elevation is from 150 m (negligible for lowland/coastal stations, but adds ~+3 °C of false warmth for a mountain station like Røros at 628 m). The fix is regenerating `postnummer.json` with real per-postnummer elevation in `climate-data/postnummer.py` (DEM lookup), a pipeline task — not a GDD-value change.
 
 ### 2.4 More weather stations + better station siting — ✅ SHIPPED 2026-06-23
 
@@ -114,7 +113,7 @@ The sim harness is solid (Rev 3 made the harvest-rate metric falsifiable). Open 
 
 0. **§2.4 weather stations** — ✅ DONE 2026-06-23: 132 → **564 stations**, 70% of postnumre now on a closer station, Sogndal fixed (→ Kaupanger 170 m). Pending: commit, and a quick in-browser sanity check at a few stations. (Tier 3 elevation-aware assignment de-prioritised; seNorge gridded is the only remaining lever.)
 1. **§2.2 Harvest-readiness labels** — ✅ DONE 2026-07-02: `Snart klar (~N uker)` → `Klar for høsting` → `Bør høstes snart` across all four harvest-rule branches; SowNowCard + "Neste til høsting" wording/colour; sim treats "late" as ripe.
-2. **§2.3 GDD cross-check** — data quality; everything downstream leans on prediction trust. Make the worklist, then correct `plants.json` crop-by-crop (start with what the user grows + the 5 new plants).
+2. **§2.3 GDD cross-check** — ✅ DONE 2026-07-06: 9 crops corrected against Norwegian sources (warm base-10 values were far too high → won't-ripen in Oslo). Surfaced a separate elevation-placeholder bug for §2.4. Layer 2 (logged harvests) is the long-term refinement.
 3. **§2.1 Såplan + reminders** — ✅ v1 DONE 2026-07-06: "Min såplan" card + in-app reminder strip (`gt_reminders` dedupe) + hand-off into the K tray + ⭐ pinning in SowNowCard + backup round-trip. Remaining: web push (see §3).
 4. **Test Simmer Rev 4** — when returning to harness work.
 

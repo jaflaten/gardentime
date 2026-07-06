@@ -52,7 +52,7 @@
       "pak_choi",
       "potet"
     ],
-    "gddToMaturity": 800,
+    "gddToMaturity": 430,
     "gddBase": 10,
     "frostTender": true
   },
@@ -109,7 +109,7 @@
       "pak_choi",
       "potet"
     ],
-    "gddToMaturity": 1050,
+    "gddToMaturity": 620,
     "gddBase": 10,
     "frostTender": true
   },
@@ -287,7 +287,7 @@
     "companionsBad": [
       "potet"
     ],
-    "gddToMaturity": 550,
+    "gddToMaturity": 430,
     "gddBase": 10,
     "frostTender": true
   },
@@ -373,7 +373,7 @@
       "basilikum",
       "persillerot"
     ],
-    "gddToMaturity": 1150,
+    "gddToMaturity": 700,
     "gddBase": 10,
     "frostTender": true
   },
@@ -459,7 +459,7 @@
     "companionsBad": [
       "potet"
     ],
-    "gddToMaturity": 900,
+    "gddToMaturity": 600,
     "gddBase": 10,
     "frostTender": true
   },
@@ -768,7 +768,7 @@
       "tomat_cherry",
       "tomat_stor"
     ],
-    "gddToMaturity": 1150,
+    "gddToMaturity": 600,
     "gddBase": 10,
     "frostTender": true
   },
@@ -884,7 +884,7 @@
       "knutekål",
       "pak_choi"
     ],
-    "gddToMaturity": 700,
+    "gddToMaturity": 800,
     "gddBase": 5,
     "gddEstablishment": 250
   },
@@ -967,8 +967,8 @@
       ]
     },
     "sunNeed": "full",
-    "gddToMaturity": 850,
-    "gddBase": 10,
+    "gddToMaturity": 700,
+    "gddBase": 5,
     "frostTender": true
   },
   {
@@ -1399,7 +1399,7 @@
       "tomat_cherry",
       "tomat_stor"
     ],
-    "gddToMaturity": 600,
+    "gddToMaturity": 720,
     "gddBase": 5
   },
   {
