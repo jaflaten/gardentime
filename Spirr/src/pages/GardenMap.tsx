@@ -10,12 +10,14 @@ import { LastSavedBadge } from "../components/LastSavedBadge";
 import { QuickAddSheet } from "../components/QuickAddSheet";
 import { SeasonTimeline } from "../components/SeasonTimeline";
 import { SowBoxPicker } from "../components/SowBoxPicker";
+import { SeasonHarvestCard } from "../components/SeasonHarvestCard";
 import { SowNowCard } from "../components/SowNowCard";
 import { SowPlanCard } from "../components/SowPlanCard";
 import type { BedType, SunExposure } from "../lib/boxMeta";
 import { now } from "../lib/clock";
 import { isCustomPlantLike } from "../lib/customPlants";
 import { usePlantLookup } from "../lib/plants";
+import { findPostnummer } from "../lib/location";
 import { isIndoorSeedling } from "../lib/planting";
 import { useResolvedLocation } from "../lib/useResolvedLocation";
 import { saveBoxes, savePlantings } from "../lib/storage";
@@ -160,6 +162,7 @@ export function GardenMap() {
   const [quickAddBoxId, setQuickAddBoxId] = useState<string | null>(null);
   const [quickAddInitialPlantKey, setQuickAddInitialPlantKey] = useState<string | undefined>(undefined);
   const [sowPickPlantKey, setSowPickPlantKey] = useState<string | null>(null);
+  const [onboardingPnr, setOnboardingPnr] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pinchStateRef = useRef<PinchState | null>(null);
 
@@ -174,6 +177,7 @@ export function GardenMap() {
   const gridSize = useUiStore((state) => state.gridSize);
   const ensureGridFits = useUiStore((state) => state.ensureGridFits);
   const setPostnummer = useLocationStore((state) => state.setPostnummer);
+  const currentPostnummer = useLocationStore((state) => state.postnummer);
   const setElevation = useLocationStore((state) => state.setElevation);
   const setFrostJustering = useLocationStore((state) => state.setFrostJustering);
   const sowPlanEntries = useSowPlanStore((state) => state.entries);
@@ -355,6 +359,40 @@ export function GardenMap() {
           </div>
         </header>
 
+        <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--green)", backgroundColor: "var(--surface)" }}>
+          <div className="space-y-1">
+            <label htmlFor="onboarding-pnr" className="block text-base font-semibold">
+              Skriv inn postnummeret ditt
+            </label>
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              Se med én gang hva som er i sesong å høste der du bor — ingen konto, ingen hage nødvendig.
+            </p>
+          </div>
+          <input
+            id="onboarding-pnr"
+            type="text"
+            inputMode="numeric"
+            maxLength={4}
+            value={onboardingPnr}
+            onChange={(event) => {
+              const value = event.target.value.replace(/\D/g, "").slice(0, 4);
+              setOnboardingPnr(value);
+              if (value.length === 4 && findPostnummer(value)) {
+                setPostnummer(value);
+              }
+            }}
+            placeholder="f.eks. 5003"
+            className="input-touch w-full max-w-[12rem] rounded-lg border px-3 py-2"
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--bg)" }}
+          />
+          {onboardingPnr.length === 4 && !findPostnummer(onboardingPnr) && (
+            <p className="text-xs" style={{ color: "var(--red)" }}>
+              Fant ikke postnummeret. Sjekk at det er skrevet riktig.
+            </p>
+          )}
+          {currentPostnummer && <SeasonHarvestCard compact />}
+        </section>
+
         <section className="space-y-3 rounded-xl border p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface)" }}>
           <p>Velg hvordan du vil starte:</p>
           <div className="grid gap-2 sm:grid-cols-2">
@@ -516,6 +554,8 @@ export function GardenMap() {
           }}
         />
       )}
+
+      {!viewMode && <SeasonHarvestCard />}
 
       {!viewMode && <SeasonTimeline />}
 

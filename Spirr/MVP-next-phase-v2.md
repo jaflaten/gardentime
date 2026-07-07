@@ -19,6 +19,7 @@ Full details + browser-verification notes live in `MVP-next-phases.md`. The shor
 - **K Forkultivering** — indoor seedling tray (`/seedlings`), "Plant ut" preserves the indoor sow date.
 - **L direct-vs-forkultivert** — per-planting sow method adjusts the GDD harvest math.
 - **Phase F** harvest tracking · grid/map UX overhaul · rebrand to **Spirr** + logo.
+- **Acquisition/first-run (2026-07)** — Såplan + reminders (§2.1); 13 perennials/berries/frukt; real per-postnummer elevation + override nudge; **Bær & frukt i sesong** location-only harvest preview that also makes the onboarding a zero-setup postnummer→"what's in season now" hook (see `OUTREACH.md`, `USER-TESTING-PLAN.md`).
 - **Test Simmer** — headless LLM-gardener sim harness (M1 + most of M2/M3); the visit-loop + falsifiable harvest-rate metric (Rev 1–3).
 
 ---
